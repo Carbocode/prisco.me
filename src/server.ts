@@ -1,23 +1,19 @@
-// app/entry-server.tsx (o il file a cui punta il tuo main in wrangler)
-
-import { wrapRequestHandler } from "@sentry/cloudflare";
-// Importiamo l'handler GIA' PRONTO dal framework
+import * as Sentry from "@sentry/cloudflare";
 import handler from "@tanstack/react-start/server-entry";
 
-export default {
-	async fetch(request: Request, ctx: any) {
-		return wrapRequestHandler(
-			{
-				options: {
-					dsn: "https://5612ec342f3bba5f99d97f79453e2ddd@o4510675457540096.ingest.de.sentry.io/4510675466125392",
-					tracesSampleRate: 1.0,
-				},
-				request,
-				context: ctx,
-			},
-			async () => {
-				return handler.fetch(request, ctx);
-			},
-		);
+export default Sentry.withSentry(
+	(env: any) => ({
+		dsn: "https://5612ec342f3bba5f99d97f79453e2ddd@o4510675457540096.ingest.de.sentry.io/4510675466125392",
+		integrations: [
+			// send console.log, console.warn, and console.error calls as logs to Sentry
+			Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+		],
+		// Enable logs to be sent to Sentry
+		enableLogs: true,
+	}),
+	{
+		async fetch(request: any, env: any) {
+			return handler.fetch(request, env);
+		},
 	},
-};
+);
