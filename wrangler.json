@@ -1,5 +1,5 @@
 {
-  "name": "nome-del-tuo-progetto",
+  "name": "prisco-website",
   "main": "./.output/server/index.mjs",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
