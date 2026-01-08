@@ -9,10 +9,5 @@
       "invocation_logs": true,
       "persist": true
     }
-  },
-  "vars": {
-    "VITE_STRAPI_URL":"https://authentic-presence-c14cd98792.strapiapp.com/api",
-    "VITE_PUBLIC_POSTHOG_KEY": "phc_o7175PcZ9PG7LwPMMg1SCcv3zi7F2K5TaW7BSDXXsZs",
-    "VITE_PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com"
   }
 }
