@@ -7,6 +7,7 @@
       "dependencies": {
         "@base-ui/react": "^1.0.0",
         "@faker-js/faker": "^10.0.0",
+        "@sentry/cloudflare": "^10.32.1",
         "@sentry/tanstackstart-react": "^10.32.1",
         "@strapi/client": "^1.5.0",
         "@tailwindcss/vite": "^4.0.6",
@@ -504,6 +505,8 @@
     "@sentry-internal/replay-canvas": ["@sentry-internal/replay-canvas@10.32.1", "", { "dependencies": { "@sentry-internal/replay": "10.32.1", "@sentry/core": "10.32.1" } }, "sha512-/XGTzWNWVc+B691fIVekV2KeoHFEDA5KftrLFAhEAW7uWOwk/xy3aQX4TYM0LcPm2PBKvoumlAD+Sd/aXk63oA=="],
 
     "@sentry/browser": ["@sentry/browser@10.32.1", "", { "dependencies": { "@sentry-internal/browser-utils": "10.32.1", "@sentry-internal/feedback": "10.32.1", "@sentry-internal/replay": "10.32.1", "@sentry-internal/replay-canvas": "10.32.1", "@sentry/core": "10.32.1" } }, "sha512-NPNCXTZ05ZGTFyJdKNqjykpFm+urem0ebosILQiw3C4BxNVNGH4vfYZexyl6prRhmg91oB6GjVNiVDuJiap1gg=="],
+
+    "@sentry/cloudflare": ["@sentry/cloudflare@10.32.1", "", { "dependencies": { "@opentelemetry/api": "^1.9.0", "@sentry/core": "10.32.1" }, "peerDependencies": { "@cloudflare/workers-types": "^4.x" }, "optionalPeers": ["@cloudflare/workers-types"] }, "sha512-LP5p+OyCjZ+eT2WEso4YHj8b9+9Z8sx15tQcyxP6SWdYPuu54AmbgNS5zxG5z7+q2neF5HA/TtEhr/t/l5ph2g=="],
 
     "@sentry/core": ["@sentry/core@10.32.1", "", {}, "sha512-PH2ldpSJlhqsMj2vCTyU0BI2Fx1oIDhm7Izo5xFALvjVCS0gmlqHt1udu6YlKn8BtpGH6bGzssvv5APrk+OdPQ=="],
 
