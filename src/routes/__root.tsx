@@ -44,8 +44,24 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 
+	notFoundComponent: NotFoundComponent,
 	shellComponent: RootDocument,
 });
+
+function NotFoundComponent() {
+	return (
+		<div className="flex min-h-dvh items-center justify-center bg-slate-950 px-6 text-center text-white">
+			<div className="flex max-w-lg flex-col gap-4">
+				<h1 className="display-font text-3xl font-semibold">
+					Pagina non trovata
+				</h1>
+				<p className="text-sm text-white/70">
+					Il contenuto richiesto non esiste o e stato spostato.
+				</p>
+			</div>
+		</div>
+	);
+}
 
 function RootDocument() {
 	return (

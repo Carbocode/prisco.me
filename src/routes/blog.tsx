@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import Header from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { articles } from "@/lib/strapiClient";
+import { getArticlesQueryOptions } from "@/server/articles";
 
 type Article = {
 	documentId?: string;
@@ -16,18 +16,14 @@ type Article = {
 };
 
 export const Route = createFileRoute("/blog")({
+	loader: async ({ context }) => {
+		await context.queryClient.ensureQueryData(getArticlesQueryOptions());
+	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { data, isLoading, isError } = useQuery({
-		queryKey: ["articles"],
-		queryFn: () =>
-			articles.find({
-				sort: "publishedAt:desc",
-				fields: ["title", "slug", "excerpt", "description", "publishedAt"],
-			}),
-	});
+	const { data, isLoading, isError } = useQuery(getArticlesQueryOptions());
 
 	const items = (data?.data ?? []) as Article[];
 
@@ -48,12 +44,13 @@ function RouteComponent() {
 							Il blog di Prisco
 						</h1>
 						<p className="max-w-2xl text-base text-white/70 sm:text-lg">
-							Approfondimenti, strumenti e storie dietro i progetti. Tutto arriva
-							direttamente da Strapi, pronto per essere aggiornato in tempo reale.
+							Approfondimenti, strumenti e storie dietro i progetti. Tutto
+							arriva direttamente da Strapi, pronto per essere aggiornato in
+							tempo reale.
 						</p>
 					</div>
 					<div>
-						<Button asChild className="bg-white text-slate-900 hover:bg-white/90">
+						<Button className="bg-white text-slate-900 hover:bg-white/90">
 							<Link to="/">Torna alla home</Link>
 						</Button>
 					</div>
@@ -67,8 +64,8 @@ function RouteComponent() {
 					)}
 					{isError && (
 						<div className="col-span-full rounded-2xl border border-white/10 bg-white/5 p-6 text-white/70">
-							Non riesco a caricare gli articoli dal CMS. Verifica la connessione
-							di Strapi.
+							Non riesco a caricare gli articoli dal CMS. Verifica la
+							connessione di Strapi.
 						</div>
 					)}
 					{!isLoading && !isError && items.length === 0 && (
@@ -80,7 +77,9 @@ function RouteComponent() {
 						const title =
 							article.title ?? article.slug ?? "Articolo senza titolo";
 						const description =
-							article.excerpt ?? article.description ?? "Descrizione non disponibile.";
+							article.excerpt ??
+							article.description ??
+							"Descrizione non disponibile.";
 						const date = article.publishedAt ?? article.createdAt;
 						return (
 							<article
@@ -97,7 +96,9 @@ function RouteComponent() {
 												})
 											: "In bozza"}
 									</p>
-									<h2 className="display-font text-2xl font-semibold">{title}</h2>
+									<h2 className="display-font text-2xl font-semibold">
+										{title}
+									</h2>
 									<p className="text-sm text-white/70">{description}</p>
 								</div>
 								<div className="pt-6">
