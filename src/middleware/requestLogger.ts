@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/cloudflare";
 import { createMiddleware } from "@tanstack/react-start";
 
 export const requestLogger = createMiddleware().server(
@@ -5,7 +6,11 @@ export const requestLogger = createMiddleware().server(
 		const startTime = Date.now();
 		const timestamp = new Date().toISOString();
 
-		console.log(`[${timestamp}] ${request.method} ${request.url} - Starting`);
+		Sentry.logger.info("Request started", {
+			action: "request log",
+			timestamp,
+			request,
+		});
 
 		try {
 			const result = await next();
@@ -16,20 +21,26 @@ export const requestLogger = createMiddleware().server(
 						? result.response?.status
 						: undefined
 					: undefined;
-			const statusLabel =
-				typeof status === "number" ? ` ${status}` : "";
+			const statusLabel = typeof status === "number" ? ` ${status}` : "";
 
-			console.log(
-				`[${timestamp}] ${request.method} ${request.url} - (${duration}ms)${statusLabel}`,
-			);
+			Sentry.logger.info("Request finished", {
+				action: "request log",
+				statusLabel,
+				timestamp,
+				request,
+				duration,
+			});
 
 			return result;
 		} catch (error) {
 			const duration = Date.now() - startTime;
-			console.error(
-				`[${timestamp}] ${request.method} ${request.url} - Error (${duration}ms):`,
-				error,
-			);
+
+			Sentry.logger.error("Request error", {
+				action: "request log",
+				timestamp,
+				request,
+				duration,
+			});
 			throw error;
 		}
 	},
