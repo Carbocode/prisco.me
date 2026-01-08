@@ -6,6 +6,11 @@ export function PostHogWrapper({ children }: { children: React.ReactNode }) {
 	const [client, setClient] = useState<any>(null);
 
 	useEffect(() => {
+		console.log("--- DEBUG POSTHOG ---");
+		console.log("1. Window defined?", typeof window !== "undefined");
+		console.log("2. API Key:", import.meta.env.VITE_PUBLIC_POSTHOG_KEY);
+		console.log("3. API Host:", import.meta.env.VITE_PUBLIC_POSTHOG_HOST);
+
 		if (typeof window !== "undefined" && !client) {
 			posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
 				api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
