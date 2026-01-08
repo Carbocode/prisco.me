@@ -6,17 +6,15 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
-import { PostHogProvider } from "posthog-js/react";
+import posthog from "posthog-js";
+import { useEffect } from "react";
 import { Toaster } from "sonner";
+import { PostHogWrapper } from "@/components/post-hog-wrapper";
+// import { PostHogProvider } from "posthog-js/react"; <--- RIMUOVI QUESTO
 import TanStackFormDevtools from "../integrations/tanstack-form/devtools";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackRouterDevtools from "../integrations/tanstack-router/devtools";
 import appCss from "../styles.css?url";
-
-const options = {
-	api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-	defaults: "2025-11-30",
-} as const;
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -25,27 +23,15 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
 		meta: [
-			{
-				charSet: "utf-8",
-			},
-			{
-				name: "viewport",
-				content: "width=device-width, initial-scale=1",
-			},
-			{
-				title: "TanStack Start Starter",
-			},
+			{ charSet: "utf-8" },
+			{ name: "viewport", content: "width=device-width, initial-scale=1" },
+			{ title: "TanStack Start Starter" },
 		],
-		links: [
-			{
-				rel: "stylesheet",
-				href: appCss,
-			},
-		],
+		links: [{ rel: "stylesheet", href: appCss }],
 	}),
-
 	notFoundComponent: NotFoundComponent,
 	shellComponent: RootDocument,
+	component: App,
 });
 
 function NotFoundComponent() {
@@ -63,6 +49,30 @@ function NotFoundComponent() {
 	);
 }
 
+function App() {
+	useEffect(() => {
+		// Traccia la pageview ogni volta che cambia l'URL
+		if (typeof window !== "undefined" && (window as any).posthog) {
+			posthog.capture("$pageview");
+		}
+	}, []); // Usa location.href o location.pathname
+
+	return (
+		<>
+			<Outlet />
+			<Toaster />
+			<TanStackDevtools
+				config={{ position: "bottom-right" }}
+				plugins={[
+					TanStackRouterDevtools,
+					TanStackQueryDevtools,
+					TanStackFormDevtools,
+				]}
+			/>
+		</>
+	);
+}
+
 function RootDocument() {
 	return (
 		<html lang="it">
@@ -70,24 +80,10 @@ function RootDocument() {
 				<HeadContent />
 			</head>
 			<body className="w-dvw h-dvh">
-				<PostHogProvider
-					apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
-					options={options}
-				>
+				<PostHogWrapper>
 					<Outlet />
-					<Toaster />
-					<TanStackDevtools
-						config={{
-							position: "bottom-right",
-						}}
-						plugins={[
-							TanStackRouterDevtools,
-							TanStackQueryDevtools,
-							TanStackFormDevtools,
-						]}
-					/>
 					<Scripts />
-				</PostHogProvider>
+				</PostHogWrapper>
 			</body>
 		</html>
 	);
