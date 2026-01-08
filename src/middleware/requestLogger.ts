@@ -10,9 +10,17 @@ export const requestLogger = createMiddleware().server(
 		try {
 			const result = await next();
 			const duration = Date.now() - startTime;
+			const status =
+				typeof result === "object" && result !== null
+					? "response" in result
+						? result.response?.status
+						: undefined
+					: undefined;
+			const statusLabel =
+				typeof status === "number" ? ` ${status}` : "";
 
 			console.log(
-				`[${timestamp}] ${request.method} ${request.url} - ${result.response.status} (${duration}ms)`,
+				`[${timestamp}] ${request.method} ${request.url} - (${duration}ms)${statusLabel}`,
 			);
 
 			return result;

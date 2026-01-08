@@ -25,27 +25,36 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
 		meta: [
-			{
-				charSet: "utf-8",
-			},
-			{
-				name: "viewport",
-				content: "width=device-width, initial-scale=1",
-			},
-			{
-				title: "TanStack Start Starter",
-			},
+			{ charSet: "utf-8" },
+			{ name: "viewport", content: "width=device-width, initial-scale=1" },
+			{ title: "Prisco.me" },
+			{ "apple-mobile-web-app-title": "Prisco.me" },
 		],
 		links: [
+			{ rel: "stylesheet", href: appCss },
+			{ rel: "manifest", href: "/favicon/site.webmanifest" },
 			{
-				rel: "stylesheet",
-				href: appCss,
+				rel: "apple-touch-icon",
+				sizes: "180x180",
+				href: "/favicon/apple-touch-icon.png",
+			},
+			{ rel: "shortcut icon", href: "/favicon/favicon.ico" },
+			{
+				rel: "icon",
+				type: "image/svg+xml",
+				href: "/favicon/favicon.svg",
+			},
+			{
+				rel: "icon",
+				type: "image/png",
+				href: "/favicon/favicon-96x96.png",
+				sizes: "96x96",
 			},
 		],
 	}),
-
 	notFoundComponent: NotFoundComponent,
 	shellComponent: RootDocument,
+	component: App,
 });
 
 function NotFoundComponent() {
@@ -63,6 +72,23 @@ function NotFoundComponent() {
 	);
 }
 
+function App() {
+	return (
+		<>
+			<Outlet />
+			<Toaster />
+			<TanStackDevtools
+				config={{ position: "bottom-right" }}
+				plugins={[
+					TanStackRouterDevtools,
+					TanStackQueryDevtools,
+					TanStackFormDevtools,
+				]}
+			/>
+		</>
+	);
+}
+
 function RootDocument() {
 	return (
 		<html lang="it">
@@ -75,17 +101,6 @@ function RootDocument() {
 					options={options}
 				>
 					<Outlet />
-					<Toaster />
-					<TanStackDevtools
-						config={{
-							position: "bottom-right",
-						}}
-						plugins={[
-							TanStackRouterDevtools,
-							TanStackQueryDevtools,
-							TanStackFormDevtools,
-						]}
-					/>
 					<Scripts />
 				</PostHogProvider>
 			</body>
