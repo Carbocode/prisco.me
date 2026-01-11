@@ -42,19 +42,19 @@ function RouteComponent() {
 
 				<CloudCarousel />
 
-				<Star size="xs" className="absolute left-[8%] top-[12%]" />
-				<Star size="sm" className="absolute left-[18%] top-[8%]" />
+				<Star size="sm" className="absolute left-[8%] top-[12%]" />
+				<Star size="md" className="absolute left-[18%] top-[8%]" />
 				<Star size="md" className="absolute left-[30%] top-[14%]" />
 				<Star size="sm" className="absolute left-[40%] top-[6%]" />
 				<Star size="md" className="absolute left-[52%] top-[12%]" />
 				<Star size="lg" className="absolute left-[60%] top-[8%]" />
 				<Star size="sm" className="absolute right-[22%] top-[22%]" />
 				<Star size="md" className="absolute right-[30%] top-[36%]" />
-				<Star size="xs" className="absolute left-[36%] top-[30%]" />
+				<Star size="md" className="absolute left-[36%] top-[30%]" />
 				<Star size="sm" className="absolute left-[12%] top-[32%]" />
 				<Star size="md" className="absolute right-[12%] top-[34%]" />
 				<Star size="lg" className="absolute left-[50%] top-[44%]" />
-				<Star size="xs" className="absolute right-[8%] top-[48%]" />
+				<Star size="sm" className="absolute right-[8%] top-[48%]" />
 			</Sky>
 
 			<div className="horizon  inset-x-0 bottom-0 h-[30dvh] z-10" />

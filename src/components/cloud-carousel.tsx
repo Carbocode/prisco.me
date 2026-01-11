@@ -156,7 +156,15 @@ function CloudMotion({
 		return () => {
 			controlsRef.current?.stop();
 		};
-	}, [cloud.duration, cloud.id, cloud.startProgress, endVw, onComplete, startVw, x]);
+	}, [
+		cloud.duration,
+		cloud.id,
+		cloud.startProgress,
+		endVw,
+		onComplete,
+		startVw,
+		x,
+	]);
 
 	useEffect(() => {
 		const controls = controlsRef.current;

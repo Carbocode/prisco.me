@@ -1,3 +1,4 @@
+import faroUploader from "@grafana/faro-rollup-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -10,13 +11,21 @@ const config = defineConfig({
 	plugins: [
 		devtools(),
 		nitro(),
-		// this is the plugin that enables path aliases
 		viteTsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
+		faroUploader({
+			appName: "prisco-website",
+			endpoint: process.env.FARO_API_URL ?? "",
+			appId: "161",
+			stackId: "1489971",
+			verbose: true,
+			apiKey: process.env.FARO_SOURCEMAP_KEY ?? "",
+			gzipContents: true,
+		}),
 	],
 });
 

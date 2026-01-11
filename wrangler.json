@@ -2,12 +2,29 @@
   "name": "prisco-website",
   "main": "./.output/server/index.mjs",
   "compatibility_flags": ["nodejs_compat"],
+  "compatibility_date": "2026-01-12",
   "observability": {
     "logs": {
       "enabled": true,
       "head_sampling_rate": 1,
       "invocation_logs": true,
       "persist": true
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1
     }
+  },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "17928d1dbf8a46678a194f8b27212f36"
+    }
+  ],
+  "vars": {
+    "VITE_STRAPI_URL":"https://authentic-presence-c14cd98792.strapiapp.com/api",
+    "VITE_PUBLIC_POSTHOG_KEY":"phc_o7175PcZ9PG7LwPMMg1SCcv3zi7F2K5TaW7BSDXXsZs",
+    "VITE_PUBLIC_POSTHOG_HOST":"https://eu.i.posthog.com",
+    "VITE_FARO_URL":"https://faro-collector-prod-eu-central-0.grafana.net/collect/1b56b9727dfa10783aec6727441f61e7"
   }
 }
