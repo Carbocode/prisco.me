@@ -8,25 +8,25 @@ import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
-	plugins: [
-		devtools(),
-		nitro(),
-		viteTsConfigPaths({
-			projects: ["./tsconfig.json"],
-		}),
-		tailwindcss(),
-		tanstackStart(),
-		viteReact(),
-		faroUploader({
-			appName: "prisco-website",
-			endpoint: process.env.FARO_API_URL ?? "",
-			appId: "161",
-			stackId: "1489971",
-			verbose: true,
-			apiKey: process.env.FARO_SOURCEMAP_KEY ?? "",
-			gzipContents: true,
-		}),
-	],
+  plugins: [
+    devtools(),
+    nitro({ preset: "cloudflare-pages" }),
+    viteTsConfigPaths({
+      projects: ["./tsconfig.json"],
+    }),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+    faroUploader({
+      appName: "prisco-website",
+      endpoint: process.env.FARO_API_URL ?? "",
+      appId: "161",
+      stackId: "1489971",
+      verbose: true,
+      apiKey: process.env.FARO_SOURCEMAP_KEY ?? "",
+      gzipContents: true,
+    }),
+  ],
 });
 
 export default config;

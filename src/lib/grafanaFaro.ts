@@ -13,7 +13,7 @@ export const initFaro = createIsomorphicFn().client(() => {
     app: {
       name: "prisco-website",
       version: "1.0.0",
-      environment: import.meta.env.NODE_ENV,
+      environment: import.meta.env.VITE_MODE,
     },
     instrumentations: [
       ...getWebInstrumentations(),
