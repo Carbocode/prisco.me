@@ -1,5 +1,7 @@
 import pino from "pino";
 
+console.log("[logger] module loaded");
+
 const isWorkers = typeof process === "undefined";
 
 const baseConfig: pino.LoggerOptions = {
