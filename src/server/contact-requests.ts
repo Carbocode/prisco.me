@@ -8,20 +8,29 @@ import { logger } from "@/lib/logger";
 const emptyToUndefined = (value: unknown) =>
   typeof value === "string" && value.trim() === "" ? undefined : value;
 
-const contactRequestInput = z.object({
-  name: z.string().trim().min(2).max(120),
-  email: z.email().max(255),
-  phone: z.preprocess(emptyToUndefined, z.string().trim().max(40).optional()),
+export const contactRequestSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Inserisci il tuo nome")
+    .max(120, "Troppo Lungo"),
+  email: z.email("Inserisci un'email valida").max(255, "Troppo Lungo"),
+  phone: z.preprocess(
+    emptyToUndefined,
+    z.string().trim().min(6, "Troppo Lungo").max(40, "Troppo Lungo").optional(),
+  ),
   company: z.preprocess(
     emptyToUndefined,
-    z.string().trim().max(160).optional(),
+    z.string().trim().max(160, "Troppo Lungo").optional(),
   ),
-  message: z.string().trim().min(10).max(4000),
-  consentToContact: z.boolean(),
+  message: z.string().trim().min(10, "Raccontaci qualcosa in piu").max(4000),
+  consentToContact: z.boolean().refine((value) => value === true, {
+    message: "Conferma il consenso al contatto",
+  }),
 });
 
 export const createContactRequest = createServerFn({ method: "POST" })
-  .inputValidator(contactRequestInput)
+  .inputValidator(contactRequestSchema)
   .handler(async ({ data }) => {
     try {
       logger.info(
