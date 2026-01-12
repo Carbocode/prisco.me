@@ -17,6 +17,13 @@
       "head_sampling_rate": 1
     }
   },
+  "routes": [
+    {
+      "pattern": "prisco.me",
+      "zone_name": "prisco.me",
+      "custom_domain": true
+    }
+  ],
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",

@@ -23,29 +23,34 @@ const contactRequestInput = z.object({
 export const createContactRequest = createServerFn({ method: "POST" })
   .inputValidator(contactRequestInput)
   .handler(async ({ data }) => {
-    logger.info(
-      { action: "contact_request_create_start" },
-      "Inizio inserimento richiesta di contatto",
-    );
+    try {
+      logger.info(
+        { action: "contact_request_create_start" },
+        "Inizio inserimento richiesta di contatto",
+      );
 
-    logger.info(env.HYPERDRIVE.connectionString);
+      logger.info(env.HYPERDRIVE.connectionString);
 
-    const [inserted] = await db
-      .insert(contactRequests)
-      .values({
-        name: data.name,
-        email: data.email,
-        phone: data.phone ?? null,
-        company: data.company ?? null,
-        message: data.message,
-        consentToContact: data.consentToContact,
-      })
-      .returning({ id: contactRequests.id });
+      const [inserted] = await db
+        .insert(contactRequests)
+        .values({
+          name: data.name,
+          email: data.email,
+          phone: data.phone ?? null,
+          company: data.company ?? null,
+          message: data.message,
+          consentToContact: data.consentToContact,
+        })
+        .returning({ id: contactRequests.id });
 
-    logger.info(
-      { action: "contact_request_create_success", id: inserted?.id ?? null },
-      "Richiesta di contatto inserita con successo",
-    );
+      logger.info(
+        { action: "contact_request_create_success", id: inserted?.id ?? null },
+        "Richiesta di contatto inserita con successo",
+      );
 
-    return { id: inserted?.id ?? null };
+      return { id: inserted?.id ?? null };
+    } catch (error) {
+      logger.error(error, "Richiesta di contatto non andata a buon fine");
+      throw error;
+    }
   });
