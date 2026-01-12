@@ -8,6 +8,14 @@ import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
+  ssr: {
+    external: ["cloudflare:workers"],
+  },
+  build: {
+    rollupOptions: {
+      external: ["cloudflare:workers"],
+    },
+  },
   plugins: [
     devtools(),
     nitro({ preset: "cloudflare-pages" }),
