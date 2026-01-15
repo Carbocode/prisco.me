@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -51,11 +50,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
       </CardContent>
       <CardFooter className="pt-6">
         {hasSlug ? (
-          <Button variant="outline">
-            <Link to="/blog/$slug" params={{ slug: article.slug as string }}>
-              Leggi l'articolo
-            </Link>
-          </Button>
+          <Button variant="outline">Leggi l'articolo</Button>
         ) : (
           <Button variant="outline" disabled>
             Leggi l'articolo

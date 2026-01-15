@@ -1,33 +1,31 @@
+import { logger } from "@sentry/cloudflare";
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { logger } from "@/lib/logger";
 import { articles } from "@/lib/strapiClient";
 
 export const getArticles = createServerFn({ method: "GET" }).handler(
   async () => {
-    logger.info(
-      { action: "get_articles_start" },
-      "Inizio recupero articoli da Strapi",
-    );
+    logger.info("Inizio recupero articoli da Strapi", {
+      action: "get_articles_start",
+    });
 
     try {
       const data = await articles.find({
         sort: "publishedAt:desc",
       });
 
-      logger.info(data);
+      logger.info("Articoli trovati", { data: data });
 
-      logger.info(
-        { action: "get_articles_success" },
-        "Articoli recuperati con successo",
-      );
+      logger.info("Articoli recuperati con successo", {
+        action: "get_articles_success",
+      });
 
       return data;
     } catch (error) {
-      logger.error(
-        { action: "get_articles_error", error },
-        "Errore durante il recupero degli articoli",
-      );
+      logger.error("Errore durante il recupero degli articoli", {
+        action: "get_articles_error",
+        error,
+      });
       throw error;
     }
   },
@@ -43,10 +41,10 @@ export const getArticleBySlug = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { slug } = data;
 
-    logger.info(
-      { action: "get_article_start", slug },
-      "Inizio recupero articolo da Strapi",
-    );
+    logger.info("Inizio recupero articolo da Strapi", {
+      action: "get_article_start",
+      slug,
+    });
 
     try {
       const response = await articles.find({
@@ -61,18 +59,19 @@ export const getArticleBySlug = createServerFn({ method: "GET" })
       const article = response.data?.[0] ?? null;
 
       if (!article) {
-        logger.warn(
-          { action: "get_article_not_found", slug },
-          "Articolo non trovato",
-        );
+        logger.warn("Articolo non trovato", {
+          action: "get_article_not_found",
+          slug,
+        });
       }
 
       return article;
     } catch (error) {
-      logger.error(
-        { action: "get_article_error", slug, error },
-        "Errore durante il recupero dell'articolo",
-      );
+      logger.error("Errore durante il recupero dell'articolo", {
+        action: "get_article_error",
+        slug,
+        error,
+      });
       throw error;
     }
   });

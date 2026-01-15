@@ -1,40 +1,53 @@
-import faroUploader from "@grafana/faro-rollup-plugin";
+import { fileURLToPath, URL } from "node:url";
+import { cloudflare } from "@cloudflare/vite-plugin";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
-import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import { nitro } from "nitro/vite";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
-const config = defineConfig({
-  ssr: {
-    external: ["cloudflare:workers"],
-  },
-  build: {
-    rollupOptions: {
-      external: ["cloudflare:workers"],
-    },
-  },
-  plugins: [
-    devtools(),
-    nitro({ preset: "cloudflare-module" }),
-    viteTsConfigPaths({
-      projects: ["./tsconfig.json"],
-    }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-    faroUploader({
-      appName: "prisco-website",
-      endpoint: process.env.FARO_API_URL ?? "",
-      appId: "161",
-      stackId: "1489971",
-      verbose: true,
-      apiKey: process.env.FARO_SOURCEMAP_KEY ?? "",
-      gzipContents: true,
-    }),
-  ],
-});
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
 
-export default config;
+  return {
+    environments: {
+      ssr: {
+        build: {
+          rollupOptions: {
+            external: ["cloudflare:workers", "cloudflare:sockets"],
+          },
+        },
+      },
+      nitro: {
+        build: {
+          rollupOptions: {
+            external: ["cloudflare:workers", "cloudflare:sockets"],
+          },
+        },
+      },
+    },
+    build: {
+      sourcemap: "hidden",
+    },
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
+    },
+    plugins: [
+      cloudflare({ viteEnvironment: { name: "ssr" } }),
+      viteTsConfigPaths({
+        projects: ["./tsconfig.json"],
+      }),
+      tailwindcss(),
+      tanstackStart(),
+      viteReact(),
+      sentryVitePlugin({
+        org: "prisco",
+        project: "javascript-tanstackstart-react",
+        authToken: env.SENTRY_AUTH_TOKEN,
+      }),
+    ],
+  };
+});

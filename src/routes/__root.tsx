@@ -1,5 +1,3 @@
-import { FaroErrorBoundary } from "@grafana/faro-react";
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRouteWithContext,
@@ -9,10 +7,6 @@ import {
 } from "@tanstack/react-router";
 import { PostHogProvider } from "posthog-js/react";
 import { Toaster } from "sonner";
-import { initFaro } from "@/lib/grafanaFaro";
-import TanStackFormDevtools from "../integrations/tanstack-form/devtools";
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
-import TanStackRouterDevtools from "../integrations/tanstack-router/devtools";
 import appCss from "../styles.css?url";
 
 const options = {
@@ -23,8 +17,6 @@ const options = {
 interface MyRouterContext {
   queryClient: QueryClient;
 }
-
-initFaro();
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
@@ -78,18 +70,10 @@ function NotFoundComponent() {
 
 function App() {
   return (
-    <FaroErrorBoundary>
+    <>
       <Outlet />
       <Toaster />
-      <TanStackDevtools
-        config={{ position: "bottom-right" }}
-        plugins={[
-          TanStackRouterDevtools,
-          TanStackQueryDevtools,
-          TanStackFormDevtools,
-        ]}
-      />
-    </FaroErrorBoundary>
+    </>
   );
 }
 

@@ -1,6 +1,5 @@
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -13,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  type ContactRequestValues,
   contactRequestSchema,
   createContactRequest,
 } from "@/server/contact-requests";
@@ -37,10 +37,9 @@ export default function ContactRequestForm() {
       company: "",
       message: "",
       consentToContact: false,
-    },
+    } as ContactRequestValues,
     validators: {
-      onBlur: contactRequestSchema,
-      onSubmit: contactRequestSchema,
+      onChange: contactRequestSchema,
     },
     onSubmit: async ({ value }) => {
       setSubmitError(null);
@@ -150,7 +149,7 @@ export default function ContactRequestForm() {
                           name={field.name}
                           autoComplete="tel"
                           placeholder="+39 333 123 4567"
-                          value={field.state.value}
+                          value={String(field.state.value)}
                           onBlur={field.handleBlur}
                           onChange={(event) =>
                             field.handleChange(event.target.value)
@@ -179,7 +178,7 @@ export default function ContactRequestForm() {
                           name={field.name}
                           autoComplete="organization"
                           placeholder="Studio Prisco"
-                          value={field.state.value}
+                          value={String(field.state.value)}
                           onBlur={field.handleBlur}
                           onChange={(event) =>
                             field.handleChange(event.target.value)

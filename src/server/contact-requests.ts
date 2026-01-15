@@ -1,12 +1,9 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { contactRequests } from "@/db/schema";
-import { logger } from "@/lib/logger";
-
-const emptyToUndefined = (value: unknown) =>
-  typeof value === "string" && value.trim() === "" ? undefined : value;
+import { emptyToUndefined } from "@/lib/utils";
 
 export const contactRequestSchema = z.object({
   name: z
@@ -29,18 +26,17 @@ export const contactRequestSchema = z.object({
   }),
 });
 
+export type ContactRequestValues = z.input<typeof contactRequestSchema>;
+
 export const createContactRequest = createServerFn({ method: "POST" })
   .inputValidator(contactRequestSchema)
   .handler(async ({ data }) => {
     try {
-      logger.info(
-        { action: "contact_request_create_start" },
-        "Inizio inserimento richiesta di contatto",
-      );
+      console.info("Inizio inserimento richiesta di contatto", {
+        action: "contact_request_create_start",
+      });
 
-      logger.info(env.HYPERDRIVE.connectionString);
-
-      const [inserted] = await db
+      const [inserted] = await getDb(env)
         .insert(contactRequests)
         .values({
           name: data.name,
@@ -52,14 +48,14 @@ export const createContactRequest = createServerFn({ method: "POST" })
         })
         .returning({ id: contactRequests.id });
 
-      logger.info(
-        { action: "contact_request_create_success", id: inserted?.id ?? null },
-        "Richiesta di contatto inserita con successo",
-      );
+      console.info("Richiesta di contatto inserita con successo", {
+        action: "contact_request_create_success",
+        id: inserted?.id ?? null,
+      });
 
       return { id: inserted?.id ?? null };
-    } catch (error) {
-      logger.error(error, "Richiesta di contatto non andata a buon fine");
+    } catch (error: any) {
+      console.error("Richiesta di contatto non andata a buon fine", error);
       throw error;
     }
   });

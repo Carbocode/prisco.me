@@ -6,29 +6,27 @@
   "observability": {
     "logs": {
       "enabled": true,
-      "destinations": ["grafana-loki"],
       "head_sampling_rate": 1,
       "invocation_logs": true,
       "persist": true
     },
     "traces": {
       "enabled": true,
-      "destinations": ["grafana-tempo"],
       "head_sampling_rate": 1
     }
   },
-  "routes": [
-    {
-      "pattern": "prisco.me",
-      "zone_name": "prisco.me",
-      "custom_domain": true
-    }
-  ],
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "17928d1dbf8a46678a194f8b27212f36",
+      "id": "bd3176eddd5e4764a4583bdb9f515af2",
       "localConnectionString": "postgresql://postgres.waalgdwcdzhnztxbqwzc:*TW0!P6*E3U$R4j*%40YTS@aws-1-eu-central-1.pooler.supabase.com:6543/postgres"
     }
-  ]
+  ],
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
+  },
+  "vars": {
+    "SENTRY_DNS": "https://1b376c7d10b15705ff1a40c2f8f140cb@o4510675457540096.ingest.de.sentry.io/4510702232862800"
+  },
+  "upload_source_maps": true
 }
