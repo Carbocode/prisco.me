@@ -1,3 +1,4 @@
+/*
 import pino from "pino";
 
 console.log("[logger] module loaded");
@@ -34,3 +35,4 @@ const localConfig: pino.LoggerOptions = {
 };
 
 export const logger = pino(isWorkers ? workerConfig : localConfig);
+*/

@@ -1,3 +1,4 @@
+/*
 import {
   getWebInstrumentations,
   initializeFaro,
@@ -33,3 +34,4 @@ export const initFaro = createIsomorphicFn().client(() => {
     },
   });
 });
+*/
