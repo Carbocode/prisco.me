@@ -1,7 +1,7 @@
-import { drizzle } from "drizzle-orm/postgres-js";
+import { drizzle } from "drizzle-orm/d1";
 
 import * as schema from "./schema.ts";
 
 export function getDb(env: Env) {
-  return drizzle(env.HYPERDRIVE.connectionString, { schema });
+  return drizzle(env.DB, { schema });
 }

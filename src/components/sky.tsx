@@ -77,7 +77,7 @@ export default function Sky({ className, children, ...props }: SkyProps) {
   useEffect(() => {
     if (!isVisible) {
       setStars([]);
-      return;
+      return undefined;
     }
     const interval = setInterval(() => {
       const id = Date.now() + Math.random();

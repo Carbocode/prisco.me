@@ -6,11 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  type ContactRequestValues,
-  contactRequestSchema,
-  createContactRequest,
-} from "@/server/contact-requests";
+import { contactRequestSchema, createContactRequest } from "@/server/contact-requests";
 
 import { Card, CardContent, CardFooter } from "./ui/card";
 
@@ -29,7 +25,7 @@ export default function ContactRequestForm() {
       company: "",
       message: "",
       consentToContact: false,
-    } as ContactRequestValues,
+    },
     validators: {
       onChange: contactRequestSchema,
     },
@@ -50,11 +46,11 @@ export default function ContactRequestForm() {
   return (
     <Card>
       <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        form.handleSubmit();
-      }}
+        onSubmit={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          void form.handleSubmit();
+        }}
       >
         <CardContent>
           <FieldSet>
@@ -71,6 +67,9 @@ export default function ContactRequestForm() {
                           name={field.name}
                           autoComplete="name"
                           placeholder="Mario Rossi"
+                          minLength={2}
+                          maxLength={120}
+                          required
                           value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(event) => field.handleChange(event.target.value)}
@@ -94,6 +93,8 @@ export default function ContactRequestForm() {
                           type="email"
                           autoComplete="email"
                           placeholder="mario@email.it"
+                          maxLength={255}
+                          required
                           value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(event) => field.handleChange(event.target.value)}
@@ -118,7 +119,9 @@ export default function ContactRequestForm() {
                           name={field.name}
                           autoComplete="tel"
                           placeholder="+39 333 123 4567"
-                          value={String(field.state.value)}
+                          minLength={6}
+                          maxLength={40}
+                          value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={invalid}
@@ -140,7 +143,8 @@ export default function ContactRequestForm() {
                           name={field.name}
                           autoComplete="organization"
                           placeholder="Studio Prisco"
-                          value={String(field.state.value)}
+                          maxLength={160}
+                          value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={invalid}
@@ -163,6 +167,9 @@ export default function ContactRequestForm() {
                         name={field.name}
                         placeholder="Raccontaci il tuo progetto e cosa possiamo fare per te."
                         rows={5}
+                        minLength={10}
+                        maxLength={4000}
+                        required
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(event) => field.handleChange(event.target.value)}
@@ -183,8 +190,9 @@ export default function ContactRequestForm() {
                       <Checkbox
                         id={field.name}
                         checked={field.state.value}
-                        onCheckedChange={(checked) => field.handleChange(Boolean(checked))}
+                        onCheckedChange={field.handleChange}
                         aria-invalid={invalid}
+                        required
                       />
 
                       <FieldLabel htmlFor={field.name}>

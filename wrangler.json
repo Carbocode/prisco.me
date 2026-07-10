@@ -15,11 +15,12 @@
       "head_sampling_rate": 1
     }
   },
-  "hyperdrive": [
+  "d1_databases": [
     {
-      "binding": "HYPERDRIVE",
-      "id": "bd3176eddd5e4764a4583bdb9f515af2",
-      "localConnectionString": "postgresql://postgres.waalgdwcdzhnztxbqwzc:*TW0!P6*E3U$R4j*%40YTS@aws-1-eu-central-1.pooler.supabase.com:6543/postgres"
+      "binding": "DB",
+      "database_name": "prisco-website",
+      "migrations_dir": "drizzle",
+      "database_id": "63c4c72a-c350-4686-885f-b6f7562b0933"
     }
   ],
   "version_metadata": {
