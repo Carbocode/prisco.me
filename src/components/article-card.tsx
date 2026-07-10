@@ -24,8 +24,7 @@ type ArticleCardProps = {
 
 export function ArticleCard({ article }: ArticleCardProps) {
   const title = article.title ?? article.slug ?? "Articolo senza titolo";
-  const description =
-    article.excerpt ?? article.description ?? "Descrizione non disponibile.";
+  const description = article.excerpt ?? article.description ?? "Descrizione non disponibile.";
   const date = article.publishedAt ?? article.createdAt;
   const hasSlug = Boolean(article.slug);
 
@@ -41,9 +40,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
               })
             : "In bozza"}
         </CardDescription>
-        <CardTitle className="display-font text-2xl font-semibold ">
-          {title}
-        </CardTitle>
+        <CardTitle className="display-font text-2xl font-semibold ">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <CardDescription>{description}</CardDescription>

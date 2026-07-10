@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+
 import CloudCarousel from "@/components/cloud-carousel";
 import ContactRequestForm from "@/components/contact-request-form";
 import Header from "@/components/header";
@@ -26,8 +27,8 @@ function HomePage() {
               Un cielo di idee per il tuo prossimo progetto
             </h1>
             <p className="max-w-xl text-base text-white/75 sm:text-lg">
-              Costruiamo identita visive, siti leggeri e interazioni chiare che
-              accompagnano ogni brand con precisione e calore.
+              Costruiamo identita visive, siti leggeri e interazioni chiare che accompagnano ogni
+              brand con precisione e calore.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Button size="lg">Scopri lo studio</Button>
@@ -63,9 +64,7 @@ function HomePage() {
       <section>
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
           <div className="text-center">
-            <h2 className="display-font text-3xl font-semibold">
-              Raccontaci la tua idea
-            </h2>
+            <h2 className="display-font text-3xl font-semibold">Raccontaci la tua idea</h2>
             <p className="mt-2 text-base">
               Compila il form e ti ricontatteremo con una proposta chiara.
             </p>

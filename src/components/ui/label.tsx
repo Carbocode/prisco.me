@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noLabelWithoutControl: ShadCN component */
+/** oxlint-disable jsx-a11y/label-has-associated-control -- ShadCN primitive forwards the control association. */
 
 import type * as React from "react";
 
