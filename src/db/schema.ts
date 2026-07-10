@@ -1,15 +1,19 @@
-import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { boolean, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const contactRequests = pgTable("contact_requests", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 120 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
-  phone: varchar("phone", { length: 40 }),
-  company: varchar("company", { length: 160 }),
+export const contactRequests = sqliteTable("contact_requests", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  company: text("company"),
   message: text("message").notNull(),
-  consentToContact: boolean("consent_to_contact").notNull().default(false),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  consentToContact: integer("consent_to_contact", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`),
 });
 
 export type ContactRequest = InferSelectModel<typeof contactRequests>;
