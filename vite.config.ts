@@ -15,14 +15,14 @@ export default defineConfig(({ mode }) => {
     environments: {
       ssr: {
         build: {
-          rollupOptions: {
+          rolldownOptions: {
             external: ["cloudflare:workers", "cloudflare:sockets"],
           },
         },
       },
       nitro: {
         build: {
-          rollupOptions: {
+          rolldownOptions: {
             external: ["cloudflare:workers", "cloudflare:sockets"],
           },
         },

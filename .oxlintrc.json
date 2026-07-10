@@ -17,19 +17,10 @@
     "src/routeTree.gen.ts",
     "src/styles.css",
     "worker-configuration.d.ts",
+    "src/components/ui/**",
     "drizzle/**"
   ],
   "overrides": [
-    {
-      "files": ["src/components/ui/**"],
-      "rules": {
-        "jsx-a11y/anchor-has-content": "off",
-        "jsx-a11y/click-events-have-key-events": "off",
-        "jsx-a11y/label-has-associated-control": "off",
-        "jsx-a11y/no-noninteractive-element-interactions": "off",
-        "jsx-a11y/prefer-tag-over-role": "off"
-      }
-    },
     {
       "files": ["**/*.{test,spec}.{ts,tsx}", "**/test/**"],
       "env": {

@@ -1,22 +1,27 @@
-import { createServerFn } from "@tanstack/react-start";
 import { logger } from "@sentry/cloudflare";
+import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import z from "zod";
 
 import { getDb } from "@/db";
 import { contactRequests } from "@/db/schema";
-import { emptyToUndefined } from "@/lib/utils";
 
 export const contactRequestSchema = z.object({
   name: z.string().trim().min(2, "Inserisci il tuo nome").max(120, "Troppo Lungo"),
   email: z.email("Inserisci un'email valida").max(255, "Troppo Lungo"),
-  phone: z.preprocess(
-    emptyToUndefined,
-    z.string().trim().min(6, "Troppo Lungo").max(40, "Troppo Lungo").optional(),
-  ),
-  company: z.preprocess(emptyToUndefined, z.string().trim().max(160, "Troppo Lungo").optional()),
+  phone: z
+    .string()
+    .trim()
+    .max(40, "Il numero di telefono è troppo lungo")
+    .refine((value) => value.length === 0 || value.length >= 6, "Numero di telefono non valido")
+    .transform((value) => value || undefined),
+  company: z
+    .string()
+    .trim()
+    .max(160, "Il nome dell'azienda è troppo lungo")
+    .transform((value) => value || undefined),
   message: z.string().trim().min(10, "Raccontaci qualcosa in piu").max(4000),
-  consentToContact: z.boolean().refine((value) => value === true, {
+  consentToContact: z.boolean().refine((value) => value, {
     message: "Conferma il consenso al contatto",
   }),
 });
