@@ -6,9 +6,7 @@ export default createServerEntry(
     (env: Env) => ({
       dsn: env.SENTRY_DNS,
       version: env.CF_VERSION_METADATA,
-      integrations: [
-        Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
-      ],
+      integrations: [Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] })],
       sendDefaultPii: true,
       enableLogs: true,
       tracesSampleRate: 1.0,

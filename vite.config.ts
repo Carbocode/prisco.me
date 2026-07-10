@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from "node:url";
+
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";

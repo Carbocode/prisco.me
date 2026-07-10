@@ -1,35 +1,33 @@
 import { logger } from "@sentry/cloudflare";
 import { createServerFn } from "@tanstack/react-start";
 import z from "zod";
+
 import { articles } from "@/lib/strapiClient";
 
-export const getArticles = createServerFn({ method: "GET" }).handler(
-  async () => {
-    logger.info("Inizio recupero articoli da Strapi", {
-      action: "get_articles_start",
+export const getArticles = createServerFn({ method: "GET" }).handler(async () => {
+  logger.info("Inizio recupero articoli da Strapi", {
+    action: "get_articles_start",
+  });
+
+  try {
+    const data = await articles.find({
+      sort: "publishedAt:desc",
     });
 
-    try {
-      const data = await articles.find({
-        sort: "publishedAt:desc",
-      });
+    logger.info("Articoli recuperati con successo", {
+      action: "get_articles_success",
+      count: data.data?.length ?? 0,
+    });
 
-      logger.info("Articoli trovati", { data: data });
-
-      logger.info("Articoli recuperati con successo", {
-        action: "get_articles_success",
-      });
-
-      return data;
-    } catch (error) {
-      logger.error("Errore durante il recupero degli articoli", {
-        action: "get_articles_error",
-        error,
-      });
-      throw error;
-    }
-  },
-);
+    return data;
+  } catch (error) {
+    logger.error("Errore durante il recupero degli articoli", {
+      action: "get_articles_error",
+      error,
+    });
+    throw error;
+  }
+});
 
 export const getArticlesQueryOptions = () => ({
   queryKey: ["articles"],
@@ -37,7 +35,7 @@ export const getArticlesQueryOptions = () => ({
 });
 
 export const getArticleBySlug = createServerFn({ method: "GET" })
-  .inputValidator(z.object({ slug: z.string() }))
+  .validator(z.object({ slug: z.string() }))
   .handler(async ({ data }) => {
     const { slug } = data;
 

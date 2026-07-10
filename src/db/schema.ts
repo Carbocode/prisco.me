@@ -1,12 +1,5 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import {
-  boolean,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const contactRequests = pgTable("contact_requests", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -16,9 +9,7 @@ export const contactRequests = pgTable("contact_requests", {
   company: varchar("company", { length: 160 }),
   message: text("message").notNull(),
   consentToContact: boolean("consent_to_contact").notNull().default(false),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export type ContactRequest = InferSelectModel<typeof contactRequests>;

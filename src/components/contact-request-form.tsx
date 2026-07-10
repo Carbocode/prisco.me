@@ -1,14 +1,9 @@
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -16,14 +11,11 @@ import {
   contactRequestSchema,
   createContactRequest,
 } from "@/server/contact-requests";
+
 import { Card, CardContent, CardFooter } from "./ui/card";
 
-const toFieldErrors = (
-  errors: Array<{ message?: string } | string | undefined>,
-) =>
-  errors.map((error) =>
-    typeof error === "string" ? { message: error } : error,
-  );
+const toFieldErrors = (errors: Array<{ message?: string } | string | undefined>) =>
+  errors.map((error) => (typeof error === "string" ? { message: error } : error));
 
 export default function ContactRequestForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -50,36 +42,27 @@ export default function ContactRequestForm() {
         form.reset();
         setSubmitted(true);
       } catch {
-        setSubmitError(
-          "Si e verificato un problema durante l'invio. Riprova tra poco.",
-        );
+        setSubmitError("Si e verificato un problema durante l'invio. Riprova tra poco.");
       }
     },
   });
 
   return (
-    <Card
+    <Card>
+      <form
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();
         form.handleSubmit();
       }}
-    >
-      <CardContent>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            form.handleSubmit();
-          }}
-        >
+      >
+        <CardContent>
           <FieldSet>
             <FieldGroup className="gap-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <form.Field name="name">
                   {(field) => {
-                    const invalid =
-                      field.state.meta.isTouched && !field.state.meta.isValid;
+                    const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
                       <Field>
                         <FieldLabel htmlFor={field.name}>Nome*</FieldLabel>
@@ -90,16 +73,10 @@ export default function ContactRequestForm() {
                           placeholder="Mario Rossi"
                           value={field.state.value}
                           onBlur={field.handleBlur}
-                          onChange={(event) =>
-                            field.handleChange(event.target.value)
-                          }
+                          onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={invalid}
                         />
-                        {invalid && (
-                          <FieldError
-                            errors={toFieldErrors(field.state.meta.errors)}
-                          />
-                        )}
+                        {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
                       </Field>
                     );
                   }}
@@ -107,8 +84,7 @@ export default function ContactRequestForm() {
 
                 <form.Field name="email">
                   {(field) => {
-                    const invalid =
-                      field.state.meta.isTouched && !field.state.meta.isValid;
+                    const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
                       <Field>
                         <FieldLabel htmlFor={field.name}>Email*</FieldLabel>
@@ -120,16 +96,10 @@ export default function ContactRequestForm() {
                           placeholder="mario@email.it"
                           value={field.state.value}
                           onBlur={field.handleBlur}
-                          onChange={(event) =>
-                            field.handleChange(event.target.value)
-                          }
+                          onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={invalid}
                         />
-                        {invalid && (
-                          <FieldError
-                            errors={toFieldErrors(field.state.meta.errors)}
-                          />
-                        )}
+                        {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
                       </Field>
                     );
                   }}
@@ -139,8 +109,7 @@ export default function ContactRequestForm() {
               <div className="grid gap-6 md:grid-cols-2">
                 <form.Field name="phone">
                   {(field) => {
-                    const invalid =
-                      field.state.meta.isTouched && !field.state.meta.isValid;
+                    const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
                       <Field>
                         <FieldLabel htmlFor={field.name}>Telefono</FieldLabel>
@@ -151,16 +120,10 @@ export default function ContactRequestForm() {
                           placeholder="+39 333 123 4567"
                           value={String(field.state.value)}
                           onBlur={field.handleBlur}
-                          onChange={(event) =>
-                            field.handleChange(event.target.value)
-                          }
+                          onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={invalid}
                         />
-                        {invalid && (
-                          <FieldError
-                            errors={toFieldErrors(field.state.meta.errors)}
-                          />
-                        )}
+                        {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
                       </Field>
                     );
                   }}
@@ -168,8 +131,7 @@ export default function ContactRequestForm() {
 
                 <form.Field name="company">
                   {(field) => {
-                    const invalid =
-                      field.state.meta.isTouched && !field.state.meta.isValid;
+                    const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
                       <Field>
                         <FieldLabel htmlFor={field.name}>Azienda</FieldLabel>
@@ -180,16 +142,10 @@ export default function ContactRequestForm() {
                           placeholder="Studio Prisco"
                           value={String(field.state.value)}
                           onBlur={field.handleBlur}
-                          onChange={(event) =>
-                            field.handleChange(event.target.value)
-                          }
+                          onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={invalid}
                         />
-                        {invalid && (
-                          <FieldError
-                            errors={toFieldErrors(field.state.meta.errors)}
-                          />
-                        )}
+                        {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
                       </Field>
                     );
                   }}
@@ -198,8 +154,7 @@ export default function ContactRequestForm() {
 
               <form.Field name="message">
                 {(field) => {
-                  const invalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                   return (
                     <Field data-invalid={invalid}>
                       <FieldLabel htmlFor={field.name}>Messaggio</FieldLabel>
@@ -210,17 +165,11 @@ export default function ContactRequestForm() {
                         rows={5}
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        onChange={(event) =>
-                          field.handleChange(event.target.value)
-                        }
+                        onChange={(event) => field.handleChange(event.target.value)}
                         aria-invalid={invalid}
                       />
 
-                      {invalid && (
-                        <FieldError
-                          errors={toFieldErrors(field.state.meta.errors)}
-                        />
-                      )}
+                      {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
                     </Field>
                   );
                 }}
@@ -228,16 +177,13 @@ export default function ContactRequestForm() {
 
               <form.Field name="consentToContact">
                 {(field) => {
-                  const invalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                   return (
                     <Field orientation="horizontal">
                       <Checkbox
                         id={field.name}
                         checked={field.state.value}
-                        onCheckedChange={(checked) =>
-                          field.handleChange(Boolean(checked))
-                        }
+                        onCheckedChange={(checked) => field.handleChange(Boolean(checked))}
                         aria-invalid={invalid}
                       />
 
@@ -245,44 +191,35 @@ export default function ContactRequestForm() {
                         Acconsento a essere ricontattato per questa richiesta.
                       </FieldLabel>
 
-                      {invalid && (
-                        <FieldError
-                          errors={toFieldErrors(field.state.meta.errors)}
-                        />
-                      )}
+                      {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
                     </Field>
                   );
                 }}
               </form.Field>
             </FieldGroup>
           </FieldSet>
-        </form>
-      </CardContent>
-      <CardFooter className="gap-2">
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-        >
-          {([canSubmit, isSubmitting]) => (
-            <Button
-              onClick={form.handleSubmit}
-              disabled={!canSubmit || isSubmitting}
-            >
-              {form.state.isSubmitting
-                ? "Invio in corso..."
-                : "Invia richiesta"}
-            </Button>
-          )}
-        </form.Subscribe>
+        </CardContent>
+        <CardFooter className="gap-2">
+          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+            {([canSubmit, isSubmitting]) => (
+              <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                {isSubmitting ? "Invio in corso..." : "Invia richiesta"}
+              </Button>
+            )}
+          </form.Subscribe>
 
-        {submitted && (
-          <p className="text-sm text-emerald-600">
-            Richiesta inviata. Ti risponderemo presto.
-          </p>
-        )}
-        {submitError && (
-          <p className="text-sm text-destructive">{submitError}</p>
-        )}
-      </CardFooter>
+          {submitted && (
+            <p aria-live="polite" className="text-sm text-emerald-600">
+              Richiesta inviata. Ti risponderemo presto.
+            </p>
+          )}
+          {submitError && (
+            <p role="alert" className="text-sm text-destructive">
+              {submitError}
+            </p>
+          )}
+        </CardFooter>
+      </form>
     </Card>
   );
 }
