@@ -1,55 +1,73 @@
-import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
-export default function Header() {
+export default function Header({ overlay = false }: { overlay?: boolean }) {
   return (
-    <header className="absolute inset-x-0 top-0 z-20">
-      <div className="mx-auto flex w-full items-center justify-between px-6 py-5 lg:px-12">
-        <div className="flex items-center gap-3">
-          <img src="/favicon/favicon.svg" alt="Prisco" className="h-10 w-10" />
+    <header
+      className={
+        overlay
+          ? "absolute inset-x-0 top-0 z-30 text-white"
+          : "relative z-20 border-b border-white/10 bg-slate-950/80 text-white backdrop-blur-md"
+      }
+    >
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
+        <Link to="/" className="flex items-center gap-3" aria-label="Torna alla home">
+          <img src="/favicon/favicon.svg" alt="" className="h-9 w-9" />
           <div className="leading-tight">
-            <p className="text-[10px] uppercase tracking-[0.4em]">Studio</p>
-            <p className="display-font text-lg font-semibold">Prisco</p>
+            <p className="text-[10px] uppercase tracking-[0.4em] text-sky-300">Portfolio</p>
+            <p className="display-font text-lg font-semibold">Vincenzo Prisco</p>
           </div>
-        </div>
+        </Link>
 
-        <nav aria-label="Primary" className="hidden items-center md:flex">
-          <NavigationMenu>
-            <NavigationMenuList className="gap-1">
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/">Home</NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink>Servizi</NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink>Progetti</NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/blog">Blog</NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink>Contatti</NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+        <nav aria-label="Navigazione principale" className="hidden items-center gap-1 md:flex">
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/chi-sono">Chi sono</NavLink>
+          <NavLink to="/progetti">Progetti</NavLink>
+          <NavLink to="/blog">Blog</NavLink>
+          <NavLink to="/contatti" emphasis>
+            Contatti
+          </NavLink>
         </nav>
 
-        <div className="flex items-center gap-2 md:hidden">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white/80 hover:bg-white/10 hover:text-white"
-          >
+        <details className="relative md:hidden">
+          <summary className="cursor-pointer list-none rounded-md border border-white/20 px-3 py-2 text-sm font-medium hover:bg-white/10">
             Menu
-          </Button>
-        </div>
+          </summary>
+          <nav
+            aria-label="Navigazione mobile"
+            className="absolute right-0 top-12 z-30 flex min-w-44 flex-col gap-1 rounded-xl border border-white/10 bg-slate-900 p-2 shadow-xl"
+          >
+            <NavLink to="/">Home</NavLink>
+            <NavLink to="/chi-sono">Chi sono</NavLink>
+            <NavLink to="/progetti">Progetti</NavLink>
+            <NavLink to="/blog">Blog</NavLink>
+            <NavLink to="/contatti">Contatti</NavLink>
+          </nav>
+        </details>
       </div>
     </header>
+  );
+}
+
+function NavLink({
+  to,
+  children,
+  emphasis = false,
+}: {
+  to: "/" | "/chi-sono" | "/progetti" | "/blog" | "/contatti";
+  children: ReactNode;
+  emphasis?: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      className={`rounded-md px-3 py-2 text-sm transition ${
+        emphasis
+          ? "bg-white text-slate-950 hover:bg-sky-100"
+          : "text-slate-300 hover:bg-white/10 hover:text-white"
+      }`}
+    >
+      {children}
+    </Link>
   );
 }

@@ -13,7 +13,7 @@ export default function usePageVisible() {
       setIsVisible(document.visibilityState === "visible");
     };
     const handleFocus = () => {
-      setIsVisible(true);
+      setIsVisible(document.visibilityState === "visible");
     };
     const handleBlur = () => {
       setIsVisible(false);

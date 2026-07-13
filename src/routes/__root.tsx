@@ -1,14 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
-import { PostHogProvider } from "posthog-js/react";
 import { Toaster } from "sonner";
 
-import appCss from "../styles.css?url";
+import { CookieConsentProvider } from "@/components/cookie-consent";
+import { SiteFooter } from "@/components/page-shell";
 
-const options = {
-  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-  defaults: "2025-11-30",
-} as const;
+import appCss from "../styles.css?url";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -19,7 +16,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Prisco.me" },
+      { title: "Vincenzo Prisco | Software Engineer" },
+      {
+        name: "description",
+        content:
+          "Portfolio personale di Vincenzo Prisco, software engineer. Progetti, architettura software e appunti dal percorso.",
+      },
+      { property: "og:title", content: "Vincenzo Prisco | Software Engineer" },
+      {
+        property: "og:description",
+        content: "Scopri progetti, idee e appunti di Vincenzo Prisco.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://prisco.me/" },
+      { name: "twitter:card", content: "summary_large_image" },
       { "apple-mobile-web-app-title": "Prisco.me" },
     ],
     links: [
@@ -51,13 +61,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-slate-950 px-6 text-center text-white">
-      <div className="flex max-w-lg flex-col gap-4">
-        <h1 className="display-font text-3xl font-semibold">Pagina non trovata</h1>
-        <p className="text-sm text-white/70">
-          Il contenuto richiesto non esiste o e stato spostato.
-        </p>
-      </div>
+    <div className="flex min-h-dvh flex-col bg-slate-950 text-center text-white">
+      <main className="flex flex-1 items-center justify-center px-6">
+        <div className="flex max-w-lg flex-col gap-4">
+          <h1 className="display-font text-3xl font-semibold">Pagina non trovata</h1>
+          <p className="text-sm text-white/70">
+            Il contenuto richiesto non esiste o è stato spostato.
+          </p>
+        </div>
+      </main>
+      <SiteFooter />
     </div>
   );
 }
@@ -76,12 +89,35 @@ function RootDocument() {
     <html lang="it">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Person",
+                  name: "Vincenzo Prisco",
+                  jobTitle: "Software Engineer",
+                  url: "https://prisco.me/",
+                  sameAs: ["https://www.linkedin.com/in/vincenzoprisco/"],
+                },
+                {
+                  "@type": "WebSite",
+                  name: "Prisco.me",
+                  url: "https://prisco.me/",
+                  publisher: { "@type": "Person", name: "Vincenzo Prisco" },
+                },
+              ],
+            }),
+          }}
+        />
       </head>
-      <body className="w-dvw h-dvh">
-        <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={options}>
+      <body className="min-h-dvh w-full">
+        <CookieConsentProvider>
           <Outlet />
           <Scripts />
-        </PostHogProvider>
+        </CookieConsentProvider>
       </body>
     </html>
   );
