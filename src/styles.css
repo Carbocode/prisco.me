@@ -124,8 +124,86 @@ code {
   );
 }
 
+.site-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+.hero-orbit {
+  animation: orbit-drift 18s linear infinite;
+}
+
+.hero-orbit-reverse {
+  animation: orbit-drift 24s linear infinite reverse;
+}
+
+.card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-sheen::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.08), transparent 55%);
+  transform: translateX(-120%);
+  transition: transform 700ms ease;
+}
+
+.card-sheen:hover::after,
+.card-sheen:focus-within::after {
+  transform: translateX(120%);
+}
+
+@keyframes orbit-drift {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .display-font {
   font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+}
+
+.hero-content-enter-item {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: hero-content-item-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-content-enter-item:nth-child(1) {
+  animation-delay: 80ms;
+}
+
+.hero-content-enter-item:nth-child(2) {
+  animation-delay: 160ms;
+}
+
+.hero-content-enter-item:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.hero-content-enter-item:nth-child(4) {
+  animation-delay: 320ms;
+}
+
+@keyframes hero-content-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .horizon{
@@ -166,9 +244,60 @@ code {
   pointer-events: none;
 }
 
+.skills-marquee {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+}
+
+.skills-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: skills-marquee-scroll var(--skills-marquee-duration, 34s) linear infinite;
+  will-change: transform;
+}
+
+.skills-marquee-track-reverse {
+  animation-direction: reverse;
+}
+
+.skills-marquee-group {
+  display: flex;
+  flex: none;
+  gap: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+@keyframes skills-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shooting-star {
     animation: none;
     opacity: 0;
+  }
+
+  .hero-orbit,
+  .hero-orbit-reverse {
+    animation: none;
+  }
+
+  .hero-content-enter-item {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .skills-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .card-sheen::after {
+    transition: none;
   }
 }

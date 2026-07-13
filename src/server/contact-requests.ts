@@ -20,7 +20,10 @@ export const contactRequestSchema = z.object({
     .trim()
     .max(160, "Il nome dell'azienda è troppo lungo")
     .transform((value) => value || undefined),
-  message: z.string().trim().min(10, "Raccontaci qualcosa in piu").max(4000),
+  message: z.string().trim().min(10, "Raccontami qualcosa in più").max(4000),
+  interest: z.enum(["product", "technical", "consulting", "opportunity", "other"], {
+    message: "Seleziona il motivo del contatto",
+  }),
   consentToContact: z.boolean().refine((value) => value, {
     message: "Conferma il consenso al contatto",
   }),
@@ -43,6 +46,7 @@ export const createContactRequest = createServerFn({ method: "POST" })
           email: data.email,
           phone: data.phone ?? null,
           company: data.company ?? null,
+          interest: data.interest,
           message: data.message,
           consentToContact: data.consentToContact,
         })

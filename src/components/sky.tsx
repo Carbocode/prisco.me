@@ -1,120 +1,208 @@
-import { motion } from "framer-motion";
+import { animate, motion, useMotionValue } from "framer-motion";
 import type { HTMLAttributes, PropsWithChildren } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import usePageVisible from "@/hooks/use-page-visible";
 
 type SkyProps = PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
 
-const MAX_ACTIVE_SHOOTING_STARS = 3;
-const MIN_STAR_DELAY_MS = 1_200;
-const STAR_DELAY_VARIATION_MS = 1_800;
+type ShootingStarConfig = {
+  top: number;
+  right: number;
+  duration: number;
+  speed: number;
+  fadeDuration: number;
+};
 
-function ShootingStar({ id, onComplete }: { id: number; onComplete: (id: number) => void }) {
-  const initialParams = useRef({
-    top: Math.random() * 20,
-    right: Math.random() * 100,
-    duration: 0.5 + Math.random() * 1.4,
-    speed: 200 + Math.random() * 100,
-    fadeDuration: 0.5 + Math.random() * 1.5,
-  }).current;
-  const distance = initialParams.speed * initialParams.duration;
-  const totalDuration = initialParams.duration + initialParams.fadeDuration;
-  const fadeStart = initialParams.duration / totalDuration;
-  const angleDeg = 135;
+type ShootingStarItem = {
+  id: number;
+  config: ShootingStarConfig;
+};
+
+const MAX_ACTIVE_SHOOTING_STARS = 3;
+const INITIAL_STAR_DELAY_MS = 1_800;
+const STAR_RESPAWN_DELAY_MS = 2_400;
+
+/*
+ * A fixed sequence avoids random bursts and makes the first few cycles
+ * reproducible. The cap is enforced before every spawn.
+ */
+const shootingStarSequence: ShootingStarConfig[] = [
+  { top: 8, right: 82, duration: 0.9, speed: 235, fadeDuration: 0.8 },
+  { top: 16, right: 57, duration: 1.1, speed: 255, fadeDuration: 0.9 },
+  { top: 5, right: 34, duration: 0.75, speed: 220, fadeDuration: 0.7 },
+  { top: 22, right: 70, duration: 1, speed: 245, fadeDuration: 0.85 },
+];
+
+function ShootingStar({
+  item,
+  isVisible,
+  onComplete,
+}: {
+  item: ShootingStarItem;
+  isVisible: boolean;
+  onComplete: (id: number) => void;
+}) {
+  const dotX = useMotionValue(0);
+  const dotOpacity = useMotionValue(0);
+  const trailWidth = useMotionValue(0);
+  const trailOpacity = useMotionValue(0);
+  const animationRef = useRef<ReturnType<typeof animate>[]>([]);
+  const isVisibleRef = useRef(isVisible);
+  const hasCompleted = useRef(false);
+
+  const { duration, fadeDuration, speed } = item.config;
+  const distance = speed * duration;
+  const totalDuration = duration + fadeDuration;
+  const fadeStart = duration / totalDuration;
+
+  useEffect(() => {
+    isVisibleRef.current = isVisible;
+    if (isVisible) {
+      animationRef.current.forEach((animation) => animation.play());
+    } else {
+      animationRef.current.forEach((animation) => animation.pause());
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
+    const dotAnimation = animate(dotX, distance, {
+      duration,
+      ease: "linear",
+    });
+    const dotOpacityAnimation = animate(dotOpacity, [0, 1, 1, 0], {
+      duration,
+      ease: "linear",
+      times: [0, 0.08, 0.95, 1],
+    });
+    const trailWidthAnimation = animate(trailWidth, distance, {
+      duration,
+      ease: "linear",
+    });
+    const trailOpacityAnimation = animate(trailOpacity, [0, 1, 1, 0], {
+      duration: totalDuration,
+      ease: "linear",
+      times: [0, 0.08, fadeStart, 1],
+      onComplete: () => {
+        if (!hasCompleted.current) {
+          hasCompleted.current = true;
+          onComplete(item.id);
+        }
+      },
+    });
+
+    animationRef.current = [
+      dotAnimation,
+      dotOpacityAnimation,
+      trailWidthAnimation,
+      trailOpacityAnimation,
+    ];
+
+    if (!isVisibleRef.current) {
+      animationRef.current.forEach((animation) => animation.pause());
+    }
+
+    return () => {
+      animationRef.current.forEach((animation) => animation.stop());
+      animationRef.current = [];
+    };
+  }, [
+    distance,
+    dotOpacity,
+    dotX,
+    duration,
+    fadeStart,
+    fadeDuration,
+    item.id,
+    onComplete,
+    trailOpacity,
+    trailWidth,
+    totalDuration,
+  ]);
 
   return (
     <div
       style={{
         position: "absolute",
-        top: `${initialParams.top}%`,
-        right: `${initialParams.right}%`,
-        transform: `rotate(${angleDeg}deg)`,
+        top: item.config.top + "%",
+        right: item.config.right + "%",
+        transform: "rotate(135deg)",
       }}
     >
-      <motion.div
-        style={{ position: "relative" }}
-        animate={{
-          transition: { staggerChildren: 0 },
-        }}
-      >
-        {/* Dot: Moves left, draws the path */}
-        <motion.span
-          className="shooting-star"
-          style={{ left: 0 }}
-          initial={{ x: 0, opacity: 0 }}
-          animate={{ x: distance, opacity: [0, 1, 1, 0] }}
-          transition={{
-            duration: initialParams.duration,
-            ease: "linear",
-            times: [0, 0.08, 0.95, 1],
-          }}
-        />
-        {/* Trail: Grows from origin to follow the dot */}
+      <div style={{ position: "relative" }}>
+        <motion.span className="shooting-star" style={{ left: 0, x: dotX, opacity: dotOpacity }} />
         <motion.span
           className="shooting-star-trail"
-          initial={{ width: 0, opacity: 0 }}
-          animate={{
-            width: distance,
-            opacity: [0, 1, 1, 0],
-          }}
-          transition={{
-            width: { duration: initialParams.duration, ease: "linear" },
-            opacity: {
-              duration: totalDuration,
-              times: [0, 0.08, fadeStart, 1],
-              ease: "linear",
-            },
-          }}
-          onAnimationComplete={() => onComplete(id)}
+          style={{ width: trailWidth, opacity: trailOpacity }}
         />
-      </motion.div>
+      </div>
     </div>
   );
 }
 
 export default function Sky({ className, children, ...props }: SkyProps) {
   const classes = ["background", "relative", className].filter(Boolean).join(" ");
-  const [stars, setStars] = useState<number[]>([]);
+  const [stars, setStars] = useState<ShootingStarItem[]>([]);
   const spawnTimeout = useRef<number | null>(null);
   const nextStarId = useRef(0);
   const isVisible = usePageVisible();
+  const isVisibleRef = useRef(isVisible);
 
   useEffect(() => {
-    const clearSpawnTimeout = () => {
-      if (spawnTimeout.current !== null) {
-        window.clearTimeout(spawnTimeout.current);
-        spawnTimeout.current = null;
-      }
-    };
+    isVisibleRef.current = isVisible;
+  }, [isVisible]);
 
-    if (!isVisible) {
-      clearSpawnTimeout();
-      setStars([]);
-      return undefined;
+  const clearSpawnTimeout = useCallback(() => {
+    if (spawnTimeout.current !== null) {
+      window.clearTimeout(spawnTimeout.current);
+      spawnTimeout.current = null;
     }
+  }, []);
 
-    const scheduleNextStar = () => {
-      const delay = MIN_STAR_DELAY_MS + Math.random() * STAR_DELAY_VARIATION_MS;
+  const scheduleNextStar = useCallback(
+    (delay: number) => {
+      clearSpawnTimeout();
       spawnTimeout.current = window.setTimeout(() => {
+        spawnTimeout.current = null;
+
+        if (!isVisibleRef.current) {
+          return;
+        }
+
         nextStarId.current += 1;
+        const sequenceIndex = (nextStarId.current - 1) % shootingStarSequence.length;
         setStars((current) => {
           if (current.length >= MAX_ACTIVE_SHOOTING_STARS) {
             return current;
           }
-          return [...current, nextStarId.current];
+
+          return [
+            ...current,
+            {
+              id: nextStarId.current,
+              config: shootingStarSequence[sequenceIndex],
+            },
+          ];
         });
-        scheduleNextStar();
+        scheduleNextStar(STAR_RESPAWN_DELAY_MS);
       }, delay);
-    };
+    },
+    [clearSpawnTimeout],
+  );
 
-    scheduleNextStar();
+  useEffect(() => {
+    clearSpawnTimeout();
+
+    if (isVisible) {
+      scheduleNextStar(INITIAL_STAR_DELAY_MS);
+    }
+
     return clearSpawnTimeout;
-  }, [isVisible]);
+  }, [clearSpawnTimeout, isVisible, scheduleNextStar]);
 
-  const removeStar = (id: number) => {
-    setStars((prev) => prev.filter((starId) => starId !== id));
-  };
+  const removeStar = useCallback((id: number) => {
+    setStars((current) => current.filter((star) => star.id !== id));
+  }, []);
 
   return (
     <div className={classes} {...props}>
@@ -125,11 +213,11 @@ export default function Sky({ className, children, ...props }: SkyProps) {
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="shooting-stars" aria-hidden="true">
-        {stars.map((id) => (
-          <ShootingStar key={id} id={id} onComplete={removeStar} />
+        {stars.map((item) => (
+          <ShootingStar key={item.id} item={item} isVisible={isVisible} onComplete={removeStar} />
         ))}
       </div>
-      <div className="relative h-full z-10">{children}</div>
+      <div className="relative z-10 h-full">{children}</div>
     </div>
   );
 }

@@ -9,38 +9,206 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProgettiRouteImport } from './routes/progetti'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as InformazioniRouteImport } from './routes/informazioni'
+import { Route as CookieRouteImport } from './routes/cookie'
+import { Route as ContattiRouteImport } from './routes/contatti'
+import { Route as ChiSonoRouteImport } from './routes/chi-sono'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProgettiSlugRouteImport } from './routes/progetti.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
+const ProgettiRoute = ProgettiRouteImport.update({
+  id: '/progetti',
+  path: '/progetti',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InformazioniRoute = InformazioniRouteImport.update({
+  id: '/informazioni',
+  path: '/informazioni',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookieRoute = CookieRouteImport.update({
+  id: '/cookie',
+  path: '/cookie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContattiRoute = ContattiRouteImport.update({
+  id: '/contatti',
+  path: '/contatti',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChiSonoRoute = ChiSonoRouteImport.update({
+  id: '/chi-sono',
+  path: '/chi-sono',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgettiSlugRoute = ProgettiSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ProgettiRoute,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteWithChildren
+  '/chi-sono': typeof ChiSonoRoute
+  '/contatti': typeof ContattiRoute
+  '/cookie': typeof CookieRoute
+  '/informazioni': typeof InformazioniRoute
+  '/privacy': typeof PrivacyRoute
+  '/progetti': typeof ProgettiRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
+  '/progetti/$slug': typeof ProgettiSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteWithChildren
+  '/chi-sono': typeof ChiSonoRoute
+  '/contatti': typeof ContattiRoute
+  '/cookie': typeof CookieRoute
+  '/informazioni': typeof InformazioniRoute
+  '/privacy': typeof PrivacyRoute
+  '/progetti': typeof ProgettiRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
+  '/progetti/$slug': typeof ProgettiSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteWithChildren
+  '/chi-sono': typeof ChiSonoRoute
+  '/contatti': typeof ContattiRoute
+  '/cookie': typeof CookieRoute
+  '/informazioni': typeof InformazioniRoute
+  '/privacy': typeof PrivacyRoute
+  '/progetti': typeof ProgettiRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
+  '/progetti/$slug': typeof ProgettiSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/blog'
+    | '/chi-sono'
+    | '/contatti'
+    | '/cookie'
+    | '/informazioni'
+    | '/privacy'
+    | '/progetti'
+    | '/blog/$slug'
+    | '/progetti/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/blog'
+    | '/chi-sono'
+    | '/contatti'
+    | '/cookie'
+    | '/informazioni'
+    | '/privacy'
+    | '/progetti'
+    | '/blog/$slug'
+    | '/progetti/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/blog'
+    | '/chi-sono'
+    | '/contatti'
+    | '/cookie'
+    | '/informazioni'
+    | '/privacy'
+    | '/progetti'
+    | '/blog/$slug'
+    | '/progetti/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlogRoute: typeof BlogRouteWithChildren
+  ChiSonoRoute: typeof ChiSonoRoute
+  ContattiRoute: typeof ContattiRoute
+  CookieRoute: typeof CookieRoute
+  InformazioniRoute: typeof InformazioniRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProgettiRoute: typeof ProgettiRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/progetti': {
+      id: '/progetti'
+      path: '/progetti'
+      fullPath: '/progetti'
+      preLoaderRoute: typeof ProgettiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/informazioni': {
+      id: '/informazioni'
+      path: '/informazioni'
+      fullPath: '/informazioni'
+      preLoaderRoute: typeof InformazioniRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookie': {
+      id: '/cookie'
+      path: '/cookie'
+      fullPath: '/cookie'
+      preLoaderRoute: typeof CookieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contatti': {
+      id: '/contatti'
+      path: '/contatti'
+      fullPath: '/contatti'
+      preLoaderRoute: typeof ContattiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chi-sono': {
+      id: '/chi-sono'
+      path: '/chi-sono'
+      fullPath: '/chi-sono'
+      preLoaderRoute: typeof ChiSonoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +216,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/progetti/$slug': {
+      id: '/progetti/$slug'
+      path: '/$slug'
+      fullPath: '/progetti/$slug'
+      preLoaderRoute: typeof ProgettiSlugRouteImport
+      parentRoute: typeof ProgettiRoute
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
   }
 }
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
+interface ProgettiRouteChildren {
+  ProgettiSlugRoute: typeof ProgettiSlugRoute
+}
+
+const ProgettiRouteChildren: ProgettiRouteChildren = {
+  ProgettiSlugRoute: ProgettiSlugRoute,
+}
+
+const ProgettiRouteWithChildren = ProgettiRoute._addFileChildren(
+  ProgettiRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlogRoute: BlogRouteWithChildren,
+  ChiSonoRoute: ChiSonoRoute,
+  ContattiRoute: ContattiRoute,
+  CookieRoute: CookieRoute,
+  InformazioniRoute: InformazioniRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProgettiRoute: ProgettiRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
