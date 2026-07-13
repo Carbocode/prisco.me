@@ -6,6 +6,10 @@ import usePageVisible from "@/hooks/use-page-visible";
 
 type SkyProps = PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
 
+const MAX_ACTIVE_SHOOTING_STARS = 3;
+const MIN_STAR_DELAY_MS = 1_200;
+const STAR_DELAY_VARIATION_MS = 1_800;
+
 function ShootingStar({ id, onComplete }: { id: number; onComplete: (id: number) => void }) {
   const initialParams = useRef({
     top: Math.random() * 20,
@@ -72,18 +76,40 @@ function ShootingStar({ id, onComplete }: { id: number; onComplete: (id: number)
 export default function Sky({ className, children, ...props }: SkyProps) {
   const classes = ["background", "relative", className].filter(Boolean).join(" ");
   const [stars, setStars] = useState<number[]>([]);
+  const spawnTimeout = useRef<number | null>(null);
+  const nextStarId = useRef(0);
   const isVisible = usePageVisible();
 
   useEffect(() => {
+    const clearSpawnTimeout = () => {
+      if (spawnTimeout.current !== null) {
+        window.clearTimeout(spawnTimeout.current);
+        spawnTimeout.current = null;
+      }
+    };
+
     if (!isVisible) {
+      clearSpawnTimeout();
       setStars([]);
       return undefined;
     }
-    const interval = setInterval(() => {
-      const id = Date.now() + Math.random();
-      setStars((prev) => [...prev, id]);
-    }, 900);
-    return () => clearInterval(interval);
+
+    const scheduleNextStar = () => {
+      const delay = MIN_STAR_DELAY_MS + Math.random() * STAR_DELAY_VARIATION_MS;
+      spawnTimeout.current = window.setTimeout(() => {
+        nextStarId.current += 1;
+        setStars((current) => {
+          if (current.length >= MAX_ACTIVE_SHOOTING_STARS) {
+            return current;
+          }
+          return [...current, nextStarId.current];
+        });
+        scheduleNextStar();
+      }, delay);
+    };
+
+    scheduleNextStar();
+    return clearSpawnTimeout;
   }, [isVisible]);
 
   const removeStar = (id: number) => {

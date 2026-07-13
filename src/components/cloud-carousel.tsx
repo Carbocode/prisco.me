@@ -6,48 +6,32 @@ import usePageVisible from "@/hooks/use-page-visible";
 
 type CloudVariant = 1 | 2 | 3;
 
-type CloudItem = {
+type CloudLane = {
   id: number;
-  variant: CloudVariant;
   top: number;
   width: number;
-  duration: number;
-  laneId: number;
-  startProgress: number;
+  variant: CloudVariant;
+  initialDelay: number;
 };
 
-const cloudConfig = {
-  respawnFactor: 0.8,
-  duration: 28,
-  speed: 1,
-  lanes: [
-    {
-      id: 2,
-      top: 54,
-      width: 30,
-      variant: 1 as CloudVariant,
-      startProgress: 0,
-    },
-    {
-      id: 1,
-      top: 25,
-      width: 26,
-      variant: 2 as CloudVariant,
-      startProgress: 0.35,
-    },
-    {
-      id: 3,
-      top: 50,
-      width: 24,
-      variant: 3 as CloudVariant,
-      startProgress: 0.65,
-    },
-  ],
+type CloudItem = Omit<CloudLane, "initialDelay"> & {
+  instanceId: number;
 };
+
+const CLOUD_TRAVEL_SPEED = 48;
+const CLOUD_GAP_MS = 2_000;
+const OFFSCREEN_GUTTER = 24;
+
+const cloudLanes: CloudLane[] = [
+  { id: 1, top: 25, width: 26, variant: 2, initialDelay: 6_000 },
+  { id: 2, top: 54, width: 30, variant: 1, initialDelay: 0 },
+  { id: 3, top: 50, width: 24, variant: 3, initialDelay: 11_000 },
+];
 
 export default function CloudCarousel() {
   const [clouds, setClouds] = useState<CloudItem[]>([]);
-  const timers = useRef<number[]>([]);
+  const timeouts = useRef<number[]>([]);
+  const instanceId = useRef(0);
   const isVisible = usePageVisible();
   const isVisibleRef = useRef(isVisible);
 
@@ -55,64 +39,76 @@ export default function CloudCarousel() {
     isVisibleRef.current = isVisible;
   }, [isVisible]);
 
-  useEffect(() => {
-    const spawnCloud = (lane: (typeof cloudConfig.lanes)[number], startProgress = 0) => {
-      if (!isVisibleRef.current) {
-        return;
-      }
-      const id = Date.now() + Math.random();
-      const { top, width, variant, id: laneId } = lane;
-      const duration = cloudConfig.duration / cloudConfig.speed;
+  const clearScheduledSpawns = useCallback(() => {
+    timeouts.current.forEach((timeout) => window.clearTimeout(timeout));
+    timeouts.current = [];
+  }, []);
 
-      setClouds((prev) => [...prev, { id, variant, top, width, duration, laneId, startProgress }]);
-    };
+  const spawnCloud = useCallback((lane: CloudLane) => {
+    if (!isVisibleRef.current) {
+      return;
+    }
 
-    cloudConfig.lanes.forEach((lane) => {
-      spawnCloud(lane, lane.startProgress);
-      const intervalMs =
-        (cloudConfig.duration / cloudConfig.speed) * cloudConfig.respawnFactor * 1000;
-      const initialDelayMs =
-        (cloudConfig.duration / cloudConfig.speed) *
-        (1 - lane.startProgress) *
-        cloudConfig.respawnFactor *
-        1000;
+    instanceId.current += 1;
+    setClouds((current) => [
+      ...current.filter((cloud) => cloud.id !== lane.id),
+      {
+        id: lane.id,
+        top: lane.top,
+        width: lane.width,
+        variant: lane.variant,
+        instanceId: instanceId.current,
+      },
+    ]);
+  }, []);
 
+  const scheduleSpawn = useCallback(
+    (lane: CloudLane, delay: number) => {
       const timeout = window.setTimeout(() => {
+        timeouts.current = timeouts.current.filter((item) => item !== timeout);
         spawnCloud(lane);
-        const interval = window.setInterval(() => spawnCloud(lane), intervalMs);
-        timers.current.push(interval);
-      }, initialDelayMs);
+      }, delay);
+      timeouts.current.push(timeout);
+    },
+    [spawnCloud],
+  );
 
-      timers.current.push(timeout);
-    });
+  useEffect(() => {
+    clearScheduledSpawns();
 
-    return () => {
-      timers.current.forEach((timer) => {
-        clearInterval(timer);
-        clearTimeout(timer);
-      });
-      timers.current = [];
-    };
-  }, []);
+    if (!isVisible) {
+      setClouds([]);
+      return undefined;
+    }
 
-  const removeCloud = useCallback((id: number) => {
-    setClouds((prev) => prev.filter((cloud) => cloud.id !== id));
-  }, []);
+    cloudLanes.forEach((lane) => scheduleSpawn(lane, lane.initialDelay));
+    return clearScheduledSpawns;
+  }, [clearScheduledSpawns, isVisible, scheduleSpawn]);
+
+  const handleComplete = useCallback(
+    (laneId: number, completedInstanceId: number) => {
+      setClouds((current) => current.filter((cloud) => cloud.instanceId !== completedInstanceId));
+
+      const lane = cloudLanes.find((item) => item.id === laneId);
+      if (lane && isVisibleRef.current) {
+        scheduleSpawn(lane, CLOUD_GAP_MS);
+      }
+    },
+    [scheduleSpawn],
+  );
 
   return (
-    <div className="absolute inset-0 pointer-events-none">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
       {clouds.map((cloud) => (
-        <CloudMotion key={cloud.id} cloud={cloud} isVisible={isVisible} onComplete={removeCloud} />
+        <CloudMotion
+          key={cloud.instanceId}
+          cloud={cloud}
+          isVisible={isVisible}
+          onComplete={handleComplete}
+        />
       ))}
     </div>
   );
-}
-
-function vwToPx(value: number) {
-  if (typeof window === "undefined") {
-    return 0;
-  }
-  return (value / 100) * window.innerWidth;
 }
 
 function CloudMotion({
@@ -122,44 +118,94 @@ function CloudMotion({
 }: {
   cloud: CloudItem;
   isVisible: boolean;
-  onComplete: (id: number) => void;
+  onComplete: (laneId: number, instanceId: number) => void;
 }) {
-  const startVw = -35 + 155 * cloud.startProgress;
-  const endVw = 120;
-  const x = useMotionValue(vwToPx(startVw));
-  const controlsRef = useRef<ReturnType<typeof animate> | null>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(-10_000);
+  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
+  const hasCompleted = useRef(false);
+  const hasStarted = useRef(false);
+  const isVisibleRef = useRef(isVisible);
 
   useEffect(() => {
-    const startX = vwToPx(startVw);
-    const endX = vwToPx(endVw);
-    x.set(startX);
+    isVisibleRef.current = isVisible;
+  }, [isVisible]);
 
-    controlsRef.current?.stop();
-    controlsRef.current = animate(x, endX, {
-      duration: cloud.duration * (1 - cloud.startProgress),
-      ease: "linear",
-      onComplete: () => onComplete(cloud.id),
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element) {
+      return undefined;
+    }
+
+    const getEndX = () => {
+      const containerWidth = element.parentElement?.clientWidth ?? window.innerWidth;
+      return containerWidth + OFFSCREEN_GUTTER;
+    };
+
+    const animateFrom = (startX: number) => {
+      const endX = getEndX();
+      animationRef.current?.stop();
+
+      if (endX <= startX) {
+        if (!hasCompleted.current) {
+          hasCompleted.current = true;
+          onComplete(cloud.id, cloud.instanceId);
+        }
+        return;
+      }
+
+      animationRef.current = animate(x, endX, {
+        duration: Math.max(0.01, (endX - startX) / CLOUD_TRAVEL_SPEED),
+        ease: "linear",
+        onComplete: () => {
+          if (!hasCompleted.current) {
+            hasCompleted.current = true;
+            onComplete(cloud.id, cloud.instanceId);
+          }
+        },
+      });
+
+      if (!isVisibleRef.current) {
+        animationRef.current.pause();
+      }
+    };
+
+    const cloudWidth = element.getBoundingClientRect().width;
+    const startX = -cloudWidth - OFFSCREEN_GUTTER;
+    x.set(startX);
+    hasStarted.current = true;
+    animateFrom(startX);
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (!hasStarted.current || hasCompleted.current) {
+        return;
+      }
+      animateFrom(x.get());
     });
+    if (element.parentElement) {
+      resizeObserver.observe(element.parentElement);
+    }
 
     return () => {
-      controlsRef.current?.stop();
+      resizeObserver.disconnect();
+      animationRef.current?.stop();
     };
-  }, [cloud.duration, cloud.id, cloud.startProgress, endVw, onComplete, startVw, x]);
+  }, [cloud.id, cloud.instanceId, onComplete, x]);
 
   useEffect(() => {
-    const controls = controlsRef.current;
-    if (!controls) {
-      return;
-    }
     if (isVisible) {
-      controls.play?.();
+      animationRef.current?.play();
     } else {
-      controls.pause?.();
+      animationRef.current?.pause();
     }
   }, [isVisible]);
 
   return (
-    <motion.div className="absolute" style={{ top: `${cloud.top}%`, left: 0, x }}>
+    <motion.div
+      ref={elementRef}
+      className="absolute left-0 will-change-transform"
+      style={{ top: `${cloud.top}%`, x }}
+    >
       <Cloud variant={cloud.variant} style={{ width: `${cloud.width}rem` }} />
     </motion.div>
   );
