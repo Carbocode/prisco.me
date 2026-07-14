@@ -3,6 +3,7 @@ import { icons as fluentColorIcons } from "@iconify-json/fluent-color";
 import {
   siAngular,
   siAstro,
+  siBetterauth,
   siCapacitor,
   siClaude,
   siCloudflare,
@@ -10,13 +11,17 @@ import {
   siElasticsearch,
   siFigma,
   siIonic,
+  siJsonwebtokens,
+  siLit,
   siMapbox,
   siMongodb,
   siMysql,
   siNextdotjs,
+  siOpenjdk,
   siPhp,
   siPosthog,
   siPostgresql,
+  siPrisma,
   siPython,
   siReact,
   siSentry,
@@ -260,11 +265,15 @@ const brandIcons: Record<string, SimpleIcon> = {
   "C#": siSharp,
   Angular: siAngular,
   Astro: siAstro,
+  "Better Auth": siBetterauth,
   Capacitor: siCapacitor,
   Cloudflare: siCloudflare,
   Elasticsearch: siElasticsearch,
   Figma: siFigma,
   Ionic: siIonic,
+  Java: siOpenjdk,
+  JWT: siJsonwebtokens,
+  Lit: siLit,
   Mapbox: siMapbox,
   MongoDB: siMongodb,
   MySQL: siMysql,
@@ -272,6 +281,7 @@ const brandIcons: Record<string, SimpleIcon> = {
   PHP: siPhp,
   PostHog: siPosthog,
   PostgreSQL: siPostgresql,
+  "Prisma ORM": siPrisma,
   Python: siPython,
   React: siReact,
   "React Native": siReact,
@@ -300,18 +310,23 @@ const brandBySlug: Record<string, SimpleIcon> = {
   sharp: siSharp,
   angular: siAngular,
   astro: siAstro,
+  betterauth: siBetterauth,
   capacitor: siCapacitor,
   cloudflare: siCloudflare,
   elasticsearch: siElasticsearch,
   figma: siFigma,
   ionic: siIonic,
+  jsonwebtokens: siJsonwebtokens,
+  lit: siLit,
   mapbox: siMapbox,
   mongodb: siMongodb,
   mysql: siMysql,
   nextdotjs: siNextdotjs,
   php: siPhp,
+  openjdk: siOpenjdk,
   posthog: siPosthog,
   postgresql: siPostgresql,
+  prisma: siPrisma,
   python: siPython,
   react: siReact,
   sentry: siSentry,
@@ -477,9 +492,17 @@ export function TechMark({ name, skill }: { name?: string; skill?: SkillVisual }
   );
 }
 
-export function SkillChip({ name, skill }: { name?: string; skill?: SkillVisual }) {
+export function SkillChip({
+  name,
+  skill,
+  compact = false,
+}: {
+  name?: string;
+  skill?: SkillVisual;
+  compact?: boolean;
+}) {
   return (
-    <span className="inline-flex shrink-0 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 backdrop-blur-sm transition hover:border-sky-300/35 hover:bg-sky-300/10">
+    <span className={`inline-flex shrink-0 border border-white/10 bg-slate-950/60 backdrop-blur-sm transition hover:border-sky-300/35 hover:bg-sky-300/10 ${compact ? "rounded-lg px-2 py-1" : "rounded-xl px-3 py-2"}`}>
       <TechIcon name={name} skill={skill} compact />
     </span>
   );

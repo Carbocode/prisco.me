@@ -129,6 +129,19 @@ export const projectSkills = sqliteTable(
   (table) => [primaryKey({ columns: [table.projectId, table.skillId] })],
 );
 
+/** Collegamento molti-a-molti tra progetti e categorie. */
+export const projectCategories = sqliteTable(
+  "project_categories",
+  {
+    projectId: text("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    category: text("category").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+  },
+  (table) => [primaryKey({ columns: [table.projectId, table.category] })],
+);
+
 /** Collegamento molti-a-molti tra esperienze e skill. */
 export const experienceSkills = sqliteTable(
   "experience_skills",

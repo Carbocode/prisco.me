@@ -29,7 +29,7 @@ export type Project = {
   description: string;
   role: string;
   company: string;
-  category: ProjectCategory;
+  categories: ProjectCategory[];
   skills: Skill[];
   period?: string;
   image?: string;

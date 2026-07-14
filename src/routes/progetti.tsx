@@ -4,7 +4,15 @@ import { useMemo, useState } from "react";
 
 import { PageShell, Section } from "@/components/page-shell";
 import { ProjectCard } from "@/components/project-card";
-import { getCompanies, getTechnologies, projectCategories } from "@/lib/projects";
+import { SkillGlyph } from "@/components/tech-icon";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { getCompanies, projectCategories, type Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 const ALL = "all";
@@ -40,6 +48,63 @@ function FilterSelect({
   );
 }
 
+function TechnologySelect({
+  value,
+  onChange,
+  skills,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  skills: Skill[];
+}) {
+  return (
+    <div className="flex flex-col gap-2 text-sm">
+      <span
+        id="technology-filter-label"
+        className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400"
+      >
+        Tecnologia
+      </span>
+      <Select value={value} onValueChange={(nextValue) => onChange(nextValue ?? ALL)}>
+        <SelectTrigger
+          aria-labelledby="technology-filter-label"
+          className="h-auto min-w-40 rounded-full border-white/15 bg-slate-950/60 px-4 py-2 text-slate-200 shadow-none transition hover:border-white/30 focus-visible:border-sky-300 focus-visible:ring-0"
+        >
+          <SelectValue>
+            {(selectedValue: string | null) => {
+              const skill = skills.find((item) => item.name === selectedValue);
+              return (
+                <span className="flex min-w-0 items-center gap-2">
+                  {skill ? <SkillGlyph skill={skill} size={16} /> : null}
+                  <span>{skill?.name ?? "Tutte"}</span>
+                </span>
+              );
+            }}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent
+          align="start"
+          className="max-h-80 border border-white/15 bg-slate-950 text-slate-200"
+        >
+          <SelectItem value={ALL} className="focus:bg-sky-300/10 focus:text-white">
+            Tutte
+          </SelectItem>
+          {skills.map((skill) => (
+            <SelectItem
+              key={skill.id}
+              value={skill.name}
+              className="focus:bg-sky-300/10 focus:text-white"
+            >
+              <SkillGlyph skill={skill} size={16} />
+              <span>{skill.name}</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/progetti")({
   head: () => ({
     meta: [
@@ -70,7 +135,10 @@ function ProjectsPage() {
   const [category, setCategory] = useState<string>(ALL);
 
   const companies = useMemo(() => getCompanies(projects), [projects]);
-  const technologies = useMemo(() => getTechnologies(projects), [projects]);
+  const technologySkills = useMemo(
+    () => [...data.skills].sort((a, b) => a.name.localeCompare(b.name)),
+    [data.skills],
+  );
 
   const companyOptions = useMemo(
     () => [
@@ -78,13 +146,6 @@ function ProjectsPage() {
       ...companies.map((name) => ({ value: name, label: name })),
     ],
     [companies],
-  );
-  const technologyOptions = useMemo(
-    () => [
-      { value: ALL, label: "Tutte" },
-      ...technologies.map((name) => ({ value: name, label: name })),
-    ],
-    [technologies],
   );
   const categoryOptions = useMemo(
     () =>
@@ -101,7 +162,8 @@ function ProjectsPage() {
         (project) =>
           (company === ALL || project.company === company) &&
           (technology === ALL || project.skills.some((skill) => skill.name === technology)) &&
-          (category === ALL || project.category === category),
+          (category === ALL ||
+            project.categories.some((projectCategory) => projectCategory === category)),
       ),
     [projects, company, technology, category],
   );
@@ -119,6 +181,7 @@ function ProjectsPage() {
       eyebrow="Portfolio"
       title="Progetti costruiti per capire, imparare e creare valore."
       description="Una selezione di prodotti e sperimentazioni che raccontano il mio percorso tra web, mobile, architettura e dominio applicativo."
+      hero={false}
     >
       <Section>
         <fieldset className="flex flex-wrap items-end gap-4 border-0 p-0">
@@ -129,12 +192,7 @@ function ProjectsPage() {
             onChange={setCompany}
             options={companyOptions}
           />
-          <FilterSelect
-            label="Tecnologia"
-            value={technology}
-            onChange={setTechnology}
-            options={technologyOptions}
-          />
+          <TechnologySelect value={technology} onChange={setTechnology} skills={technologySkills} />
           <FilterSelect
             label="Tipologia"
             value={category}

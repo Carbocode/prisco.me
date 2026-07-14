@@ -22,18 +22,19 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
         </div>
       </div>
       <div className="flex items-center justify-between gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-sky-300">
-        <span>{categoryLabels[project.category]}</span>
+        <span>{project.categories.map((category) => categoryLabels[category]).join(" / ")}</span>
         <span className="text-slate-500">{project.period?.split(" ").at(-1)}</span>
       </div>
       <h3 className="display-font mt-5 text-2xl font-semibold text-white">{project.title}</h3>
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        {project.skills.slice(0, 5).map((skill) => (
+          <SkillChip key={skill.id} skill={skill} compact />
+        ))}
+      </div>
       <p className="mt-3 text-sm leading-7 text-slate-300">
         {compact ? project.summary : project.description}
       </p>
-      <div className="mt-5 flex flex-wrap gap-2">
-        {project.skills.slice(0, 5).map((skill) => (
-          <SkillChip key={skill.id} skill={skill} />
-        ))}
-      </div>
+
       <Link
         to="/progetti/$slug"
         params={{ slug: project.slug }}

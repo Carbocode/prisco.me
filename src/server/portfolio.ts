@@ -9,6 +9,7 @@ import {
   experiences,
   experienceSkills,
   projects as projectsTable,
+  projectCategories as projectCategoriesTable,
   projectSections,
   projectSkills,
   skills as skillsTable,
@@ -66,6 +67,7 @@ async function loadPortfolio() {
   const [
     skillRows,
     projectRows,
+    projectCategoryRows,
     sectionRows,
     projectSkillRows,
     experienceRows,
@@ -74,6 +76,7 @@ async function loadPortfolio() {
   ] = await Promise.all([
     db.select().from(skillsTable).orderBy(asc(skillsTable.sortOrder)),
     db.select().from(projectsTable).orderBy(asc(projectsTable.sortOrder)),
+    db.select().from(projectCategoriesTable).orderBy(asc(projectCategoriesTable.sortOrder)),
     db.select().from(projectSections).orderBy(asc(projectSections.sortOrder)),
     db.select().from(projectSkills).orderBy(asc(projectSkills.sortOrder)),
     db.select().from(experiences).orderBy(asc(experiences.sortOrder)),
@@ -104,6 +107,15 @@ async function loadPortfolio() {
     skillsByProject.set(row.projectId, list);
   }
 
+  const categoriesByProject = new Map<string, ProjectCategory[]>();
+  for (const row of projectCategoryRows) {
+    const category = projectCategoryByValue[row.category];
+    if (!category) continue;
+    const list = categoriesByProject.get(row.projectId) ?? [];
+    list.push(category);
+    categoriesByProject.set(row.projectId, list);
+  }
+
   const projectById = new Map<string, Project>();
   const projects: Project[] = projectRows.map((row) => {
     const project: Project = {
@@ -113,7 +125,9 @@ async function loadPortfolio() {
       description: row.description,
       role: row.role,
       company: row.company,
-      category: projectCategoryByValue[row.category] ?? "web",
+      categories: categoriesByProject.get(row.id) ?? [
+        projectCategoryByValue[row.category] ?? "web",
+      ],
       skills: skillsByProject.get(row.id) ?? [],
       period: row.period ?? undefined,
       image: row.image ?? undefined,

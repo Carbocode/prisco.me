@@ -15,6 +15,13 @@
       "when": 1783962967826,
       "tag": "0001_gray_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1784013422797,
+      "tag": "0002_project_categories",
+      "breakpoints": true
     }
   ]
 }

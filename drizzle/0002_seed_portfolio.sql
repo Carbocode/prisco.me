@@ -3,6 +3,7 @@
 
 DELETE FROM `experience_projects`;
 DELETE FROM `experience_skills`;
+DELETE FROM `project_categories`;
 DELETE FROM `project_skills`;
 DELETE FROM `project_sections`;
 DELETE FROM `experiences`;
@@ -10,7 +11,7 @@ DELETE FROM `projects`;
 DELETE FROM `skills`;
 
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-net-c', '.NET / C#', 'dotnet', 'text-violet-200 bg-violet-300/15 border-violet-300/25', '.N', 'code-24', 1, 0);
-INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-java', 'Java', NULL, 'text-orange-200 bg-orange-300/15 border-orange-300/25', 'J', 'code-24', 1, 1);
+INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-java', 'Java', 'openjdk', 'text-orange-200 bg-orange-300/15 border-orange-300/25', 'J', 'code-24', 1, 1);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-python', 'Python', 'python', 'text-yellow-200 bg-yellow-300/15 border-yellow-300/25', 'Py', 'code-24', 1, 2);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-php', 'PHP', 'php', 'text-indigo-200 bg-indigo-300/15 border-indigo-300/25', 'PHP', 'code-24', 1, 3);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-symfony', 'Symfony', 'symfony', 'text-slate-100 bg-white/10 border-white/20', 'Sf', 'code-24', 1, 4);
@@ -22,7 +23,7 @@ INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `mar
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-react', 'React', 'react', 'text-cyan-200 bg-cyan-300/15 border-cyan-300/25', 'R', 'code-24', 2, 10);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-next-js', 'Next.js', 'nextdotjs', 'text-slate-100 bg-white/10 border-white/20', 'N', 'code-24', 2, 11);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-astro', 'Astro', 'astro', 'text-orange-200 bg-orange-300/15 border-orange-300/25', '✦', 'design-ideas-24', 2, 12);
-INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-tanstack', 'TanStack', 'tanstack', 'text-red-200 bg-red-300/15 border-red-300/25', 'TS', 'code-block-24', 2, 13);
+INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-tanstack', 'TanStack Start', 'tanstack', 'text-red-200 bg-red-300/15 border-red-300/25', 'TS', 'code-block-24', 2, 13);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-typescript', 'TypeScript', 'typescript', 'text-blue-200 bg-blue-300/15 border-blue-300/25', 'TS', 'code-24', 2, 14);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-tailwind-css', 'Tailwind CSS', 'tailwindcss', 'text-cyan-200 bg-cyan-300/15 border-cyan-300/25', 'TW', 'code-24', 2, 15);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-swift-swiftui', 'Swift / SwiftUI', 'swift', 'text-orange-200 bg-orange-300/15 border-orange-300/25', 'SW', 'phone-24', 3, 16);
@@ -43,12 +44,15 @@ INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `mar
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-storybook', 'Storybook', 'storybook', 'text-pink-200 bg-pink-300/15 border-pink-300/25', 'SB', 'apps-list-24', 4, 31);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-codex', 'Codex', 'openai', 'text-emerald-200 bg-emerald-300/15 border-emerald-300/25', 'CX', 'code-24', 4, 32);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-claude-code', 'Claude Code', 'claude', 'text-orange-200 bg-orange-300/15 border-orange-300/25', 'CC', 'code-24', 4, 33);
-INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-lit', 'Lit', NULL, 'text-slate-200 bg-white/10 border-white/15', 'Li', 'code-24', NULL, 34);
+INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-lit', 'Lit', 'lit', 'text-slate-200 bg-white/10 border-white/15', 'Li', 'code-24', NULL, 34);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-web-components', 'Web Components', NULL, 'text-slate-200 bg-white/10 border-white/15', 'WC', 'code-24', NULL, 35);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-wcag', 'WCAG', NULL, 'text-slate-200 bg-white/10 border-white/15', 'WA', 'apps-list-24', NULL, 36);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-web', 'Web', NULL, 'text-blue-200 bg-blue-300/15 border-blue-300/25', 'W', 'globe-24', NULL, 37);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-web-development', 'Web Development', NULL, 'text-blue-200 bg-blue-300/15 border-blue-300/25', 'W', 'globe-24', NULL, 38);
 INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-vite', 'Vite', 'vite', 'text-purple-200 bg-purple-300/15 border-purple-300/25', 'V', 'code-24', NULL, 39);
+INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-prisma-orm', 'Prisma ORM', 'prisma', 'text-slate-100 bg-white/10 border-white/20', 'PR', 'database-24', 1, 40);
+INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-jwt', 'JWT', 'jsonwebtokens', 'text-pink-200 bg-pink-300/15 border-pink-300/25', 'JWT', 'key-24', 1, 41);
+INSERT INTO `skills` (`id`, `name`, `icon`, `color`, `mark`, `fluent_icon`, `marquee_row`, `sort_order`) VALUES ('skill-better-auth', 'Better Auth', 'betterauth', 'text-slate-100 bg-white/10 border-white/20', 'BA', 'shield-lock-24', 4, 42);
 
 INSERT INTO `projects` (`id`, `slug`, `title`, `summary`, `description`, `role`, `company`, `category`, `period`, `featured`, `sort_order`) VALUES ('myvet-user', 'myvet-user', 'MyVet User', 'L''app pensata per i proprietari di animali domestici.', 'L''applicazione con cui i proprietari trovano professionisti, prenotano appuntamenti e conservano la storia clinica del proprio animale.', 'Software Developer / Software Engineer', 'MyVet', 'web', 'Aprile 2023 - Settembre 2025', 1, 0);
 INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, `sort_order`) VALUES ('myvet-user-section-0', 'myvet-user', 'Il problema', 'MyVet nasce per rendere piu semplice la relazione tra proprietari di animali e professionisti della pet care, raccogliendo in un unico posto ricerca, prenotazioni e informazioni sanitarie.', NULL, 0);
@@ -59,8 +63,8 @@ INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('m
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-user', 'skill-capacitor', 1);
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-user', 'skill-angular', 2);
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-user', 'skill-mapbox', 3);
-INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-user', 'skill-cloudflare', 4);
-INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-user', 'skill-posthog', 5);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-user', 'skill-posthog', 4);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-user', 'skill-stripe', 5);
 
 INSERT INTO `projects` (`id`, `slug`, `title`, `summary`, `description`, `role`, `company`, `category`, `period`, `featured`, `sort_order`) VALUES ('myvet-business', 'myvet-business', 'MyVet Business', 'Il gestionale per i professionisti della pet care.', 'Il gestionale aperto con cui veterinari, toelettatori ed educatori cinofili organizzano clienti, appuntamenti e strumenti personalizzati.', 'Software Developer / Software Engineer', 'MyVet', 'web', 'Aprile 2023 - Settembre 2025', 1, 1);
 INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, `sort_order`) VALUES ('myvet-business-section-0', 'myvet-business', 'Il problema', 'MyVet nasce per rendere piu semplice la relazione tra proprietari di animali e professionisti della pet care, raccogliendo in un unico posto ricerca, prenotazioni e informazioni sanitarie.', NULL, 0);
@@ -70,9 +74,8 @@ INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, 
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-ionic', 0);
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-capacitor', 1);
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-angular', 2);
-INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-mapbox', 3);
-INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-cloudflare', 4);
-INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-posthog', 5);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-posthog', 3);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-business', 'skill-stripe', 4);
 
 INSERT INTO `projects` (`id`, `slug`, `title`, `summary`, `description`, `role`, `company`, `category`, `period`, `featured`, `sort_order`) VALUES ('egaf-ui', 'egaf-ui', 'EGAF UI', 'Una libreria di web component nativi costruita con Lit.', 'Una libreria di componenti UI costruita con Lit per creare web component nativi, riutilizzabili in tutti i principali framework, testati per funzionamento, rendering e accessibilita WCAG tramite Storybook e corredati di documentazione per gli sviluppatori.', 'Software Engineer', 'EGAF', 'web', NULL, 1, 2);
 INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, `sort_order`) VALUES ('egaf-ui-section-0', 'egaf-ui', 'Obiettivo', 'EGAF UI nasce per offrire una libreria di componenti condivisi, costruiti come web component nativi in JavaScript e quindi utilizzabili in tutti i principali framework senza vincoli di stack.', NULL, 0);
@@ -104,19 +107,48 @@ INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, 
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-diet', 'skill-stripe', 0);
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-diet', 'skill-uml', 1);
 INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-diet', 'skill-product-design', 2);
+INSERT INTO `projects` (`id`, `slug`, `title`, `summary`, `description`, `role`, `company`, `category`, `period`, `featured`, `sort_order`) VALUES ('myvet-admin', 'myvet-admin', 'MyVet Admin', 'Il pannello amministrativo dell''ecosistema MyVet.', 'Un''applicazione interna per gestire utenti, professionisti, contenuti e operazioni trasversali dell''ecosistema MyVet.', 'Software Engineer', 'MyVet', 'web', 'Aprile 2024 - Settembre 2025', 0, 6);
+INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, `sort_order`) VALUES ('myvet-admin-section-0', 'myvet-admin', 'Obiettivo', 'MyVet Admin riunisce in un unico pannello gli strumenti necessari per amministrare i prodotti e i dati dell''ecosistema MyVet.', NULL, 0);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-admin', 'skill-angular', 0);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-admin', 'skill-net-c', 1);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-admin', 'skill-prisma-orm', 2);
+
+INSERT INTO `projects` (`id`, `slug`, `title`, `summary`, `description`, `role`, `company`, `category`, `period`, `featured`, `sort_order`) VALUES ('myvet-services', 'myvet-services', 'MyVet Services', 'I servizi backend condivisi dell''ecosistema MyVet.', 'API e servizi applicativi che collegano i prodotti MyVet e centralizzano logica di dominio, dati e integrazioni.', 'Software Engineer', 'MyVet', 'backend', 'Aprile 2024 - Settembre 2025', 0, 7);
+INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, `sort_order`) VALUES ('myvet-services-section-0', 'myvet-services', 'Architettura', 'MyVet Services concentra le funzionalita backend condivise dai prodotti dell''ecosistema, mantenendo coerenti dominio e integrazioni.', NULL, 0);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-services', 'skill-net-c', 0);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('myvet-services', 'skill-prisma-orm', 1);
+
+INSERT INTO `projects` (`id`, `slug`, `title`, `summary`, `description`, `role`, `company`, `category`, `period`, `featured`, `sort_order`) VALUES ('violazioni-cds', 'violazioni-cds', 'Violazioni CDS', 'Un''applicazione dedicata alla gestione delle violazioni del Codice della Strada.', 'Un prodotto per consultare e gestire in modo strutturato le violazioni del Codice della Strada.', 'Software Engineer', 'EGAF', 'web', NULL, 0, 8);
+INSERT INTO `project_sections` (`id`, `project_id`, `title`, `body`, `bullets`, `sort_order`) VALUES ('violazioni-cds-section-0', 'violazioni-cds', 'Obiettivo', 'Violazioni CDS organizza in un''unica applicazione le informazioni e i flussi legati alle violazioni del Codice della Strada.', NULL, 0);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('violazioni-cds', 'skill-angular', 0);
+INSERT INTO `project_skills` (`project_id`, `skill_id`, `sort_order`) VALUES ('violazioni-cds', 'skill-capacitor', 1);
+
+INSERT INTO `project_categories` (`project_id`, `category`, `sort_order`) VALUES
+  ('myvet-user', 'web', 0), ('myvet-user', 'mobile', 1),
+  ('myvet-business', 'web', 0), ('myvet-business', 'mobile', 1),
+  ('egaf-ui', 'web', 0),
+  ('tribuna', 'web', 0),
+  ('swiftui', 'mobile', 0),
+  ('myvet-diet', 'web', 0), ('myvet-diet', 'backend', 1),
+  ('myvet-admin', 'web', 0), ('myvet-admin', 'backend', 1),
+  ('myvet-services', 'backend', 0);
+INSERT INTO `project_categories` (`project_id`, `category`, `sort_order`) VALUES
+  ('violazioni-cds', 'web', 0),
+  ('violazioni-cds', 'mobile', 1);
+
 
 INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('tinfo-intern', 'work', 'T-Info', 'Alternanza scuola-lavoro', 'Alternanza scuola-lavoro', 'Alternanza scuola-lavoro da T-Info', 'mag - lug 2021', 'Il primo contatto con un ambiente di lavoro reale durante la scuola: vedere da vicino come si porta avanti un progetto software fuori dall''aula.', '2021-05', '2021-08', 0, 0);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('tinfo-intern', 'skill-php', 0);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('tinfo-intern', 'skill-mysql', 1);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('tinfo-intern', 'skill-web-development', 0);
 
-INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('myvet-developer', 'work', 'MyVet', '2 ruoli nella stessa azienda', 'Developer', 'Software Developer', 'apr 2023 - apr 2024', 'Entro in MyVet come Software Developer. Metto mano al prodotto vero, imparo a lavorare in team e a portare il codice fino in produzione.', '2023-04', '2024-04', 0, 1);
+INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('myvet-developer', 'work', 'MyVet', '2 ruoli nella stessa azienda', 'Developer', 'Software Developer', 'apr 2023 - apr 2024', 'Finito il primo anno, sentivo che l''approccio universitario era troppo teorico e in un settore così pratico ero in cerca di una sfida che mi permettesse di fare un salto di qualità come sviluppatore. L’opportunità è arrivata con MyVet, un''idea appena nata che, come vice di un senior, ho contribuito a trasformare in un prodotto concreto. Essere Socio di una startup che ho fondato, ha profondamente cambiato il mio approccio alla programmazione e alla gestione dei progetti, portandomi a sviluppare competenze più avanzate in software architecture, project management e problem solving.', '2023-04', '2024-04', 0, 1);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-developer', 'skill-ionic', 0);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-developer', 'skill-capacitor', 1);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-developer', 'skill-angular', 2);
 INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('myvet-developer', 'myvet-user', 0);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-developer', 'skill-jwt', 3);
 INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('myvet-developer', 'myvet-business', 1);
 
-INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('myvet-engineer', 'work', 'MyVet', '2 ruoli nella stessa azienda', 'Software Engineer', 'Software Engineer', 'apr 2024 - apr 2026', 'Cresco come Software Engineer: seguo il prodotto dall''idea alla pubblicazione, tra architettura, scelte tecniche e manutenzione nel tempo.', '2024-04', '2026-04', 0, 2);
+INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('myvet-engineer', 'work', 'MyVet', '2 ruoli nella stessa azienda', 'Software Engineer', 'Software Engineer', 'apr 2024 - apr 2026', 'Il team cresceva, ma le richieste di funzionalità per i nostri prodotti erano tante. Date le skill personali dimostrate, mi è stata data l''opportunità di gestire in autonomia lo sviluppo di nuovi software e funzionalità critiche, avendo avuto spesso la possibilità di guidare un piccolo team', '2024-04', '2026-04', 0, 2);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-mapbox', 0);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-cloudflare', 1);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-posthog', 2);
@@ -124,24 +156,44 @@ INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALU
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-mvvm', 4);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-stripe', 5);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-software-architecture', 6);
-INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('myvet-engineer', 'swiftui', 0);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-prisma-orm', 7);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-better-auth', 8);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-elasticsearch', 9);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-next-js', 10);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('myvet-engineer', 'skill-tanstack', 11);
+INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('myvet-engineer', 'myvet-user', 0);
 INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('myvet-engineer', 'myvet-diet', 1);
+INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('myvet-engineer', 'myvet-admin', 2);
+INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('myvet-engineer', 'myvet-services', 3);
 
-INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('egaf-engineer', 'work', 'Egaf Edizioni', 'Azienda attuale', 'Software Engineer', 'Ruolo attuale', 'da apr 2026', 'Oggi lavoro in Egaf Edizioni come Software Engineer. Prodotti reali e tecnologie scelte in base al problema, non alle mode.', '2026-04', '2027-01', 1, 3);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-lit', 0);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-web-components', 1);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-typescript', 2);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-storybook', 3);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-wcag', 4);
+INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('egaf-engineer', 'work', 'Egaf Edizioni', 'Azienda attuale', 'Software Engineer', 'Ruolo attuale', 'da apr 2026', 'Anche le belle cose hanno una fine e a seguito di una riorganizzazione interna di MyVet, ho pensato che per me era meglio scoprire altre realtà, per capire come altre aziende più stagionate gestiscono i propri flussi. In Egaf si predilige l''individualità e qui ho potuto in autonomia sviluppare servizi attorno al codice della strada e servizi legati ai dataset normativi.', '2026-04', '2027-01', 1, 3);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-net-c', 0);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-tanstack', 1);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-react', 2);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-lit', 3);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-web-components', 4);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-typescript', 5);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-storybook', 6);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-wcag', 7);
 INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('egaf-engineer', 'egaf-ui', 0);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-angular', 8);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('egaf-engineer', 'skill-capacitor', 9);
 INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('egaf-engineer', 'tribuna', 1);
+INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('egaf-engineer', 'violazioni-cds', 2);
 
-INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('itt-diploma', 'education', 'ITT Blaise Pascal', 'Indirizzo informatico', 'Diploma', 'Istituto tecnico informatico', 'set 2016 - giu 2022', 'Il punto di partenza: istituto tecnico a indirizzo informatico. Qui ho iniziato con C# e lo sviluppo web, ed è diventato il mestiere che faccio.', '2016-09', '2022-07', 0, 4);
+INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('itt-diploma', 'education', 'ITT Blaise Pascal', 'Indirizzo informatico', 'Diploma', 'Istituto tecnico informatico', 'set 2016 - giu 2022', 'La mia passione per la programmazione è nata a 15 anni, con i primi passi in C# e sviluppo web. Grazie a diversi progetti realizzati durante e fuori dal percorso scolastico, ho avuto modo di espandere le mie conoscenze verso pratiche di sviluppo e scelte di progettazione con mentalità aziendale', '2016-09', '2022-07', 0, 4);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('itt-diploma', 'skill-net-c', 0);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('itt-diploma', 'skill-web-development', 1);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('itt-diploma', 'skill-php', 2);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('itt-diploma', 'skill-mysql', 3);
 
-INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('unibo-degree', 'education', 'Universita di Bologna', 'Bachelor of Engineering', 'Computer Science & Software Engineering', 'Bachelor of Engineering', 'da set 2022', 'In parallelo al lavoro, il percorso in Computer Science & Software Engineering per costruire basi solide oltre alla pratica.', '2022-09', '2027-01', 0, 5);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('itt-diploma', 'skill-jwt', 4);
+INSERT INTO `experiences` (`id`, `kind`, `org`, `org_detail`, `title`, `detail`, `period`, `narrative`, `start_date`, `end_date`, `current`, `sort_order`) VALUES ('unibo-degree', 'education', 'Universita di Bologna', 'Bachelor of Engineering', 'Computer Science & Software Engineering', 'Bachelor of Engineering', 'da set 2022', 'Nel mondo dell''informatica non si finisce mai di imparare, e seppur il persorso scolastico mi aveva dato una buona base, la curiosità di imparare le sfaccettature dietro un mondo così stratificato era tanta, e per questo ho deciso di proseguire gli Studi.', '2022-09', '2027-01', 0, 5);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('unibo-degree', 'skill-software-architecture', 0);
 INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('unibo-degree', 'skill-uml', 1);
-INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('unibo-degree', 'skill-python', 2);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('unibo-degree', 'skill-java', 2);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('unibo-degree', 'skill-mvvm', 3);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('unibo-degree', 'skill-swift-swiftui', 4);
+INSERT INTO `experience_skills` (`experience_id`, `skill_id`, `sort_order`) VALUES ('unibo-degree', 'skill-wcag', 5);
 
+INSERT INTO `experience_projects` (`experience_id`, `project_id`, `sort_order`) VALUES ('unibo-degree', 'swiftui', 0);
