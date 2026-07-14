@@ -293,6 +293,66 @@ const brandIcons: Record<string, SimpleIcon> = {
   ClaudeCode: siClaude,
 };
 
+// Registro dei loghi indicizzato per slug: usato quando una skill arriva dal
+// database e porta con sé il proprio slug (colonna `icon`).
+const brandBySlug: Record<string, SimpleIcon> = {
+  dotnet: siDotnet,
+  sharp: siSharp,
+  angular: siAngular,
+  astro: siAstro,
+  capacitor: siCapacitor,
+  cloudflare: siCloudflare,
+  elasticsearch: siElasticsearch,
+  figma: siFigma,
+  ionic: siIonic,
+  mapbox: siMapbox,
+  mongodb: siMongodb,
+  mysql: siMysql,
+  nextdotjs: siNextdotjs,
+  php: siPhp,
+  posthog: siPosthog,
+  postgresql: siPostgresql,
+  python: siPython,
+  react: siReact,
+  sentry: siSentry,
+  strapi: siStrapi,
+  stripe: siStripe,
+  storybook: siStorybook,
+  symfony: siSymfony,
+  swift: siSwift,
+  tanstack: siTanstack,
+  tailwindcss: siTailwindcss,
+  typescript: siTypescript,
+  uml: siUml,
+  vite: siVite,
+  claude: siClaude,
+};
+
+const logoBySlug: Record<string, typeof openaiIcon | undefined> = {
+  openai: openaiIcon,
+};
+
+/** Dati visivi minimi necessari per disegnare un chip: nome (obbligatorio) più i
+ *  campi salvati sul database. Passando solo `name` si usano i fallback statici. */
+export type SkillVisual = {
+  name: string;
+  icon?: string | null;
+  color?: string | null;
+  mark?: string | null;
+  fluentIcon?: string | null;
+};
+
+type ResolvedVisual = {
+  label: string;
+  tint: string;
+  mark: string;
+  fluent: string;
+  /** Slug del logo dal database, se presente. */
+  iconSlug: string | null;
+  /** Nome usato per il fallback statico dei loghi. */
+  iconName: string;
+};
+
 function getDefinition(name: string) {
   return (
     definitions[name] ?? {
@@ -303,8 +363,36 @@ function getDefinition(name: string) {
   );
 }
 
-function BrandIcon({ name, size }: { name: string; size: number }) {
-  const logo = logoMarks[name];
+function resolveVisual(input: string | SkillVisual): ResolvedVisual {
+  if (typeof input === "string") {
+    const definition = getDefinition(input);
+    return {
+      label: input,
+      tint: definition.tint,
+      mark: definition.mark,
+      fluent: definition.fluent,
+      iconSlug: null,
+      iconName: input,
+    };
+  }
+
+  const definition = getDefinition(input.name);
+  return {
+    label: input.name,
+    tint: input.color ?? definition.tint,
+    mark: input.mark ?? definition.mark,
+    fluent: input.fluentIcon ?? definition.fluent,
+    iconSlug: input.icon ?? null,
+    iconName: input.name,
+  };
+}
+
+function BrandIcon({ visual, size }: { visual: ResolvedVisual; size: number }) {
+  // 1. Logo dal database (slug) — loghi dedicati, poi Simple Icons.
+  const slugLogo = visual.iconSlug ? logoBySlug[visual.iconSlug] : undefined;
+  const slugBrand = visual.iconSlug ? brandBySlug[visual.iconSlug] : undefined;
+  // 2. Fallback statico per nome.
+  const logo = slugLogo ?? logoMarks[visual.iconName];
   if (logo) {
     return (
       <svg
@@ -318,7 +406,7 @@ function BrandIcon({ name, size }: { name: string; size: number }) {
     );
   }
 
-  const brand = brandIcons[name];
+  const brand = slugBrand ?? brandIcons[visual.iconName];
   if (brand) {
     return (
       <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true">
@@ -327,8 +415,7 @@ function BrandIcon({ name, size }: { name: string; size: number }) {
     );
   }
 
-  const definition = getDefinition(name);
-  const fluentIcon = fluentColorIcons.icons[definition.fluent] ?? fluentColorIcons.icons["code-24"];
+  const fluentIcon = fluentColorIcons.icons[visual.fluent] ?? fluentColorIcons.icons["code-24"];
   return (
     <svg
       viewBox={`0 0 ${fluentIcon.width ?? fluentColorIcons.width ?? 24} ${fluentIcon.height ?? fluentColorIcons.height ?? 24}`}
@@ -340,37 +427,60 @@ function BrandIcon({ name, size }: { name: string; size: number }) {
   );
 }
 
-export function TechIcon({ name, compact = false }: { name: string; compact?: boolean }) {
-  const definition = getDefinition(name);
+export function TechIcon({
+  name,
+  skill,
+  compact = false,
+}: {
+  name?: string;
+  skill?: SkillVisual;
+  compact?: boolean;
+}) {
+  const visual = resolveVisual(skill ?? name ?? "");
 
   return (
     <span className={`inline-flex items-center gap-2 ${compact ? "text-xs" : "text-sm"}`}>
       <span
-        className={`inline-flex shrink-0 items-center justify-center rounded-lg border ${definition.tint} ${compact ? "h-7 w-7" : "h-10 w-10"}`}
+        className={`inline-flex shrink-0 items-center justify-center rounded-lg border ${visual.tint} ${compact ? "h-7 w-7" : "h-10 w-10"}`}
       >
-        <BrandIcon name={name} size={compact ? 15 : 19} />
+        <BrandIcon visual={visual} size={compact ? 15 : 19} />
       </span>
-      <span className="text-slate-200">{name}</span>
+      <span className="text-slate-200">{visual.label}</span>
     </span>
   );
 }
 
-export function TechMark({ name }: { name: string }) {
-  const definition = getDefinition(name);
+/** Just the brand logo, no badge/box around it. Colour comes from the
+ *  surrounding `currentColor` for monochrome brand marks. */
+export function SkillGlyph({
+  name,
+  skill,
+  size = 24,
+}: {
+  name?: string;
+  skill?: SkillVisual;
+  size?: number;
+}) {
+  const visual = resolveVisual(skill ?? name ?? "");
+  return <BrandIcon visual={visual} size={size} />;
+}
+
+export function TechMark({ name, skill }: { name?: string; skill?: SkillVisual }) {
+  const visual = resolveVisual(skill ?? name ?? "");
   return (
     <span
-      className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border ${definition.tint}`}
+      className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border ${visual.tint}`}
       aria-hidden="true"
     >
-      <BrandIcon name={name} size={20} />
+      <BrandIcon visual={visual} size={20} />
     </span>
   );
 }
 
-export function SkillChip({ name }: { name: string }) {
+export function SkillChip({ name, skill }: { name?: string; skill?: SkillVisual }) {
   return (
     <span className="inline-flex shrink-0 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 backdrop-blur-sm transition hover:border-sky-300/35 hover:bg-sky-300/10">
-      <TechIcon name={name} compact />
+      <TechIcon name={name} skill={skill} compact />
     </span>
   );
 }

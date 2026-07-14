@@ -70,7 +70,7 @@ function PageHeading({
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/10 bg-slate-950 px-6 py-12 text-sm text-slate-400">
+    <footer className="border-t border-white/10 bg-black px-6 py-12 text-sm text-slate-400">
       <div className="mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
         <div className="max-w-sm">
           <p className="display-font text-lg font-semibold text-white">Vincenzo Prisco</p>

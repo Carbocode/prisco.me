@@ -14,7 +14,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as InformazioniRouteImport } from './routes/informazioni'
 import { Route as CookieRouteImport } from './routes/cookie'
 import { Route as ContattiRouteImport } from './routes/contatti'
-import { Route as ChiSonoRouteImport } from './routes/chi-sono'
+import { Route as CarrieraRouteImport } from './routes/carriera'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgettiSlugRouteImport } from './routes/progetti.$slug'
@@ -45,9 +45,9 @@ const ContattiRoute = ContattiRouteImport.update({
   path: '/contatti',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChiSonoRoute = ChiSonoRouteImport.update({
-  id: '/chi-sono',
-  path: '/chi-sono',
+const CarrieraRoute = CarrieraRouteImport.update({
+  id: '/carriera',
+  path: '/carriera',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -74,7 +74,7 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
-  '/chi-sono': typeof ChiSonoRoute
+  '/carriera': typeof CarrieraRoute
   '/contatti': typeof ContattiRoute
   '/cookie': typeof CookieRoute
   '/informazioni': typeof InformazioniRoute
@@ -86,7 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
-  '/chi-sono': typeof ChiSonoRoute
+  '/carriera': typeof CarrieraRoute
   '/contatti': typeof ContattiRoute
   '/cookie': typeof CookieRoute
   '/informazioni': typeof InformazioniRoute
@@ -99,7 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteWithChildren
-  '/chi-sono': typeof ChiSonoRoute
+  '/carriera': typeof CarrieraRoute
   '/contatti': typeof ContattiRoute
   '/cookie': typeof CookieRoute
   '/informazioni': typeof InformazioniRoute
@@ -113,7 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/blog'
-    | '/chi-sono'
+    | '/carriera'
     | '/contatti'
     | '/cookie'
     | '/informazioni'
@@ -125,7 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/blog'
-    | '/chi-sono'
+    | '/carriera'
     | '/contatti'
     | '/cookie'
     | '/informazioni'
@@ -137,7 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/blog'
-    | '/chi-sono'
+    | '/carriera'
     | '/contatti'
     | '/cookie'
     | '/informazioni'
@@ -150,7 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRoute: typeof BlogRouteWithChildren
-  ChiSonoRoute: typeof ChiSonoRoute
+  CarrieraRoute: typeof CarrieraRoute
   ContattiRoute: typeof ContattiRoute
   CookieRoute: typeof CookieRoute
   InformazioniRoute: typeof InformazioniRoute
@@ -195,11 +195,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContattiRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chi-sono': {
-      id: '/chi-sono'
-      path: '/chi-sono'
-      fullPath: '/chi-sono'
-      preLoaderRoute: typeof ChiSonoRouteImport
+    '/carriera': {
+      id: '/carriera'
+      path: '/carriera'
+      fullPath: '/carriera'
+      preLoaderRoute: typeof CarrieraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -258,7 +258,7 @@ const ProgettiRouteWithChildren = ProgettiRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRoute: BlogRouteWithChildren,
-  ChiSonoRoute: ChiSonoRoute,
+  CarrieraRoute: CarrieraRoute,
   ContattiRoute: ContattiRoute,
   CookieRoute: CookieRoute,
   InformazioniRoute: InformazioniRoute,

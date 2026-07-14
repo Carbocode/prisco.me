@@ -3,10 +3,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ActionLink, PageShell, Section } from "@/components/page-shell";
 import { SkillChip } from "@/components/tech-icon";
 import { getProjectBySlug } from "@/lib/projects";
+import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/progetti/$slug")({
-  head: ({ params }) => {
-    const project = getProjectBySlug(params.slug);
+  loader: async ({ context, params }) => {
+    const data = await context.queryClient.ensureQueryData(getPortfolioQueryOptions());
+    return { project: getProjectBySlug(data.projects, params.slug) ?? null };
+  },
+  head: ({ params, loaderData }) => {
+    const project = loaderData?.project ?? null;
     const title = project
       ? `${project.title} | Vincenzo Prisco`
       : "Progetto non trovato | Vincenzo Prisco";
@@ -27,8 +32,7 @@ export const Route = createFileRoute("/progetti/$slug")({
 });
 
 function ProjectDetailPage() {
-  const { slug } = Route.useParams();
-  const project = getProjectBySlug(slug);
+  const { project } = Route.useLoaderData();
 
   if (!project) {
     return (
@@ -59,25 +63,25 @@ function ProjectDetailPage() {
             description: project.description,
             url: `https://prisco.me/progetti/${project.slug}`,
             author: { "@type": "Person", name: "Vincenzo Prisco" },
-            keywords: project.technologies.join(", "),
+            keywords: project.skills.map((skill) => skill.name).join(", "),
           }),
         }}
       />
       <Section>
         <div className="grid gap-3 border-b border-white/10 pb-8 sm:grid-cols-2 lg:grid-cols-3">
-          {project.technologies.map((technology) => (
-            <SkillChip key={technology} name={technology} />
+          {project.skills.map((skill) => (
+            <SkillChip key={skill.id} skill={skill} />
           ))}
         </div>
-        <aside className="card-sheen relative mb-12 max-w-4xl overflow-hidden rounded-2xl border border-sky-300/20 bg-gradient-to-br from-sky-300/10 via-violet-300/[0.06] to-transparent p-6">
+        <aside className="card-sheen relative mb-12 max-w-4xl overflow-hidden rounded-2xl border border-sky-300/20 bg-linear-to-br from-sky-300/10 via-violet-300/6 to-transparent p-6">
           <div className="site-grid absolute inset-0 opacity-35" />
           <div className="relative grid gap-6 sm:grid-cols-[0.7fr_1.3fr] sm:items-end">
             <div>
               <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-sky-200">
                 Product map
               </span>
-              <p className="display-font mt-2 text-6xl font-semibold tracking-[-0.1em] text-white/90">
-                0{project.technologies.length}
+              <p className="display-font mt-2 text-6xl font-semibold -tracking-widest text-white/90">
+                0{project.skills.length}
               </p>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -108,7 +112,7 @@ function ProjectDetailPage() {
           ))}
         </div>
       </Section>
-      <section className="border-t border-white/10 bg-white/[0.03] px-6 py-16">
+      <section className="border-t border-white/10 bg-white/3 px-6 py-16">
         <div className="mx-auto flex max-w-4xl flex-col gap-5">
           <h2 className="display-font text-3xl font-semibold">Costruiamo qualcosa insieme?</h2>
           <p className="leading-7 text-slate-300">

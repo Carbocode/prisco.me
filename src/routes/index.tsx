@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import CloudCarousel from "@/components/cloud-carousel";
+import DesertScene from "@/components/desert-scene";
 import Header from "@/components/header";
 import Jupiter from "@/components/jupiter";
 import Moon from "@/components/moon";
@@ -10,8 +11,10 @@ import { ProjectCard } from "@/components/project-card";
 import { SkillsMarquee } from "@/components/skills-marquee";
 import Sky from "@/components/sky";
 import Star from "@/components/star";
+import SubsoilDecor from "@/components/subsoil-decor";
 import { SkillChip, TechIcon } from "@/components/tech-icon";
 import { getArticlesQueryOptions } from "@/server/articles";
+import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,12 +33,21 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "https://prisco.me/" }],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: HomePage,
 });
 
 function HomePage() {
   const articlesQuery = useQuery(getArticlesQueryOptions());
   const articles = (articlesQuery.data?.data ?? []).slice(0, 3);
+
+  const { data: portfolio } = useSuspenseQuery(getPortfolioQueryOptions());
+  const otherProjects = portfolio.projects.filter((project) =>
+    ["swiftui", "myvet-diet"].includes(project.slug),
+  );
+  const myvetSkills = portfolio.skills.filter((skill) =>
+    ["Ionic", "Capacitor", "Angular", "Cloudflare", "PostHog"].includes(skill.name),
+  );
 
   return (
     <div className="min-h-dvh bg-slate-950 text-slate-100">
@@ -44,15 +56,11 @@ function HomePage() {
 
         <section className="absolute inset-0 z-10 flex items-center justify-center px-6 pt-14">
           <div className="hero-content-enter flex max-w-3xl flex-col items-center gap-4 text-center text-white drop-shadow-[0_2px_12px_rgba(4,12,25,0.9)]">
-            <span className="hero-content-enter-item rounded-full border border-white/70 bg-slate-950/35 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-white backdrop-blur-sm">
-              Software Engineer · Product Builder
-            </span>
             <h1 className="hero-content-enter-item display-font text-3xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-              Costruisco prodotti digitali che partono da un&apos;idea e arrivano alle persone.
+              CIAO, sono Vincenzo!
             </h1>
             <p className="hero-content-enter-item max-w-xl text-sm font-medium leading-6 text-white sm:text-base sm:leading-7">
-              Sono Vincenzo, software engineer. Mi occupo di trasformare idee e problemi complessi
-              in applicazioni solide, utili e pensate per crescere.
+              Benvenuti nel mio sito personale, uno spazio dedicato a me
             </p>
             <div className="hero-content-enter-item flex flex-wrap justify-center gap-2 pt-1">
               <ActionLink href="/progetti">Scopri i progetti</ActionLink>
@@ -81,6 +89,12 @@ function HomePage() {
         <Star size="sm" className="absolute right-[8%] top-[48%]" />
       </Sky>
 
+      <DesertScene className="-mt-px" skills={portfolio.skills} />
+
+      <div className="earth-cross-section relative -mt-px">
+        <div className="earth-strata pointer-events-none absolute inset-0" aria-hidden="true" />
+        <SubsoilDecor />
+        <div className="relative">
       <Section>
         <div className="grid gap-5 md:grid-cols-3">
           <SkillCard
@@ -104,7 +118,7 @@ function HomePage() {
             ]}
           />
         </div>
-        <SkillsMarquee />
+        <SkillsMarquee skills={portfolio.skills} />
       </Section>
 
       <Section className="pt-0">
@@ -114,7 +128,7 @@ function HomePage() {
           description="MyVet e il progetto che ha segnato il mio percorso: un ecosistema digitale costruito per proprietari e professionisti della pet care."
         />
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-2xl border border-sky-300/30 bg-gradient-to-br from-sky-300/15 via-white/[0.05] to-transparent p-8">
+          <div className="rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
               MyVet User e MyVet Business
             </p>
@@ -127,21 +141,21 @@ function HomePage() {
               degli animali.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {["Ionic", "Capacitor", "Angular", "Cloudflare", "PostHog"].map((item) => (
-                <SkillChip key={item} name={item} />
+              {myvetSkills.map((skill) => (
+                <SkillChip key={skill.id} skill={skill} />
               ))}
             </div>
             <ActionLink href="/progetti/myvet" variant="secondary">
               Scopri il progetto
             </ActionLink>
           </div>
-          <div className="flex flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <div className="flex flex-col justify-center rounded-2xl border border-white/10 bg-white/3 p-8">
             <p className="text-sm leading-7 text-slate-300">
               Ho contribuito all'evoluzione del progetto dall'ideazione alla pubblicazione,
               lavorando su sviluppo, architettura, problem solving e qualita del prodotto.
             </p>
             <Link
-              to="/chi-sono"
+              to="/carriera"
               className="mt-6 text-sm font-semibold text-sky-300 hover:text-sky-200"
             >
               Scopri il mio percorso <span aria-hidden="true">→</span>
@@ -157,41 +171,14 @@ function HomePage() {
           description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
         />
         <div className="mt-8 grid gap-5 md:grid-cols-2">
-          <ProjectCard
-            project={{
-              slug: "swiftui",
-              title: "App nativa in SwiftUI",
-              summary: "La trasposizione nativa dell'app MyVet in SwiftUI.",
-              description:
-                "Un progetto per esplorare una nuova implementazione nativa con SwiftUI e MVVM.",
-              role: "Software Engineer",
-              category: "mobile",
-              technologies: ["SwiftUI", "MVVM", "Software Architecture"],
-              period: "Dicembre 2024 - Settembre 2025",
-              sections: [],
-            }}
-            compact
-          />
-          <ProjectCard
-            project={{
-              slug: "myvet-diet",
-              title: "MyVet Diet",
-              summary: "Un progetto verticale dell'ecosistema MyVet.",
-              description:
-                "Un'esperienza di prodotto che unisce modellazione, pagamenti e attenzione al dominio pet care.",
-              role: "Software Engineer",
-              category: "backend",
-              technologies: ["Stripe", "UML", "Product Design"],
-              period: "Maggio 2025 - Settembre 2025",
-              sections: [],
-            }}
-            compact
-          />
+          {otherProjects.map((project) => (
+            <ProjectCard key={project.slug} project={project} compact />
+          ))}
         </div>
       </Section>
 
       <Section className="pt-0">
-        <div className="grid gap-8 rounded-2xl border border-white/10 bg-white/[0.03] p-8 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div className="grid gap-8 rounded-2xl border border-white/10 bg-white/3 p-8 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
               Chi sono
@@ -205,7 +192,7 @@ function HomePage() {
               Ho iniziato a programmare a 15 anni. Da allora ho cercato di unire curiosita tecnica,
               pensiero critico e attenzione alla qualita del prodotto.
             </p>
-            <ActionLink href="/chi-sono" variant="secondary">
+            <ActionLink href="/carriera" variant="secondary">
               Conosciamoci meglio
             </ActionLink>
           </div>
@@ -233,7 +220,7 @@ function HomePage() {
               key={article.documentId ?? article.slug}
               to="/blog/$slug"
               params={{ slug: article.slug ?? "" }}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-sky-300/40 hover:bg-white/[0.06]"
+              className="rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/40 hover:bg-white/6"
             >
               <p className="text-xs uppercase tracking-[0.25em] text-sky-300">
                 {article.category ?? "Articolo"}
@@ -252,17 +239,31 @@ function HomePage() {
         </div>
       </Section>
 
-      <section className="border-t border-white/10 bg-gradient-to-r from-sky-400/10 to-violet-400/10 px-6 py-20 text-center">
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-5">
-          <h2 className="display-font text-3xl font-semibold sm:text-4xl">
+      <section className="relative isolate overflow-hidden px-6 pb-28 pt-24 text-center">
+        {/* the molten core: a glow rising from the very bottom of the earth */}
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_128%,#ffd27a_0%,#ff8a2b_16%,#f0531a_32%,#b8300d_50%,#5c1305_68%,transparent_82%)]"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(255,190,110,0.55),transparent_75%)] blur-2xl"
+          aria-hidden="true"
+        />
+        <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
+          <span className="rounded-full border border-orange-200/40 bg-orange-950/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-orange-100 backdrop-blur-sm">
+            Il nucleo
+          </span>
+          <h2 className="display-font text-3xl font-semibold text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-4xl">
             Hai un'idea da trasformare in prodotto?
           </h2>
-          <p className="leading-7 text-slate-300">
+          <p className="leading-7 text-orange-50/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
             Raccontami cosa stai costruendo e vediamo insieme da dove partire.
           </p>
           <ActionLink href="/contatti">Scrivimi</ActionLink>
         </div>
       </section>
+        </div>
+      </div>
       <SiteFooter />
     </div>
   );
@@ -278,7 +279,7 @@ function SkillCard({
   items: string[];
 }) {
   return (
-    <article className="card-sheen rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-sky-300/30 hover:bg-white/[0.05]">
+    <article className="card-sheen rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/30 hover:bg-white/5">
       <TechIcon name={technology} />
       <h2 className="display-font mt-5 text-xl font-semibold">{title}</h2>
       <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-300">

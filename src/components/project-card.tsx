@@ -1,24 +1,21 @@
 import { Link } from "@tanstack/react-router";
 
 import { SkillChip, TechMark } from "@/components/tech-icon";
-import type { Project } from "@/lib/projects";
-
-const categoryLabels = {
-  web: "Web",
-  mobile: "Mobile",
-  backend: "Backend",
-  experiment: "Esperimento",
-} as const;
+import { categoryLabels, type Project } from "@/lib/projects";
 
 export function ProjectCard({ project, compact = false }: { project: Project; compact?: boolean }) {
   return (
-    <article className="card-sheen group flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:border-sky-300/40 hover:bg-white/[0.07] sm:p-5">
-      <div className="relative mb-5 h-32 overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-sky-400/15 via-violet-400/10 to-slate-950">
+    <article className="card-sheen group flex h-full flex-col rounded-2xl border border-white/10 bg-white/4 p-4 transition hover:-translate-y-1 hover:border-sky-300/40 hover:bg-white/[0.07] sm:p-5">
+      <div className="relative mb-5 h-32 overflow-hidden rounded-xl border border-white/10 bg-linear-to-br from-sky-400/15 via-violet-400/10 to-slate-950">
         <div className="site-grid absolute inset-0 opacity-40" />
         <div className="absolute -right-8 -top-10 h-32 w-32 rounded-full border border-sky-300/20" />
         <div className="absolute -right-2 -top-4 h-20 w-20 rounded-full border border-violet-300/20" />
         <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-4">
-          <TechMark name={project.technologies[0] ?? project.title} />
+          {project.skills[0] ? (
+            <TechMark skill={project.skills[0]} />
+          ) : (
+            <TechMark name={project.title} />
+          )}
           <span className="text-right text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-400">
             {project.slug.replaceAll("-", " / ")}
           </span>
@@ -33,8 +30,8 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
         {compact ? project.summary : project.description}
       </p>
       <div className="mt-5 flex flex-wrap gap-2">
-        {project.technologies.slice(0, 5).map((technology) => (
-          <SkillChip key={technology} name={technology} />
+        {project.skills.slice(0, 5).map((skill) => (
+          <SkillChip key={skill.id} skill={skill} />
         ))}
       </div>
       <Link

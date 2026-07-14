@@ -1,9 +1,44 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 import { PageShell, Section } from "@/components/page-shell";
 import { ProjectCard } from "@/components/project-card";
-import { projectCategories, projects, type ProjectCategory } from "@/lib/projects";
+import { getCompanies, getTechnologies, projectCategories } from "@/lib/projects";
+import { getPortfolioQueryOptions } from "@/server/portfolio";
+
+const ALL = "all";
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+}) {
+  return (
+    <label className="flex flex-col gap-2 text-sm">
+      <span className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="min-w-40 rounded-full border border-white/15 bg-slate-950/60 px-4 py-2 text-sm text-slate-200 transition hover:border-white/30 focus:border-sky-300 focus:outline-none"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value} className="bg-slate-950 text-slate-200">
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
 export const Route = createFileRoute("/progetti")({
   head: () => ({
@@ -22,16 +57,62 @@ export const Route = createFileRoute("/progetti")({
     ],
     links: [{ rel: "canonical", href: "https://prisco.me/progetti" }],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: ProjectsPage,
 });
 
 function ProjectsPage() {
-  const [category, setCategory] = useState<"all" | ProjectCategory>("all");
+  const { data } = useSuspenseQuery(getPortfolioQueryOptions());
+  const projects = data.projects;
+
+  const [company, setCompany] = useState<string>(ALL);
+  const [technology, setTechnology] = useState<string>(ALL);
+  const [category, setCategory] = useState<string>(ALL);
+
+  const companies = useMemo(() => getCompanies(projects), [projects]);
+  const technologies = useMemo(() => getTechnologies(projects), [projects]);
+
+  const companyOptions = useMemo(
+    () => [
+      { value: ALL, label: "Tutte" },
+      ...companies.map((name) => ({ value: name, label: name })),
+    ],
+    [companies],
+  );
+  const technologyOptions = useMemo(
+    () => [
+      { value: ALL, label: "Tutte" },
+      ...technologies.map((name) => ({ value: name, label: name })),
+    ],
+    [technologies],
+  );
+  const categoryOptions = useMemo(
+    () =>
+      projectCategories.map((item) => ({
+        value: item.value,
+        label: item.value === "all" ? "Tutte" : item.label,
+      })),
+    [],
+  );
+
   const filteredProjects = useMemo(
     () =>
-      category === "all" ? projects : projects.filter((project) => project.category === category),
-    [category],
+      projects.filter(
+        (project) =>
+          (company === ALL || project.company === company) &&
+          (technology === ALL || project.skills.some((skill) => skill.name === technology)) &&
+          (category === ALL || project.category === category),
+      ),
+    [projects, company, technology, category],
   );
+
+  const resetFilters = () => {
+    setCompany(ALL);
+    setTechnology(ALL);
+    setCategory(ALL);
+  };
+
+  const hasActiveFilters = company !== ALL || technology !== ALL || category !== ALL;
 
   return (
     <PageShell
@@ -40,24 +121,47 @@ function ProjectsPage() {
       description="Una selezione di prodotti e sperimentazioni che raccontano il mio percorso tra web, mobile, architettura e dominio applicativo."
     >
       <Section>
-        <div className="flex flex-wrap gap-2" aria-label="Filtra progetti">
-          {projectCategories.map((item) => (
+        <fieldset className="flex flex-wrap items-end gap-4 border-0 p-0">
+          <legend className="sr-only">Filtra progetti</legend>
+          <FilterSelect
+            label="Azienda"
+            value={company}
+            onChange={setCompany}
+            options={companyOptions}
+          />
+          <FilterSelect
+            label="Tecnologia"
+            value={technology}
+            onChange={setTechnology}
+            options={technologyOptions}
+          />
+          <FilterSelect
+            label="Tipologia"
+            value={category}
+            onChange={setCategory}
+            options={categoryOptions}
+          />
+          {hasActiveFilters && (
             <button
-              key={item.value}
               type="button"
-              aria-pressed={category === item.value}
-              onClick={() => setCategory(item.value)}
-              className={`rounded-full border px-4 py-2 text-sm transition ${category === item.value ? "border-sky-300 bg-sky-300/15 text-sky-200" : "border-white/15 text-slate-400 hover:border-white/30 hover:text-white"}`}
+              onClick={resetFilters}
+              className="rounded-full border border-white/15 px-4 py-2 text-sm text-slate-400 transition hover:border-white/30 hover:text-white"
             >
-              {item.label}
+              Azzera filtri
             </button>
-          ))}
-        </div>
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-        </div>
+          )}
+        </fieldset>
+        {filteredProjects.length > 0 ? (
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProjects.map((project) => (
+              <ProjectCard key={project.slug} project={project} />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-8 text-sm text-slate-400">
+            Nessun progetto corrisponde ai filtri selezionati.
+          </p>
+        )}
       </Section>
     </PageShell>
   );

@@ -13,15 +13,12 @@ export default function Header({ overlay = false }: { overlay?: boolean }) {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
         <Link to="/" className="flex items-center gap-3" aria-label="Torna alla home">
           <img src="/favicon/favicon.svg" alt="" className="h-9 w-9" />
-          <div className="leading-tight">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-sky-300">Portfolio</p>
-            <p className="display-font text-lg font-semibold">Vincenzo Prisco</p>
-          </div>
+          <p className="leading-tight display-font text-lg font-semibold">Vincenzo Prisco</p>
         </Link>
 
         <nav aria-label="Navigazione principale" className="hidden items-center gap-1 md:flex">
           <NavLink to="/">Home</NavLink>
-          <NavLink to="/chi-sono">Chi sono</NavLink>
+          <NavLink to="/carriera">Carriera</NavLink>
           <NavLink to="/progetti">Progetti</NavLink>
           <NavLink to="/blog">Blog</NavLink>
           <NavLink to="/contatti" emphasis>
@@ -38,7 +35,7 @@ export default function Header({ overlay = false }: { overlay?: boolean }) {
             className="absolute right-0 top-12 z-30 flex min-w-44 flex-col gap-1 rounded-xl border border-white/10 bg-slate-900 p-2 shadow-xl"
           >
             <NavLink to="/">Home</NavLink>
-            <NavLink to="/chi-sono">Chi sono</NavLink>
+            <NavLink to="/carriera">Carriera</NavLink>
             <NavLink to="/progetti">Progetti</NavLink>
             <NavLink to="/blog">Blog</NavLink>
             <NavLink to="/contatti">Contatti</NavLink>
@@ -54,7 +51,7 @@ function NavLink({
   children,
   emphasis = false,
 }: {
-  to: "/" | "/chi-sono" | "/progetti" | "/blog" | "/contatti";
+  to: "/" | "/carriera" | "/progetti" | "/blog" | "/contatti";
   children: ReactNode;
   emphasis?: boolean;
 }) {
