@@ -22,6 +22,13 @@
       "when": 1784013422797,
       "tag": "0002_project_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1784026289740,
+      "tag": "0003_lame_leopardon",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "h-5 gap-1 rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium transition-all has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&>svg]:size-3! inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-colors overflow-hidden group/badge",
+  "rounded-4xl border border-transparent font-medium transition-all inline-flex items-center justify-center w-fit whitespace-nowrap shrink-0 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-colors overflow-hidden group/badge",
   {
     variants: {
       variant: {
@@ -17,24 +17,37 @@ const badgeVariants = cva(
         ghost: "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
       },
+      size: {
+        sm: "h-5 gap-1 px-2 py-0.5 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&>svg]:size-3!",
+        md: "h-6 gap-1.5 px-2.5 py-0.5 text-sm has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&>svg]:size-3.5!",
+        lg: "h-7 gap-1.5 px-3 py-1 text-sm has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&>svg]:size-4!",
+      },
     },
     defaultVariants: {
       variant: "default",
+      size: "sm",
     },
   },
 );
 
+type BadgeProps = useRender.ComponentProps<"span"> &
+  VariantProps<typeof badgeVariants> & {
+    color?: string;
+  };
+
 function Badge({
   className,
+  color,
   variant = "default",
+  size = "sm",
   render,
   ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+}: BadgeProps) {
   return useRender({
     defaultTagName: "span",
     props: mergeProps<"span">(
       {
-        className: cn(badgeVariants({ className, variant })),
+        className: cn(badgeVariants({ className, variant, size }), color),
       },
       props,
     ),
@@ -42,8 +55,9 @@ function Badge({
     state: {
       slot: "badge",
       variant,
+      size,
     },
   });
 }
 
-export { Badge, badgeVariants };
+export { Badge, badgeVariants, type BadgeProps };

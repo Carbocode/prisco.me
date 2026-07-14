@@ -53,7 +53,12 @@ function Boulder(props: SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 100 80" fill="none" {...props}>
       <polygon points="8,74 1,38 22,10 58,4 82,30 76,68 44,78" fill="#3f3021" />
       <polygon points="22,10 58,4 82,30 60,26 36,20" fill="#4d3b28" opacity="0.7" />
-      <path d="M30 30 L52 44 M40 54 L64 46" stroke="#2a2016" strokeWidth="2.5" strokeLinecap="round" />
+      <path
+        d="M30 30 L52 44 M40 54 L64 46"
+        stroke="#2a2016"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

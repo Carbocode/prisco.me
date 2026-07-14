@@ -9,20 +9,36 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Verifica2faRouteImport } from './routes/verifica-2fa'
 import { Route as ProgettiRouteImport } from './routes/progetti'
+import { Route as ProfiloRouteImport } from './routes/profilo'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as InformazioniRouteImport } from './routes/informazioni'
 import { Route as CookieRouteImport } from './routes/cookie'
 import { Route as ContattiRouteImport } from './routes/contatti'
 import { Route as CarrieraRouteImport } from './routes/carriera'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AccediRouteImport } from './routes/accedi'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgettiSlugRouteImport } from './routes/progetti.$slug'
+import { Route as OauthConsensoRouteImport } from './routes/oauth.consenso'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 
+const Verifica2faRoute = Verifica2faRouteImport.update({
+  id: '/verifica-2fa',
+  path: '/verifica-2fa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProgettiRoute = ProgettiRouteImport.update({
   id: '/progetti',
   path: '/progetti',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfiloRoute = ProfiloRouteImport.update({
+  id: '/profilo',
+  path: '/profilo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -55,6 +71,16 @@ const BlogRoute = BlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccediRoute = AccediRouteImport.update({
+  id: '/accedi',
+  path: '/accedi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -65,106 +91,172 @@ const ProgettiSlugRoute = ProgettiSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ProgettiRoute,
 } as any)
+const OauthConsensoRoute = OauthConsensoRouteImport.update({
+  id: '/oauth/consenso',
+  path: '/oauth/consenso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accedi': typeof AccediRoute
+  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/carriera': typeof CarrieraRoute
   '/contatti': typeof ContattiRoute
   '/cookie': typeof CookieRoute
   '/informazioni': typeof InformazioniRoute
   '/privacy': typeof PrivacyRoute
+  '/profilo': typeof ProfiloRoute
   '/progetti': typeof ProgettiRouteWithChildren
+  '/verifica-2fa': typeof Verifica2faRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/oauth/consenso': typeof OauthConsensoRoute
   '/progetti/$slug': typeof ProgettiSlugRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accedi': typeof AccediRoute
+  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/carriera': typeof CarrieraRoute
   '/contatti': typeof ContattiRoute
   '/cookie': typeof CookieRoute
   '/informazioni': typeof InformazioniRoute
   '/privacy': typeof PrivacyRoute
+  '/profilo': typeof ProfiloRoute
   '/progetti': typeof ProgettiRouteWithChildren
+  '/verifica-2fa': typeof Verifica2faRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/oauth/consenso': typeof OauthConsensoRoute
   '/progetti/$slug': typeof ProgettiSlugRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/accedi': typeof AccediRoute
+  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/carriera': typeof CarrieraRoute
   '/contatti': typeof ContattiRoute
   '/cookie': typeof CookieRoute
   '/informazioni': typeof InformazioniRoute
   '/privacy': typeof PrivacyRoute
+  '/profilo': typeof ProfiloRoute
   '/progetti': typeof ProgettiRouteWithChildren
+  '/verifica-2fa': typeof Verifica2faRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/oauth/consenso': typeof OauthConsensoRoute
   '/progetti/$slug': typeof ProgettiSlugRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/accedi'
+    | '/admin'
     | '/blog'
     | '/carriera'
     | '/contatti'
     | '/cookie'
     | '/informazioni'
     | '/privacy'
+    | '/profilo'
     | '/progetti'
+    | '/verifica-2fa'
     | '/blog/$slug'
+    | '/oauth/consenso'
     | '/progetti/$slug'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/accedi'
+    | '/admin'
     | '/blog'
     | '/carriera'
     | '/contatti'
     | '/cookie'
     | '/informazioni'
     | '/privacy'
+    | '/profilo'
     | '/progetti'
+    | '/verifica-2fa'
     | '/blog/$slug'
+    | '/oauth/consenso'
     | '/progetti/$slug'
+    | '/api/auth/$'
   id:
     | '__root__'
     | '/'
+    | '/accedi'
+    | '/admin'
     | '/blog'
     | '/carriera'
     | '/contatti'
     | '/cookie'
     | '/informazioni'
     | '/privacy'
+    | '/profilo'
     | '/progetti'
+    | '/verifica-2fa'
     | '/blog/$slug'
+    | '/oauth/consenso'
     | '/progetti/$slug'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccediRoute: typeof AccediRoute
+  AdminRoute: typeof AdminRoute
   BlogRoute: typeof BlogRouteWithChildren
   CarrieraRoute: typeof CarrieraRoute
   ContattiRoute: typeof ContattiRoute
   CookieRoute: typeof CookieRoute
   InformazioniRoute: typeof InformazioniRoute
   PrivacyRoute: typeof PrivacyRoute
+  ProfiloRoute: typeof ProfiloRoute
   ProgettiRoute: typeof ProgettiRouteWithChildren
+  Verifica2faRoute: typeof Verifica2faRoute
+  OauthConsensoRoute: typeof OauthConsensoRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verifica-2fa': {
+      id: '/verifica-2fa'
+      path: '/verifica-2fa'
+      fullPath: '/verifica-2fa'
+      preLoaderRoute: typeof Verifica2faRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/progetti': {
       id: '/progetti'
       path: '/progetti'
       fullPath: '/progetti'
       preLoaderRoute: typeof ProgettiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profilo': {
+      id: '/profilo'
+      path: '/profilo'
+      fullPath: '/profilo'
+      preLoaderRoute: typeof ProfiloRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -209,6 +301,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accedi': {
+      id: '/accedi'
+      path: '/accedi'
+      fullPath: '/accedi'
+      preLoaderRoute: typeof AccediRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -223,12 +329,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgettiSlugRouteImport
       parentRoute: typeof ProgettiRoute
     }
+    '/oauth/consenso': {
+      id: '/oauth/consenso'
+      path: '/oauth/consenso'
+      fullPath: '/oauth/consenso'
+      preLoaderRoute: typeof OauthConsensoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -257,13 +377,19 @@ const ProgettiRouteWithChildren = ProgettiRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccediRoute: AccediRoute,
+  AdminRoute: AdminRoute,
   BlogRoute: BlogRouteWithChildren,
   CarrieraRoute: CarrieraRoute,
   ContattiRoute: ContattiRoute,
   CookieRoute: CookieRoute,
   InformazioniRoute: InformazioniRoute,
   PrivacyRoute: PrivacyRoute,
+  ProfiloRoute: ProfiloRoute,
   ProgettiRoute: ProgettiRouteWithChildren,
+  Verifica2faRoute: Verifica2faRoute,
+  OauthConsensoRoute: OauthConsensoRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

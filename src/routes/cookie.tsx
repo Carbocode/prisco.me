@@ -2,6 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { openCookiePreferences } from "@/components/cookie-consent";
 import { ActionLink, PageShell, Section } from "@/components/page-shell";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const Route = createFileRoute("/cookie")({
   head: () => ({
@@ -47,21 +58,17 @@ function CookiePage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-sky-300/20 bg-sky-300/[0.06] p-6 text-sm leading-7">
-            <p className="font-semibold text-white">Stato attuale del consenso</p>
-            <p className="mt-3">
+          <Alert>
+            <AlertTitle>Stato attuale del consenso</AlertTitle>
+            <AlertDescription>
               Il banner distingue gli strumenti necessari da quelli analitici. Il codice PostHog non
               viene inizializzato prima di una scelta positiva dell&apos;utente. Il rifiuto non
               limita la consultazione delle pagine o l&apos;invio del modulo di contatto.
-            </p>
-            <button
-              className="mt-5 inline-flex h-10 items-center justify-center rounded-lg bg-white px-4 text-sm font-semibold text-slate-950 transition hover:bg-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-              type="button"
-              onClick={openCookiePreferences}
-            >
+            </AlertDescription>
+            <Button type="button" onClick={openCookiePreferences}>
               Modifica le preferenze
-            </button>
-          </div>
+            </Button>
+          </Alert>
 
           <LegalSection title="1. Cosa sono cookie e strumenti di tracciamento">
             <p>
@@ -108,62 +115,76 @@ function CookiePage() {
 
           <LegalSection title="3. Categorie di strumenti">
             <div className="grid gap-4 sm:grid-cols-2">
-              <CookieCard
-                title="Strumenti tecnici"
-                body="Sono necessari a fornire la pagina richiesta, mantenere la sicurezza, gestire la sessione o ricordare una scelta tecnica. Quando sono strettamente necessari, vengono utilizzati senza consenso preventivo."
-                tone="sky"
-              />
-              <CookieCard
-                title="Strumenti analitici"
-                body="Servono a comprendere, in forma aggregata o pseudonimizzata, come vengono utilizzate le pagine e quali contenuti migliorare. Sono attivati soltanto dopo il consenso."
-                tone="violet"
-              />
-              <CookieCard
-                title="Preferenza del banner"
-                body="La scelta accettata o rifiutata viene salvata nel localStorage del browser con una chiave tecnica del sito, così da non ripresentare il banner a ogni pagina."
-                tone="emerald"
-              />
-              <CookieCard
-                title="Servizi di terzi"
-                body="Un collegamento esterno, come LinkedIn o GitHub, può applicare le proprie tecnologie quando l'utente abbandona il sito. Il relativo trattamento è disciplinato dal gestore esterno."
-                tone="slate"
-              />
+              {[
+                [
+                  "Strumenti tecnici",
+                  "Sono necessari a fornire la pagina richiesta, mantenere la sicurezza, gestire la sessione o ricordare una scelta tecnica. Quando sono strettamente necessari, vengono utilizzati senza consenso preventivo.",
+                ],
+                [
+                  "Strumenti analitici",
+                  "Servono a comprendere, in forma aggregata o pseudonimizzata, come vengono utilizzate le pagine e quali contenuti migliorare. Sono attivati soltanto dopo il consenso.",
+                ],
+                [
+                  "Preferenza del banner",
+                  "La scelta accettata o rifiutata viene salvata nel localStorage del browser con una chiave tecnica del sito, così da non ripresentare il banner a ogni pagina.",
+                ],
+                [
+                  "Servizi di terzi",
+                  "Un collegamento esterno, come LinkedIn o GitHub, può applicare le proprie tecnologie quando l'utente abbandona il sito. Il relativo trattamento è disciplinato dal gestore esterno.",
+                ],
+              ].map(([title, body]) => (
+                <Card key={title}>
+                  <CardHeader>
+                    <CardTitle>{title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{body}</CardDescription>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </LegalSection>
 
           <LegalSection title="4. Strumenti presenti nel progetto">
-            <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03]">
-              <table className="w-full min-w-[680px] text-left text-sm">
-                <thead className="border-b border-white/10 text-xs uppercase tracking-[0.18em] text-slate-500">
-                  <tr>
-                    <th className="px-5 py-4 font-semibold">Strumento</th>
-                    <th className="px-5 py-4 font-semibold">Finalità</th>
-                    <th className="px-5 py-4 font-semibold">Attivazione</th>
-                    <th className="px-5 py-4 font-semibold">Durata</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10 text-slate-300">
-                  <CookieRow
-                    name="Funzioni tecniche del sito"
-                    purpose="Navigazione, sicurezza, rendering e gestione delle richieste."
-                    activation="Necessaria"
-                    duration="Sessione o secondo configurazione tecnica."
-                  />
-                  <CookieRow
-                    name="prisco-cookie-consent"
-                    purpose="Memorizzazione della scelta effettuata nel banner."
-                    activation="Quando viene effettuata una scelta."
-                    duration="Fino a modifica o cancellazione locale."
-                  />
-                  <CookieRow
-                    name="PostHog"
-                    purpose="Analisi aggregate dell'utilizzo e miglioramento del sito."
-                    activation="Solo dopo consenso esplicito."
-                    duration="Secondo la configurazione del servizio."
-                  />
-                </tbody>
-              </table>
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Strumento</TableHead>
+                  <TableHead>Finalità</TableHead>
+                  <TableHead>Attivazione</TableHead>
+                  <TableHead>Durata</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[
+                  [
+                    "Funzioni tecniche del sito",
+                    "Navigazione, sicurezza, rendering e gestione delle richieste.",
+                    "Necessaria",
+                    "Sessione o secondo configurazione tecnica.",
+                  ],
+                  [
+                    "prisco-cookie-consent",
+                    "Memorizzazione della scelta effettuata nel banner.",
+                    "Quando viene effettuata una scelta.",
+                    "Fino a modifica o cancellazione locale.",
+                  ],
+                  [
+                    "PostHog",
+                    "Analisi aggregate dell'utilizzo e miglioramento del sito.",
+                    "Solo dopo consenso esplicito.",
+                    "Secondo la configurazione del servizio.",
+                  ],
+                ].map(([name, purpose, activation, duration]) => (
+                  <TableRow key={name}>
+                    <TableCell>{name}</TableCell>
+                    <TableCell>{purpose}</TableCell>
+                    <TableCell>{activation}</TableCell>
+                    <TableCell>{duration}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
             <p className="text-sm">
               I nomi e la durata di eventuali identificatori generati dai fornitori possono cambiare
               in base all&apos;ambiente di produzione, alla versione del loro SDK e alle
@@ -295,13 +316,9 @@ function CookiePage() {
           </LegalSection>
 
           <div className="flex flex-wrap gap-3 border-t border-white/10 pt-8">
-            <button
-              className="inline-flex h-10 items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-              type="button"
-              onClick={openCookiePreferences}
-            >
+            <Button type="button" variant="outline" onClick={openCookiePreferences}>
               Modifica preferenze
-            </button>
+            </Button>
             <ActionLink href="/privacy" variant="secondary">
               Leggi la privacy
             </ActionLink>
@@ -319,50 +336,5 @@ function LegalSection({ title, children }: { title: string; children: React.Reac
       <h2 className="display-font text-2xl font-semibold text-white">{title}</h2>
       <div className="space-y-4 text-[0.98rem] leading-8">{children}</div>
     </section>
-  );
-}
-
-function CookieCard({
-  title,
-  body,
-  tone,
-}: {
-  title: string;
-  body: string;
-  tone: "sky" | "violet" | "emerald" | "slate";
-}) {
-  const toneClasses = {
-    sky: "border-sky-300/20 bg-sky-300/[0.06]",
-    violet: "border-violet-300/20 bg-violet-300/[0.06]",
-    emerald: "border-emerald-300/20 bg-emerald-300/[0.06]",
-    slate: "border-white/10 bg-white/[0.035]",
-  } as const;
-
-  return (
-    <article className={["rounded-2xl border p-5", toneClasses[tone]].join(" ")}>
-      <h3 className="display-font text-lg font-semibold text-white">{title}</h3>
-      <p className="mt-3 text-sm leading-7 text-slate-300">{body}</p>
-    </article>
-  );
-}
-
-function CookieRow({
-  name,
-  purpose,
-  activation,
-  duration,
-}: {
-  name: string;
-  purpose: string;
-  activation: string;
-  duration: string;
-}) {
-  return (
-    <tr>
-      <td className="px-5 py-4 font-semibold text-white">{name}</td>
-      <td className="px-5 py-4 leading-6">{purpose}</td>
-      <td className="px-5 py-4 leading-6">{activation}</td>
-      <td className="px-5 py-4 leading-6">{duration}</td>
-    </tr>
   );
 }

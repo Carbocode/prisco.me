@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 
 import { PageShell, Section } from "@/components/page-shell";
 import { ProjectCard } from "@/components/project-card";
-import { SkillGlyph } from "@/components/tech-icon";
+import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -12,98 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getCompanies, projectCategories, type Skill } from "@/lib/projects";
+import { getCompanies, projectCategories } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 const ALL = "all";
-
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-}) {
-  return (
-    <label className="flex flex-col gap-2 text-sm">
-      <span className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-        {label}
-      </span>
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="min-w-40 rounded-full border border-white/15 bg-slate-950/60 px-4 py-2 text-sm text-slate-200 transition hover:border-white/30 focus:border-sky-300 focus:outline-none"
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value} className="bg-slate-950 text-slate-200">
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-function TechnologySelect({
-  value,
-  onChange,
-  skills,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  skills: Skill[];
-}) {
-  return (
-    <div className="flex flex-col gap-2 text-sm">
-      <span
-        id="technology-filter-label"
-        className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400"
-      >
-        Tecnologia
-      </span>
-      <Select value={value} onValueChange={(nextValue) => onChange(nextValue ?? ALL)}>
-        <SelectTrigger
-          aria-labelledby="technology-filter-label"
-          className="h-auto min-w-40 rounded-full border-white/15 bg-slate-950/60 px-4 py-2 text-slate-200 shadow-none transition hover:border-white/30 focus-visible:border-sky-300 focus-visible:ring-0"
-        >
-          <SelectValue>
-            {(selectedValue: string | null) => {
-              const skill = skills.find((item) => item.name === selectedValue);
-              return (
-                <span className="flex min-w-0 items-center gap-2">
-                  {skill ? <SkillGlyph skill={skill} size={16} /> : null}
-                  <span>{skill?.name ?? "Tutte"}</span>
-                </span>
-              );
-            }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent
-          align="start"
-          className="max-h-80 border border-white/15 bg-slate-950 text-slate-200"
-        >
-          <SelectItem value={ALL} className="focus:bg-sky-300/10 focus:text-white">
-            Tutte
-          </SelectItem>
-          {skills.map((skill) => (
-            <SelectItem
-              key={skill.id}
-              value={skill.name}
-              className="focus:bg-sky-300/10 focus:text-white"
-            >
-              <SkillGlyph skill={skill} size={16} />
-              <span>{skill.name}</span>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
 
 export const Route = createFileRoute("/progetti")({
   head: () => ({
@@ -184,29 +97,58 @@ function ProjectsPage() {
       hero={false}
     >
       <Section>
-        <fieldset className="flex flex-wrap items-end gap-4 border-0 p-0">
+        <fieldset className="grid items-end gap-4 md:grid-cols-4">
           <legend className="sr-only">Filtra progetti</legend>
-          <FilterSelect
-            label="Azienda"
-            value={company}
-            onChange={setCompany}
-            options={companyOptions}
-          />
-          <TechnologySelect value={technology} onChange={setTechnology} skills={technologySkills} />
-          <FilterSelect
-            label="Tipologia"
-            value={category}
-            onChange={setCategory}
-            options={categoryOptions}
-          />
+          <Field>
+            <FieldLabel>Azienda</FieldLabel>
+            <Select value={company} onValueChange={(value) => setCompany(value ?? ALL)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {companyOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field>
+            <FieldLabel>Tecnologia</FieldLabel>
+            <Select value={technology} onValueChange={(value) => setTechnology(value ?? ALL)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>Tutte</SelectItem>
+                {technologySkills.map((skill) => (
+                  <SelectItem key={skill.id} value={skill.name}>
+                    {skill.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field>
+            <FieldLabel>Tipologia</FieldLabel>
+            <Select value={category} onValueChange={(value) => setCategory(value ?? ALL)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {categoryOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
           {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="rounded-full border border-white/15 px-4 py-2 text-sm text-slate-400 transition hover:border-white/30 hover:text-white"
-            >
+            <Button type="button" variant="outline" onClick={resetFilters}>
               Azzera filtri
-            </button>
+            </Button>
           )}
         </fieldset>
         {filteredProjects.length > 0 ? (

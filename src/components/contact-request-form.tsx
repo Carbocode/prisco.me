@@ -1,11 +1,17 @@
 import { useForm } from "@tanstack/react-form";
-import { Send } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   contactRequestSchema,
@@ -13,7 +19,8 @@ import {
   type ContactRequestValues,
 } from "@/server/contact-requests";
 
-import { Card, CardContent, CardFooter } from "./ui/card";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 
 const toFieldErrors = (errors: Array<{ message?: string } | string | undefined>) =>
   errors.map((error) => (typeof error === "string" ? { message: error } : error));
@@ -57,20 +64,13 @@ export default function ContactRequestForm() {
   });
 
   return (
-    <Card className="overflow-hidden border-white/10 bg-white/[0.04] py-0">
-      <div className="relative flex h-28 items-end justify-between overflow-hidden border-b border-white/10 bg-gradient-to-br from-sky-400/15 via-violet-400/10 to-slate-950 px-6 py-5">
-        <div className="site-grid absolute inset-0 opacity-40" />
-        <div className="relative">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-sky-200">
-            Open channel
-          </p>
-          <p className="mt-1 text-sm text-white">
-            Il prossimo prodotto inizia da una conversazione.
-          </p>
-        </div>
-        <Send className="relative text-sky-200/80" size={28} strokeWidth={1.4} aria-hidden="true" />
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Invia una richiesta</CardTitle>
+        <CardDescription>Il prossimo prodotto inizia da una conversazione.</CardDescription>
+      </CardHeader>
       <form
+        id="contact-request-form"
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
@@ -187,25 +187,23 @@ export default function ContactRequestForm() {
                   return (
                     <Field>
                       <FieldLabel htmlFor={field.name}>Motivo del contatto*</FieldLabel>
-                      <select
-                        id={field.name}
-                        name={field.name}
+                      <Select
                         value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(event) => {
-                          const value = event.target.value;
-                          if (isContactInterest(value)) field.handleChange(value);
-                        }}
-                        aria-invalid={invalid}
-                        className="h-10 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                        required
+                        onValueChange={(value) =>
+                          value && isContactInterest(value) && field.handleChange(value)
+                        }
                       >
-                        <option value="product">Sviluppo di un prodotto</option>
-                        <option value="technical">Collaborazione tecnica</option>
-                        <option value="consulting">Consulenza</option>
-                        <option value="opportunity">Opportunita professionale</option>
-                        <option value="other">Altro</option>
-                      </select>
+                        <SelectTrigger id={field.name} aria-invalid={invalid}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="product">Sviluppo di un prodotto</SelectItem>
+                          <SelectItem value="technical">Collaborazione tecnica</SelectItem>
+                          <SelectItem value="consulting">Consulenza</SelectItem>
+                          <SelectItem value="opportunity">Opportunità professionale</SelectItem>
+                          <SelectItem value="other">Altro</SelectItem>
+                        </SelectContent>
+                      </Select>
                       {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
                     </Field>
                   );
@@ -263,27 +261,27 @@ export default function ContactRequestForm() {
             </FieldGroup>
           </FieldSet>
         </CardContent>
-        <CardFooter className="gap-2">
-          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-            {([canSubmit, isSubmitting]) => (
-              <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                {isSubmitting ? "Invio in corso..." : "Invia richiesta"}
-              </Button>
-            )}
-          </form.Subscribe>
-
-          {submitted && (
-            <p aria-live="polite" className="text-sm text-emerald-600">
-              Messaggio inviato. Ti risponderò presto.
-            </p>
-          )}
-          {submitError && (
-            <p role="alert" className="text-sm text-destructive">
-              {submitError}
-            </p>
-          )}
-        </CardFooter>
       </form>
+      <CardFooter>
+        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
+            <Button type="submit" form="contact-request-form" disabled={!canSubmit || isSubmitting}>
+              {isSubmitting ? "Invio in corso..." : "Invia richiesta"}
+            </Button>
+          )}
+        </form.Subscribe>
+
+        {submitted && (
+          <Alert>
+            <AlertDescription>Messaggio inviato. Ti risponderò presto.</AlertDescription>
+          </Alert>
+        )}
+        {submitError && (
+          <Alert variant="destructive">
+            <AlertDescription>{submitError}</AlertDescription>
+          </Alert>
+        )}
+      </CardFooter>
     </Card>
   );
 }

@@ -5,6 +5,16 @@ import { useState } from "react";
 
 import { ArticleCard } from "@/components/article-card";
 import { PageShell, Section } from "@/components/page-shell";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { getArticlesQueryOptions } from "@/server/articles";
 
 export const Route = createFileRoute("/blog")({
@@ -46,51 +56,41 @@ function BlogPage() {
     >
       <Section>
         {!query.isLoading && !query.isError && articles.length > 0 && (
-          <div className="mb-8 flex flex-wrap gap-2" aria-label="Filtra articoli per categoria">
+          <ToggleGroup
+            value={[category]}
+            onValueChange={(value) => value[0] && setCategory(value[0])}
+            aria-label="Filtra articoli per categoria"
+          >
             {categories.map((item) => (
-              <button
-                key={item}
-                type="button"
-                aria-pressed={category === item}
-                onClick={() => setCategory(item)}
-                className={`rounded-full border px-4 py-2 text-sm transition ${category === item ? "border-sky-300 bg-sky-300/15 text-sky-200" : "border-white/15 text-slate-400 hover:border-white/30 hover:text-white"}`}
-              >
+              <ToggleGroupItem key={item} value={item}>
                 {item}
-              </button>
+              </ToggleGroupItem>
             ))}
-          </div>
+          </ToggleGroup>
         )}
         {query.isLoading && <p className="text-slate-400">Caricamento degli articoli...</p>}
         {query.isError && (
-          <div className="rounded-2xl border border-red-300/20 bg-red-300/10 p-6 text-red-100">
-            <p>Non riesco a recuperare gli articoli in questo momento.</p>
-            <button
-              type="button"
-              className="mt-4 text-sm font-semibold underline"
-              onClick={() => void query.refetch()}
-            >
+          <Alert variant="destructive">
+            <AlertDescription>
+              Non riesco a recuperare gli articoli in questo momento.
+            </AlertDescription>
+            <Button variant="outline" onClick={() => void query.refetch()}>
               Riprova
-            </button>
-          </div>
+            </Button>
+          </Alert>
         )}
         {!query.isLoading && !query.isError && articles.length === 0 && (
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-violet-400/10 via-sky-400/[0.05] to-transparent p-8 text-slate-300">
-            <div className="site-grid absolute inset-0 opacity-35" />
-            <FileText
-              className="relative text-sky-200/80"
-              size={34}
-              strokeWidth={1.4}
-              aria-hidden="true"
-            />
-            <div className="relative mt-6">
-              <h2 className="display-font text-2xl font-semibold">
-                Sto preparando i primi articoli.
-              </h2>
-              <p className="mt-3 max-w-xl leading-7 text-slate-400">
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <FileText />
+              </EmptyMedia>
+              <EmptyTitle>Sto preparando i primi articoli.</EmptyTitle>
+              <EmptyDescription>
                 Torna presto per leggere note su sviluppo, architettura e prodotti digitali.
-              </p>
-            </div>
-          </div>
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         )}
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredArticles.map((article) => (

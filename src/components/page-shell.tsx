@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { PropsWithChildren, ReactNode } from "react";
 
 import Header from "@/components/header";
+import { Button } from "@/components/ui/button";
 
 type PageShellProps = PropsWithChildren<{
   eyebrow?: string;
@@ -84,15 +85,15 @@ export function SiteFooter() {
             Navigazione
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Navigazione footer">
-            <Link className="transition hover:text-white" to="/progetti">
+            <Button variant="link" render={<Link to="/progetti" />}>
               Progetti
-            </Link>
-            <Link className="transition hover:text-white" to="/blog">
+            </Button>
+            <Button variant="link" render={<Link to="/blog" />}>
               Blog
-            </Link>
-            <Link className="transition hover:text-white" to="/contatti">
+            </Button>
+            <Button variant="link" render={<Link to="/contatti" />}>
               Contatti
-            </Link>
+            </Button>
           </nav>
         </div>
         <div>
@@ -100,23 +101,28 @@ export function SiteFooter() {
             Informazioni
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Informazioni legali">
-            <Link className="transition hover:text-white" to="/informazioni">
+            <Button variant="link" render={<Link to="/informazioni" />}>
               Informazioni sul sito
-            </Link>
-            <Link className="transition hover:text-white" to="/privacy">
+            </Button>
+            <Button variant="link" render={<Link to="/privacy" />}>
               Privacy
-            </Link>
-            <Link className="transition hover:text-white" to="/cookie">
+            </Button>
+            <Button variant="link" render={<Link to="/cookie" />}>
               Cookie
-            </Link>
-            <a
-              className="transition hover:text-white"
-              href="https://www.linkedin.com/in/vincenzoprisco/"
-              target="_blank"
-              rel="noreferrer"
+            </Button>
+            <Button
+              variant="link"
+              render={
+                <a
+                  href="https://www.linkedin.com/in/vincenzoprisco/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                />
+              }
             >
-              LinkedIn <span aria-hidden="true">↗</span>
-            </a>
+              LinkedIn
+            </Button>
           </nav>
         </div>
       </div>

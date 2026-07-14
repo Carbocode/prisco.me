@@ -39,6 +39,8 @@ import {
 } from "simple-icons";
 import type { SimpleIcon } from "simple-icons";
 
+import { Badge } from "@/components/ui/badge";
+
 type TechDefinition = {
   tint: string;
   mark: string;
@@ -402,6 +404,10 @@ function resolveVisual(input: string | SkillVisual): ResolvedVisual {
   };
 }
 
+export function getSkillColor(input: string | SkillVisual) {
+  return resolveVisual(input).tint;
+}
+
 function BrandIcon({ visual, size }: { visual: ResolvedVisual; size: number }) {
   // 1. Logo dal database (slug) — loghi dedicati, poi Simple Icons.
   const slugLogo = visual.iconSlug ? logoBySlug[visual.iconSlug] : undefined;
@@ -495,15 +501,17 @@ export function TechMark({ name, skill }: { name?: string; skill?: SkillVisual }
 export function SkillChip({
   name,
   skill,
-  compact = false,
 }: {
   name?: string;
   skill?: SkillVisual;
   compact?: boolean;
 }) {
+  const visual = resolveVisual(skill ?? name ?? "");
+
   return (
-    <span className={`inline-flex shrink-0 border border-white/10 bg-slate-950/60 backdrop-blur-sm transition hover:border-sky-300/35 hover:bg-sky-300/10 ${compact ? "rounded-lg px-2 py-1" : "rounded-xl px-3 py-2"}`}>
-      <TechIcon name={name} skill={skill} compact />
-    </span>
+    <Badge color={visual.tint} className="gap-1.5 px-2 py-0.5 text-[11px]">
+      <BrandIcon visual={visual} size={12} />
+      <span>{visual.label}</span>
+    </Badge>
   );
 }

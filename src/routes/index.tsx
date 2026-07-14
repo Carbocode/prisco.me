@@ -95,173 +95,173 @@ function HomePage() {
         <div className="earth-strata pointer-events-none absolute inset-0" aria-hidden="true" />
         <SubsoilDecor />
         <div className="relative">
-      <Section>
-        <div className="grid gap-5 md:grid-cols-3">
-          <SkillCard
-            title="Sviluppo web"
-            technology="Web Development"
-            items={["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"]}
-          />
-          <SkillCard
-            title="Architettura software"
-            technology="Software Architecture"
-            items={["Progettazione", "Modularita", "Manutenibilita", "Decisioni proporzionate"]}
-          />
-          <SkillCard
-            title="Dal concept al prodotto"
-            technology="Product Design"
-            items={[
-              "Analisi dell'idea",
-              "Sviluppo iterativo",
-              "Pubblicazione",
-              "Miglioramento continuo",
-            ]}
-          />
-        </div>
-        <SkillsMarquee skills={portfolio.skills} />
-      </Section>
+          <Section>
+            <div className="grid gap-5 md:grid-cols-3">
+              <SkillCard
+                title="Sviluppo web"
+                technology="Web Development"
+                items={["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"]}
+              />
+              <SkillCard
+                title="Architettura software"
+                technology="Software Architecture"
+                items={["Progettazione", "Modularita", "Manutenibilita", "Decisioni proporzionate"]}
+              />
+              <SkillCard
+                title="Dal concept al prodotto"
+                technology="Product Design"
+                items={[
+                  "Analisi dell'idea",
+                  "Sviluppo iterativo",
+                  "Pubblicazione",
+                  "Miglioramento continuo",
+                ]}
+              />
+            </div>
+            <SkillsMarquee skills={portfolio.skills} />
+          </Section>
 
-      <Section className="pt-0">
-        <SectionIntro
-          eyebrow="In evidenza"
-          title="Un'idea trasformata in un prodotto reale"
-          description="MyVet e il progetto che ha segnato il mio percorso: un ecosistema digitale costruito per proprietari e professionisti della pet care."
-        />
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-              MyVet User e MyVet Business
-            </p>
-            <h3 className="display-font mt-4 text-3xl font-semibold">
-              Due applicazioni, un unico ecosistema.
-            </h3>
-            <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-              Una piattaforma ibrida realizzata con Ionic, Capacitor e Angular per cercare
-              professionisti, prenotare appuntamenti, gestire clienti e custodire la storia clinica
-              degli animali.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {myvetSkills.map((skill) => (
-                <SkillChip key={skill.id} skill={skill} />
+          <Section className="pt-0">
+            <SectionIntro
+              eyebrow="In evidenza"
+              title="Un'idea trasformata in un prodotto reale"
+              description="MyVet e il progetto che ha segnato il mio percorso: un ecosistema digitale costruito per proprietari e professionisti della pet care."
+            />
+            <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+              <div className="rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
+                  MyVet User e MyVet Business
+                </p>
+                <h3 className="display-font mt-4 text-3xl font-semibold">
+                  Due applicazioni, un unico ecosistema.
+                </h3>
+                <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+                  Una piattaforma ibrida realizzata con Ionic, Capacitor e Angular per cercare
+                  professionisti, prenotare appuntamenti, gestire clienti e custodire la storia
+                  clinica degli animali.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {myvetSkills.map((skill) => (
+                    <SkillChip key={skill.id} skill={skill} />
+                  ))}
+                </div>
+                <ActionLink href="/progetti/myvet" variant="secondary">
+                  Scopri il progetto
+                </ActionLink>
+              </div>
+              <div className="flex flex-col justify-center rounded-2xl border border-white/10 bg-white/3 p-8">
+                <p className="text-sm leading-7 text-slate-300">
+                  Ho contribuito all'evoluzione del progetto dall'ideazione alla pubblicazione,
+                  lavorando su sviluppo, architettura, problem solving e qualita del prodotto.
+                </p>
+                <Link
+                  to="/carriera"
+                  className="mt-6 text-sm font-semibold text-sky-300 hover:text-sky-200"
+                >
+                  Scopri il mio percorso <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
+          </Section>
+
+          <Section className="pt-0">
+            <SectionIntro
+              eyebrow="Portfolio"
+              title="Altri progetti che mi hanno fatto crescere"
+              description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
+            />
+            <div className="mt-8 grid gap-5 md:grid-cols-2">
+              {otherProjects.map((project) => (
+                <ProjectCard key={project.slug} project={project} compact />
               ))}
             </div>
-            <ActionLink href="/progetti/myvet" variant="secondary">
-              Scopri il progetto
-            </ActionLink>
-          </div>
-          <div className="flex flex-col justify-center rounded-2xl border border-white/10 bg-white/3 p-8">
-            <p className="text-sm leading-7 text-slate-300">
-              Ho contribuito all'evoluzione del progetto dall'ideazione alla pubblicazione,
-              lavorando su sviluppo, architettura, problem solving e qualita del prodotto.
-            </p>
-            <Link
-              to="/carriera"
-              className="mt-6 text-sm font-semibold text-sky-300 hover:text-sky-200"
-            >
-              Scopri il mio percorso <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </Section>
+          </Section>
 
-      <Section className="pt-0">
-        <SectionIntro
-          eyebrow="Portfolio"
-          title="Altri progetti che mi hanno fatto crescere"
-          description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
-        />
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
-          {otherProjects.map((project) => (
-            <ProjectCard key={project.slug} project={project} compact />
-          ))}
-        </div>
-      </Section>
+          <Section className="pt-0">
+            <div className="grid gap-8 rounded-2xl border border-white/10 bg-white/3 p-8 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
+                  Chi sono
+                </p>
+                <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
+                  Programmare per me significa continuare a imparare.
+                </h2>
+              </div>
+              <div>
+                <p className="leading-8 text-slate-300">
+                  Ho iniziato a programmare a 15 anni. Da allora ho cercato di unire curiosita
+                  tecnica, pensiero critico e attenzione alla qualita del prodotto.
+                </p>
+                <ActionLink href="/carriera" variant="secondary">
+                  Conosciamoci meglio
+                </ActionLink>
+              </div>
+            </div>
+          </Section>
 
-      <Section className="pt-0">
-        <div className="grid gap-8 rounded-2xl border border-white/10 bg-white/3 p-8 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-              Chi sono
-            </p>
-            <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
-              Programmare per me significa continuare a imparare.
-            </h2>
-          </div>
-          <div>
-            <p className="leading-8 text-slate-300">
-              Ho iniziato a programmare a 15 anni. Da allora ho cercato di unire curiosita tecnica,
-              pensiero critico e attenzione alla qualita del prodotto.
-            </p>
-            <ActionLink href="/carriera" variant="secondary">
-              Conosciamoci meglio
-            </ActionLink>
-          </div>
-        </div>
-      </Section>
+          <Section className="pt-0">
+            <SectionIntro
+              eyebrow="Dal blog"
+              title="Appunti dal percorso"
+              description="Scrivo di architettura, sviluppo e delle lezioni che arrivano dal costruire prodotti reali."
+            />
+            <div className="mt-8 grid gap-5 md:grid-cols-3">
+              {articlesQuery.isLoading && (
+                <p className="text-slate-400">Gli articoli stanno arrivando.</p>
+              )}
+              {articlesQuery.isError && (
+                <p className="text-slate-400">Gli articoli saranno disponibili presto.</p>
+              )}
+              {!articlesQuery.isLoading && !articlesQuery.isError && articles.length === 0 && (
+                <p className="text-slate-400">Sto preparando i primi articoli.</p>
+              )}
+              {articles.map((article) => (
+                <Link
+                  key={article.documentId ?? article.slug}
+                  to="/blog/$slug"
+                  params={{ slug: article.slug ?? "" }}
+                  className="rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/40 hover:bg-white/6"
+                >
+                  <p className="text-xs uppercase tracking-[0.25em] text-sky-300">
+                    {article.category ?? "Articolo"}
+                  </p>
+                  <h3 className="display-font mt-4 text-xl font-semibold">
+                    {article.title ?? article.slug}
+                  </h3>
+                  <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-400">
+                    {article.excerpt ?? article.description}
+                  </p>
+                  <span className="mt-5 inline-block text-sm font-semibold text-white">
+                    Leggi l'articolo →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </Section>
 
-      <Section className="pt-0">
-        <SectionIntro
-          eyebrow="Dal blog"
-          title="Appunti dal percorso"
-          description="Scrivo di architettura, sviluppo e delle lezioni che arrivano dal costruire prodotti reali."
-        />
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {articlesQuery.isLoading && (
-            <p className="text-slate-400">Gli articoli stanno arrivando.</p>
-          )}
-          {articlesQuery.isError && (
-            <p className="text-slate-400">Gli articoli saranno disponibili presto.</p>
-          )}
-          {!articlesQuery.isLoading && !articlesQuery.isError && articles.length === 0 && (
-            <p className="text-slate-400">Sto preparando i primi articoli.</p>
-          )}
-          {articles.map((article) => (
-            <Link
-              key={article.documentId ?? article.slug}
-              to="/blog/$slug"
-              params={{ slug: article.slug ?? "" }}
-              className="rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/40 hover:bg-white/6"
-            >
-              <p className="text-xs uppercase tracking-[0.25em] text-sky-300">
-                {article.category ?? "Articolo"}
-              </p>
-              <h3 className="display-font mt-4 text-xl font-semibold">
-                {article.title ?? article.slug}
-              </h3>
-              <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-400">
-                {article.excerpt ?? article.description}
-              </p>
-              <span className="mt-5 inline-block text-sm font-semibold text-white">
-                Leggi l'articolo →
+          <section className="relative isolate overflow-hidden px-6 pb-28 pt-24 text-center">
+            {/* the molten core: a glow rising from the very bottom of the earth */}
+            <div
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_128%,#ffd27a_0%,#ff8a2b_16%,#f0531a_32%,#b8300d_50%,#5c1305_68%,transparent_82%)]"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(255,190,110,0.55),transparent_75%)] blur-2xl"
+              aria-hidden="true"
+            />
+            <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
+              <span className="rounded-full border border-orange-200/40 bg-orange-950/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-orange-100 backdrop-blur-sm">
+                Il nucleo
               </span>
-            </Link>
-          ))}
-        </div>
-      </Section>
-
-      <section className="relative isolate overflow-hidden px-6 pb-28 pt-24 text-center">
-        {/* the molten core: a glow rising from the very bottom of the earth */}
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_128%,#ffd27a_0%,#ff8a2b_16%,#f0531a_32%,#b8300d_50%,#5c1305_68%,transparent_82%)]"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(255,190,110,0.55),transparent_75%)] blur-2xl"
-          aria-hidden="true"
-        />
-        <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
-          <span className="rounded-full border border-orange-200/40 bg-orange-950/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-orange-100 backdrop-blur-sm">
-            Il nucleo
-          </span>
-          <h2 className="display-font text-3xl font-semibold text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-4xl">
-            Hai un'idea da trasformare in prodotto?
-          </h2>
-          <p className="leading-7 text-orange-50/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
-            Raccontami cosa stai costruendo e vediamo insieme da dove partire.
-          </p>
-          <ActionLink href="/contatti">Scrivimi</ActionLink>
-        </div>
-      </section>
+              <h2 className="display-font text-3xl font-semibold text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-4xl">
+                Hai un'idea da trasformare in prodotto?
+              </h2>
+              <p className="leading-7 text-orange-50/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+                Raccontami cosa stai costruendo e vediamo insieme da dove partire.
+              </p>
+              <ActionLink href="/contatti">Scrivimi</ActionLink>
+            </div>
+          </section>
         </div>
       </div>
       <SiteFooter />
