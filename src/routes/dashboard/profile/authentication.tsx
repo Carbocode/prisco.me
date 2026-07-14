@@ -30,7 +30,7 @@ import { authClient } from "@/lib/auth-client";
 
 type TwoFactorSetup = { uri: string; qr: string; backupCodes: string[] };
 
-export const Route = createFileRoute("/profile/authentication")({
+export const Route = createFileRoute("/dashboard/profile/authentication")({
   head: () => ({ meta: [{ title: "Autenticazione | Prisco.me" }] }),
   component: AuthenticationPage,
 });

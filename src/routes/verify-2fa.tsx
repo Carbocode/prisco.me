@@ -34,7 +34,7 @@ function TwoFactorChallenge() {
         })
       : await authClient.twoFactor.verifyTotp({ code, trustDevice: Boolean(values.get("trust")) });
     if (result.error) setError(result.error.message ?? "Codice non valido.");
-    else void navigate({ to: "/profile" });
+    else void navigate({ to: "/dashboard/profile" });
   }
   return (
     <AuthPage

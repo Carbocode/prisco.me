@@ -1,6 +1,8 @@
 import { sql, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+export * from "./cms-schema";
+
 const authId = () =>
   text("id")
     .primaryKey()

@@ -10,28 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Verify2faRouteImport } from './routes/verify-2fa'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as CookieRouteImport } from './routes/cookie'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CareerRouteImport } from './routes/career'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ProjectsRouteRouteImport } from './routes/projects/route'
-import { Route as ProfileRouteRouteImport } from './routes/profile/route'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
+import { Route as ServiziIndexRouteImport } from './routes/servizi/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as ServiziSlugRouteImport } from './routes/servizi/$slug'
 import { Route as ProjectsSlugRouteImport } from './routes/projects/$slug'
-import { Route as ProfileDangerRouteImport } from './routes/profile/danger'
-import { Route as ProfileAuthorizationsRouteImport } from './routes/profile/authorizations'
-import { Route as ProfileAuthenticationRouteImport } from './routes/profile/authentication'
 import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
+import { Route as DashboardProfileRouteRouteImport } from './routes/dashboard/profile/route'
+import { Route as DashboardCmsRouteRouteImport } from './routes/dashboard/cms/route'
+import { Route as DashboardAdminRouteRouteImport } from './routes/dashboard/admin/route'
+import { Route as DashboardProfileIndexRouteImport } from './routes/dashboard/profile/index'
+import { Route as DashboardCmsIndexRouteImport } from './routes/dashboard/cms/index'
+import { Route as DashboardProfileDangerRouteImport } from './routes/dashboard/profile/danger'
+import { Route as DashboardProfileAuthorizationsRouteImport } from './routes/dashboard/profile/authorizations'
+import { Route as DashboardProfileAuthenticationRouteImport } from './routes/dashboard/profile/authentication'
+import { Route as DashboardCmsServicesRouteImport } from './routes/dashboard/cms/services'
+import { Route as DashboardCmsMediaRouteImport } from './routes/dashboard/cms/media'
+import { Route as DashboardCmsCategoriesRouteImport } from './routes/dashboard/cms/categories'
+import { Route as DashboardCmsArticlesRouteImport } from './routes/dashboard/cms/articles'
+import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard/admin/users'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as DashboardCmsArticlesNewRouteImport } from './routes/dashboard/cms/articles_.new'
+import { Route as DashboardCmsArticlesArticleIdRouteImport } from './routes/dashboard/cms/articles_.$articleId'
+import { Route as DashboardAdminUsersNewRouteImport } from './routes/dashboard/admin/users_.new'
+import { Route as ApiContentV1CategoriesRouteImport } from './routes/api/content/v1/categories'
+import { Route as ApiCmsMediaUploadRouteImport } from './routes/api/cms/media/upload'
+import { Route as ApiContentV1ServicesIndexRouteImport } from './routes/api/content/v1/services/index'
+import { Route as ApiContentV1ArticlesIndexRouteImport } from './routes/api/content/v1/articles/index'
+import { Route as DashboardCmsArticlesArticleIdPreviewRouteImport } from './routes/dashboard/cms/articles_.$articleId_.preview'
+import { Route as ApiContentV1ServicesSlugRouteImport } from './routes/api/content/v1/services/$slug'
+import { Route as ApiContentV1ArticlesSlugRouteImport } from './routes/api/content/v1/articles/$slug'
 
 const Verify2faRoute = Verify2faRouteImport.update({
   id: '/verify-2fa',
   path: '/verify-2fa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -64,11 +99,6 @@ const CareerRoute = CareerRouteImport.update({
   path: '/career',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -79,9 +109,9 @@ const ProjectsRouteRoute = ProjectsRouteRouteImport.update({
   path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileRouteRoute = ProfileRouteRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -89,185 +119,470 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileIndexRoute = ProfileIndexRouteImport.update({
+const ServiziIndexRoute = ServiziIndexRouteImport.update({
+  id: '/servizi/',
+  path: '/servizi/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ProfileRouteRoute,
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiziSlugRoute = ServiziSlugRouteImport.update({
+  id: '/servizi/$slug',
+  path: '/servizi/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => ProjectsRouteRoute,
 } as any)
-const ProfileDangerRoute = ProfileDangerRouteImport.update({
-  id: '/danger',
-  path: '/danger',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const ProfileAuthorizationsRoute = ProfileAuthorizationsRouteImport.update({
-  id: '/authorizations',
-  path: '/authorizations',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
-const ProfileAuthenticationRoute = ProfileAuthenticationRouteImport.update({
-  id: '/authentication',
-  path: '/authentication',
-  getParentRoute: () => ProfileRouteRoute,
-} as any)
 const OauthConsentRoute = OauthConsentRouteImport.update({
   id: '/oauth/consent',
   path: '/oauth/consent',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardProfileRouteRoute = DashboardProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardCmsRouteRoute = DashboardCmsRouteRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardAdminRouteRoute = DashboardAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardProfileIndexRoute = DashboardProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardProfileRouteRoute,
+} as any)
+const DashboardCmsIndexRoute = DashboardCmsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardProfileDangerRoute = DashboardProfileDangerRouteImport.update({
+  id: '/danger',
+  path: '/danger',
+  getParentRoute: () => DashboardProfileRouteRoute,
+} as any)
+const DashboardProfileAuthorizationsRoute =
+  DashboardProfileAuthorizationsRouteImport.update({
+    id: '/authorizations',
+    path: '/authorizations',
+    getParentRoute: () => DashboardProfileRouteRoute,
+  } as any)
+const DashboardProfileAuthenticationRoute =
+  DashboardProfileAuthenticationRouteImport.update({
+    id: '/authentication',
+    path: '/authentication',
+    getParentRoute: () => DashboardProfileRouteRoute,
+  } as any)
+const DashboardCmsServicesRoute = DashboardCmsServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardCmsMediaRoute = DashboardCmsMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardCmsCategoriesRoute = DashboardCmsCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardCmsArticlesRoute = DashboardCmsArticlesRouteImport.update({
+  id: '/articles',
+  path: '/articles',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => DashboardAdminRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardCmsArticlesNewRoute = DashboardCmsArticlesNewRouteImport.update({
+  id: '/articles_/new',
+  path: '/articles/new',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardCmsArticlesArticleIdRoute =
+  DashboardCmsArticlesArticleIdRouteImport.update({
+    id: '/articles_/$articleId',
+    path: '/articles/$articleId',
+    getParentRoute: () => DashboardCmsRouteRoute,
+  } as any)
+const DashboardAdminUsersNewRoute = DashboardAdminUsersNewRouteImport.update({
+  id: '/users_/new',
+  path: '/users/new',
+  getParentRoute: () => DashboardAdminRouteRoute,
+} as any)
+const ApiContentV1CategoriesRoute = ApiContentV1CategoriesRouteImport.update({
+  id: '/api/content/v1/categories',
+  path: '/api/content/v1/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCmsMediaUploadRoute = ApiCmsMediaUploadRouteImport.update({
+  id: '/api/cms/media/upload',
+  path: '/api/cms/media/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiContentV1ServicesIndexRoute =
+  ApiContentV1ServicesIndexRouteImport.update({
+    id: '/api/content/v1/services/',
+    path: '/api/content/v1/services/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiContentV1ArticlesIndexRoute =
+  ApiContentV1ArticlesIndexRouteImport.update({
+    id: '/api/content/v1/articles/',
+    path: '/api/content/v1/articles/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardCmsArticlesArticleIdPreviewRoute =
+  DashboardCmsArticlesArticleIdPreviewRouteImport.update({
+    id: '/articles_/$articleId_/preview',
+    path: '/articles/$articleId/preview',
+    getParentRoute: () => DashboardCmsRouteRoute,
+  } as any)
+const ApiContentV1ServicesSlugRoute =
+  ApiContentV1ServicesSlugRouteImport.update({
+    id: '/api/content/v1/services/$slug',
+    path: '/api/content/v1/services/$slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiContentV1ArticlesSlugRoute =
+  ApiContentV1ArticlesSlugRouteImport.update({
+    id: '/api/content/v1/articles/$slug',
+    path: '/api/content/v1/articles/$slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/profile': typeof ProfileRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/projects': typeof ProjectsRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/career': typeof CareerRoute
   '/contact': typeof ContactRoute
   '/cookie': typeof CookieRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-2fa': typeof Verify2faRoute
+  '/dashboard/admin': typeof DashboardAdminRouteRouteWithChildren
+  '/dashboard/cms': typeof DashboardCmsRouteRouteWithChildren
+  '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/oauth/consent': typeof OauthConsentRoute
-  '/profile/authentication': typeof ProfileAuthenticationRoute
-  '/profile/authorizations': typeof ProfileAuthorizationsRoute
-  '/profile/danger': typeof ProfileDangerRoute
   '/projects/$slug': typeof ProjectsSlugRoute
-  '/profile/': typeof ProfileIndexRoute
+  '/servizi/$slug': typeof ServiziSlugRoute
+  '/blog/': typeof BlogIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/servizi/': typeof ServiziIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
+  '/dashboard/cms/articles': typeof DashboardCmsArticlesRoute
+  '/dashboard/cms/categories': typeof DashboardCmsCategoriesRoute
+  '/dashboard/cms/media': typeof DashboardCmsMediaRoute
+  '/dashboard/cms/services': typeof DashboardCmsServicesRoute
+  '/dashboard/profile/authentication': typeof DashboardProfileAuthenticationRoute
+  '/dashboard/profile/authorizations': typeof DashboardProfileAuthorizationsRoute
+  '/dashboard/profile/danger': typeof DashboardProfileDangerRoute
+  '/dashboard/cms/': typeof DashboardCmsIndexRoute
+  '/dashboard/profile/': typeof DashboardProfileIndexRoute
+  '/api/cms/media/upload': typeof ApiCmsMediaUploadRoute
+  '/api/content/v1/categories': typeof ApiContentV1CategoriesRoute
+  '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
+  '/dashboard/cms/articles/$articleId': typeof DashboardCmsArticlesArticleIdRoute
+  '/dashboard/cms/articles/new': typeof DashboardCmsArticlesNewRoute
+  '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
+  '/api/content/v1/services/$slug': typeof ApiContentV1ServicesSlugRoute
+  '/dashboard/cms/articles/$articleId/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
+  '/api/content/v1/articles/': typeof ApiContentV1ArticlesIndexRoute
+  '/api/content/v1/services/': typeof ApiContentV1ServicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/career': typeof CareerRoute
   '/contact': typeof ContactRoute
   '/cookie': typeof CookieRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-2fa': typeof Verify2faRoute
+  '/dashboard/admin': typeof DashboardAdminRouteRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/oauth/consent': typeof OauthConsentRoute
-  '/profile/authentication': typeof ProfileAuthenticationRoute
-  '/profile/authorizations': typeof ProfileAuthorizationsRoute
-  '/profile/danger': typeof ProfileDangerRoute
   '/projects/$slug': typeof ProjectsSlugRoute
-  '/profile': typeof ProfileIndexRoute
+  '/servizi/$slug': typeof ServiziSlugRoute
+  '/blog': typeof BlogIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/servizi': typeof ServiziIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
+  '/dashboard/cms/articles': typeof DashboardCmsArticlesRoute
+  '/dashboard/cms/categories': typeof DashboardCmsCategoriesRoute
+  '/dashboard/cms/media': typeof DashboardCmsMediaRoute
+  '/dashboard/cms/services': typeof DashboardCmsServicesRoute
+  '/dashboard/profile/authentication': typeof DashboardProfileAuthenticationRoute
+  '/dashboard/profile/authorizations': typeof DashboardProfileAuthorizationsRoute
+  '/dashboard/profile/danger': typeof DashboardProfileDangerRoute
+  '/dashboard/cms': typeof DashboardCmsIndexRoute
+  '/dashboard/profile': typeof DashboardProfileIndexRoute
+  '/api/cms/media/upload': typeof ApiCmsMediaUploadRoute
+  '/api/content/v1/categories': typeof ApiContentV1CategoriesRoute
+  '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
+  '/dashboard/cms/articles/$articleId': typeof DashboardCmsArticlesArticleIdRoute
+  '/dashboard/cms/articles/new': typeof DashboardCmsArticlesNewRoute
+  '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
+  '/api/content/v1/services/$slug': typeof ApiContentV1ServicesSlugRoute
+  '/dashboard/cms/articles/$articleId/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
+  '/api/content/v1/articles': typeof ApiContentV1ArticlesIndexRoute
+  '/api/content/v1/services': typeof ApiContentV1ServicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/profile': typeof ProfileRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/projects': typeof ProjectsRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/career': typeof CareerRoute
   '/contact': typeof ContactRoute
   '/cookie': typeof CookieRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/verify-2fa': typeof Verify2faRoute
+  '/dashboard/admin': typeof DashboardAdminRouteRouteWithChildren
+  '/dashboard/cms': typeof DashboardCmsRouteRouteWithChildren
+  '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/oauth/consent': typeof OauthConsentRoute
-  '/profile/authentication': typeof ProfileAuthenticationRoute
-  '/profile/authorizations': typeof ProfileAuthorizationsRoute
-  '/profile/danger': typeof ProfileDangerRoute
   '/projects/$slug': typeof ProjectsSlugRoute
-  '/profile/': typeof ProfileIndexRoute
+  '/servizi/$slug': typeof ServiziSlugRoute
+  '/blog/': typeof BlogIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/servizi/': typeof ServiziIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
+  '/dashboard/cms/articles': typeof DashboardCmsArticlesRoute
+  '/dashboard/cms/categories': typeof DashboardCmsCategoriesRoute
+  '/dashboard/cms/media': typeof DashboardCmsMediaRoute
+  '/dashboard/cms/services': typeof DashboardCmsServicesRoute
+  '/dashboard/profile/authentication': typeof DashboardProfileAuthenticationRoute
+  '/dashboard/profile/authorizations': typeof DashboardProfileAuthorizationsRoute
+  '/dashboard/profile/danger': typeof DashboardProfileDangerRoute
+  '/dashboard/cms/': typeof DashboardCmsIndexRoute
+  '/dashboard/profile/': typeof DashboardProfileIndexRoute
+  '/api/cms/media/upload': typeof ApiCmsMediaUploadRoute
+  '/api/content/v1/categories': typeof ApiContentV1CategoriesRoute
+  '/dashboard/admin/users_/new': typeof DashboardAdminUsersNewRoute
+  '/dashboard/cms/articles_/$articleId': typeof DashboardCmsArticlesArticleIdRoute
+  '/dashboard/cms/articles_/new': typeof DashboardCmsArticlesNewRoute
+  '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
+  '/api/content/v1/services/$slug': typeof ApiContentV1ServicesSlugRoute
+  '/dashboard/cms/articles_/$articleId_/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
+  '/api/content/v1/articles/': typeof ApiContentV1ArticlesIndexRoute
+  '/api/content/v1/services/': typeof ApiContentV1ServicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/profile'
+    | '/dashboard'
     | '/projects'
     | '/about'
-    | '/admin'
     | '/career'
     | '/contact'
     | '/cookie'
     | '/llms.txt'
     | '/login'
     | '/privacy'
+    | '/rss.xml'
+    | '/sitemap.xml'
     | '/verify-2fa'
+    | '/dashboard/admin'
+    | '/dashboard/cms'
+    | '/dashboard/profile'
+    | '/blog/$slug'
     | '/oauth/consent'
-    | '/profile/authentication'
-    | '/profile/authorizations'
-    | '/profile/danger'
     | '/projects/$slug'
-    | '/profile/'
+    | '/servizi/$slug'
+    | '/blog/'
+    | '/dashboard/'
+    | '/servizi/'
     | '/api/auth/$'
+    | '/dashboard/admin/users'
+    | '/dashboard/cms/articles'
+    | '/dashboard/cms/categories'
+    | '/dashboard/cms/media'
+    | '/dashboard/cms/services'
+    | '/dashboard/profile/authentication'
+    | '/dashboard/profile/authorizations'
+    | '/dashboard/profile/danger'
+    | '/dashboard/cms/'
+    | '/dashboard/profile/'
+    | '/api/cms/media/upload'
+    | '/api/content/v1/categories'
+    | '/dashboard/admin/users/new'
+    | '/dashboard/cms/articles/$articleId'
+    | '/dashboard/cms/articles/new'
+    | '/api/content/v1/articles/$slug'
+    | '/api/content/v1/services/$slug'
+    | '/dashboard/cms/articles/$articleId/preview'
+    | '/api/content/v1/articles/'
+    | '/api/content/v1/services/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/projects'
     | '/about'
-    | '/admin'
     | '/career'
     | '/contact'
     | '/cookie'
     | '/llms.txt'
     | '/login'
     | '/privacy'
+    | '/rss.xml'
+    | '/sitemap.xml'
     | '/verify-2fa'
+    | '/dashboard/admin'
+    | '/blog/$slug'
     | '/oauth/consent'
-    | '/profile/authentication'
-    | '/profile/authorizations'
-    | '/profile/danger'
     | '/projects/$slug'
-    | '/profile'
+    | '/servizi/$slug'
+    | '/blog'
+    | '/dashboard'
+    | '/servizi'
     | '/api/auth/$'
+    | '/dashboard/admin/users'
+    | '/dashboard/cms/articles'
+    | '/dashboard/cms/categories'
+    | '/dashboard/cms/media'
+    | '/dashboard/cms/services'
+    | '/dashboard/profile/authentication'
+    | '/dashboard/profile/authorizations'
+    | '/dashboard/profile/danger'
+    | '/dashboard/cms'
+    | '/dashboard/profile'
+    | '/api/cms/media/upload'
+    | '/api/content/v1/categories'
+    | '/dashboard/admin/users/new'
+    | '/dashboard/cms/articles/$articleId'
+    | '/dashboard/cms/articles/new'
+    | '/api/content/v1/articles/$slug'
+    | '/api/content/v1/services/$slug'
+    | '/dashboard/cms/articles/$articleId/preview'
+    | '/api/content/v1/articles'
+    | '/api/content/v1/services'
   id:
     | '__root__'
     | '/'
-    | '/profile'
+    | '/dashboard'
     | '/projects'
     | '/about'
-    | '/admin'
     | '/career'
     | '/contact'
     | '/cookie'
     | '/llms.txt'
     | '/login'
     | '/privacy'
+    | '/rss.xml'
+    | '/sitemap.xml'
     | '/verify-2fa'
+    | '/dashboard/admin'
+    | '/dashboard/cms'
+    | '/dashboard/profile'
+    | '/blog/$slug'
     | '/oauth/consent'
-    | '/profile/authentication'
-    | '/profile/authorizations'
-    | '/profile/danger'
     | '/projects/$slug'
-    | '/profile/'
+    | '/servizi/$slug'
+    | '/blog/'
+    | '/dashboard/'
+    | '/servizi/'
     | '/api/auth/$'
+    | '/dashboard/admin/users'
+    | '/dashboard/cms/articles'
+    | '/dashboard/cms/categories'
+    | '/dashboard/cms/media'
+    | '/dashboard/cms/services'
+    | '/dashboard/profile/authentication'
+    | '/dashboard/profile/authorizations'
+    | '/dashboard/profile/danger'
+    | '/dashboard/cms/'
+    | '/dashboard/profile/'
+    | '/api/cms/media/upload'
+    | '/api/content/v1/categories'
+    | '/dashboard/admin/users_/new'
+    | '/dashboard/cms/articles_/$articleId'
+    | '/dashboard/cms/articles_/new'
+    | '/api/content/v1/articles/$slug'
+    | '/api/content/v1/services/$slug'
+    | '/dashboard/cms/articles_/$articleId_/preview'
+    | '/api/content/v1/articles/'
+    | '/api/content/v1/services/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   ProjectsRouteRoute: typeof ProjectsRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
   CareerRoute: typeof CareerRoute
   ContactRoute: typeof ContactRoute
   CookieRoute: typeof CookieRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Verify2faRoute: typeof Verify2faRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   OauthConsentRoute: typeof OauthConsentRoute
+  ServiziSlugRoute: typeof ServiziSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  ServiziIndexRoute: typeof ServiziIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCmsMediaUploadRoute: typeof ApiCmsMediaUploadRoute
+  ApiContentV1CategoriesRoute: typeof ApiContentV1CategoriesRoute
+  ApiContentV1ArticlesSlugRoute: typeof ApiContentV1ArticlesSlugRoute
+  ApiContentV1ServicesSlugRoute: typeof ApiContentV1ServicesSlugRoute
+  ApiContentV1ArticlesIndexRoute: typeof ApiContentV1ArticlesIndexRoute
+  ApiContentV1ServicesIndexRoute: typeof ApiContentV1ServicesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -277,6 +592,20 @@ declare module '@tanstack/react-router' {
       path: '/verify-2fa'
       fullPath: '/verify-2fa'
       preLoaderRoute: typeof Verify2faRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -321,13 +650,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CareerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -342,11 +664,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -356,12 +678,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile/': {
-      id: '/profile/'
+    '/servizi/': {
+      id: '/servizi/'
+      path: '/servizi'
+      fullPath: '/servizi/'
+      preLoaderRoute: typeof ServiziIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
       path: '/'
-      fullPath: '/profile/'
-      preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof ProfileRouteRoute
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servizi/$slug': {
+      id: '/servizi/$slug'
+      path: '/servizi/$slug'
+      fullPath: '/servizi/$slug'
+      preLoaderRoute: typeof ServiziSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/projects/$slug': {
       id: '/projects/$slug'
@@ -370,33 +713,110 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsSlugRouteImport
       parentRoute: typeof ProjectsRouteRoute
     }
-    '/profile/danger': {
-      id: '/profile/danger'
-      path: '/danger'
-      fullPath: '/profile/danger'
-      preLoaderRoute: typeof ProfileDangerRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/profile/authorizations': {
-      id: '/profile/authorizations'
-      path: '/authorizations'
-      fullPath: '/profile/authorizations'
-      preLoaderRoute: typeof ProfileAuthorizationsRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
-    '/profile/authentication': {
-      id: '/profile/authentication'
-      path: '/authentication'
-      fullPath: '/profile/authentication'
-      preLoaderRoute: typeof ProfileAuthenticationRouteImport
-      parentRoute: typeof ProfileRouteRoute
-    }
     '/oauth/consent': {
       id: '/oauth/consent'
       path: '/oauth/consent'
       fullPath: '/oauth/consent'
       preLoaderRoute: typeof OauthConsentRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/profile': {
+      id: '/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof DashboardProfileRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/cms': {
+      id: '/dashboard/cms'
+      path: '/cms'
+      fullPath: '/dashboard/cms'
+      preLoaderRoute: typeof DashboardCmsRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/profile/': {
+      id: '/dashboard/profile/'
+      path: '/'
+      fullPath: '/dashboard/profile/'
+      preLoaderRoute: typeof DashboardProfileIndexRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/cms/': {
+      id: '/dashboard/cms/'
+      path: '/'
+      fullPath: '/dashboard/cms/'
+      preLoaderRoute: typeof DashboardCmsIndexRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/profile/danger': {
+      id: '/dashboard/profile/danger'
+      path: '/danger'
+      fullPath: '/dashboard/profile/danger'
+      preLoaderRoute: typeof DashboardProfileDangerRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/authorizations': {
+      id: '/dashboard/profile/authorizations'
+      path: '/authorizations'
+      fullPath: '/dashboard/profile/authorizations'
+      preLoaderRoute: typeof DashboardProfileAuthorizationsRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/authentication': {
+      id: '/dashboard/profile/authentication'
+      path: '/authentication'
+      fullPath: '/dashboard/profile/authentication'
+      preLoaderRoute: typeof DashboardProfileAuthenticationRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/cms/services': {
+      id: '/dashboard/cms/services'
+      path: '/services'
+      fullPath: '/dashboard/cms/services'
+      preLoaderRoute: typeof DashboardCmsServicesRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/media': {
+      id: '/dashboard/cms/media'
+      path: '/media'
+      fullPath: '/dashboard/cms/media'
+      preLoaderRoute: typeof DashboardCmsMediaRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/categories': {
+      id: '/dashboard/cms/categories'
+      path: '/categories'
+      fullPath: '/dashboard/cms/categories'
+      preLoaderRoute: typeof DashboardCmsCategoriesRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/articles': {
+      id: '/dashboard/cms/articles'
+      path: '/articles'
+      fullPath: '/dashboard/cms/articles'
+      preLoaderRoute: typeof DashboardCmsArticlesRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/admin/users': {
+      id: '/dashboard/admin/users'
+      path: '/users'
+      fullPath: '/dashboard/admin/users'
+      preLoaderRoute: typeof DashboardAdminUsersRouteImport
+      parentRoute: typeof DashboardAdminRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -405,25 +825,153 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/cms/articles_/new': {
+      id: '/dashboard/cms/articles_/new'
+      path: '/articles/new'
+      fullPath: '/dashboard/cms/articles/new'
+      preLoaderRoute: typeof DashboardCmsArticlesNewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/articles_/$articleId': {
+      id: '/dashboard/cms/articles_/$articleId'
+      path: '/articles/$articleId'
+      fullPath: '/dashboard/cms/articles/$articleId'
+      preLoaderRoute: typeof DashboardCmsArticlesArticleIdRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/admin/users_/new': {
+      id: '/dashboard/admin/users_/new'
+      path: '/users/new'
+      fullPath: '/dashboard/admin/users/new'
+      preLoaderRoute: typeof DashboardAdminUsersNewRouteImport
+      parentRoute: typeof DashboardAdminRouteRoute
+    }
+    '/api/content/v1/categories': {
+      id: '/api/content/v1/categories'
+      path: '/api/content/v1/categories'
+      fullPath: '/api/content/v1/categories'
+      preLoaderRoute: typeof ApiContentV1CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cms/media/upload': {
+      id: '/api/cms/media/upload'
+      path: '/api/cms/media/upload'
+      fullPath: '/api/cms/media/upload'
+      preLoaderRoute: typeof ApiCmsMediaUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/content/v1/services/': {
+      id: '/api/content/v1/services/'
+      path: '/api/content/v1/services'
+      fullPath: '/api/content/v1/services/'
+      preLoaderRoute: typeof ApiContentV1ServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/content/v1/articles/': {
+      id: '/api/content/v1/articles/'
+      path: '/api/content/v1/articles'
+      fullPath: '/api/content/v1/articles/'
+      preLoaderRoute: typeof ApiContentV1ArticlesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/cms/articles_/$articleId_/preview': {
+      id: '/dashboard/cms/articles_/$articleId_/preview'
+      path: '/articles/$articleId/preview'
+      fullPath: '/dashboard/cms/articles/$articleId/preview'
+      preLoaderRoute: typeof DashboardCmsArticlesArticleIdPreviewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/api/content/v1/services/$slug': {
+      id: '/api/content/v1/services/$slug'
+      path: '/api/content/v1/services/$slug'
+      fullPath: '/api/content/v1/services/$slug'
+      preLoaderRoute: typeof ApiContentV1ServicesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/content/v1/articles/$slug': {
+      id: '/api/content/v1/articles/$slug'
+      path: '/api/content/v1/articles/$slug'
+      fullPath: '/api/content/v1/articles/$slug'
+      preLoaderRoute: typeof ApiContentV1ArticlesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
-interface ProfileRouteRouteChildren {
-  ProfileAuthenticationRoute: typeof ProfileAuthenticationRoute
-  ProfileAuthorizationsRoute: typeof ProfileAuthorizationsRoute
-  ProfileDangerRoute: typeof ProfileDangerRoute
-  ProfileIndexRoute: typeof ProfileIndexRoute
+interface DashboardAdminRouteRouteChildren {
+  DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
+  DashboardAdminUsersNewRoute: typeof DashboardAdminUsersNewRoute
 }
 
-const ProfileRouteRouteChildren: ProfileRouteRouteChildren = {
-  ProfileAuthenticationRoute: ProfileAuthenticationRoute,
-  ProfileAuthorizationsRoute: ProfileAuthorizationsRoute,
-  ProfileDangerRoute: ProfileDangerRoute,
-  ProfileIndexRoute: ProfileIndexRoute,
+const DashboardAdminRouteRouteChildren: DashboardAdminRouteRouteChildren = {
+  DashboardAdminUsersRoute: DashboardAdminUsersRoute,
+  DashboardAdminUsersNewRoute: DashboardAdminUsersNewRoute,
 }
 
-const ProfileRouteRouteWithChildren = ProfileRouteRoute._addFileChildren(
-  ProfileRouteRouteChildren,
+const DashboardAdminRouteRouteWithChildren =
+  DashboardAdminRouteRoute._addFileChildren(DashboardAdminRouteRouteChildren)
+
+interface DashboardCmsRouteRouteChildren {
+  DashboardCmsArticlesRoute: typeof DashboardCmsArticlesRoute
+  DashboardCmsCategoriesRoute: typeof DashboardCmsCategoriesRoute
+  DashboardCmsMediaRoute: typeof DashboardCmsMediaRoute
+  DashboardCmsServicesRoute: typeof DashboardCmsServicesRoute
+  DashboardCmsIndexRoute: typeof DashboardCmsIndexRoute
+  DashboardCmsArticlesArticleIdRoute: typeof DashboardCmsArticlesArticleIdRoute
+  DashboardCmsArticlesNewRoute: typeof DashboardCmsArticlesNewRoute
+  DashboardCmsArticlesArticleIdPreviewRoute: typeof DashboardCmsArticlesArticleIdPreviewRoute
+}
+
+const DashboardCmsRouteRouteChildren: DashboardCmsRouteRouteChildren = {
+  DashboardCmsArticlesRoute: DashboardCmsArticlesRoute,
+  DashboardCmsCategoriesRoute: DashboardCmsCategoriesRoute,
+  DashboardCmsMediaRoute: DashboardCmsMediaRoute,
+  DashboardCmsServicesRoute: DashboardCmsServicesRoute,
+  DashboardCmsIndexRoute: DashboardCmsIndexRoute,
+  DashboardCmsArticlesArticleIdRoute: DashboardCmsArticlesArticleIdRoute,
+  DashboardCmsArticlesNewRoute: DashboardCmsArticlesNewRoute,
+  DashboardCmsArticlesArticleIdPreviewRoute:
+    DashboardCmsArticlesArticleIdPreviewRoute,
+}
+
+const DashboardCmsRouteRouteWithChildren =
+  DashboardCmsRouteRoute._addFileChildren(DashboardCmsRouteRouteChildren)
+
+interface DashboardProfileRouteRouteChildren {
+  DashboardProfileAuthenticationRoute: typeof DashboardProfileAuthenticationRoute
+  DashboardProfileAuthorizationsRoute: typeof DashboardProfileAuthorizationsRoute
+  DashboardProfileDangerRoute: typeof DashboardProfileDangerRoute
+  DashboardProfileIndexRoute: typeof DashboardProfileIndexRoute
+}
+
+const DashboardProfileRouteRouteChildren: DashboardProfileRouteRouteChildren = {
+  DashboardProfileAuthenticationRoute: DashboardProfileAuthenticationRoute,
+  DashboardProfileAuthorizationsRoute: DashboardProfileAuthorizationsRoute,
+  DashboardProfileDangerRoute: DashboardProfileDangerRoute,
+  DashboardProfileIndexRoute: DashboardProfileIndexRoute,
+}
+
+const DashboardProfileRouteRouteWithChildren =
+  DashboardProfileRouteRoute._addFileChildren(
+    DashboardProfileRouteRouteChildren,
+  )
+
+interface DashboardRouteRouteChildren {
+  DashboardAdminRouteRoute: typeof DashboardAdminRouteRouteWithChildren
+  DashboardCmsRouteRoute: typeof DashboardCmsRouteRouteWithChildren
+  DashboardProfileRouteRoute: typeof DashboardProfileRouteRouteWithChildren
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardAdminRouteRoute: DashboardAdminRouteRouteWithChildren,
+  DashboardCmsRouteRoute: DashboardCmsRouteRouteWithChildren,
+  DashboardProfileRouteRoute: DashboardProfileRouteRouteWithChildren,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
 )
 
 interface ProjectsRouteRouteChildren {
@@ -440,19 +988,30 @@ const ProjectsRouteRouteWithChildren = ProjectsRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ProfileRouteRoute: ProfileRouteRouteWithChildren,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
   ProjectsRouteRoute: ProjectsRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
   CareerRoute: CareerRoute,
   ContactRoute: ContactRoute,
   CookieRoute: CookieRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   Verify2faRoute: Verify2faRoute,
+  BlogSlugRoute: BlogSlugRoute,
   OauthConsentRoute: OauthConsentRoute,
+  ServiziSlugRoute: ServiziSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  ServiziIndexRoute: ServiziIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCmsMediaUploadRoute: ApiCmsMediaUploadRoute,
+  ApiContentV1CategoriesRoute: ApiContentV1CategoriesRoute,
+  ApiContentV1ArticlesSlugRoute: ApiContentV1ArticlesSlugRoute,
+  ApiContentV1ServicesSlugRoute: ApiContentV1ServicesSlugRoute,
+  ApiContentV1ArticlesIndexRoute: ApiContentV1ArticlesIndexRoute,
+  ApiContentV1ServicesIndexRoute: ApiContentV1ServicesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

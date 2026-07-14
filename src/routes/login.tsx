@@ -37,7 +37,7 @@ function AccessPage() {
   const [mode, setMode] = useState(search.mode);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
-  const callbackURL = search.callbackURL ?? "/profile";
+  const callbackURL = search.callbackURL ?? "/dashboard/profile";
 
   useEffect(() => {
     if (session.data) void navigate({ href: callbackURL });

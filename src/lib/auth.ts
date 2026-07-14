@@ -6,6 +6,7 @@ import { admin, jwt, twoFactor, username } from "better-auth/plugins";
 
 import { getDb } from "@/db";
 import * as schema from "@/db/schema";
+import { cmsAccessControl, cmsRoles } from "@/lib/cms-permissions";
 
 type AuthEnv = Env & { BETTER_AUTH_SECRET: string };
 
@@ -33,7 +34,7 @@ export function createAuth(env: AuthEnv) {
       useSecureCookies: process.env.NODE_ENV === "production",
     },
     plugins: [
-      admin({ defaultRole: "user" }),
+      admin({ defaultRole: "user", adminRoles: ["admin"], ac: cmsAccessControl, roles: cmsRoles }),
       username(),
       twoFactor({ issuer: "Prisco.me" }),
       passkey({ rpName: "Prisco.me" }),

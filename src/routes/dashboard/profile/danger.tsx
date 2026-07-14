@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
 
-export const Route = createFileRoute("/profile/danger")({
+export const Route = createFileRoute("/dashboard/profile/danger")({
   head: () => ({ meta: [{ title: "Elimina account | Prisco.me" }] }),
   component: DangerPage,
 });

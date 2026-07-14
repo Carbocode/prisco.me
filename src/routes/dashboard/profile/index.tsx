@@ -20,7 +20,7 @@ import { authClient } from "@/lib/auth-client";
 
 type AccountItem = { id: string; accountId: string; providerId: string };
 
-export const Route = createFileRoute("/profile/")({
+export const Route = createFileRoute("/dashboard/profile/")({
   head: () => ({ meta: [{ title: "Profilo | Prisco.me" }] }),
   component: ProfilePage,
 });
@@ -55,7 +55,7 @@ function ProfilePage() {
     const values = formValues(event);
     const result = await authClient.changeEmail({
       newEmail: formString(values, "email"),
-      callbackURL: "/profile",
+      callbackURL: "/dashboard/profile",
     });
     if (result.error) toast.error(result.error.message ?? "Aggiornamento non riuscito.");
     else toast.success("Indirizzo email aggiornato o verifica inviata.");

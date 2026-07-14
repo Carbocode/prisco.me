@@ -42,7 +42,7 @@ function Consent() {
     const result = await authClient.oauth2.consent({ accept, scope: search.scope });
     if (result.error) setError(result.error.message ?? "Impossibile completare il consenso.");
     else if (result.data?.url) window.location.assign(result.data.url);
-    else void navigate({ to: "/profile" });
+    else void navigate({ to: "/dashboard/profile" });
   }
   return (
     <Card>

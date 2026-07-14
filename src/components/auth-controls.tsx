@@ -10,7 +10,7 @@ export function AuthControls() {
   if (session.isPending) return <Skeleton className="h-8 w-44" />;
   if (session.data)
     return (
-      <Button render={<Link to="/profile" />}>
+      <Button render={<Link to="/dashboard/profile" />}>
         <UserRound size={16} /> Profilo
       </Button>
     );

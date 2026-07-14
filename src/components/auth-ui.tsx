@@ -38,16 +38,28 @@ export function formString(data: FormData, name: string) {
   return typeof value === "string" ? value : "";
 }
 
-export function RequireAuth({ admin = false, children }: PropsWithChildren<{ admin?: boolean }>) {
+export function RequireAuth({
+  admin = false,
+  cms = false,
+  children,
+}: PropsWithChildren<{ admin?: boolean; cms?: boolean }>) {
   const session = authClient.useSession();
   const navigate = useNavigate();
   const role = session.data?.user.role;
   useEffect(() => {
     if (!session.isPending && !session.data)
       void navigate({ to: "/login", search: { mode: "login" } });
-    else if (!session.isPending && admin && role !== "admin") void navigate({ to: "/profile" });
-  }, [admin, navigate, role, session.data, session.isPending]);
-  if (session.isPending || !session.data || (admin && role !== "admin"))
+    else if (!session.isPending && admin && role !== "admin")
+      void navigate({ to: "/dashboard/profile" });
+    else if (!session.isPending && cms && !["admin", "editor", "author"].includes(role ?? ""))
+      void navigate({ to: "/dashboard/profile" });
+  }, [admin, cms, navigate, role, session.data, session.isPending]);
+  if (
+    session.isPending ||
+    !session.data ||
+    (admin && role !== "admin") ||
+    (cms && !["admin", "editor", "author"].includes(role ?? ""))
+  )
     return <p className="text-slate-400">Verifica della sessione…</p>;
   return children;
 }
