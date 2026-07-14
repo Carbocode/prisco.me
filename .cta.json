@@ -22,7 +22,6 @@
     "shadcn",
     "form",
     "db",
-    "strapi",
     "drizzle"
   ]
 }

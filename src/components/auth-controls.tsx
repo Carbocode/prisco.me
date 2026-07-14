@@ -7,19 +7,19 @@ import { authClient } from "@/lib/auth-client";
 
 export function AuthControls() {
   const session = authClient.useSession();
-  if (session.isPending) return <Skeleton className="h-9 w-24" />;
+  if (session.isPending) return <Skeleton className="h-8 w-44" />;
   if (session.data)
     return (
-      <Button render={<Link to="/profilo" />}>
+      <Button render={<Link to="/profile" />}>
         <UserRound size={16} /> Profilo
       </Button>
     );
   return (
     <div className="flex items-center gap-2">
-      <Button variant="ghost" render={<Link to="/accedi" search={{ mode: "login" }} />}>
+      <Button variant="ghost" render={<Link to="/login" search={{ mode: "login" }} />}>
         Accedi
       </Button>
-      <Button render={<Link to="/accedi" search={{ mode: "register" }} />}>Registrati</Button>
+      <Button render={<Link to="/login" search={{ mode: "register" }} />}>Registrati</Button>
     </div>
   );
 }

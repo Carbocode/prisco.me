@@ -5,7 +5,7 @@ import { SkillChip } from "@/components/tech-icon";
 import { getProjectBySlug } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
-export const Route = createFileRoute("/progetti/$slug")({
+export const Route = createFileRoute("/projects/$slug")({
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData(getPortfolioQueryOptions());
     return { project: getProjectBySlug(data.projects, params.slug) ?? null };
@@ -25,7 +25,23 @@ export const Route = createFileRoute("/progetti/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
       ],
-      links: [{ rel: "canonical", href: `https://prisco.me/progetti/${params.slug}` }],
+      links: [{ rel: "canonical", href: `https://prisco.me/projects/${params.slug}` }],
+      scripts: project
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "CreativeWork",
+                name: project.title,
+                description: project.description,
+                url: `https://prisco.me/projects/${project.slug}`,
+                author: { "@type": "Person", name: "Vincenzo Prisco" },
+                keywords: project.skills.map((skill) => skill.name).join(", "),
+              }),
+            },
+          ]
+        : [],
     };
   },
   component: ProjectDetailPage,
@@ -38,7 +54,7 @@ function ProjectDetailPage() {
     return (
       <PageShell eyebrow="Progetto non trovato" title="Questo progetto non esiste.">
         <Section>
-          <Link to="/progetti" className="text-sky-300 hover:text-sky-200">
+          <Link to="/projects" className="text-sky-300 hover:text-sky-200">
             Torna al portfolio →
           </Link>
         </Section>
@@ -51,22 +67,8 @@ function ProjectDetailPage() {
       eyebrow={`${project.role}${project.period ? ` · ${project.period}` : ""}`}
       title={project.title}
       description={project.description}
-      actions={<ActionLink href="/contatti">Parliamo di un progetto</ActionLink>}
+      actions={<ActionLink href="/contact">Parliamo di un progetto</ActionLink>}
     >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CreativeWork",
-            name: project.title,
-            description: project.description,
-            url: `https://prisco.me/progetti/${project.slug}`,
-            author: { "@type": "Person", name: "Vincenzo Prisco" },
-            keywords: project.skills.map((skill) => skill.name).join(", "),
-          }),
-        }}
-      />
       <Section>
         <div className="grid gap-3 border-b border-white/10 pb-8 sm:grid-cols-2 lg:grid-cols-3">
           {project.skills.map((skill) => (
@@ -118,7 +120,7 @@ function ProjectDetailPage() {
           <p className="leading-7 text-slate-300">
             Raccontami il contesto: possiamo partire dal problema prima ancora che dalla tecnologia.
           </p>
-          <ActionLink href="/contatti">Scrivimi</ActionLink>
+          <ActionLink href="/contact">Scrivimi</ActionLink>
         </div>
       </section>
     </PageShell>

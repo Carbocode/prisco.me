@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ActionLink, PageShell, Section } from "@/components/page-shell";
 import { TechIcon } from "@/components/tech-icon";
 
-export const Route = createFileRoute("/informazioni")({
+export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "Informazioni sul sito | Prisco.me" },
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/informazioni")({
         content: "Scopri come è costruito Prisco.me e visita la repository del progetto.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://prisco.me/informazioni" }],
+    links: [{ rel: "canonical", href: "https://prisco.me/about" }],
   }),
   component: SiteInformationPage,
 });
@@ -33,7 +33,7 @@ const technologyGroups = [
     title: "Routing e dati",
     description:
       "Navigazione file-based, caricamento dati e gestione degli stati con l'ecosistema TanStack.",
-    technologies: ["TanStack", "React Query", "Strapi"],
+    technologies: ["TanStack", "React Query"],
   },
   {
     title: "Infrastruttura",
@@ -43,8 +43,7 @@ const technologyGroups = [
   },
   {
     title: "Contenuti e misurazione",
-    description:
-      "Icone brand e colorate, blog headless e strumenti per capire come migliorare l'esperienza.",
+    description: "Icone brand e colorate e strumenti per capire come migliorare l'esperienza.",
     technologies: ["Fluent Color", "Simple Icons", "PostHog"],
   },
 ] as const;
@@ -75,7 +74,7 @@ function SiteInformationPage() {
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 <Metric label="Frontend" value="React + TS" />
                 <Metric label="Runtime" value="Edge-ready" />
-                <Metric label="Contenuti" value="Headless CMS" />
+                <Metric label="Contenuti" value="Dati tipizzati" />
               </div>
             </div>
           </div>
@@ -156,7 +155,7 @@ function SiteInformationPage() {
           <DetailCard
             number="03"
             title="Evoluzione"
-            body="Il blog arriva da Strapi, i progetti sono contenuti tipizzati locali e il layout condiviso mantiene coerenti tutte le route."
+            body="I progetti sono contenuti tipizzati e il layout condiviso mantiene coerenti tutte le route."
           />
         </div>
       </Section>
@@ -170,7 +169,7 @@ function SiteInformationPage() {
             Scrivimi oppure esplora direttamente il codice del progetto.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <ActionLink href="/contatti">Parliamone</ActionLink>
+            <ActionLink href="/contact">Parliamone</ActionLink>
             <a
               className="inline-flex h-10 items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
               href="https://github.com/Carbocode/prisco-website"

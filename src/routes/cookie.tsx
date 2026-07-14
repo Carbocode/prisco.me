@@ -91,7 +91,7 @@ function CookiePage() {
               richieste è possibile utilizzare la pagina{" "}
               <Link
                 className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
-                to="/contatti"
+                to="/contact"
               >
                 Contatti
               </Link>{" "}
@@ -242,8 +242,8 @@ function CookiePage() {
             </p>
             <p>
               Il rifiuto o la revoca del consenso non comportano limitazioni alla consultazione del
-              portfolio, del blog, delle pagine progetto o al contatto tramite modulo, salvo
-              eventuali funzioni tecniche strettamente necessarie.
+              portfolio, delle pagine progetto o al contatto tramite modulo, salvo eventuali
+              funzioni tecniche strettamente necessarie.
             </p>
           </LegalSection>
 
@@ -283,7 +283,7 @@ function CookiePage() {
               richieste possono essere inviate tramite la pagina{" "}
               <Link
                 className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
-                to="/contatti"
+                to="/contact"
               >
                 Contatti
               </Link>
@@ -322,7 +322,7 @@ function CookiePage() {
             <ActionLink href="/privacy" variant="secondary">
               Leggi la privacy
             </ActionLink>
-            <ActionLink href="/contatti">Contattami</ActionLink>
+            <ActionLink href="/contact">Contattami</ActionLink>
           </div>
         </div>
       </Section>

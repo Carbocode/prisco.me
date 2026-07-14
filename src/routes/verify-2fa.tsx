@@ -10,7 +10,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
-export const Route = createFileRoute("/verifica-2fa")({
+export const Route = createFileRoute("/verify-2fa")({
   head: () => ({
     meta: [
       { title: "Verifica in due passaggi | Prisco.me" },
@@ -34,7 +34,7 @@ function TwoFactorChallenge() {
         })
       : await authClient.twoFactor.verifyTotp({ code, trustDevice: Boolean(values.get("trust")) });
     if (result.error) setError(result.error.message ?? "Codice non valido.");
-    else void navigate({ to: "/profilo" });
+    else void navigate({ to: "/profile" });
   }
   return (
     <AuthPage

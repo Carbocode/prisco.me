@@ -7,7 +7,7 @@ export const authClient = createAuthClient({
   plugins: [
     adminClient(),
     usernameClient(),
-    twoFactorClient({ twoFactorPage: "/verifica-2fa" }),
+    twoFactorClient({ twoFactorPage: "/verify-2fa" }),
     passkeyClient(),
     oauthProviderClient(),
   ],

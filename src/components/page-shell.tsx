@@ -85,13 +85,10 @@ export function SiteFooter() {
             Navigazione
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Navigazione footer">
-            <Button variant="link" render={<Link to="/progetti" />}>
+            <Button variant="link" render={<Link to="/projects" />}>
               Progetti
             </Button>
-            <Button variant="link" render={<Link to="/blog" />}>
-              Blog
-            </Button>
-            <Button variant="link" render={<Link to="/contatti" />}>
+            <Button variant="link" render={<Link to="/contact" />}>
               Contatti
             </Button>
           </nav>
@@ -101,7 +98,7 @@ export function SiteFooter() {
             Informazioni
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Informazioni legali">
-            <Button variant="link" render={<Link to="/informazioni" />}>
+            <Button variant="link" render={<Link to="/about" />}>
               Informazioni sul sito
             </Button>
             <Button variant="link" render={<Link to="/privacy" />}>

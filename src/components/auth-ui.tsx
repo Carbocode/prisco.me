@@ -12,8 +12,8 @@ export function AuthPage({
   return (
     <div className="min-h-dvh bg-slate-950 px-6 py-12 text-slate-100">
       <div className="mx-auto w-full max-w-5xl">
-        <Link to="/blog" className="text-sm text-sky-300 hover:text-sky-200">
-          ← Torna al blog
+        <Link to="/" className="text-sm text-sky-300 hover:text-sky-200">
+          ← Torna alla home
         </Link>
         <div className="mt-10">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
@@ -44,8 +44,8 @@ export function RequireAuth({ admin = false, children }: PropsWithChildren<{ adm
   const role = session.data?.user.role;
   useEffect(() => {
     if (!session.isPending && !session.data)
-      void navigate({ to: "/accedi", search: { mode: "login" } });
-    else if (!session.isPending && admin && role !== "admin") void navigate({ to: "/profilo" });
+      void navigate({ to: "/login", search: { mode: "login" } });
+    else if (!session.isPending && admin && role !== "admin") void navigate({ to: "/profile" });
   }, [admin, navigate, role, session.data, session.isPending]);
   if (session.isPending || !session.data || (admin && role !== "admin"))
     return <p className="text-slate-400">Verifica della sessione…</p>;

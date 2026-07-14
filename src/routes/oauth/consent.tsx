@@ -14,7 +14,7 @@ const consentSearch = z.object({
   client_id: z.string().catch("Applicazione OAuth"),
   scope: z.string().catch("openid profile email"),
 });
-export const Route = createFileRoute("/oauth/consenso")({
+export const Route = createFileRoute("/oauth/consent")({
   validateSearch: consentSearch,
   head: () => ({
     meta: [{ title: "Autorizza applicazione | Prisco.me" }, { name: "robots", content: "noindex" }],
@@ -42,7 +42,7 @@ function Consent() {
     const result = await authClient.oauth2.consent({ accept, scope: search.scope });
     if (result.error) setError(result.error.message ?? "Impossibile completare il consenso.");
     else if (result.data?.url) window.location.assign(result.data.url);
-    else void navigate({ to: "/profilo" });
+    else void navigate({ to: "/profile" });
   }
   return (
     <Card>

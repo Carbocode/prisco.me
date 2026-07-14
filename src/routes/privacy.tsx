@@ -62,7 +62,7 @@ function PrivacyPage() {
                 Le richieste degli interessati possono essere esercitate tramite la pagina{" "}
                 <Link
                   className="text-sky-200 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
-                  to="/contatti"
+                  to="/contact"
                 >
                   Contatti
                 </Link>
@@ -82,7 +82,7 @@ function PrivacyPage() {
               normativa o per chiedere chiarimenti, l&apos;interessato può utilizzare il{" "}
               <Link
                 className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
-                to="/contatti"
+                to="/contact"
               >
                 modulo di contatto
               </Link>{" "}
@@ -111,10 +111,9 @@ function PrivacyPage() {
           <LegalSection title="2. Ambito di applicazione e definizioni">
             <p>
               La presente informativa si applica alla navigazione sulle pagine pubbliche del sito,
-              alla consultazione del blog, alla visualizzazione dei progetti e all&apos;invio di
-              richieste tramite il form di contatto. Eventuali servizi esterni raggiungibili
-              attraverso collegamenti ipertestuali sono soggetti alle informative dei rispettivi
-              titolari.
+              alla visualizzazione dei progetti e all&apos;invio di richieste tramite il form di
+              contatto. Eventuali servizi esterni raggiungibili attraverso collegamenti ipertestuali
+              sono soggetti alle informative dei rispettivi titolari.
             </p>
             <p>
               Per <em>dato personale</em> si intende qualsiasi informazione riguardante una persona
@@ -356,7 +355,7 @@ function PrivacyPage() {
               pagina{" "}
               <Link
                 className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
-                to="/contatti"
+                to="/contact"
               >
                 Contatti
               </Link>
@@ -414,7 +413,7 @@ function PrivacyPage() {
             <ActionLink href="/cookie" variant="secondary">
               Leggi la policy cookie
             </ActionLink>
-            <ActionLink href="/contatti">Contattami</ActionLink>
+            <ActionLink href="/contact">Contattami</ActionLink>
           </div>
         </div>
       </Section>

@@ -39,4 +39,4 @@ Da quel momento l'area `/admin` permette agli amministratori di assegnare o rimu
 
 ## OAuth Provider
 
-Issuer predefinito: `https://prisco.me/api/auth`. Gli host pubblici e locali sono limitati dalla allowlist `baseURL` in `src/lib/auth.ts`. Le pagine di login e consenso sono `/accedi` e `/oauth/consenso`; discovery OAuth/OIDC e JWKS sono serviti dall'handler Better Auth. I client e i consensi si gestiscono dal profilo.
+Issuer predefinito: `https://prisco.me/api/auth`. Gli host pubblici e locali sono limitati dalla allowlist `baseURL` in `src/lib/auth.ts`. Le pagine di login e consenso sono `/login` e `/oauth/consent`; discovery OAuth/OIDC e JWKS sono serviti dall'handler Better Auth. I client e i consensi si gestiscono dal profilo.

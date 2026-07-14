@@ -57,7 +57,7 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
           {project.period}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-4">
         <div className="flex flex-wrap gap-2">
           {project.skills.slice(0, 5).map((skill) => (
             <Badge key={skill.id} color={getSkillColor(skill)}>
@@ -71,7 +71,7 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
       <CardFooter className="mt-auto">
         <Button
           variant="outline"
-          render={<Link to="/progetti/$slug" params={{ slug: project.slug }} />}
+          render={<Link to="/projects/$slug" params={{ slug: project.slug }} />}
         >
           Scopri il progetto
         </Button>

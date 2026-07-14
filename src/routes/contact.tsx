@@ -3,14 +3,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import ContactRequestForm from "@/components/contact-request-form";
 import { PageShell, Section } from "@/components/page-shell";
 
-export const Route = createFileRoute("/contatti")({
+const contactPageDescription =
+  "Racconta a Vincenzo Prisco cosa stai costruendo: prodotto, collaborazione tecnica o nuova opportunità.";
+
+export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contatti | Vincenzo Prisco" },
       {
         name: "description",
-        content:
-          "Racconta a Vincenzo Prisco cosa stai costruendo: prodotto, collaborazione tecnica o nuova opportunità.",
+        content: contactPageDescription,
       },
       { property: "og:title", content: "Contatti | Vincenzo Prisco" },
       {
@@ -18,7 +20,22 @@ export const Route = createFileRoute("/contatti")({
         content: "Parliamo del tuo prossimo prodotto o della tua prossima sfida tecnica.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://prisco.me/contatti" }],
+    links: [{ rel: "canonical", href: "https://prisco.me/contact" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contatti | Vincenzo Prisco",
+          description: contactPageDescription,
+          url: "https://prisco.me/contact",
+          inLanguage: "it-IT",
+          mainEntity: { "@id": "https://prisco.me/#person" },
+          isPartOf: { "@id": "https://prisco.me/#website" },
+        }),
+      },
+    ],
   }),
   component: ContactPage,
 });

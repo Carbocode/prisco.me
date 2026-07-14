@@ -9,6 +9,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -18,7 +19,7 @@ import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 const ALL = "all";
 
-export const Route = createFileRoute("/progetti")({
+export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
       { title: "Progetti | Vincenzo Prisco" },
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/progetti")({
         content: "MyVet, SwiftUI e altri progetti costruiti dall'idea alla pubblicazione.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://prisco.me/progetti" }],
+    links: [{ rel: "canonical", href: "https://prisco.me/projects" }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: ProjectsPage,
@@ -106,11 +107,13 @@ function ProjectsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {companyOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {companyOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>
@@ -121,12 +124,14 @@ function ProjectsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL}>Tutte</SelectItem>
-                {technologySkills.map((skill) => (
-                  <SelectItem key={skill.id} value={skill.name}>
-                    {skill.name}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  <SelectItem value={ALL}>Tutte</SelectItem>
+                  {technologySkills.map((skill) => (
+                    <SelectItem key={skill.id} value={skill.name}>
+                      {skill.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>
@@ -137,11 +142,13 @@ function ProjectsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {categoryOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {categoryOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>

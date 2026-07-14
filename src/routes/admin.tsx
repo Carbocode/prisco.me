@@ -116,7 +116,7 @@ function AdminPanel() {
   async function impersonate(item: AdminUser) {
     const result = await authClient.admin.impersonateUser({ userId: item.id });
     if (result.error) setNotice(result.error.message ?? "Operazione non riuscita.");
-    else void navigate({ to: "/profilo" });
+    else void navigate({ to: "/profile" });
   }
   async function remove(item: AdminUser) {
     if (!confirm(`Eliminare definitivamente ${item.email}?`)) return;

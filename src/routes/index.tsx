@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import CloudCarousel from "@/components/cloud-carousel";
@@ -13,7 +13,6 @@ import Sky from "@/components/sky";
 import Star from "@/components/star";
 import SubsoilDecor from "@/components/subsoil-decor";
 import { SkillChip, TechIcon } from "@/components/tech-icon";
-import { getArticlesQueryOptions } from "@/server/articles";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/")({
@@ -38,9 +37,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const articlesQuery = useQuery(getArticlesQueryOptions());
-  const articles = (articlesQuery.data?.data ?? []).slice(0, 3);
-
   const { data: portfolio } = useSuspenseQuery(getPortfolioQueryOptions());
   const otherProjects = portfolio.projects.filter((project) =>
     ["swiftui", "myvet-diet"].includes(project.slug),
@@ -63,8 +59,8 @@ function HomePage() {
               Benvenuti nel mio sito personale, uno spazio dedicato a me
             </p>
             <div className="hero-content-enter-item flex flex-wrap justify-center gap-2 pt-1">
-              <ActionLink href="/progetti">Scopri i progetti</ActionLink>
-              <ActionLink href="/contatti" variant="secondary">
+              <ActionLink href="/projects">Scopri i progetti</ActionLink>
+              <ActionLink href="/contact" variant="secondary">
                 Parliamo del tuo prodotto
               </ActionLink>
             </div>
@@ -145,7 +141,7 @@ function HomePage() {
                     <SkillChip key={skill.id} skill={skill} />
                   ))}
                 </div>
-                <ActionLink href="/progetti/myvet" variant="secondary">
+                <ActionLink href="/projects/myvet" variant="secondary">
                   Scopri il progetto
                 </ActionLink>
               </div>
@@ -155,7 +151,7 @@ function HomePage() {
                   lavorando su sviluppo, architettura, problem solving e qualita del prodotto.
                 </p>
                 <Link
-                  to="/carriera"
+                  to="/career"
                   className="mt-6 text-sm font-semibold text-sky-300 hover:text-sky-200"
                 >
                   Scopri il mio percorso <span aria-hidden="true">→</span>
@@ -192,50 +188,10 @@ function HomePage() {
                   Ho iniziato a programmare a 15 anni. Da allora ho cercato di unire curiosita
                   tecnica, pensiero critico e attenzione alla qualita del prodotto.
                 </p>
-                <ActionLink href="/carriera" variant="secondary">
+                <ActionLink href="/career" variant="secondary">
                   Conosciamoci meglio
                 </ActionLink>
               </div>
-            </div>
-          </Section>
-
-          <Section className="pt-0">
-            <SectionIntro
-              eyebrow="Dal blog"
-              title="Appunti dal percorso"
-              description="Scrivo di architettura, sviluppo e delle lezioni che arrivano dal costruire prodotti reali."
-            />
-            <div className="mt-8 grid gap-5 md:grid-cols-3">
-              {articlesQuery.isLoading && (
-                <p className="text-slate-400">Gli articoli stanno arrivando.</p>
-              )}
-              {articlesQuery.isError && (
-                <p className="text-slate-400">Gli articoli saranno disponibili presto.</p>
-              )}
-              {!articlesQuery.isLoading && !articlesQuery.isError && articles.length === 0 && (
-                <p className="text-slate-400">Sto preparando i primi articoli.</p>
-              )}
-              {articles.map((article) => (
-                <Link
-                  key={article.documentId ?? article.slug}
-                  to="/blog/$slug"
-                  params={{ slug: article.slug ?? "" }}
-                  className="rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/40 hover:bg-white/6"
-                >
-                  <p className="text-xs uppercase tracking-[0.25em] text-sky-300">
-                    {article.category ?? "Articolo"}
-                  </p>
-                  <h3 className="display-font mt-4 text-xl font-semibold">
-                    {article.title ?? article.slug}
-                  </h3>
-                  <p className="mt-3 line-clamp-3 text-sm leading-7 text-slate-400">
-                    {article.excerpt ?? article.description}
-                  </p>
-                  <span className="mt-5 inline-block text-sm font-semibold text-white">
-                    Leggi l'articolo →
-                  </span>
-                </Link>
-              ))}
             </div>
           </Section>
 
@@ -259,7 +215,7 @@ function HomePage() {
               <p className="leading-7 text-orange-50/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
                 Raccontami cosa stai costruendo e vediamo insieme da dove partire.
               </p>
-              <ActionLink href="/contatti">Scrivimi</ActionLink>
+              <ActionLink href="/contact">Scrivimi</ActionLink>
             </div>
           </section>
         </div>

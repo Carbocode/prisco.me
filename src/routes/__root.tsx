@@ -53,6 +53,31 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         sizes: "96x96",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Person",
+              "@id": "https://prisco.me/#person",
+              name: "Vincenzo Prisco",
+              jobTitle: "Software Engineer",
+              url: "https://prisco.me/",
+              sameAs: ["https://www.linkedin.com/in/vincenzoprisco/"],
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://prisco.me/#website",
+              name: "Prisco.me",
+              url: "https://prisco.me/",
+              publisher: { "@id": "https://prisco.me/#person" },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   notFoundComponent: NotFoundComponent,
   shellComponent: RootDocument,
@@ -79,39 +104,16 @@ function App() {
   return (
     <>
       <Outlet />
-      <Toaster />
+      <Toaster theme="dark" />
     </>
   );
 }
 
 function RootDocument() {
   return (
-    <html lang="it">
+    <html lang="it" className="dark">
       <head>
         <HeadContent />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "Person",
-                  name: "Vincenzo Prisco",
-                  jobTitle: "Software Engineer",
-                  url: "https://prisco.me/",
-                  sameAs: ["https://www.linkedin.com/in/vincenzoprisco/"],
-                },
-                {
-                  "@type": "WebSite",
-                  name: "Prisco.me",
-                  url: "https://prisco.me/",
-                  publisher: { "@type": "Person", name: "Vincenzo Prisco" },
-                },
-              ],
-            }),
-          }}
-        />
       </head>
       <body className="min-h-dvh w-full">
         <CookieConsentProvider>

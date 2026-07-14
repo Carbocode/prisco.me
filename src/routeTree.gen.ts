@@ -9,36 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Verifica2faRouteImport } from './routes/verifica-2fa'
-import { Route as ProgettiRouteImport } from './routes/progetti'
-import { Route as ProfiloRouteImport } from './routes/profilo'
+import { Route as Verify2faRouteImport } from './routes/verify-2fa'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as InformazioniRouteImport } from './routes/informazioni'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as CookieRouteImport } from './routes/cookie'
-import { Route as ContattiRouteImport } from './routes/contatti'
-import { Route as CarrieraRouteImport } from './routes/carriera'
-import { Route as BlogRouteImport } from './routes/blog'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CareerRouteImport } from './routes/career'
 import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AccediRouteImport } from './routes/accedi'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ProjectsRouteRouteImport } from './routes/projects/route'
+import { Route as ProfileRouteRouteImport } from './routes/profile/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProgettiSlugRouteImport } from './routes/progetti.$slug'
-import { Route as OauthConsensoRouteImport } from './routes/oauth.consenso'
-import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
-import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
+import { Route as ProjectsSlugRouteImport } from './routes/projects/$slug'
+import { Route as ProfileDangerRouteImport } from './routes/profile/danger'
+import { Route as ProfileAuthorizationsRouteImport } from './routes/profile/authorizations'
+import { Route as ProfileAuthenticationRouteImport } from './routes/profile/authentication'
+import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
-const Verifica2faRoute = Verifica2faRouteImport.update({
-  id: '/verifica-2fa',
-  path: '/verifica-2fa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProgettiRoute = ProgettiRouteImport.update({
-  id: '/progetti',
-  path: '/progetti',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfiloRoute = ProfiloRouteImport.update({
-  id: '/profilo',
-  path: '/profilo',
+const Verify2faRoute = Verify2faRouteImport.update({
+  id: '/verify-2fa',
+  path: '/verify-2fa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -46,9 +39,14 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InformazioniRoute = InformazioniRouteImport.update({
-  id: '/informazioni',
-  path: '/informazioni',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CookieRoute = CookieRouteImport.update({
@@ -56,19 +54,14 @@ const CookieRoute = CookieRouteImport.update({
   path: '/cookie',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContattiRoute = ContattiRouteImport.update({
-  id: '/contatti',
-  path: '/contatti',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CarrieraRoute = CarrieraRouteImport.update({
-  id: '/carriera',
-  path: '/carriera',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
+const CareerRoute = CareerRouteImport.update({
+  id: '/career',
+  path: '/career',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -76,9 +69,19 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AccediRoute = AccediRouteImport.update({
-  id: '/accedi',
-  path: '/accedi',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRouteRoute = ProjectsRouteRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRouteRoute = ProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -86,20 +89,35 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProgettiSlugRoute = ProgettiSlugRouteImport.update({
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
-  getParentRoute: () => ProgettiRoute,
+  getParentRoute: () => ProjectsRouteRoute,
 } as any)
-const OauthConsensoRoute = OauthConsensoRouteImport.update({
-  id: '/oauth/consenso',
-  path: '/oauth/consenso',
+const ProfileDangerRoute = ProfileDangerRouteImport.update({
+  id: '/danger',
+  path: '/danger',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProfileAuthorizationsRoute = ProfileAuthorizationsRouteImport.update({
+  id: '/authorizations',
+  path: '/authorizations',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const ProfileAuthenticationRoute = ProfileAuthenticationRouteImport.update({
+  id: '/authentication',
+  path: '/authentication',
+  getParentRoute: () => ProfileRouteRoute,
+} as any)
+const OauthConsentRoute = OauthConsentRouteImport.update({
+  id: '/oauth/consent',
+  path: '/oauth/consent',
   getParentRoute: () => rootRouteImport,
-} as any)
-const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => BlogRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -109,154 +127,156 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/accedi': typeof AccediRoute
+  '/profile': typeof ProfileRouteRouteWithChildren
+  '/projects': typeof ProjectsRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/blog': typeof BlogRouteWithChildren
-  '/carriera': typeof CarrieraRoute
-  '/contatti': typeof ContattiRoute
+  '/career': typeof CareerRoute
+  '/contact': typeof ContactRoute
   '/cookie': typeof CookieRoute
-  '/informazioni': typeof InformazioniRoute
+  '/llms.txt': typeof LlmsDottxtRoute
+  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
-  '/profilo': typeof ProfiloRoute
-  '/progetti': typeof ProgettiRouteWithChildren
-  '/verifica-2fa': typeof Verifica2faRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/oauth/consenso': typeof OauthConsensoRoute
-  '/progetti/$slug': typeof ProgettiSlugRoute
+  '/verify-2fa': typeof Verify2faRoute
+  '/oauth/consent': typeof OauthConsentRoute
+  '/profile/authentication': typeof ProfileAuthenticationRoute
+  '/profile/authorizations': typeof ProfileAuthorizationsRoute
+  '/profile/danger': typeof ProfileDangerRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
+  '/profile/': typeof ProfileIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/accedi': typeof AccediRoute
+  '/projects': typeof ProjectsRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/blog': typeof BlogRouteWithChildren
-  '/carriera': typeof CarrieraRoute
-  '/contatti': typeof ContattiRoute
+  '/career': typeof CareerRoute
+  '/contact': typeof ContactRoute
   '/cookie': typeof CookieRoute
-  '/informazioni': typeof InformazioniRoute
+  '/llms.txt': typeof LlmsDottxtRoute
+  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
-  '/profilo': typeof ProfiloRoute
-  '/progetti': typeof ProgettiRouteWithChildren
-  '/verifica-2fa': typeof Verifica2faRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/oauth/consenso': typeof OauthConsensoRoute
-  '/progetti/$slug': typeof ProgettiSlugRoute
+  '/verify-2fa': typeof Verify2faRoute
+  '/oauth/consent': typeof OauthConsentRoute
+  '/profile/authentication': typeof ProfileAuthenticationRoute
+  '/profile/authorizations': typeof ProfileAuthorizationsRoute
+  '/profile/danger': typeof ProfileDangerRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
+  '/profile': typeof ProfileIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/accedi': typeof AccediRoute
+  '/profile': typeof ProfileRouteRouteWithChildren
+  '/projects': typeof ProjectsRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/blog': typeof BlogRouteWithChildren
-  '/carriera': typeof CarrieraRoute
-  '/contatti': typeof ContattiRoute
+  '/career': typeof CareerRoute
+  '/contact': typeof ContactRoute
   '/cookie': typeof CookieRoute
-  '/informazioni': typeof InformazioniRoute
+  '/llms.txt': typeof LlmsDottxtRoute
+  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
-  '/profilo': typeof ProfiloRoute
-  '/progetti': typeof ProgettiRouteWithChildren
-  '/verifica-2fa': typeof Verifica2faRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/oauth/consenso': typeof OauthConsensoRoute
-  '/progetti/$slug': typeof ProgettiSlugRoute
+  '/verify-2fa': typeof Verify2faRoute
+  '/oauth/consent': typeof OauthConsentRoute
+  '/profile/authentication': typeof ProfileAuthenticationRoute
+  '/profile/authorizations': typeof ProfileAuthorizationsRoute
+  '/profile/danger': typeof ProfileDangerRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
+  '/profile/': typeof ProfileIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/accedi'
+    | '/profile'
+    | '/projects'
+    | '/about'
     | '/admin'
-    | '/blog'
-    | '/carriera'
-    | '/contatti'
+    | '/career'
+    | '/contact'
     | '/cookie'
-    | '/informazioni'
+    | '/llms.txt'
+    | '/login'
     | '/privacy'
-    | '/profilo'
-    | '/progetti'
-    | '/verifica-2fa'
-    | '/blog/$slug'
-    | '/oauth/consenso'
-    | '/progetti/$slug'
+    | '/verify-2fa'
+    | '/oauth/consent'
+    | '/profile/authentication'
+    | '/profile/authorizations'
+    | '/profile/danger'
+    | '/projects/$slug'
+    | '/profile/'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/accedi'
+    | '/projects'
+    | '/about'
     | '/admin'
-    | '/blog'
-    | '/carriera'
-    | '/contatti'
+    | '/career'
+    | '/contact'
     | '/cookie'
-    | '/informazioni'
+    | '/llms.txt'
+    | '/login'
     | '/privacy'
-    | '/profilo'
-    | '/progetti'
-    | '/verifica-2fa'
-    | '/blog/$slug'
-    | '/oauth/consenso'
-    | '/progetti/$slug'
+    | '/verify-2fa'
+    | '/oauth/consent'
+    | '/profile/authentication'
+    | '/profile/authorizations'
+    | '/profile/danger'
+    | '/projects/$slug'
+    | '/profile'
     | '/api/auth/$'
   id:
     | '__root__'
     | '/'
-    | '/accedi'
+    | '/profile'
+    | '/projects'
+    | '/about'
     | '/admin'
-    | '/blog'
-    | '/carriera'
-    | '/contatti'
+    | '/career'
+    | '/contact'
     | '/cookie'
-    | '/informazioni'
+    | '/llms.txt'
+    | '/login'
     | '/privacy'
-    | '/profilo'
-    | '/progetti'
-    | '/verifica-2fa'
-    | '/blog/$slug'
-    | '/oauth/consenso'
-    | '/progetti/$slug'
+    | '/verify-2fa'
+    | '/oauth/consent'
+    | '/profile/authentication'
+    | '/profile/authorizations'
+    | '/profile/danger'
+    | '/projects/$slug'
+    | '/profile/'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AccediRoute: typeof AccediRoute
+  ProfileRouteRoute: typeof ProfileRouteRouteWithChildren
+  ProjectsRouteRoute: typeof ProjectsRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
-  BlogRoute: typeof BlogRouteWithChildren
-  CarrieraRoute: typeof CarrieraRoute
-  ContattiRoute: typeof ContattiRoute
+  CareerRoute: typeof CareerRoute
+  ContactRoute: typeof ContactRoute
   CookieRoute: typeof CookieRoute
-  InformazioniRoute: typeof InformazioniRoute
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
+  LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
-  ProfiloRoute: typeof ProfiloRoute
-  ProgettiRoute: typeof ProgettiRouteWithChildren
-  Verifica2faRoute: typeof Verifica2faRoute
-  OauthConsensoRoute: typeof OauthConsensoRoute
+  Verify2faRoute: typeof Verify2faRoute
+  OauthConsentRoute: typeof OauthConsentRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/verifica-2fa': {
-      id: '/verifica-2fa'
-      path: '/verifica-2fa'
-      fullPath: '/verifica-2fa'
-      preLoaderRoute: typeof Verifica2faRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/progetti': {
-      id: '/progetti'
-      path: '/progetti'
-      fullPath: '/progetti'
-      preLoaderRoute: typeof ProgettiRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profilo': {
-      id: '/profilo'
-      path: '/profilo'
-      fullPath: '/profilo'
-      preLoaderRoute: typeof ProfiloRouteImport
+    '/verify-2fa': {
+      id: '/verify-2fa'
+      path: '/verify-2fa'
+      fullPath: '/verify-2fa'
+      preLoaderRoute: typeof Verify2faRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -266,11 +286,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/informazioni': {
-      id: '/informazioni'
-      path: '/informazioni'
-      fullPath: '/informazioni'
-      preLoaderRoute: typeof InformazioniRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cookie': {
@@ -280,25 +307,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CookieRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/contatti': {
-      id: '/contatti'
-      path: '/contatti'
-      fullPath: '/contatti'
-      preLoaderRoute: typeof ContattiRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/carriera': {
-      id: '/carriera'
-      path: '/carriera'
-      fullPath: '/carriera'
-      preLoaderRoute: typeof CarrieraRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
+    '/career': {
+      id: '/career'
+      path: '/career'
+      fullPath: '/career'
+      preLoaderRoute: typeof CareerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -308,11 +328,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/accedi': {
-      id: '/accedi'
-      path: '/accedi'
-      fullPath: '/accedi'
-      preLoaderRoute: typeof AccediRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -322,26 +356,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/progetti/$slug': {
-      id: '/progetti/$slug'
-      path: '/$slug'
-      fullPath: '/progetti/$slug'
-      preLoaderRoute: typeof ProgettiSlugRouteImport
-      parentRoute: typeof ProgettiRoute
+    '/profile/': {
+      id: '/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof ProfileRouteRoute
     }
-    '/oauth/consenso': {
-      id: '/oauth/consenso'
-      path: '/oauth/consenso'
-      fullPath: '/oauth/consenso'
-      preLoaderRoute: typeof OauthConsensoRouteImport
+    '/projects/$slug': {
+      id: '/projects/$slug'
+      path: '/$slug'
+      fullPath: '/projects/$slug'
+      preLoaderRoute: typeof ProjectsSlugRouteImport
+      parentRoute: typeof ProjectsRouteRoute
+    }
+    '/profile/danger': {
+      id: '/profile/danger'
+      path: '/danger'
+      fullPath: '/profile/danger'
+      preLoaderRoute: typeof ProfileDangerRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/profile/authorizations': {
+      id: '/profile/authorizations'
+      path: '/authorizations'
+      fullPath: '/profile/authorizations'
+      preLoaderRoute: typeof ProfileAuthorizationsRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/profile/authentication': {
+      id: '/profile/authentication'
+      path: '/authentication'
+      fullPath: '/profile/authentication'
+      preLoaderRoute: typeof ProfileAuthenticationRouteImport
+      parentRoute: typeof ProfileRouteRoute
+    }
+    '/oauth/consent': {
+      id: '/oauth/consent'
+      path: '/oauth/consent'
+      fullPath: '/oauth/consent'
+      preLoaderRoute: typeof OauthConsentRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/blog/$slug': {
-      id: '/blog/$slug'
-      path: '/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof BlogRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -353,42 +408,50 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface BlogRouteChildren {
-  BlogSlugRoute: typeof BlogSlugRoute
+interface ProfileRouteRouteChildren {
+  ProfileAuthenticationRoute: typeof ProfileAuthenticationRoute
+  ProfileAuthorizationsRoute: typeof ProfileAuthorizationsRoute
+  ProfileDangerRoute: typeof ProfileDangerRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
-const BlogRouteChildren: BlogRouteChildren = {
-  BlogSlugRoute: BlogSlugRoute,
+const ProfileRouteRouteChildren: ProfileRouteRouteChildren = {
+  ProfileAuthenticationRoute: ProfileAuthenticationRoute,
+  ProfileAuthorizationsRoute: ProfileAuthorizationsRoute,
+  ProfileDangerRoute: ProfileDangerRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
 }
 
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+const ProfileRouteRouteWithChildren = ProfileRouteRoute._addFileChildren(
+  ProfileRouteRouteChildren,
+)
 
-interface ProgettiRouteChildren {
-  ProgettiSlugRoute: typeof ProgettiSlugRoute
+interface ProjectsRouteRouteChildren {
+  ProjectsSlugRoute: typeof ProjectsSlugRoute
 }
 
-const ProgettiRouteChildren: ProgettiRouteChildren = {
-  ProgettiSlugRoute: ProgettiSlugRoute,
+const ProjectsRouteRouteChildren: ProjectsRouteRouteChildren = {
+  ProjectsSlugRoute: ProjectsSlugRoute,
 }
 
-const ProgettiRouteWithChildren = ProgettiRoute._addFileChildren(
-  ProgettiRouteChildren,
+const ProjectsRouteRouteWithChildren = ProjectsRouteRoute._addFileChildren(
+  ProjectsRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AccediRoute: AccediRoute,
+  ProfileRouteRoute: ProfileRouteRouteWithChildren,
+  ProjectsRouteRoute: ProjectsRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
-  BlogRoute: BlogRouteWithChildren,
-  CarrieraRoute: CarrieraRoute,
-  ContattiRoute: ContattiRoute,
+  CareerRoute: CareerRoute,
+  ContactRoute: ContactRoute,
   CookieRoute: CookieRoute,
-  InformazioniRoute: InformazioniRoute,
+  LlmsDottxtRoute: LlmsDottxtRoute,
+  LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
-  ProfiloRoute: ProfiloRoute,
-  ProgettiRoute: ProgettiRouteWithChildren,
-  Verifica2faRoute: Verifica2faRoute,
-  OauthConsensoRoute: OauthConsensoRoute,
+  Verify2faRoute: Verify2faRoute,
+  OauthConsentRoute: OauthConsentRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

@@ -20,10 +20,9 @@ import {
 
 const links = [
   { to: "/" as const, label: "Home" },
-  { to: "/carriera" as const, label: "Carriera" },
-  { to: "/progetti" as const, label: "Progetti" },
-  { to: "/blog" as const, label: "Blog" },
-  { to: "/contatti" as const, label: "Contatti" },
+  { to: "/career" as const, label: "Carriera" },
+  { to: "/projects" as const, label: "Progetti" },
+  { to: "/contact" as const, label: "Contatti" },
 ];
 
 export default function Header({ overlay = false }: { overlay?: boolean }) {
@@ -35,24 +34,28 @@ export default function Header({ overlay = false }: { overlay?: boolean }) {
           : "relative z-20 border-b border-white/10 bg-slate-950/80 text-white backdrop-blur-md"
       }
     >
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
+      <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
         <Link to="/" className="flex items-center gap-3" aria-label="Torna alla home">
           <img src="/favicon/favicon.svg" alt="" className="h-9 w-9" />
           <p className="leading-tight display-font text-lg font-semibold">Vincenzo Prisco</p>
         </Link>
 
-        <NavigationMenu aria-label="Navigazione principale" className="hidden md:flex">
+        <NavigationMenu
+          aria-label="Navigazione principale"
+          className="absolute left-1/2 hidden -translate-x-1/2 md:flex"
+        >
           <NavigationMenuList>
             {links.map((item) => (
               <NavigationMenuItem key={item.to}>
                 <NavigationMenuLink render={<Link to={item.to} />}>{item.label}</NavigationMenuLink>
               </NavigationMenuItem>
             ))}
-            <NavigationMenuItem>
-              <AuthControls />
-            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+
+        <div className="ml-auto hidden w-44 items-center justify-end md:flex">
+          <AuthControls />
+        </div>
 
         <Sheet>
           <SheetTrigger render={<Button variant="outline" size="icon" className="md:hidden" />}>

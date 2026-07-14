@@ -2,13 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://prisco.me/</loc></url>
   <url><loc>https://prisco.me/chi-sono</loc></url>
-  <url><loc>https://prisco.me/progetti</loc></url>
-  <url><loc>https://prisco.me/progetti/myvet</loc></url>
-  <url><loc>https://prisco.me/progetti/swiftui</loc></url>
-  <url><loc>https://prisco.me/progetti/myvet-diet</loc></url>
-  <url><loc>https://prisco.me/blog</loc></url>
-  <url><loc>https://prisco.me/contatti</loc></url>
-  <url><loc>https://prisco.me/informazioni</loc></url>
+  <url><loc>https://prisco.me/projects</loc></url>
+  <url><loc>https://prisco.me/projects/myvet</loc></url>
+  <url><loc>https://prisco.me/projects/swiftui</loc></url>
+  <url><loc>https://prisco.me/projects/myvet-diet</loc></url>
+  <url><loc>https://prisco.me/contact</loc></url>
+  <url><loc>https://prisco.me/about</loc></url>
   <url><loc>https://prisco.me/privacy</loc></url>
   <url><loc>https://prisco.me/cookie</loc></url>
 </urlset>

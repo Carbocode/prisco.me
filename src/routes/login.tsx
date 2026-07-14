@@ -22,7 +22,7 @@ const searchSchema = z.object({
   callbackURL: z.string().startsWith("/").optional(),
 });
 
-export const Route = createFileRoute("/accedi")({
+export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [{ title: "Accedi o registrati | Prisco.me" }, { name: "robots", content: "noindex" }],
@@ -37,7 +37,7 @@ function AccessPage() {
   const [mode, setMode] = useState(search.mode);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
-  const callbackURL = search.callbackURL ?? "/profilo";
+  const callbackURL = search.callbackURL ?? "/profile";
 
   useEffect(() => {
     if (session.data) void navigate({ href: callbackURL });
@@ -84,7 +84,7 @@ function AccessPage() {
   return (
     <AuthPage
       title={mode === "login" ? "Bentornato." : "Crea il tuo account."}
-      description="Accedi al blog e gestisci identità, sicurezza, passkey, sessioni e autorizzazioni OAuth da un unico profilo."
+      description="Gestisci identità, sicurezza, passkey, sessioni e autorizzazioni OAuth da un unico profilo."
     >
       <Card className="mx-auto w-full max-w-md">
         <CardContent>
@@ -120,7 +120,7 @@ function AccessPage() {
                     variant="link"
                     render={
                       <Link
-                        to="/accedi"
+                        to="/login"
                         search={{ mode: "register", callbackURL: search.callbackURL }}
                         onClick={() => {
                           setMode("register");
@@ -193,7 +193,7 @@ function AccessPage() {
                     variant="link"
                     render={
                       <Link
-                        to="/accedi"
+                        to="/login"
                         search={{ mode: "login", callbackURL: search.callbackURL }}
                         onClick={() => {
                           setMode("login");

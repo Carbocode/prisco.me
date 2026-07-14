@@ -39,8 +39,8 @@ export function createAuth(env: AuthEnv) {
       passkey({ rpName: "Prisco.me" }),
       jwt(),
       oauthProvider({
-        loginPage: "/accedi",
-        consentPage: "/oauth/consenso",
+        loginPage: "/login",
+        consentPage: "/oauth/consent",
         allowDynamicClientRegistration: true,
       }),
     ],

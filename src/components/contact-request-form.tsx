@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -197,11 +198,13 @@ export default function ContactRequestForm() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="product">Sviluppo di un prodotto</SelectItem>
-                          <SelectItem value="technical">Collaborazione tecnica</SelectItem>
-                          <SelectItem value="consulting">Consulenza</SelectItem>
-                          <SelectItem value="opportunity">Opportunità professionale</SelectItem>
-                          <SelectItem value="other">Altro</SelectItem>
+                          <SelectGroup>
+                            <SelectItem value="product">Sviluppo di un prodotto</SelectItem>
+                            <SelectItem value="technical">Collaborazione tecnica</SelectItem>
+                            <SelectItem value="consulting">Consulenza</SelectItem>
+                            <SelectItem value="opportunity">Opportunità professionale</SelectItem>
+                            <SelectItem value="other">Altro</SelectItem>
+                          </SelectGroup>
                         </SelectContent>
                       </Select>
                       {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}

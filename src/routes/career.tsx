@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import type { Experience, Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
-export const Route = createFileRoute("/carriera")({
+export const Route = createFileRoute("/career")({
   head: () => ({
     meta: [
       { title: "Carriera | Vincenzo Prisco" },
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/carriera")({
         content: "Esperienze, metodo e competenze di un software engineer.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://prisco.me/carriera" }],
+    links: [{ rel: "canonical", href: "https://prisco.me/career" }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: AboutPage,
@@ -487,7 +487,7 @@ function CareerCta() {
           storia potremmo costruirlo insieme.
         </p>
         <Button
-          render={<Link to="/contatti" />}
+          render={<Link to="/contact" />}
           size="lg"
           className="mt-7 rounded-full bg-gradient-to-r from-violet-300 to-fuchsia-400 px-6 font-semibold text-violet-950 shadow-lg shadow-fuchsia-950/30 hover:brightness-110"
         >
@@ -554,7 +554,7 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
             {experience.projects.map((project) => (
               <Link
                 key={project.slug}
-                to="/progetti/$slug"
+                to="/projects/$slug"
                 params={{ slug: project.slug }}
                 className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-200 transition hover:border-sky-300/35 hover:bg-sky-300/10 hover:text-sky-200"
               >
