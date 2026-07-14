@@ -42,6 +42,8 @@ export const listArticlesSchema = z.object({
   status: z.enum(["draft", "scheduled", "published", "archived"]).optional(),
   categoryId: z.string().uuid().optional(),
   authorId: z.string().uuid().optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
 });
 
 const ctaUrl = z

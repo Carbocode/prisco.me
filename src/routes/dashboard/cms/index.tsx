@@ -37,11 +37,54 @@ function CmsDashboardContent() {
         />
       </div>
       <div className="flex flex-wrap gap-3">
-        <Button render={<Link to="/dashboard/cms/articles" />}>Gestisci articoli</Button>
+        <Button render={<Link to="/dashboard/cms/articles/new" />}>Nuovo articolo</Button>
+        <Button variant="outline" render={<Link to="/dashboard/cms/services/new" />}>
+          Nuovo servizio
+        </Button>
+        <Button
+          variant="outline"
+          render={<Link to="/dashboard/cms/articles" search={{ page: 1 }} />}
+        >
+          Gestisci articoli
+        </Button>
         <Button variant="outline" render={<Link to="/dashboard/cms/services" />}>
           Gestisci servizi
         </Button>
       </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Ultimi contenuti modificati</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          {[
+            ...articles.map((item) => ({
+              id: item.id,
+              label: item.title,
+              updatedAt: item.updatedAt,
+              type: "article" as const,
+            })),
+            ...services.map((item) => ({
+              id: item.id,
+              label: item.name,
+              updatedAt: item.updatedAt,
+              type: "service" as const,
+            })),
+          ]
+            .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+            .slice(0, 5)
+            .map((item) => (
+              <div
+                key={`${item.type}-${item.id}`}
+                className="flex items-center justify-between gap-3"
+              >
+                <span>{item.label}</span>
+                <span className="text-sm text-muted-foreground">
+                  {item.updatedAt.toLocaleString("it-IT")}
+                </span>
+              </div>
+            ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

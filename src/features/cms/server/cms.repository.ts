@@ -1,4 +1,20 @@
-import { and, asc, count, desc, eq, inArray, isNull, like, lte, ne, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  gte,
+  inArray,
+  isNull,
+  like,
+  lt,
+  lte,
+  ne,
+  or,
+  sql,
+} from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 import type * as schema from "@/db/schema";
@@ -12,6 +28,7 @@ import {
   cmsServiceRevisions,
   cmsServices,
 } from "@/db/schema";
+import { user } from "@/db/schema";
 
 export type CmsDb = DrizzleD1Database<typeof schema>;
 export function articleRepository(db: CmsDb) {
@@ -24,10 +41,25 @@ export function articleRepository(db: CmsDb) {
       query?: string;
       status?: string;
       authorId?: string;
+      categoryId?: string;
+      dateFrom?: Date;
+      dateTo?: Date;
     }) {
       const filters = [isNull(cmsArticles.deletedAt)];
       if (input.status) filters.push(eq(cmsArticles.status, input.status));
       if (input.authorId) filters.push(eq(cmsArticles.authorId, input.authorId));
+      if (input.categoryId)
+        filters.push(
+          inArray(
+            cmsArticles.id,
+            db
+              .select({ articleId: cmsArticleCategories.articleId })
+              .from(cmsArticleCategories)
+              .where(eq(cmsArticleCategories.categoryId, input.categoryId)),
+          ),
+        );
+      if (input.dateFrom) filters.push(gte(cmsArticles.updatedAt, input.dateFrom));
+      if (input.dateTo) filters.push(lte(cmsArticles.updatedAt, input.dateTo));
       if (input.query)
         filters.push(
           or(
@@ -38,17 +70,44 @@ export function articleRepository(db: CmsDb) {
       const where = and(...filters);
       const [items, total] = await Promise.all([
         db
-          .select()
+          .select({ ...getTableColumns(cmsArticles), authorName: user.name })
           .from(cmsArticles)
+          .leftJoin(user, eq(cmsArticles.authorId, user.id))
           .where(where)
           .orderBy(desc(cmsArticles.updatedAt))
           .limit(input.pageSize)
           .offset((input.page - 1) * input.pageSize),
         db.select({ value: count() }).from(cmsArticles).where(where),
       ]);
-      return { items, total: total[0]?.value ?? 0 };
+      const categoryRows = items.length
+        ? await db
+            .select({ articleId: cmsArticleCategories.articleId, name: cmsCategories.name })
+            .from(cmsArticleCategories)
+            .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
+            .where(
+              inArray(
+                cmsArticleCategories.articleId,
+                items.map((item) => item.id),
+              ),
+            )
+        : [];
+      return {
+        items: items.map((item) => ({
+          ...item,
+          categories: categoryRows
+            .filter((category) => category.articleId === item.id)
+            .map((category) => category.name),
+        })),
+        total: total[0]?.value ?? 0,
+      };
     },
-    listPublic(limit = 20) {
+    listPublic(limit = 20, cursor?: { publishedAt: Date; id: string }) {
+      const cursorFilter = cursor
+        ? or(
+            lt(cmsArticles.publishedAt, cursor.publishedAt),
+            and(eq(cmsArticles.publishedAt, cursor.publishedAt), lt(cmsArticles.id, cursor.id)),
+          )
+        : undefined;
       return db
         .select({
           id: cmsArticles.id,
@@ -69,6 +128,7 @@ export function articleRepository(db: CmsDb) {
             isNull(cmsArticles.deletedAt),
             inArray(cmsArticles.status, ["published", "scheduled"]),
             lte(cmsArticles.publishedAt, new Date()),
+            cursorFilter,
           ),
         )
         .orderBy(desc(cmsArticles.publishedAt), desc(cmsArticles.id))
@@ -145,6 +205,14 @@ export function serviceRepository(db: CmsDb) {
         .select({ value: sql<number>`coalesce(max(${cmsServiceRevisions.revision}), 0) + 1` })
         .from(cmsServiceRevisions)
         .where(eq(cmsServiceRevisions.serviceId, serviceId));
+    },
+    revisions(serviceId: string) {
+      return db
+        .select()
+        .from(cmsServiceRevisions)
+        .where(eq(cmsServiceRevisions.serviceId, serviceId))
+        .orderBy(desc(cmsServiceRevisions.createdAt))
+        .limit(50);
     },
   };
 }

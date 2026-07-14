@@ -4,10 +4,11 @@ import { desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/db";
-import { cmsMedia } from "@/db/schema";
+import { cmsAuditLogs, cmsMedia } from "@/db/schema";
 
 import { mediaUrl } from "../domain/media";
 import { requireCmsPermission } from "./cms-auth";
+import { auditInsert } from "./cms.repository";
 export const listMediaFn = createServerFn({ method: "GET" }).handler(async () => {
   await requireCmsPermission("cmsMedia", "list");
   const items = await getDb(env)
@@ -27,22 +28,35 @@ export const updateMediaFn = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    await requireCmsPermission("cmsMedia", "update");
-    const [item] = await getDb(env)
-      .update(cmsMedia)
-      .set({ altText: data.altText, caption: data.caption, updatedAt: new Date() })
-      .where(and(eq(cmsMedia.id, data.id), isNull(cmsMedia.deletedAt)))
-      .returning();
+    const session = await requireCmsPermission("cmsMedia", "update");
+    const database = getDb(env);
+    const results = await database.batch([
+      database
+        .update(cmsMedia)
+        .set({ altText: data.altText, caption: data.caption, updatedAt: new Date() })
+        .where(and(eq(cmsMedia.id, data.id), isNull(cmsMedia.deletedAt)))
+        .returning(),
+      database
+        .insert(cmsAuditLogs)
+        .values(auditInsert(session.user.id, "media.updated", "media", data.id)),
+    ]);
+    const item = results[0][0];
     return item;
   });
 import { and } from "drizzle-orm";
 export const archiveMediaFn = createServerFn({ method: "POST" })
   .validator(z.object({ id: z.string().uuid() }))
   .handler(async ({ data }) => {
-    await requireCmsPermission("cmsMedia", "delete");
-    await getDb(env)
-      .update(cmsMedia)
-      .set({ deletedAt: new Date(), updatedAt: new Date() })
-      .where(eq(cmsMedia.id, data.id));
+    const session = await requireCmsPermission("cmsMedia", "delete");
+    const database = getDb(env);
+    await database.batch([
+      database
+        .update(cmsMedia)
+        .set({ deletedAt: new Date(), updatedAt: new Date() })
+        .where(eq(cmsMedia.id, data.id)),
+      database
+        .insert(cmsAuditLogs)
+        .values(auditInsert(session.user.id, "media.archived", "media", data.id)),
+    ]);
     return { ok: true };
   });

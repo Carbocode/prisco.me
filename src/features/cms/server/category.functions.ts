@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
+import { z } from "zod";
 
 import { getDb } from "@/db";
 import { cmsCategories } from "@/db/schema";
@@ -30,7 +31,17 @@ export const updateCategoryFn = createServerFn({ method: "POST" })
     const [item] = await getDb(env)
       .update(cmsCategories)
       .set({ ...changes, updatedAt: new Date() })
-      .where(eq(cmsCategories.id, id))
+      .where(and(eq(cmsCategories.id, id), isNull(cmsCategories.deletedAt)))
       .returning();
     return item;
+  });
+export const archiveCategoryFn = createServerFn({ method: "POST" })
+  .validator(z.object({ id: z.string().uuid() }))
+  .handler(async ({ data }) => {
+    await requireCmsPermission("cmsCategory", "delete");
+    await getDb(env)
+      .update(cmsCategories)
+      .set({ deletedAt: new Date(), updatedAt: new Date() })
+      .where(eq(cmsCategories.id, data.id));
+    return { ok: true };
   });

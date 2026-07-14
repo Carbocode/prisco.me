@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 
 import { PageShell, Section } from "@/components/page-shell";
 import { parseCmsDocument } from "@/features/cms/domain/cms-document";
@@ -9,7 +9,12 @@ export const Route = createFileRoute("/blog/$slug")({
     const article = await getPublishedArticleFn({ data: { slug: params.slug } });
     if (!article) {
       const moved = await getCmsRedirectFn({ data: { path: `/blog/${params.slug}` } });
-      if (moved) throw redirect({ href: moved.destinationPath });
+      if (moved)
+        throw redirect({
+          href: moved.destinationPath,
+          statusCode: redirectStatus(moved.statusCode),
+        });
+      throw notFound();
     }
     return { article };
   },
@@ -68,10 +73,29 @@ function ArticlePage() {
       description={article.excerpt ?? undefined}
     >
       <Section>
+        {article.cover ? (
+          <img
+            src={article.cover.url}
+            alt={article.cover.altText ?? ""}
+            className="mb-8 aspect-video w-full rounded-2xl object-cover"
+          />
+        ) : null}
+        {article.categories.length ? (
+          <p className="mb-4 text-sm text-slate-400">
+            {article.categories.map((category) => category.name).join(" · ")}
+          </p>
+        ) : null}
         <article className="prose prose-invert max-w-3xl space-y-5">
-          {renderCmsDocument(parseCmsDocument(article.content))}
+          {renderCmsDocument(
+            parseCmsDocument(article.content),
+            new Map(article.media.map((item) => [item.id, item])),
+          )}
         </article>
       </Section>
     </PageShell>
   );
+}
+
+function redirectStatus(value: number): 301 | 302 | 307 | 308 {
+  return value === 302 || value === 307 || value === 308 ? value : 301;
 }

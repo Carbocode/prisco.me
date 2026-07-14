@@ -1,8 +1,11 @@
 import { env } from "cloudflare:workers";
+import { inArray } from "drizzle-orm";
 
 import { getDb } from "@/db";
+import { cmsCategories, cmsMedia } from "@/db/schema";
 
-import { serializeCmsDocument } from "../domain/cms-document";
+import { parseCmsDocument, serializeCmsDocument } from "../domain/cms-document";
+import { mediaUrl } from "../domain/media";
 import {
   createArticleSchema,
   listArticlesSchema,
@@ -38,7 +41,11 @@ export async function getAdminArticle(id: string) {
   if (!item) throw notFound("article");
   if (session.user.role === "author" && item.authorId !== session.user.id)
     throw new CmsError(403, "FORBIDDEN", "Permission denied");
-  return item;
+  const categories = await db()
+    .select({ categoryId: cmsArticleCategories.categoryId })
+    .from(cmsArticleCategories)
+    .where(eq(cmsArticleCategories.articleId, id));
+  return { ...item, categoryIds: categories.map((category) => category.categoryId) };
 }
 export async function createArticle(input: unknown) {
   const session = await requireCmsPermission("cmsArticle", "create");
@@ -228,6 +235,9 @@ export async function archiveArticle(input: { id: string; version: number }) {
     .returning({ id: cmsArticles.id });
   if (!result.length)
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
+  await database
+    .insert(cmsAuditLogs)
+    .values(auditInsert(session.user.id, "article.archived", "article", input.id));
   return { ok: true };
 }
 export async function unpublishArticle(input: { id: string; version: number }) {
@@ -352,8 +362,94 @@ export async function restoreArticleRevision(input: {
   return articleRepository(database).byId(current.id);
 }
 export async function listPublishedArticles(limit?: number) {
-  return articleRepository(db()).listPublic(Math.min(limit ?? 20, 50));
+  const items = await articleRepository(db()).listPublic(Math.min(limit ?? 20, 50));
+  return hydratePublicArticles(items);
+}
+export async function listPublishedArticlesPage(limit = 20, cursor?: string) {
+  const safeLimit = Math.min(Math.max(limit, 1), 50);
+  const rows = await articleRepository(db()).listPublic(
+    safeLimit + 1,
+    cursor ? decodeCursor(cursor) : undefined,
+  );
+  const hasMore = rows.length > safeLimit;
+  const items = await hydratePublicArticles(rows.slice(0, safeLimit));
+  const last = items.at(-1);
+  return {
+    items,
+    nextCursor: hasMore && last?.publishedAt ? encodeCursor(last.publishedAt, last.id) : null,
+  };
 }
 export async function getPublishedArticleBySlug(slug: string) {
-  return (await articleRepository(db()).publicBySlug(slug))[0] ?? null;
+  const item = (await articleRepository(db()).publicBySlug(slug))[0];
+  if (!item) return null;
+  return (await hydratePublicArticles([item]))[0] ?? null;
+}
+
+async function hydratePublicArticles<
+  T extends { id: string; content: string; coverMediaId: string | null },
+>(items: T[]) {
+  if (!items.length) return [];
+  const articleIds = items.map((item) => item.id);
+  const categoryRows = await db()
+    .select({
+      articleId: cmsArticleCategories.articleId,
+      name: cmsCategories.name,
+      slug: cmsCategories.slug,
+    })
+    .from(cmsArticleCategories)
+    .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
+    .where(inArray(cmsArticleCategories.articleId, articleIds));
+  const mediaIds = new Set<string>();
+  for (const item of items) {
+    if (item.coverMediaId) mediaIds.add(item.coverMediaId);
+    collectMediaIds(parseCmsDocument(item.content).content, mediaIds);
+  }
+  const mediaRows = mediaIds.size
+    ? await db()
+        .select()
+        .from(cmsMedia)
+        .where(and(inArray(cmsMedia.id, [...mediaIds]), isNull(cmsMedia.deletedAt)))
+    : [];
+  const media = mediaRows.map((item) => ({
+    id: item.id,
+    url: mediaUrl(env.MEDIA_PUBLIC_URL, item.storageKey),
+    altText: item.altText,
+    caption: item.caption,
+  }));
+  return items.map((item) => ({
+    ...item,
+    categories: categoryRows
+      .filter((category) => category.articleId === item.id)
+      .map(({ name, slug }) => ({ name, slug })),
+    media,
+    cover: item.coverMediaId
+      ? (media.find((entry) => entry.id === item.coverMediaId) ?? null)
+      : null,
+  }));
+}
+
+function collectMediaIds(nodes: Array<Record<string, unknown>> | undefined, ids: Set<string>) {
+  for (const node of nodes ?? []) {
+    if (node.type === "mediaImage" && node.attrs && typeof node.attrs === "object") {
+      const mediaId = (node.attrs as Record<string, unknown>).mediaId; // oxlint-disable-line typescript/no-unsafe-type-assertion
+      if (typeof mediaId === "string") ids.add(mediaId);
+    }
+    if (Array.isArray(node.content))
+      collectMediaIds(node.content as Array<Record<string, unknown>>, ids); // oxlint-disable-line typescript/no-unsafe-type-assertion
+  }
+}
+
+function encodeCursor(publishedAt: Date, id: string) {
+  return btoa(`${publishedAt.getTime()}:${id}`);
+}
+
+function decodeCursor(cursor: string) {
+  try {
+    const [timestamp, id] = atob(cursor).split(":");
+    const value = Number(timestamp);
+    if (!Number.isFinite(value) || !id) throw new Error("invalid cursor");
+    return { publishedAt: new Date(value), id };
+  } catch {
+    throw new CmsError(400, "INVALID_CURSOR", "Invalid pagination cursor");
+  }
 }

@@ -43,6 +43,8 @@ import { Route as DashboardCmsCategoriesRouteImport } from './routes/dashboard/c
 import { Route as DashboardCmsArticlesRouteImport } from './routes/dashboard/cms/articles'
 import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard/admin/users'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as DashboardCmsServicesNewRouteImport } from './routes/dashboard/cms/services_.new'
+import { Route as DashboardCmsServicesServiceIdRouteImport } from './routes/dashboard/cms/services_.$serviceId'
 import { Route as DashboardCmsArticlesNewRouteImport } from './routes/dashboard/cms/articles_.new'
 import { Route as DashboardCmsArticlesArticleIdRouteImport } from './routes/dashboard/cms/articles_.$articleId'
 import { Route as DashboardAdminUsersNewRouteImport } from './routes/dashboard/admin/users_.new'
@@ -50,6 +52,7 @@ import { Route as ApiContentV1CategoriesRouteImport } from './routes/api/content
 import { Route as ApiCmsMediaUploadRouteImport } from './routes/api/cms/media/upload'
 import { Route as ApiContentV1ServicesIndexRouteImport } from './routes/api/content/v1/services/index'
 import { Route as ApiContentV1ArticlesIndexRouteImport } from './routes/api/content/v1/articles/index'
+import { Route as DashboardCmsServicesServiceIdPreviewRouteImport } from './routes/dashboard/cms/services_.$serviceId_.preview'
 import { Route as DashboardCmsArticlesArticleIdPreviewRouteImport } from './routes/dashboard/cms/articles_.$articleId_.preview'
 import { Route as ApiContentV1ServicesSlugRouteImport } from './routes/api/content/v1/services/$slug'
 import { Route as ApiContentV1ArticlesSlugRouteImport } from './routes/api/content/v1/articles/$slug'
@@ -226,6 +229,17 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardCmsServicesNewRoute = DashboardCmsServicesNewRouteImport.update({
+  id: '/services_/new',
+  path: '/services/new',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardCmsServicesServiceIdRoute =
+  DashboardCmsServicesServiceIdRouteImport.update({
+    id: '/services_/$serviceId',
+    path: '/services/$serviceId',
+    getParentRoute: () => DashboardCmsRouteRoute,
+  } as any)
 const DashboardCmsArticlesNewRoute = DashboardCmsArticlesNewRouteImport.update({
   id: '/articles_/new',
   path: '/articles/new',
@@ -263,6 +277,12 @@ const ApiContentV1ArticlesIndexRoute =
     id: '/api/content/v1/articles/',
     path: '/api/content/v1/articles/',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardCmsServicesServiceIdPreviewRoute =
+  DashboardCmsServicesServiceIdPreviewRouteImport.update({
+    id: '/services_/$serviceId_/preview',
+    path: '/services/$serviceId/preview',
+    getParentRoute: () => DashboardCmsRouteRoute,
   } as any)
 const DashboardCmsArticlesArticleIdPreviewRoute =
   DashboardCmsArticlesArticleIdPreviewRouteImport.update({
@@ -323,9 +343,12 @@ export interface FileRoutesByFullPath {
   '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/cms/articles/$articleId': typeof DashboardCmsArticlesArticleIdRoute
   '/dashboard/cms/articles/new': typeof DashboardCmsArticlesNewRoute
+  '/dashboard/cms/services/$serviceId': typeof DashboardCmsServicesServiceIdRoute
+  '/dashboard/cms/services/new': typeof DashboardCmsServicesNewRoute
   '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
   '/api/content/v1/services/$slug': typeof ApiContentV1ServicesSlugRoute
   '/dashboard/cms/articles/$articleId/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
+  '/dashboard/cms/services/$serviceId/preview': typeof DashboardCmsServicesServiceIdPreviewRoute
   '/api/content/v1/articles/': typeof ApiContentV1ArticlesIndexRoute
   '/api/content/v1/services/': typeof ApiContentV1ServicesIndexRoute
 }
@@ -366,9 +389,12 @@ export interface FileRoutesByTo {
   '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/cms/articles/$articleId': typeof DashboardCmsArticlesArticleIdRoute
   '/dashboard/cms/articles/new': typeof DashboardCmsArticlesNewRoute
+  '/dashboard/cms/services/$serviceId': typeof DashboardCmsServicesServiceIdRoute
+  '/dashboard/cms/services/new': typeof DashboardCmsServicesNewRoute
   '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
   '/api/content/v1/services/$slug': typeof ApiContentV1ServicesSlugRoute
   '/dashboard/cms/articles/$articleId/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
+  '/dashboard/cms/services/$serviceId/preview': typeof DashboardCmsServicesServiceIdPreviewRoute
   '/api/content/v1/articles': typeof ApiContentV1ArticlesIndexRoute
   '/api/content/v1/services': typeof ApiContentV1ServicesIndexRoute
 }
@@ -413,9 +439,12 @@ export interface FileRoutesById {
   '/dashboard/admin/users_/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/cms/articles_/$articleId': typeof DashboardCmsArticlesArticleIdRoute
   '/dashboard/cms/articles_/new': typeof DashboardCmsArticlesNewRoute
+  '/dashboard/cms/services_/$serviceId': typeof DashboardCmsServicesServiceIdRoute
+  '/dashboard/cms/services_/new': typeof DashboardCmsServicesNewRoute
   '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
   '/api/content/v1/services/$slug': typeof ApiContentV1ServicesSlugRoute
   '/dashboard/cms/articles_/$articleId_/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
+  '/dashboard/cms/services_/$serviceId_/preview': typeof DashboardCmsServicesServiceIdPreviewRoute
   '/api/content/v1/articles/': typeof ApiContentV1ArticlesIndexRoute
   '/api/content/v1/services/': typeof ApiContentV1ServicesIndexRoute
 }
@@ -461,9 +490,12 @@ export interface FileRouteTypes {
     | '/dashboard/admin/users/new'
     | '/dashboard/cms/articles/$articleId'
     | '/dashboard/cms/articles/new'
+    | '/dashboard/cms/services/$serviceId'
+    | '/dashboard/cms/services/new'
     | '/api/content/v1/articles/$slug'
     | '/api/content/v1/services/$slug'
     | '/dashboard/cms/articles/$articleId/preview'
+    | '/dashboard/cms/services/$serviceId/preview'
     | '/api/content/v1/articles/'
     | '/api/content/v1/services/'
   fileRoutesByTo: FileRoutesByTo
@@ -504,9 +536,12 @@ export interface FileRouteTypes {
     | '/dashboard/admin/users/new'
     | '/dashboard/cms/articles/$articleId'
     | '/dashboard/cms/articles/new'
+    | '/dashboard/cms/services/$serviceId'
+    | '/dashboard/cms/services/new'
     | '/api/content/v1/articles/$slug'
     | '/api/content/v1/services/$slug'
     | '/dashboard/cms/articles/$articleId/preview'
+    | '/dashboard/cms/services/$serviceId/preview'
     | '/api/content/v1/articles'
     | '/api/content/v1/services'
   id:
@@ -550,9 +585,12 @@ export interface FileRouteTypes {
     | '/dashboard/admin/users_/new'
     | '/dashboard/cms/articles_/$articleId'
     | '/dashboard/cms/articles_/new'
+    | '/dashboard/cms/services_/$serviceId'
+    | '/dashboard/cms/services_/new'
     | '/api/content/v1/articles/$slug'
     | '/api/content/v1/services/$slug'
     | '/dashboard/cms/articles_/$articleId_/preview'
+    | '/dashboard/cms/services_/$serviceId_/preview'
     | '/api/content/v1/articles/'
     | '/api/content/v1/services/'
   fileRoutesById: FileRoutesById
@@ -825,6 +863,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/cms/services_/new': {
+      id: '/dashboard/cms/services_/new'
+      path: '/services/new'
+      fullPath: '/dashboard/cms/services/new'
+      preLoaderRoute: typeof DashboardCmsServicesNewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/services_/$serviceId': {
+      id: '/dashboard/cms/services_/$serviceId'
+      path: '/services/$serviceId'
+      fullPath: '/dashboard/cms/services/$serviceId'
+      preLoaderRoute: typeof DashboardCmsServicesServiceIdRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
     '/dashboard/cms/articles_/new': {
       id: '/dashboard/cms/articles_/new'
       path: '/articles/new'
@@ -874,6 +926,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiContentV1ArticlesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/cms/services_/$serviceId_/preview': {
+      id: '/dashboard/cms/services_/$serviceId_/preview'
+      path: '/services/$serviceId/preview'
+      fullPath: '/dashboard/cms/services/$serviceId/preview'
+      preLoaderRoute: typeof DashboardCmsServicesServiceIdPreviewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
     '/dashboard/cms/articles_/$articleId_/preview': {
       id: '/dashboard/cms/articles_/$articleId_/preview'
       path: '/articles/$articleId/preview'
@@ -919,7 +978,10 @@ interface DashboardCmsRouteRouteChildren {
   DashboardCmsIndexRoute: typeof DashboardCmsIndexRoute
   DashboardCmsArticlesArticleIdRoute: typeof DashboardCmsArticlesArticleIdRoute
   DashboardCmsArticlesNewRoute: typeof DashboardCmsArticlesNewRoute
+  DashboardCmsServicesServiceIdRoute: typeof DashboardCmsServicesServiceIdRoute
+  DashboardCmsServicesNewRoute: typeof DashboardCmsServicesNewRoute
   DashboardCmsArticlesArticleIdPreviewRoute: typeof DashboardCmsArticlesArticleIdPreviewRoute
+  DashboardCmsServicesServiceIdPreviewRoute: typeof DashboardCmsServicesServiceIdPreviewRoute
 }
 
 const DashboardCmsRouteRouteChildren: DashboardCmsRouteRouteChildren = {
@@ -930,8 +992,12 @@ const DashboardCmsRouteRouteChildren: DashboardCmsRouteRouteChildren = {
   DashboardCmsIndexRoute: DashboardCmsIndexRoute,
   DashboardCmsArticlesArticleIdRoute: DashboardCmsArticlesArticleIdRoute,
   DashboardCmsArticlesNewRoute: DashboardCmsArticlesNewRoute,
+  DashboardCmsServicesServiceIdRoute: DashboardCmsServicesServiceIdRoute,
+  DashboardCmsServicesNewRoute: DashboardCmsServicesNewRoute,
   DashboardCmsArticlesArticleIdPreviewRoute:
     DashboardCmsArticlesArticleIdPreviewRoute,
+  DashboardCmsServicesServiceIdPreviewRoute:
+    DashboardCmsServicesServiceIdPreviewRoute,
 }
 
 const DashboardCmsRouteRouteWithChildren =

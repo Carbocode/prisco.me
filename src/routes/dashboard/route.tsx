@@ -166,7 +166,11 @@ function ProfileShell() {
                       title="Articoli"
                       isActive={pathname.startsWith("/dashboard/cms/articles")}
                       render={
-                        <Link to="/dashboard/cms/articles" onClick={() => setOpenMobile(false)} />
+                        <Link
+                          to="/dashboard/cms/articles"
+                          search={{ page: 1 }}
+                          onClick={() => setOpenMobile(false)}
+                        />
                       }
                     >
                       <FileText />
