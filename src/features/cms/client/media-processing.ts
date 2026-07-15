@@ -112,12 +112,19 @@ async function processAudioVideo(
   }
 }
 
+// Il core di ffmpeg (~30 MiB di wasm) viene caricato da CDN a runtime invece di
+// essere incluso nel bundle: un asset > 25 MiB viene rifiutato da Cloudflare Workers.
+const FFMPEG_CORE_BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm";
+
 async function getFFmpeg() {
   ffmpegPromise ??= (async () => {
-    const [{ FFmpeg }, { default: coreURL }, { default: wasmURL }] = await Promise.all([
+    const [{ FFmpeg }, { toBlobURL }] = await Promise.all([
       import("@ffmpeg/ffmpeg"),
-      import("@ffmpeg/core?url"),
-      import("@ffmpeg/core/wasm?url"),
+      import("@ffmpeg/util"),
+    ]);
+    const [coreURL, wasmURL] = await Promise.all([
+      toBlobURL(`${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`, "text/javascript"),
+      toBlobURL(`${FFMPEG_CORE_BASE_URL}/ffmpeg-core.wasm`, "application/wasm"),
     ]);
     const ffmpeg = new FFmpeg();
     await ffmpeg.load({ coreURL, wasmURL });

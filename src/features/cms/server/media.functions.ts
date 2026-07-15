@@ -6,7 +6,7 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { cmsAuditLogs, cmsMedia } from "@/db/schema";
 
-import { mediaUrl } from "../domain/media";
+import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
 import { requireCmsPermission } from "./cms-auth";
 import { auditInsert } from "./cms.repository";
 export const listMediaFn = createServerFn({ method: "GET" }).handler(async () => {
@@ -17,7 +17,8 @@ export const listMediaFn = createServerFn({ method: "GET" }).handler(async () =>
     .where(isNull(cmsMedia.deletedAt))
     .orderBy(desc(cmsMedia.createdAt))
     .limit(100);
-  return items.map((item) => ({ ...item, url: mediaUrl(env.MEDIA_PUBLIC_URL, item.storageKey) }));
+  const baseUrl = mediaDeliveryBaseUrl(env.VITE_MODE, env.MEDIA_PUBLIC_URL);
+  return items.map((item) => ({ ...item, url: mediaUrl(baseUrl, item.storageKey) }));
 });
 export const updateMediaFn = createServerFn({ method: "POST" })
   .validator(

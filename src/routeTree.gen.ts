@@ -26,6 +26,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as ArchiveSlugIndexRouteImport } from './routes/$archiveSlug/index'
 import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
+import { Route as MediaSplatRouteImport } from './routes/media/$'
 import { Route as ArchiveSlugSplatRouteImport } from './routes/$archiveSlug/$'
 import { Route as DashboardProfileRouteRouteImport } from './routes/dashboard/profile/route'
 import { Route as DashboardCmsRouteRouteImport } from './routes/dashboard/cms/route'
@@ -135,6 +136,11 @@ const ArchiveSlugIndexRoute = ArchiveSlugIndexRouteImport.update({
 const OauthConsentRoute = OauthConsentRouteImport.update({
   id: '/oauth/consent',
   path: '/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MediaSplatRoute = MediaSplatRouteImport.update({
+  id: '/media/$',
+  path: '/media/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArchiveSlugSplatRoute = ArchiveSlugSplatRouteImport.update({
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/cms': typeof DashboardCmsRouteRouteWithChildren
   '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
   '/$archiveSlug/$': typeof ArchiveSlugSplatRoute
+  '/media/$': typeof MediaSplatRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/$archiveSlug/': typeof ArchiveSlugIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -329,6 +336,7 @@ export interface FileRoutesByTo {
   '/verify-2fa': typeof Verify2faRoute
   '/dashboard/admin': typeof DashboardAdminRouteRouteWithChildren
   '/$archiveSlug/$': typeof ArchiveSlugSplatRoute
+  '/media/$': typeof MediaSplatRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/$archiveSlug': typeof ArchiveSlugIndexRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -374,6 +382,7 @@ export interface FileRoutesById {
   '/dashboard/cms': typeof DashboardCmsRouteRouteWithChildren
   '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
   '/$archiveSlug/$': typeof ArchiveSlugSplatRoute
+  '/media/$': typeof MediaSplatRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/$archiveSlug/': typeof ArchiveSlugIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -420,6 +429,7 @@ export interface FileRouteTypes {
     | '/dashboard/cms'
     | '/dashboard/profile'
     | '/$archiveSlug/$'
+    | '/media/$'
     | '/oauth/consent'
     | '/$archiveSlug/'
     | '/dashboard/'
@@ -460,6 +470,7 @@ export interface FileRouteTypes {
     | '/verify-2fa'
     | '/dashboard/admin'
     | '/$archiveSlug/$'
+    | '/media/$'
     | '/oauth/consent'
     | '/$archiveSlug'
     | '/dashboard'
@@ -504,6 +515,7 @@ export interface FileRouteTypes {
     | '/dashboard/cms'
     | '/dashboard/profile'
     | '/$archiveSlug/$'
+    | '/media/$'
     | '/oauth/consent'
     | '/$archiveSlug/'
     | '/dashboard/'
@@ -545,6 +557,7 @@ export interface RootRouteChildren {
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Verify2faRoute: typeof Verify2faRoute
+  MediaSplatRoute: typeof MediaSplatRoute
   OauthConsentRoute: typeof OauthConsentRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCmsMediaUploadRoute: typeof ApiCmsMediaUploadRoute
@@ -673,6 +686,13 @@ declare module '@tanstack/react-router' {
       path: '/oauth/consent'
       fullPath: '/oauth/consent'
       preLoaderRoute: typeof OauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/media/$': {
+      id: '/media/$'
+      path: '/media/$'
+      fullPath: '/media/$'
+      preLoaderRoute: typeof MediaSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$archiveSlug/$': {
@@ -959,6 +979,7 @@ const rootRouteChildren: RootRouteChildren = {
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   Verify2faRoute: Verify2faRoute,
+  MediaSplatRoute: MediaSplatRoute,
   OauthConsentRoute: OauthConsentRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCmsMediaUploadRoute: ApiCmsMediaUploadRoute,

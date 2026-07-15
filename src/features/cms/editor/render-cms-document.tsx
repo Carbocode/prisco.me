@@ -1,6 +1,25 @@
+/* oxlint-disable react/iframe-missing-sandbox -- trusted YouTube/Vimeo embeds validated by toEmbedUrl need scripts + same-origin to play. */
+import { renderToString } from "katex";
+
+// oxlint-disable-next-line import/no-unassigned-import -- KaTeX stylesheet for server-rendered equations.
+import "katex/dist/katex.min.css";
 import type { CSSProperties, ReactNode } from "react";
 
+import { toEmbedUrl } from "../../editor/embed-url";
 import { toPlateValue, type CmsDocument } from "../domain/cms-document";
+
+function katexHtml(tex: unknown, displayMode: boolean): string {
+  if (typeof tex !== "string" || tex.length === 0) return "";
+  try {
+    return renderToString(tex, {
+      displayMode,
+      output: "htmlAndMathml",
+      throwOnError: false,
+    });
+  } catch {
+    return "";
+  }
+}
 
 type Node = Record<string, unknown> & {
   type?: string;
@@ -13,6 +32,13 @@ type Node = Record<string, unknown> & {
 export type CmsMediaView = { url: string; altText?: string | null; caption?: string | null };
 function stringAttr(value: unknown) {
   return typeof value === "string" ? value : undefined;
+}
+
+function mediaWidth(value: unknown) {
+  if (typeof value === "number" && value >= 120) return `${value}px`;
+  if (typeof value !== "string" || !/^\d{1,3}(?:\.\d+)?%$/.test(value)) return undefined;
+  const percentage = Number.parseFloat(value);
+  return percentage > 0 && percentage <= 100 ? value : undefined;
 }
 
 function safeHref(value: unknown) {
@@ -194,10 +220,10 @@ function children(
       );
     case "toggle":
       return (
-        <details key={key} open>
-          <summary>Dettagli</summary>
-          {nested}
-        </details>
+        <div key={key} className="cms-toggle" style={blockStyle(node)}>
+          <span className="cms-toggle__marker" aria-hidden="true" />
+          <div className="cms-toggle__title">{nested}</div>
+        </div>
       );
     case "tr":
       return <tr key={key}>{nested}</tr>;
@@ -291,12 +317,100 @@ function children(
       );
     case "tableCell":
       return <td key={key}>{nested}</td>;
+    case "callout":
+      return (
+        <div key={key} className="cms-callout" style={blockStyle(node)}>
+          <span className="cms-callout__icon" aria-hidden="true">
+            {stringAttr(node.icon) ?? "💡"}
+          </span>
+          <div className="cms-callout__body">{nested}</div>
+        </div>
+      );
+    case "column_group":
+      return (
+        <div key={key} className="cms-columns">
+          {nested}
+        </div>
+      );
+    case "column":
+      return (
+        <div
+          key={key}
+          className="cms-column"
+          style={typeof node.width === "string" ? { width: node.width } : undefined}
+        >
+          {nested}
+        </div>
+      );
+    case "equation":
+      return (
+        <div
+          key={key}
+          className="cms-equation"
+          // oxlint-disable-next-line react/no-danger -- KaTeX output is generated from stored TeX, not user HTML.
+          dangerouslySetInnerHTML={{ __html: katexHtml(node.texExpression, true) }}
+        />
+      );
+    case "inline_equation":
+      return (
+        <span
+          key={key}
+          className="cms-equation cms-equation--inline"
+          // oxlint-disable-next-line react/no-danger -- KaTeX output is generated from stored TeX, not user HTML.
+          dangerouslySetInnerHTML={{ __html: katexHtml(node.texExpression, false) }}
+        />
+      );
+    case "date":
+      return (
+        <span key={key} className="cms-date">
+          {stringAttr(node.date) ?? stringAttr(node.rawDate) ?? ""}
+          {nested}
+        </span>
+      );
+    case "mention":
+      return (
+        <span key={key} className="cms-mention">
+          @{stringAttr(node.value) ?? ""}
+          {nested}
+        </span>
+      );
+    case "mediaEmbed": {
+      const embedUrl = toEmbedUrl(node.url);
+      if (!embedUrl) return null;
+      return (
+        <div key={key} className="cms-embed">
+          <iframe
+            src={embedUrl}
+            title="Contenuto incorporato"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+            allowFullScreen
+          />
+        </div>
+      );
+    }
+    case "code_drawing": {
+      const data =
+        node.data && typeof node.data === "object" ? (node.data as Record<string, unknown>) : {};
+      const drawingCode = typeof data.code === "string" ? data.code : "";
+      if (!drawingCode) return null;
+      return (
+        <pre
+          key={key}
+          className="cms-code-drawing"
+          data-drawing-type={stringAttr(data.drawingType)}
+        >
+          <code>{drawingCode}</code>
+        </pre>
+      );
+    }
     case "mediaImage": {
       const item = media.get(stringAttr(node.mediaId) ?? stringAttr(node.attrs?.mediaId) ?? "");
       if (!item) return null;
       const mediaType = stringAttr(node.mediaType) ?? stringAttr(node.attrs?.mediaType) ?? "image";
+      const width = mediaWidth(node.width ?? node.attrs?.width);
       return (
-        <figure key={key}>
+        <figure key={key} style={width ? { marginInline: "auto", width } : undefined}>
           {mediaType === "image" ? (
             <img
               src={item.url}

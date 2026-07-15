@@ -12,18 +12,17 @@ import {
   QuoteIcon,
   SquareIcon,
 } from "lucide-react";
-import type { TElement } from "platejs";
 import { KEYS } from "platejs";
 import { useEditorRef, useSelectionFragmentProp } from "platejs/react";
 import * as React from "react";
 
-import { getBlockType, setBlockType } from "@/components/editor/transforms";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getBlockType, setBlockType } from "@/features/editor/transforms";
 
 import { ToolbarButton, ToolbarMenuGroup } from "./toolbar";
 
@@ -96,7 +95,7 @@ export function TurnIntoToolbarButton(props: React.ComponentProps<typeof Dropdow
 
   const value = useSelectionFragmentProp({
     defaultValue: KEYS.p,
-    getProp: (node) => getBlockType(node as TElement),
+    getProp: (node) => ("type" in node ? getBlockType(node) : KEYS.p),
   });
   const selectedItem = React.useMemo(
     () => turnIntoItems.find((item) => item.value === (value ?? KEYS.p)) ?? turnIntoItems[0],

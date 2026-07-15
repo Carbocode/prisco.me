@@ -45,9 +45,9 @@ export function LineHeightToolbarButton(props: React.ComponentProps<typeof Dropd
             editor.tf.focus();
           }}
         >
-          {values.map((value) => (
-            <DropdownMenuRadioItem key={value} className="min-w-[180px]" value={value}>
-              {value}
+          {values.map((option) => (
+            <DropdownMenuRadioItem key={option} className="min-w-[180px]" value={option}>
+              {option}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

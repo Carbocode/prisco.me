@@ -96,6 +96,7 @@ code {
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand: var(--primary);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -377,17 +378,20 @@ code {
 }
 
 .cms-editor {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
   overflow: clip;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
   background: var(--background);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 6%, transparent);
 }
 
 .cms-editor__toolbar {
   position: sticky;
   top: 4.5rem;
   z-index: 10;
+  /* On large screens the editor column scrolls independently, so the toolbar
+     pins to the top of that column instead of sitting below the page header. */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -397,6 +401,12 @@ code {
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--card) 94%, transparent);
   backdrop-filter: blur(12px);
+}
+
+@media (min-width: 1280px) {
+  .cms-editor__toolbar {
+    top: 0;
+  }
 }
 
 .cms-editor__canvas {
@@ -538,18 +548,6 @@ code {
   color: var(--color-slate-950);
 }
 
-.cms-editor__comment {
-  border-bottom: 2px solid var(--primary);
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-}
-
-.cms-editor__suggestion {
-  background: color-mix(in srgb, var(--accent) 72%, transparent);
-  text-decoration: underline;
-  text-decoration-style: wavy;
-  text-underline-offset: 0.2em;
-}
-
 .cms-editor__content ul[data-type='taskList'],
 .cms-task-list {
   margin-block: 0 1.15em;
@@ -645,10 +643,6 @@ code {
   color: var(--muted-foreground);
   content: attr(data-placeholder);
   pointer-events: none;
-}
-
-.cms-editor__content:focus {
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ring) 55%, transparent);
 }
 
 .cms-editor__media {
@@ -809,6 +803,100 @@ code {
   color: var(--muted-foreground);
   font-size: 0.875rem;
   text-align: center;
+}
+
+.cms-callout {
+  display: flex;
+  gap: 0.75rem;
+  margin-block: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--muted) 55%, transparent);
+}
+
+.cms-callout__icon {
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.cms-callout__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.cms-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-block: 0.35rem;
+}
+
+.cms-toggle__marker::before {
+  content: '▸';
+  display: inline-block;
+  color: var(--muted-foreground);
+}
+
+.cms-toggle__title {
+  min-width: 0;
+  flex: 1;
+  font-weight: 500;
+}
+
+.cms-embed {
+  position: relative;
+  margin-block: 1rem;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--muted);
+}
+
+.cms-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.cms-columns {
+  display: flex;
+  gap: 1rem;
+  margin-block: 0.75rem;
+}
+
+.cms-column {
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.cms-equation {
+  overflow-x: auto;
+  margin-block: 0.75rem;
+  text-align: center;
+}
+
+.cms-equation--inline {
+  display: inline-block;
+  margin: 0;
+}
+
+.cms-date {
+  border-radius: 0.25rem;
+  padding: 0 0.25rem;
+  background: color-mix(in srgb, var(--muted) 60%, transparent);
+  color: var(--muted-foreground);
+}
+
+.cms-mention {
+  display: inline-block;
+  border-radius: 0.375rem;
+  padding: 0 0.375rem;
+  background: color-mix(in srgb, var(--muted) 60%, transparent);
+  font-weight: 500;
+  font-size: 0.95em;
 }
 
 .cms-content {

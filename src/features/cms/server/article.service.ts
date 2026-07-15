@@ -9,7 +9,7 @@ import {
   parseCmsDocument,
   serializeCmsDocument,
 } from "../domain/cms-document";
-import { mediaUrl } from "../domain/media";
+import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
 import { publicationDateParts } from "../domain/publication-date";
 import {
   createArticleSchema,
@@ -545,7 +545,7 @@ async function hydratePublicArticles<
     : [];
   const media = mediaRows.map((item) => ({
     id: item.id,
-    url: mediaUrl(env.MEDIA_PUBLIC_URL, item.storageKey),
+    url: mediaUrl(mediaDeliveryBaseUrl(env.VITE_MODE, env.MEDIA_PUBLIC_URL), item.storageKey),
     altText: item.altText,
     caption: item.caption,
   }));

@@ -1,3 +1,4 @@
+import emojiMartData from "@emoji-mart/data";
 import {
   BlockquotePlugin,
   BoldPlugin,
@@ -21,90 +22,67 @@ import {
   LineHeightPlugin,
   TextAlignPlugin,
 } from "@platejs/basic-styles/react";
-import { toggleCodeBlock } from "@platejs/code-block";
-import { CodeBlockPlugin, CodeLinePlugin } from "@platejs/code-block/react";
-import { DndPlugin, useDndNode, useDropLine } from "@platejs/dnd";
+import { CalloutPlugin } from "@platejs/callout/react";
+import { CodeBlockPlugin, CodeLinePlugin, CodeSyntaxPlugin } from "@platejs/code-block/react";
+import { CodeDrawingPlugin } from "@platejs/code-drawing/react";
+import { DatePlugin } from "@platejs/date/react";
+import { DndPlugin } from "@platejs/dnd";
+import { EmojiInputPlugin, EmojiPlugin } from "@platejs/emoji/react";
 import { IndentPlugin } from "@platejs/indent/react";
-import { insertLink, unwrapLink, upsertLink } from "@platejs/link";
+import { ColumnItemPlugin, ColumnPlugin } from "@platejs/layout/react";
+import { insertLink, LinkRules, unwrapLink, upsertLink } from "@platejs/link";
 import { LinkPlugin } from "@platejs/link/react";
 import { someList, toggleList } from "@platejs/list";
 import { ListPlugin } from "@platejs/list/react";
-import {
-  deleteColumn,
-  deleteRow,
-  deleteTable,
-  insertTable,
-  insertTableColumn,
-  insertTableRow,
-} from "@platejs/table";
+import { EquationPlugin, InlineEquationPlugin } from "@platejs/math/react";
+import { MentionInputPlugin, MentionPlugin } from "@platejs/mention/react";
+import { ResizableProvider, useResizableValue } from "@platejs/resizable";
+import { BlockSelectionPlugin } from "@platejs/selection/react";
+import { SlashInputPlugin, SlashPlugin } from "@platejs/slash-command/react";
 import {
   TableCellHeaderPlugin,
   TableCellPlugin,
   TablePlugin,
   TableRowPlugin,
 } from "@platejs/table/react";
-import { insertToc } from "@platejs/toc";
 import { TocPlugin, useTocElement, useTocElementState } from "@platejs/toc/react";
+import { TogglePlugin } from "@platejs/toggle/react";
+import { all, createLowlight } from "lowlight";
 import {
   AlignCenter,
   AlignJustify,
   AlignLeft,
   AlignRight,
-  AudioLines,
   Baseline,
   Bold,
-  Braces,
-  ChevronsUpDown,
   Code2,
-  Copy,
-  Eraser,
-  FileUp,
-  GripVertical,
   Highlighter,
-  ImagePlus,
   Italic,
   Link2,
   List,
   ListChecks,
   ListOrdered,
-  MessageSquarePlus,
-  Minus,
-  MoreVertical,
   PaintBucket,
-  PencilLine,
-  Quote,
-  SmilePlus,
   Strikethrough,
-  Table2,
-  TableOfContents,
-  Trash2,
+  Subscript,
+  Superscript,
   Underline,
-  Video,
 } from "lucide-react";
-import { KEYS, type TElement, type Value } from "platejs";
+import { ExitBreakPlugin, KEYS, type TElement, TrailingBlockPlugin, type Value } from "platejs";
 import {
+  BlockPlaceholderPlugin,
   ParagraphPlugin,
   Plate,
   PlateElement,
-  PlateLeaf,
   createPlatePlugin,
   useEditorRef,
   useEditorSelector,
   useNodePath,
   usePlateEditor,
+  withHOC,
   type PlateElementProps,
-  type RenderNodeWrapperProps,
 } from "platejs/react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type FormEvent,
-  type MouseEvent as ReactMouseEvent,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -125,19 +103,11 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Editor, EditorContainer } from "@/components/ui/editor";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { FixedToolbar } from "@/components/ui/fixed-toolbar";
-import { FontColorToolbarButton } from "@/components/ui/font-color-toolbar-button";
-import { RedoToolbarButton, UndoToolbarButton } from "@/components/ui/history-toolbar-button";
-import { IndentToolbarButton, OutdentToolbarButton } from "@/components/ui/indent-toolbar-button";
 import { Input } from "@/components/ui/input";
-import { LineHeightToolbarButton } from "@/components/ui/line-height-toolbar-button";
-import { MarkToolbarButton } from "@/components/ui/mark-toolbar-button";
-import { MoreToolbarButton } from "@/components/ui/more-toolbar-button";
+import { mediaResizeHandleVariants, Resizable, ResizeHandle } from "@/components/ui/resize-handle";
 import {
   Select,
   SelectContent,
@@ -147,10 +117,49 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ToolbarButton as PlateToolbarButton, ToolbarGroup } from "@/components/ui/toolbar";
-import { TurnIntoToolbarButton } from "@/components/ui/turn-into-toolbar-button";
-
-import { fromPlateValue, toPlateValue, type CmsDocument } from "../domain/cms-document";
+import { fromPlateValue, toPlateValue, type CmsDocument } from "@/features/cms/domain/cms-document";
+import { autoformatPlugin } from "@/features/editor/autoformat-plugin";
+import { BlockDraggable } from "@/features/editor/components/block-draggable";
+import { CalloutElement } from "@/features/editor/components/callout-node";
+import {
+  CodeBlockElement,
+  CodeLineElement,
+  CodeSyntaxLeaf,
+} from "@/features/editor/components/code-block-node";
+import { CodeDrawingElement } from "@/features/editor/components/code-drawing-node";
+import { ColumnElement, ColumnGroupElement } from "@/features/editor/components/column-node";
+import { DateElement } from "@/features/editor/components/date-node";
+import { Editor, EditorContainer } from "@/features/editor/components/editor";
+import { EmojiInputElement } from "@/features/editor/components/emoji-node";
+import { EmojiToolbarButton } from "@/features/editor/components/emoji-toolbar-button";
+import { EquationElement, InlineEquationElement } from "@/features/editor/components/equation-node";
+import { FixedToolbar } from "@/features/editor/components/fixed-toolbar";
+import { FloatingToolbar } from "@/features/editor/components/floating-toolbar";
+import { FloatingToolbarButtons } from "@/features/editor/components/floating-toolbar-buttons";
+import { FontColorToolbarButton } from "@/features/editor/components/font-color-toolbar-button";
+import {
+  RedoToolbarButton,
+  UndoToolbarButton,
+} from "@/features/editor/components/history-toolbar-button";
+import {
+  IndentToolbarButton,
+  OutdentToolbarButton,
+} from "@/features/editor/components/indent-toolbar-button";
+import { LineHeightToolbarButton } from "@/features/editor/components/line-height-toolbar-button";
+import { LinkElement } from "@/features/editor/components/link-node";
+import { LinkFloatingToolbar } from "@/features/editor/components/link-toolbar";
+import { MarkToolbarButton } from "@/features/editor/components/mark-toolbar-button";
+import { MediaEmbedElement } from "@/features/editor/components/media-embed-node";
+import { MentionElement, MentionInputElement } from "@/features/editor/components/mention-node";
+import { SlashInputElement } from "@/features/editor/components/slash-node";
+import { TableToolbarButton } from "@/features/editor/components/table-toolbar-button";
+import { ToggleElement } from "@/features/editor/components/toggle-node";
+import {
+  ToolbarButton as PlateToolbarButton,
+  ToolbarGroup,
+} from "@/features/editor/components/toolbar";
+import { EditorActionsProvider, type MediaKind } from "@/features/editor/editor-actions-context";
+import { toEmbedUrl } from "@/features/editor/embed-url";
 
 type MediaItem = { id: string; filename: string; url: string; altText: string | null };
 const MediaContext = createContext<Map<string, MediaItem>>(new Map());
@@ -216,18 +225,6 @@ function BlockquoteElement(props: PlateElementProps) {
   return <PlateElement {...props} as="blockquote" />;
 }
 
-function CodeBlockElement(props: PlateElementProps) {
-  return (
-    <PlateElement {...props} as="pre">
-      <code>{props.children}</code>
-    </PlateElement>
-  );
-}
-
-function CodeLineElement(props: PlateElementProps) {
-  return <PlateElement {...props} as="div" />;
-}
-
 function HorizontalRuleElement(props: PlateElementProps) {
   return (
     <PlateElement {...props} as="div">
@@ -237,43 +234,6 @@ function HorizontalRuleElement(props: PlateElementProps) {
       {props.children}
     </PlateElement>
   );
-}
-
-function ToggleElement(props: PlateElementProps) {
-  return (
-    <PlateElement {...props} as="details">
-      <summary contentEditable={false}>Dettagli</summary>
-      <div>{props.children}</div>
-    </PlateElement>
-  );
-}
-
-function LinkElement(props: PlateElementProps) {
-  const element = props.element as TElement & { url?: string };
-  return (
-    <PlateElement
-      {...props}
-      as="a"
-      attributes={{
-        ...props.attributes,
-        href: safeHref(element.url),
-        onClick: (event: ReactMouseEvent<HTMLAnchorElement>) => event.preventDefault(),
-      }}
-    />
-  );
-}
-
-function CommentLeaf(props: React.ComponentProps<typeof PlateLeaf>) {
-  const comment = typeof props.leaf.comment === "string" ? props.leaf.comment : "Commento";
-  return (
-    <span title={comment}>
-      <PlateLeaf {...props} className="cms-editor__comment" />
-    </span>
-  );
-}
-
-function SuggestionLeaf(props: React.ComponentProps<typeof PlateLeaf>) {
-  return <PlateLeaf {...props} className="cms-editor__suggestion" />;
 }
 
 function TableElement(props: PlateElementProps) {
@@ -298,43 +258,62 @@ function TableCellElement(props: PlateElementProps) {
   return <PlateElement {...props} as="td" />;
 }
 
-function MediaImageElement(props: PlateElementProps) {
-  const media = useContext(MediaContext);
-  const element = props.element as TElement & {
-    alt?: string;
-    caption?: string;
-    mediaId?: string;
-    mediaType?: "audio" | "file" | "image" | "video";
-  };
-  const item = media.get(element.mediaId ?? "");
-  const mediaType = element.mediaType ?? "image";
-  return (
-    <PlateElement {...props} as="figure">
-      <span contentEditable={false}>
-        {item && mediaType === "image" ? (
-          <img src={item.url} alt={element.alt || item.altText || ""} />
-        ) : null}
-        {item && mediaType === "video" ? (
-          <video src={item.url} controls>
-            <track kind="captions" />
-          </video>
-        ) : null}
-        {item && mediaType === "audio" ? (
-          <audio src={item.url} controls>
-            <track kind="captions" />
-          </audio>
-        ) : null}
-        {item && mediaType === "file" ? (
-          <a href={item.url} target="_blank" rel="noreferrer">
-            {item.filename}
-          </a>
-        ) : null}
-        {element.caption ? <figcaption>{element.caption}</figcaption> : null}
-      </span>
-      {props.children}
-    </PlateElement>
-  );
-}
+const MediaImageElement = withHOC(
+  ResizableProvider,
+  function MediaImageElement(props: PlateElementProps) {
+    const media = useContext(MediaContext);
+    const width = useResizableValue("width");
+    const element = props.element as TElement & {
+      alt?: string;
+      caption?: string;
+      mediaId?: string;
+      mediaType?: "audio" | "file" | "image" | "video";
+    };
+    const item = media.get(element.mediaId ?? "");
+    const mediaType = element.mediaType ?? "image";
+
+    return (
+      <PlateElement {...props} as="figure">
+        <div contentEditable={false}>
+          {item && mediaType === "image" ? (
+            <Resizable
+              align="center"
+              className="group"
+              options={{ align: "center", maxWidth: "100%", minWidth: 120 }}
+            >
+              <ResizeHandle
+                className={mediaResizeHandleVariants({ direction: "left" })}
+                options={{ direction: "left" }}
+              />
+              <img src={item.url} alt={element.alt || item.altText || ""} />
+              <ResizeHandle
+                className={mediaResizeHandleVariants({ direction: "right" })}
+                options={{ direction: "right" }}
+              />
+            </Resizable>
+          ) : null}
+          {item && mediaType === "video" ? (
+            <video src={item.url} controls>
+              <track kind="captions" />
+            </video>
+          ) : null}
+          {item && mediaType === "audio" ? (
+            <audio src={item.url} controls>
+              <track kind="captions" />
+            </audio>
+          ) : null}
+          {item && mediaType === "file" ? (
+            <a href={item.url} target="_blank" rel="noreferrer">
+              {item.filename}
+            </a>
+          ) : null}
+          {element.caption ? <figcaption style={{ width }}>{element.caption}</figcaption> : null}
+        </div>
+        {props.children}
+      </PlateElement>
+    );
+  },
+);
 
 function TocElement(props: PlateElementProps) {
   const state = useTocElementState();
@@ -389,108 +368,12 @@ const MediaImagePlugin = createPlatePlugin({
   node: { isElement: true, isVoid: true },
 }).withComponent(MediaImageElement);
 
-const ToggleBlockPlugin = createPlatePlugin({
-  key: "toggle",
-  node: { isElement: true },
-}).withComponent(ToggleElement);
+const MediaEmbedPlugin = createPlatePlugin({
+  key: "mediaEmbed",
+  node: { isElement: true, isVoid: true },
+}).withComponent(MediaEmbedElement);
 
-const CommentMarkPlugin = createPlatePlugin({
-  key: "comment",
-  node: { isLeaf: true },
-}).withComponent(CommentLeaf);
-
-const SuggestionMarkPlugin = createPlatePlugin({
-  key: "suggestion",
-  node: { isLeaf: true },
-}).withComponent(SuggestionLeaf);
-
-function BlockDraggable(props: RenderNodeWrapperProps) {
-  const editor = useEditorRef();
-  const nodeRef = useRef<HTMLDivElement>(null);
-  const { dragRef, isDragging } = useDndNode({ element: props.element, nodeRef });
-  const dropLine = useDropLine({
-    id: typeof props.element.id === "string" ? props.element.id : "",
-  });
-  const path = editor.api.findPath(props.element);
-
-  if (!path || path.length !== 1) return undefined;
-
-  function transform(type: string) {
-    editor.tf.setNodes({ type }, { at: path });
-    editor.tf.unsetNodes(["checked", "indent", "listStyleType"], { at: path });
-    editor.tf.focus();
-  }
-
-  return (elementProps: PlateElementProps) => (
-    <div
-      ref={nodeRef}
-      className="cms-plate-block"
-      data-dragging={isDragging || undefined}
-      data-drop-line={dropLine || undefined}
-    >
-      <div className="cms-plate-block-controls" contentEditable={false}>
-        <Button
-          ref={(node) => {
-            dragRef(node);
-          }}
-          type="button"
-          size="icon-sm"
-          variant="ghost"
-          aria-label="Trascina blocco"
-          title="Trascina blocco"
-        >
-          <GripVertical />
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button type="button" size="icon-sm" variant="ghost" aria-label="Azioni blocco" />
-            }
-          >
-            <MoreVertical />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel>Trasforma in</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => transform(KEYS.p)}>Paragrafo</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => transform(KEYS.h2)}>Titolo 2</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => transform(KEYS.h3)}>Titolo 3</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => transform(KEYS.h4)}>Titolo 4</DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={() => void navigator.clipboard.writeText(editor.api.string(path))}
-              >
-                <Copy />
-                Copia testo
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => editor.tf.duplicateNodes({ at: path })}>
-                <Copy />
-                Duplica blocco
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => transform(KEYS.p)}>
-                <Eraser />
-                Rimuovi formattazione blocco
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => editor.tf.removeNodes({ at: path })}
-              >
-                <Trash2 />
-                Elimina blocco
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      {elementProps.children}
-    </div>
-  );
-}
+const lowlight = createLowlight(all);
 
 const editorPlugins = [
   ParagraphPlugin.withComponent(ParagraphElement),
@@ -522,24 +405,79 @@ const editorPlugins = [
   }),
   TextAlignPlugin,
   IndentPlugin,
-  ListPlugin,
-  CodeBlockPlugin.withComponent(CodeBlockElement),
+  // Disable the plugin's built-in marker rendering — ParagraphElement draws the
+  // markers/checkbox itself (kept in sync with the public renderer).
+  ListPlugin.configure({ render: { belowNodes: () => undefined } }),
+  CodeBlockPlugin.configure({
+    node: { component: CodeBlockElement },
+    options: { lowlight },
+  }),
   CodeLinePlugin.withComponent(CodeLineElement),
-  LinkPlugin.withComponent(LinkElement),
+  CodeSyntaxPlugin.withComponent(CodeSyntaxLeaf),
+  CalloutPlugin.withComponent(CalloutElement),
+  CodeDrawingPlugin.withComponent(CodeDrawingElement),
+  DatePlugin.withComponent(DateElement),
+  EquationPlugin.withComponent(EquationElement),
+  InlineEquationPlugin.withComponent(InlineEquationElement),
+  ColumnPlugin.withComponent(ColumnGroupElement),
+  ColumnItemPlugin.withComponent(ColumnElement),
+  MentionPlugin.configure({ options: { triggerPreviousCharPattern: /^$|^[\s"']$/ } }).withComponent(
+    MentionElement,
+  ),
+  MentionInputPlugin.withComponent(MentionInputElement),
+  BlockSelectionPlugin,
+  LinkPlugin.configure({
+    inputRules: [LinkRules.markdown(), LinkRules.autolink({ variant: "paste" })],
+    render: {
+      node: LinkElement,
+      afterEditable: () => <LinkFloatingToolbar />,
+    },
+  }),
   TablePlugin.withComponent(TableElement),
   TableRowPlugin.withComponent(TableRowElement),
   TableCellPlugin.withComponent(TableCellElement),
   TableCellHeaderPlugin.withComponent(TableHeaderElement),
   TocPlugin.configure({ options: { topOffset: 96 } }).withComponent(TocElement),
   MediaImagePlugin,
-  ToggleBlockPlugin,
-  CommentMarkPlugin,
-  SuggestionMarkPlugin,
+  MediaEmbedPlugin,
+  TogglePlugin.withComponent(ToggleElement),
   DndPlugin.configure({
     options: { enableScroller: true },
     render: {
       aboveNodes: BlockDraggable,
       aboveSlate: ({ children }) => <DndProvider backend={HTML5Backend}>{children}</DndProvider>,
+    },
+  }),
+  // Slash command "/"
+  SlashPlugin,
+  SlashInputPlugin.withComponent(SlashInputElement),
+  // Emoji combobox ":"
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- emoji-mart data shape.
+  EmojiPlugin.configure({ options: { data: emojiMartData as never } }),
+  EmojiInputPlugin.withComponent(EmojiInputElement),
+  // Editing niceties
+  autoformatPlugin,
+  ExitBreakPlugin,
+  TrailingBlockPlugin.configure({ options: { type: KEYS.p } }),
+  BlockPlaceholderPlugin.configure({
+    options: {
+      className:
+        "before:absolute before:cursor-text before:text-muted-foreground/60 before:content-[attr(placeholder)]",
+      placeholders: {
+        [KEYS.p]: 'Scrivi qualcosa, oppure premi "/" per i comandi…',
+      },
+      query: ({ path }) => path.length === 1,
+    },
+  }),
+  // Floating selection toolbar
+  createPlatePlugin({
+    key: "floating-toolbar",
+    render: {
+      afterEditable: () => (
+        <FloatingToolbar>
+          <FloatingToolbarButtons />
+        </FloatingToolbar>
+      ),
     },
   }),
 ];
@@ -557,19 +495,18 @@ export function CmsEditor({
   const [linkText, setLinkText] = useState("");
   const [linkHref, setLinkHref] = useState("");
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  const [commentDialogOpen, setCommentDialogOpen] = useState(false);
-  const [commentText, setCommentText] = useState("");
   const [mediaType, setMediaType] = useState<"audio" | "file" | "image" | "video">("image");
   const [selectedMediaId, setSelectedMediaId] = useState("");
   const [imageAlt, setImageAlt] = useState("");
   const [imageCaption, setImageCaption] = useState("");
+  const [embedDialogOpen, setEmbedDialogOpen] = useState(false);
+  const [embedUrl, setEmbedUrl] = useState("");
   const mediaMap = useMemo(() => new Map(media.map((item) => [item.id, item])), [media]);
   const editor = usePlateEditor({
     plugins: editorPlugins,
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- CMS nodes are validated before reaching Plate.
     value: toPlateValue(value) as Value,
   });
-  const commentSelection = useRef(editor.selection);
 
   useEffect(() => {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- CMS nodes are validated before reaching Plate.
@@ -614,84 +551,129 @@ export function CmsEditor({
     setImageCaption("");
   }
 
-  function openCommentDialog() {
-    if (!editor.selection || editor.api.isCollapsed()) return;
-    commentSelection.current = editor.selection;
-    setCommentText("");
-    setCommentDialogOpen(true);
+  function insertEmbed(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const url = embedUrl.trim();
+    if (!toEmbedUrl(url)) return;
+    editor.tf.insertNodes({ type: "mediaEmbed", url, children: [{ text: "" }] });
+    editor.tf.focus();
+    setEmbedDialogOpen(false);
+    setEmbedUrl("");
   }
 
-  function saveComment(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const comment = commentText.trim();
-    if (!comment || !commentSelection.current) return;
-    editor.tf.select(commentSelection.current);
-    editor.tf.addMarks({ comment });
-    editor.tf.collapse({ edge: "end" });
-    editor.tf.focus();
-    setCommentDialogOpen(false);
-  }
+  const actions = useMemo(
+    () => ({
+      onMedia: (type: MediaKind) => {
+        setMediaType(type);
+        setImageDialogOpen(true);
+      },
+      onEmbed: () => setEmbedDialogOpen(true),
+    }),
+    [],
+  );
 
   return (
-    <Field>
-      <FieldLabel htmlFor="cms-content-editor">Corpo</FieldLabel>
+    <Field className="xl:min-h-0 xl:flex-1">
       <MediaContext.Provider value={mediaMap}>
-        <Plate editor={editor} onValueChange={({ value: next }) => onChange(fromPlateValue(next))}>
-          <div className="cms-editor">
-            <FixedToolbar className="cms-editor__toolbar">
-              <EditorToolbar
-                onLink={openLinkDialog}
-                onComment={openCommentDialog}
-                onMedia={(type) => {
-                  setMediaType(type);
-                  setImageDialogOpen(true);
-                }}
-              />
-            </FixedToolbar>
-            <EditorContainer className="cms-editor__canvas">
-              <Editor
-                id="cms-content-editor"
-                variant="none"
-                className="cms-editor__content"
-                aria-label="Corpo del contenuto"
-                placeholder="Inizia a scrivere il contenuto…"
-                spellCheck
-              />
-            </EditorContainer>
-            <EditorStatus />
-          </div>
-          <LinkDialog
-            open={linkDialogOpen}
-            onOpenChange={setLinkDialogOpen}
-            text={linkText}
-            href={linkHref}
-            onTextChange={setLinkText}
-            onHrefChange={setLinkHref}
-            onSubmit={saveLink}
-          />
-          <ImageDialog
-            open={imageDialogOpen}
-            onOpenChange={setImageDialogOpen}
-            media={media}
-            selectedMediaId={selectedMediaId}
-            alt={imageAlt}
-            caption={imageCaption}
-            mediaType={mediaType}
-            onMediaChange={setSelectedMediaId}
-            onAltChange={setImageAlt}
-            onCaptionChange={setImageCaption}
-            onSubmit={insertImage}
-          />
-          <CommentDialog
-            open={commentDialogOpen}
-            text={commentText}
-            onOpenChange={setCommentDialogOpen}
-            onTextChange={setCommentText}
-            onSubmit={saveComment}
-          />
-        </Plate>
+        <EditorActionsProvider value={actions}>
+          <Plate
+            editor={editor}
+            onValueChange={({ value: next }) => onChange(fromPlateValue(next))}
+          >
+            <div className="cms-editor">
+              <FixedToolbar className="cms-editor__toolbar rounded-none">
+                <EditorToolbar onLink={openLinkDialog} />
+              </FixedToolbar>
+              <EditorContainer className="cms-editor__canvas">
+                <Editor
+                  id="cms-content-editor"
+                  variant="none"
+                  className="cms-editor__content rounded-none"
+                  aria-label="Corpo del contenuto"
+                  placeholder="Inizia a scrivere il contenuto…"
+                  spellCheck
+                />
+              </EditorContainer>
+              <EditorStatus />
+            </div>
+            <LinkDialog
+              open={linkDialogOpen}
+              onOpenChange={setLinkDialogOpen}
+              text={linkText}
+              href={linkHref}
+              onTextChange={setLinkText}
+              onHrefChange={setLinkHref}
+              onSubmit={saveLink}
+            />
+            <ImageDialog
+              open={imageDialogOpen}
+              onOpenChange={setImageDialogOpen}
+              media={media}
+              selectedMediaId={selectedMediaId}
+              alt={imageAlt}
+              caption={imageCaption}
+              mediaType={mediaType}
+              onMediaChange={setSelectedMediaId}
+              onAltChange={setImageAlt}
+              onCaptionChange={setImageCaption}
+              onSubmit={insertImage}
+            />
+            <EmbedDialog
+              open={embedDialogOpen}
+              onOpenChange={setEmbedDialogOpen}
+              url={embedUrl}
+              onUrlChange={setEmbedUrl}
+              onSubmit={insertEmbed}
+            />
+          </Plate>
+        </EditorActionsProvider>
       </MediaContext.Provider>
     </Field>
+  );
+}
+
+function EmbedDialog({
+  open,
+  onOpenChange,
+  url,
+  onUrlChange,
+  onSubmit,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  url: string;
+  onUrlChange: (value: string) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <form onSubmit={onSubmit}>
+          <DialogHeader>
+            <DialogTitle>Inserisci un embed</DialogTitle>
+            <DialogDescription>Incolla un link YouTube o Vimeo da incorporare.</DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="plate-embed-url">Indirizzo</FieldLabel>
+              <Input
+                id="plate-embed-url"
+                value={url}
+                placeholder="https://www.youtube.com/watch?v=…"
+                onChange={(event) => onUrlChange(event.target.value)}
+                required
+              />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose render={<Button type="button" variant="outline" />}>Annulla</DialogClose>
+            <Button type="submit" disabled={!toEmbedUrl(url)}>
+              Inserisci
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -704,15 +686,7 @@ function EditorStatus() {
   );
 }
 
-function EditorToolbar({
-  onLink,
-  onComment,
-  onMedia,
-}: {
-  onLink: () => void;
-  onComment: () => void;
-  onMedia: (type: "audio" | "file" | "image" | "video") => void;
-}) {
+function EditorToolbar({ onLink }: { onLink: () => void }) {
   const state = useEditorSelector((current) => {
     const marks = (current.api.marks() ?? {}) as Record<string, unknown>;
     const block = current.api.block()?.[0];
@@ -736,15 +710,10 @@ function EditorToolbar({
   }, []);
 
   return (
-    <div className="flex w-full" aria-label="Formattazione testo">
+    <div className="flex w-full flex-wrap" aria-label="Formattazione testo">
       <ToolbarGroup>
         <UndoToolbarButton tooltip="Annulla" />
         <RedoToolbarButton tooltip="Ripristina" />
-      </ToolbarGroup>
-
-      <ToolbarGroup>
-        <InsertMenu />
-        <TurnIntoToolbarButton />
       </ToolbarGroup>
 
       <ToolbarGroup>
@@ -763,6 +732,12 @@ function EditorToolbar({
         <MarkToolbarButton nodeType={KEYS.code} tooltip="Codice inline">
           <Code2 />
         </MarkToolbarButton>
+        <MarkToolbarButton nodeType={KEYS.sup} clear={KEYS.sub} tooltip="Apice">
+          <Superscript />
+        </MarkToolbarButton>
+        <MarkToolbarButton nodeType={KEYS.sub} clear={KEYS.sup} tooltip="Pedice">
+          <Subscript />
+        </MarkToolbarButton>
         <FontColorToolbarButton nodeType={KEYS.color} tooltip="Colore testo">
           <Baseline />
         </FontColorToolbarButton>
@@ -778,12 +753,8 @@ function EditorToolbar({
 
       <ToolbarGroup>
         <LinkButtons activeLink={state.link} onLink={onLink} />
-        <TableMenu active={state.table} />
-        <EmojiMenu />
-      </ToolbarGroup>
-
-      <ToolbarGroup>
-        <MediaButtons onMedia={onMedia} />
+        <TableToolbarButton />
+        <EmojiToolbarButton />
       </ToolbarGroup>
 
       <ToolbarGroup>
@@ -792,44 +763,14 @@ function EditorToolbar({
         <IndentToolbarButton />
       </ToolbarGroup>
 
-      <ToolbarGroup>
-        <MoreToolbarButton />
-      </ToolbarGroup>
-
       <div className="grow" />
 
       <ToolbarGroup>
         <MarkToolbarButton nodeType={KEYS.highlight} tooltip="Evidenzia">
           <Highlighter />
         </MarkToolbarButton>
-        <PlateToolbarButton type="button" tooltip="Aggiungi commento" onClick={onComment}>
-          <MessageSquarePlus />
-        </PlateToolbarButton>
-      </ToolbarGroup>
-
-      <ToolbarGroup>
-        <SuggestionModeButton />
       </ToolbarGroup>
     </div>
-  );
-}
-
-function SuggestionModeButton() {
-  const editor = useEditorRef();
-  const pressed = useEditorSelector((current) => current.api.marks()?.suggestion === true, []);
-  return (
-    <PlateToolbarButton
-      type="button"
-      pressed={pressed}
-      tooltip="Modalità suggerimento"
-      onClick={() => {
-        if (pressed) editor.tf.removeMarks("suggestion");
-        else editor.tf.addMarks({ suggestion: true });
-        editor.tf.focus();
-      }}
-    >
-      <PencilLine />
-    </PlateToolbarButton>
   );
 }
 
@@ -871,7 +812,7 @@ function ListMenu({
   const icon = state.orderedList ? <ListOrdered /> : state.taskList ? <ListChecks /> : <List />;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger
         render={
           <PlateToolbarButton type="button" pressed={active} tooltip="Tipo di elenco" isDropdown>
@@ -897,76 +838,6 @@ function ListMenu({
   );
 }
 
-function InsertMenu() {
-  const editor = useEditorRef();
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <PlateToolbarButton type="button" tooltip="Inserisci" isDropdown>
-            Inserisci
-          </PlateToolbarButton>
-        }
-      />
-      <DropdownMenuContent align="start">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Blocchi</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => editor.tf.toggleBlock(KEYS.blockquote)}>
-            <Quote /> Citazione
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => toggleCodeBlock(editor)}>
-            <Braces /> Blocco di codice
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => editor.tf.insertNodes({ type: KEYS.hr, children: [{ text: "" }] })}
-          >
-            <Minus /> Separatore
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => editor.tf.setNodes({ type: "toggle" })}>
-            <ChevronsUpDown /> Blocco espandibile
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => insertToc(editor)}>
-            <TableOfContents /> Indice
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-const commonEmoji = ["😀", "😂", "😍", "🤔", "👍", "👏", "🎉", "❤️", "🔥", "✅", "🚀", "💡"];
-
-function EmojiMenu() {
-  const editor = useEditorRef();
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <PlateToolbarButton type="button" tooltip="Emoji">
-            <SmilePlus />
-          </PlateToolbarButton>
-        }
-      />
-      <DropdownMenuContent align="start">
-        <DropdownMenuGroup className="grid grid-cols-4">
-          {commonEmoji.map((emoji) => (
-            <DropdownMenuItem
-              key={emoji}
-              aria-label={`Inserisci ${emoji}`}
-              onClick={() => {
-                editor.tf.insertText(emoji);
-                editor.tf.focus();
-              }}
-            >
-              {emoji}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 function AlignmentButtons({ alignment }: { alignment: string }) {
   const editor = useEditorRef();
   const align = (value: "left" | "center" | "right" | "justify") => {
@@ -984,7 +855,7 @@ function AlignmentButtons({ alignment }: { alignment: string }) {
       <AlignLeft />
     );
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger
         render={
           <PlateToolbarButton type="button" tooltip="Allineamento" isDropdown>
@@ -1012,65 +883,6 @@ function AlignmentButtons({ alignment }: { alignment: string }) {
   );
 }
 
-function TableMenu({ active }: { active: boolean }) {
-  const editor = useEditorRef();
-  const focus = (action: () => void) => {
-    action();
-    editor.tf.focus();
-  };
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <PlateToolbarButton type="button" pressed={active} tooltip="Tabella">
-            <Table2 />
-          </PlateToolbarButton>
-        }
-      />
-      <DropdownMenuContent>
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Tabella</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() =>
-              focus(() => insertTable(editor, { rowCount: 3, colCount: 3, header: true }))
-            }
-          >
-            Inserisci tabella 3 × 3
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem disabled={!active} onClick={() => focus(() => insertTableRow(editor))}>
-            Aggiungi riga
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={!active}
-            onClick={() => focus(() => insertTableColumn(editor))}
-          >
-            Aggiungi colonna
-          </DropdownMenuItem>
-          <DropdownMenuItem disabled={!active} onClick={() => focus(() => deleteRow(editor))}>
-            Elimina riga
-          </DropdownMenuItem>
-          <DropdownMenuItem disabled={!active} onClick={() => focus(() => deleteColumn(editor))}>
-            Elimina colonna
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            variant="destructive"
-            disabled={!active}
-            onClick={() => focus(() => deleteTable(editor))}
-          >
-            Elimina tabella
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 function LinkButtons({ activeLink, onLink }: { activeLink: boolean; onLink: () => void }) {
   const editor = useEditorRef();
   return (
@@ -1086,29 +898,6 @@ function LinkButtons({ activeLink, onLink }: { activeLink: boolean; onLink: () =
         }}
       >
         <Link2 />
-      </ToolbarButton>
-    </>
-  );
-}
-
-function MediaButtons({
-  onMedia,
-}: {
-  onMedia: (type: "audio" | "file" | "image" | "video") => void;
-}) {
-  return (
-    <>
-      <ToolbarButton label="Inserisci immagine" onClick={() => onMedia("image")}>
-        <ImagePlus />
-      </ToolbarButton>
-      <ToolbarButton label="Inserisci video" onClick={() => onMedia("video")}>
-        <Video />
-      </ToolbarButton>
-      <ToolbarButton label="Inserisci audio" onClick={() => onMedia("audio")}>
-        <AudioLines />
-      </ToolbarButton>
-      <ToolbarButton label="Inserisci file" onClick={() => onMedia("file")}>
-        <FileUp />
       </ToolbarButton>
     </>
   );
@@ -1248,48 +1037,6 @@ function ImageDialog({
             <Button type="submit" disabled={!selectedMediaId}>
               Inserisci
             </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function CommentDialog({
-  open,
-  text,
-  onOpenChange,
-  onTextChange,
-  onSubmit,
-}: {
-  open: boolean;
-  text: string;
-  onOpenChange: (open: boolean) => void;
-  onTextChange: (value: string) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <form onSubmit={onSubmit}>
-          <DialogHeader>
-            <DialogTitle>Aggiungi commento</DialogTitle>
-            <DialogDescription>Il commento resta associato al testo selezionato.</DialogDescription>
-          </DialogHeader>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="plate-comment">Commento</FieldLabel>
-              <Input
-                id="plate-comment"
-                value={text}
-                onChange={(event) => onTextChange(event.target.value)}
-                required
-              />
-            </Field>
-          </FieldGroup>
-          <DialogFooter>
-            <DialogClose render={<Button type="button" variant="outline" />}>Annulla</DialogClose>
-            <Button type="submit">Aggiungi commento</Button>
           </DialogFooter>
         </form>
       </DialogContent>

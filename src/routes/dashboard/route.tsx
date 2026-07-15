@@ -40,6 +40,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
 
 const profileNavigation = [
   { to: "/dashboard/profile", label: "Profilo", icon: UserRound },
@@ -77,6 +78,7 @@ function ProfileShell() {
   const { isMobile, setOpenMobile } = useSidebar();
   const user = session.data!.user;
   const pageTitle = dashboardTitle(pathname);
+  const isArticleEditor = /^\/dashboard\/cms\/articles\/[^/]+\/?$/.test(pathname);
   const initials = user.name
     .split(" ")
     .map((part) => part[0])
@@ -316,7 +318,13 @@ function ProfileShell() {
             </Avatar>
           </div>
         </header>
-        <main id="dashboard-content" className="mx-auto w-full max-w-7xl flex-1 p-4 md:p-6">
+        <main
+          id="dashboard-content"
+          className={cn(
+            "w-full flex-1",
+            isArticleEditor ? "min-h-0 overflow-hidden" : "mx-auto max-w-7xl p-4 md:p-6",
+          )}
+        >
           <Outlet />
         </main>
       </SidebarInset>

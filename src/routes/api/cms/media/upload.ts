@@ -8,6 +8,7 @@ import {
   MAX_MEDIA_BYTES,
   mediaStorageKey,
   mediaTypes,
+  mediaDeliveryBaseUrl,
   mediaUrl,
 } from "@/features/cms/domain/media";
 import { requireCmsPermission } from "@/features/cms/server/cms-auth";
@@ -91,7 +92,10 @@ export const Route = createFileRoute("/api/cms/media/upload")({
                 filename: file.name,
                 mimeType,
                 sizeBytes: file.size,
-                url: mediaUrl(env.MEDIA_PUBLIC_URL, storageKey),
+                url: mediaUrl(
+                  mediaDeliveryBaseUrl(env.VITE_MODE, env.MEDIA_PUBLIC_URL),
+                  storageKey,
+                ),
               },
             },
             { status: 201, headers: { "Cache-Control": "no-store" } },

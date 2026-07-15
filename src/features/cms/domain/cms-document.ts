@@ -115,8 +115,10 @@ function migrateStructuredBlock(node: CmsNode, attrs: Record<string, unknown>): 
       {
         type: "mediaImage",
         mediaId: attrs.mediaId,
+        mediaType: attrs.mediaType,
         alt: attrs.alt,
         caption: attrs.caption,
+        width: attrs.width,
         children: [{ text: "" }],
       },
     ];

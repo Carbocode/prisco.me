@@ -44,11 +44,12 @@ function getEditorColorMarks(editor: PlateEditor, nodeType: string): string[] {
 
   for (const [node] of editor.api.nodes({
     at: [],
-    match: (n) => "text" in n && typeof (n as Record<string, unknown>)[nodeType] === "string",
+    match: (currentNode) =>
+      "text" in currentNode && typeof Reflect.get(currentNode, nodeType) === "string",
     mode: "all",
   })) {
-    const color = (node as Record<string, unknown>)[nodeType] as string;
-    usedColors.add(normalizeColor(color));
+    const nodeColor = Reflect.get(node, nodeType);
+    if (typeof nodeColor === "string") usedColors.add(normalizeColor(nodeColor));
   }
 
   return Array.from(usedColors);
@@ -65,17 +66,23 @@ export function FontColorToolbarButton({
 } & Omit<React.ComponentProps<typeof DropdownMenu>, "children">) {
   const editor = useEditorRef();
 
-  const selectionDefined = useEditorSelector((editor) => !!editor.selection, []);
+  const selectionDefined = useEditorSelector((current) => !!current.selection, []);
 
-  const color = useEditorSelector((editor) => editor.api.mark(nodeType) as string, [nodeType]);
+  const color = useEditorSelector(
+    (current) => {
+      const mark = current.api.mark(nodeType);
+      return typeof mark === "string" ? mark : undefined;
+    },
+    [nodeType],
+  );
 
   const [selectedColor, setSelectedColor] = React.useState<string>();
   const [updatedColor, setUpdatedColor] = React.useState<string>();
   const [open, setOpen] = React.useState(false);
   const [colorsQueue, setColorsQueue] = React.useState<string[]>([]);
 
-  const recordColorUsage = React.useCallback((color: string) => {
-    const normalized = normalizeColor(color);
+  const recordColorUsage = React.useCallback((nextColor: string) => {
+    const normalized = normalizeColor(nextColor);
 
     if (!isValidHexColor(normalized)) return;
 
@@ -171,7 +178,7 @@ export function FontColorToolbarButton({
         }
       />
 
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align="start" className="w-auto! min-w-[240px]">
         <ColorPicker
           clearColor={clearColor}
           color={selectedColor || color}
@@ -330,7 +337,7 @@ function ColorCustom({
   );
 
   const updateCustomColorDebounced = React.useMemo(
-    () => debounce((value: string) => updateCustomColor(value), 100),
+    () => debounce((nextValue: string) => updateCustomColor(nextValue), 100),
     [updateCustomColor],
   );
 
@@ -367,9 +374,7 @@ function ColorCustom({
               }),
               "flex size-8 items-center justify-center rounded-full",
             )}
-            onSelect={(e) => {
-              e.preventDefault();
-            }}
+            closeOnClick={false}
           >
             <span className="sr-only">Custom</span>
             <PlusIcon />
@@ -391,16 +396,8 @@ function ColorInput({
   return (
     <div className={cn("flex flex-col items-center", className)}>
       {React.Children.map(children, (child) => {
-        if (!child) return child;
-
-        return React.cloneElement(
-          child as React.ReactElement<{
-            onClick: () => void;
-          }>,
-          {
-            onClick: () => inputRef.current?.click(),
-          },
-        );
+        if (!React.isValidElement<{ onClick?: () => void }>(child)) return child;
+        return React.cloneElement(child, { onClick: () => inputRef.current?.click() });
       })}
       <input
         {...props}
@@ -446,19 +443,19 @@ function ColorDropdownMenuItem({
         className,
       )}
       style={{ backgroundColor: value }}
-      onSelect={(e) => {
-        e.preventDefault();
+      closeOnClick={false}
+      onClick={() => {
         updateColor(value);
       }}
       {...props}
     >
-      {isSelected ? <CheckIcon className="!size-3" strokeWidth={3} /> : null}
+      {isSelected ? <CheckIcon className="size-3!" strokeWidth={3} /> : null}
     </DropdownMenuItem>
   );
 
   return name ? (
     <Tooltip>
-      <TooltipTrigger>{content}</TooltipTrigger>
+      <TooltipTrigger render={content} />
       <TooltipContent className="mb-1 capitalize">{name}</TooltipContent>
     </Tooltip>
   ) : (

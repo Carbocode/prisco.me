@@ -26,3 +26,7 @@ export function hasValidMediaSignature(bytes: Uint8Array, mimeType: keyof typeof
 export function mediaUrl(baseUrl: string, storageKey: string) {
   return `${baseUrl.replace(/\/$/, "")}/${storageKey.split("/").map(encodeURIComponent).join("/")}`;
 }
+
+export function mediaDeliveryBaseUrl(mode: string | undefined, publicUrl: string) {
+  return mode === "dev" ? "/media" : publicUrl;
+}
