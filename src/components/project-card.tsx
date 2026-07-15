@@ -1,5 +1,3 @@
-import { Link } from "@tanstack/react-router";
-
 import { getSkillColor, SkillGlyph } from "@/components/tech-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { categoryLabels, type Project } from "@/lib/projects";
+import type { Project } from "@/lib/projects";
+import { cn } from "@/lib/utils";
 
 export function ProjectCard({ project, compact = false }: { project: Project; compact?: boolean }) {
   const primarySkill = project.skills[0];
@@ -42,8 +41,10 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
         )}
         {primarySkill && (
           <Badge
-            color={getSkillColor(primarySkill)}
-            className="absolute bottom-3 left-3 h-11 w-11 p-0 shadow-md backdrop-blur-md"
+            className={cn(
+              getSkillColor(primarySkill),
+              "absolute bottom-3 left-3 h-11 w-11 p-0 shadow-md backdrop-blur-md",
+            )}
             aria-hidden="true"
           >
             <SkillGlyph skill={primarySkill} size={34} />
@@ -53,14 +54,14 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
       <CardHeader>
         <CardTitle>{project.title}</CardTitle>
         <CardDescription>
-          {project.categories.map((category) => categoryLabels[category]).join(" / ")} ·{" "}
-          {project.period}
+          {project.company}
+          {project.period ? ` · ${project.period}` : ""}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-wrap gap-2">
           {project.skills.slice(0, 5).map((skill) => (
-            <Badge key={skill.id} color={getSkillColor(skill)}>
+            <Badge key={skill.id} className={getSkillColor(skill)}>
               <SkillGlyph skill={skill} size={12} />
               <span>{skill.name}</span>
             </Badge>
@@ -71,7 +72,7 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
       <CardFooter className="mt-auto">
         <Button
           variant="outline"
-          render={<Link to="/projects/$slug" params={{ slug: project.slug }} />}
+          render={<a href={`/progetti/${project.slug}`} aria-label={`Scopri ${project.title}`} />}
         >
           Scopri il progetto
         </Button>

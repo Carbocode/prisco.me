@@ -1,6 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "base-rhea",
+  "style": "base-nova",
   "rsc": false,
   "tsx": true,
   "tailwind": {
@@ -10,18 +10,18 @@
     "cssVariables": true,
     "prefix": ""
   },
-  "menuColor": "default-translucent",
-  "menuAccent": "subtle",
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "menuColor": "default",
+  "menuAccent": "bold",
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
     "ui": "@/components/ui",
     "lib": "@/lib",
-    "hooks": "@/hooks",
-    "actions": "@/actions",
-    "db": "@/db"
+    "hooks": "@/hooks"
   },
-  "iconLibrary": "lucide",
-  "rtl": false,
-  "registries": {}
+  "registries": {
+    "@plate": "https://platejs.org/r/{name}.json"
+  }
 }

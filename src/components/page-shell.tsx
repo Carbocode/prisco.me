@@ -85,11 +85,23 @@ export function SiteFooter() {
             Navigazione
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Navigazione footer">
-            <Button variant="link" render={<Link to="/projects" />}>
+            <Button
+              variant="link"
+              render={<Link to="/$archiveSlug" params={{ archiveSlug: "progetti" }} />}
+            >
               Progetti
+            </Button>
+            <Button
+              variant="link"
+              render={<Link to="/$archiveSlug" params={{ archiveSlug: "blog" }} />}
+            >
+              Blog
             </Button>
             <Button variant="link" render={<Link to="/contact" />}>
               Contatti
+            </Button>
+            <Button variant="link" render={<a href="/rss.xml" aria-label="Feed RSS" />}>
+              Feed RSS
             </Button>
           </nav>
         </div>

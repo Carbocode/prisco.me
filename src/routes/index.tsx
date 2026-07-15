@@ -59,7 +59,7 @@ function HomePage() {
               Benvenuti nel mio sito personale, uno spazio dedicato a me
             </p>
             <div className="hero-content-enter-item flex flex-wrap justify-center gap-2 pt-1">
-              <ActionLink href="/projects">Scopri i progetti</ActionLink>
+              <ActionLink href="/progetti">Scopri i progetti</ActionLink>
               <ActionLink href="/contact" variant="secondary">
                 Parliamo del tuo prodotto
               </ActionLink>
@@ -141,7 +141,7 @@ function HomePage() {
                     <SkillChip key={skill.id} skill={skill} />
                   ))}
                 </div>
-                <ActionLink href="/projects/myvet" variant="secondary">
+                <ActionLink href="/progetti/myvet" variant="secondary">
                   Scopri il progetto
                 </ActionLink>
               </div>

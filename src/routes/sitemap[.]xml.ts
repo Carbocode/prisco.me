@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { listPublishedArticles } from "@/features/cms/server/article.service";
-import { listPublishedServices } from "@/features/cms/server/service.service";
+import { listPublishedArticlesByFilter } from "@/features/cms/server/article.service";
+
 const escapeXml = (value: string) =>
   value.replace(
     /[<>&'"]/g,
@@ -12,19 +12,31 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const [articles, services] = await Promise.all([
-          listPublishedArticles(50),
-          listPublishedServices(),
-        ]);
-        const staticPaths = ["", "/about", "/career", "/projects", "/contact", "/blog", "/servizi"];
+        const articles = await listPublishedArticlesByFilter({});
+        const staticPaths = ["", "/about", "/career", "/contact"];
+        const archivePaths = new Set<string>();
+        for (const article of articles) {
+          if (article.publishedAt) {
+            const date = datePath(article.publishedAt);
+            archivePaths.add(`/${date.slice(0, 4)}`);
+            archivePaths.add(`/${date.slice(0, 7)}`);
+            archivePaths.add(`/${date}`);
+          }
+          for (const category of article.categories) {
+            archivePaths.add(`/${category.slug}`);
+          }
+          for (const tag of article.tags) archivePaths.add(`/${tag.slug}`);
+          archivePaths.add(`/${article.author.slug}`);
+          if (article.organization) archivePaths.add(`/${article.organization.slug}`);
+        }
         const urls = [
           ...staticPaths.map((path) => ({ loc: `https://prisco.me${path}`, lastmod: undefined })),
-          ...articles.map((item) => ({
-            loc: `https://prisco.me/blog/${item.slug}`,
-            lastmod: item.publishedAt?.toISOString(),
+          ...[...archivePaths].map((path) => ({
+            loc: `https://prisco.me${path}`,
+            lastmod: undefined,
           })),
-          ...services.map((item) => ({
-            loc: `https://prisco.me/servizi/${item.slug}`,
+          ...articles.map((item) => ({
+            loc: `https://prisco.me/${canonicalArchiveSlug(item)}/${item.slug}`,
             lastmod: item.updatedAt.toISOString(),
           })),
         ];
@@ -39,3 +51,20 @@ export const Route = createFileRoute("/sitemap.xml")({
     },
   },
 });
+
+function canonicalArchiveSlug(article: { categories: Array<{ slug: string }> }) {
+  const category = article.categories[0]?.slug;
+  if (!category) throw new Error("Published articles must have a category");
+  return category;
+}
+
+function datePath(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Rome",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${value.year}/${value.month}/${value.day}`;
+}

@@ -5,6 +5,7 @@ export const cmsStatements = {
   cmsArticle: ["list", "read", "create", "update", "delete", "publish", "restore"],
   cmsService: ["list", "read", "create", "update", "delete", "publish", "restore"],
   cmsCategory: ["list", "read", "create", "update", "delete"],
+  cmsTag: ["list", "read", "create", "update", "delete"],
   cmsMedia: ["list", "read", "upload", "update", "delete"],
 } as const;
 
@@ -37,6 +38,7 @@ export const cmsRoles = {
     cmsArticle: ["list", "read", "create", "update"],
     cmsService: [],
     cmsCategory: ["list", "read"],
+    cmsTag: ["list", "read"],
     cmsMedia: ["list", "read", "upload"],
   }),
   user: cmsAccessControl.newRole({
@@ -45,6 +47,7 @@ export const cmsRoles = {
     cmsArticle: [],
     cmsService: [],
     cmsCategory: [],
+    cmsTag: [],
     cmsMedia: [],
   }),
 } as const;

@@ -4,7 +4,7 @@ import { env } from "cloudflare:workers";
 import { getDb } from "@/db";
 import { cmsAuditLogs, cmsMedia } from "@/db/schema";
 import {
-  hasValidImageSignature,
+  hasValidMediaSignature,
   MAX_MEDIA_BYTES,
   mediaStorageKey,
   mediaTypes,
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/cms/media/upload")({
             throw new CmsError(415, "UNSUPPORTED_MEDIA_TYPE", "Unsupported media type");
           const mimeType = file.type;
           const bytes = new Uint8Array(await file.arrayBuffer());
-          if (!hasValidImageSignature(bytes, mimeType))
+          if (!hasValidMediaSignature(bytes, mimeType))
             throw new CmsError(
               415,
               "INVALID_FILE_SIGNATURE",
@@ -43,15 +43,7 @@ export const Route = createFileRoute("/api/cms/media/upload")({
             );
           const expectedExtension = mediaTypes[mimeType];
           const originalExtension = file.name.split(".").pop()?.toLowerCase();
-          if (
-            !originalExtension ||
-            !(
-              [
-                expectedExtension,
-                mimeType === "image/jpeg" ? "jpeg" : expectedExtension,
-              ] as string[]
-            ).includes(originalExtension)
-          )
+          if (!originalExtension || originalExtension !== expectedExtension)
             throw new CmsError(
               415,
               "INVALID_FILE_EXTENSION",
@@ -63,6 +55,8 @@ export const Route = createFileRoute("/api/cms/media/upload")({
           const altTextValue = form.get("altText");
           const altText =
             typeof altTextValue === "string" ? altTextValue.slice(0, 300) || null : null;
+          const width = formDimension(form.get("width"));
+          const height = formDimension(form.get("height"));
           try {
             await getDb(env).batch([
               getDb(env).insert(cmsMedia).values({
@@ -71,6 +65,8 @@ export const Route = createFileRoute("/api/cms/media/upload")({
                 filename: file.name,
                 mimeType,
                 sizeBytes: file.size,
+                width,
+                height,
                 altText,
                 createdById: session.user.id,
               }),
@@ -110,4 +106,10 @@ export const Route = createFileRoute("/api/cms/media/upload")({
 
 function isSupportedMime(value: string): value is keyof typeof mediaTypes {
   return value in mediaTypes;
+}
+
+function formDimension(value: FormDataEntryValue | null) {
+  if (typeof value !== "string" || !/^\d{1,5}$/.test(value)) return null;
+  const dimension = Number(value);
+  return dimension > 0 ? dimension : null;
 }

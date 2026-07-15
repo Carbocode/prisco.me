@@ -1,11 +1,16 @@
 import { env } from "cloudflare:workers";
-import { inArray } from "drizzle-orm";
+import { asc, inArray } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { cmsCategories, cmsMedia } from "@/db/schema";
+import { cmsArticleTags, cmsCategories, cmsMedia, cmsOrganizations, cmsTags } from "@/db/schema";
 
-import { parseCmsDocument, serializeCmsDocument } from "../domain/cms-document";
+import {
+  CURRENT_CONTENT_VERSION,
+  parseCmsDocument,
+  serializeCmsDocument,
+} from "../domain/cms-document";
 import { mediaUrl } from "../domain/media";
+import { publicationDateParts } from "../domain/publication-date";
 import {
   createArticleSchema,
   listArticlesSchema,
@@ -45,7 +50,17 @@ export async function getAdminArticle(id: string) {
     .select({ categoryId: cmsArticleCategories.categoryId })
     .from(cmsArticleCategories)
     .where(eq(cmsArticleCategories.articleId, id));
-  return { ...item, categoryIds: categories.map((category) => category.categoryId) };
+  const tags = await db()
+    .select({ tagId: cmsArticleTags.tagId })
+    .from(cmsArticleTags)
+    .innerJoin(cmsTags, eq(cmsArticleTags.tagId, cmsTags.id))
+    .where(and(eq(cmsArticleTags.articleId, id), isNull(cmsTags.deletedAt)))
+    .orderBy(asc(cmsArticleTags.sortOrder), asc(cmsTags.name));
+  return {
+    ...item,
+    categoryIds: categories.map((category) => category.categoryId),
+    tagIds: tags.map((tag) => tag.tagId),
+  };
 }
 export async function createArticle(input: unknown) {
   const session = await requireCmsPermission("cmsArticle", "create");
@@ -62,12 +77,17 @@ export async function createArticle(input: unknown) {
           slug: data.slug,
           excerpt: data.excerpt,
           content: serializeCmsDocument(data.content),
+          contentVersion: CURRENT_CONTENT_VERSION,
           coverMediaId: data.coverMediaId,
           authorId: session.user.id,
+          organizationId: data.organizationId,
+          projectRole: data.projectRole,
+          projectPeriod: data.projectPeriod,
+          projectFeatured: data.projectFeatured,
+          projectSortOrder: data.projectSortOrder,
           lastEditedById: session.user.id,
           seoTitle: data.seoTitle,
           seoDescription: data.seoDescription,
-          canonicalUrl: data.canonicalUrl,
           noIndex: data.noIndex,
           createdAt: now,
           updatedAt: now,
@@ -75,6 +95,10 @@ export async function createArticle(input: unknown) {
       // oxlint-disable-next-line typescript/no-unsafe-type-assertion
       ...(data.categoryIds.map((categoryId) =>
         db().insert(cmsArticleCategories).values({ articleId: id, categoryId }),
+      ) as []),
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+      ...(data.tagIds.map((tagId, sortOrder) =>
+        db().insert(cmsArticleTags).values({ articleId: id, tagId, sortOrder }),
       ) as []),
       db()
         .insert(cmsAuditLogs)
@@ -100,11 +124,18 @@ export async function updateArticle(input: unknown) {
     ...(data.title !== undefined && { title: data.title }),
     ...(data.slug !== undefined && { slug: data.slug }),
     ...(data.excerpt !== undefined && { excerpt: data.excerpt }),
-    ...(data.content !== undefined && { content: serializeCmsDocument(data.content) }),
+    ...(data.content !== undefined && {
+      content: serializeCmsDocument(data.content),
+      contentVersion: CURRENT_CONTENT_VERSION,
+    }),
     ...(data.coverMediaId !== undefined && { coverMediaId: data.coverMediaId }),
+    ...(data.organizationId !== undefined && { organizationId: data.organizationId }),
+    ...(data.projectRole !== undefined && { projectRole: data.projectRole }),
+    ...(data.projectPeriod !== undefined && { projectPeriod: data.projectPeriod }),
+    ...(data.projectFeatured !== undefined && { projectFeatured: data.projectFeatured }),
+    ...(data.projectSortOrder !== undefined && { projectSortOrder: data.projectSortOrder }),
     ...(data.seoTitle !== undefined && { seoTitle: data.seoTitle }),
     ...(data.seoDescription !== undefined && { seoDescription: data.seoDescription }),
-    ...(data.canonicalUrl !== undefined && { canonicalUrl: data.canonicalUrl }),
     ...(data.noIndex !== undefined && { noIndex: data.noIndex }),
     lastEditedById: session.user.id,
     updatedAt: now,
@@ -112,6 +143,22 @@ export async function updateArticle(input: unknown) {
   };
   const changedSlug =
     data.slug && data.slug !== current.slug && ["published", "scheduled"].includes(current.status);
+  const sourceCategories = changedSlug
+    ? await database
+        .select({ slug: cmsCategories.slug })
+        .from(cmsArticleCategories)
+        .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
+        .where(eq(cmsArticleCategories.articleId, current.id))
+    : [];
+  const destinationCategories =
+    changedSlug && data.categoryIds
+      ? await database
+          .select({ slug: cmsCategories.slug })
+          .from(cmsCategories)
+          .where(inArray(cmsCategories.id, data.categoryIds))
+      : sourceCategories;
+  const sourceBase = publicArchiveSlug(sourceCategories[0]?.slug);
+  const destinationBase = publicArchiveSlug(destinationCategories[0]?.slug);
   const statements = [
     database.insert(cmsArticleRevisions).values({
       articleId: current.id,
@@ -139,11 +186,19 @@ export async function updateArticle(input: unknown) {
           ),
         ]
       : []),
+    ...(data.tagIds
+      ? [
+          database.delete(cmsArticleTags).where(eq(cmsArticleTags.articleId, current.id)),
+          ...data.tagIds.map((tagId, sortOrder) =>
+            database.insert(cmsArticleTags).values({ articleId: current.id, tagId, sortOrder }),
+          ),
+        ]
+      : []),
     ...(changedSlug
       ? [
           database.insert(cmsRedirects).values({
-            sourcePath: `/blog/${current.slug}`,
-            destinationPath: `/blog/${data.slug}`,
+            sourcePath: `/${sourceBase}/${current.slug}`,
+            destinationPath: `/${destinationBase}/${data.slug}`,
             entityType: "article",
             entityId: current.id,
           }),
@@ -172,6 +227,11 @@ export async function updateArticle(input: unknown) {
   if (!updated || updated.version === current.version)
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
   return updated;
+}
+
+function publicArchiveSlug(categorySlug: string | undefined) {
+  if (!categorySlug) throw new Error("Published articles must have a category");
+  return categorySlug;
 }
 export async function publishArticle(input: unknown) {
   const session = await requireCmsPermission("cmsArticle", "publish");
@@ -340,6 +400,11 @@ export async function restoreArticleRevision(input: {
         content: snapshot.content,
         contentVersion: snapshot.contentVersion,
         coverMediaId: snapshot.coverMediaId,
+        organizationId: snapshot.organizationId,
+        projectRole: snapshot.projectRole,
+        projectPeriod: snapshot.projectPeriod,
+        projectFeatured: snapshot.projectFeatured,
+        projectSortOrder: snapshot.projectSortOrder,
         seoTitle: snapshot.seoTitle,
         seoDescription: snapshot.seoDescription,
         canonicalUrl: snapshot.canonicalUrl,
@@ -385,8 +450,42 @@ export async function getPublishedArticleBySlug(slug: string) {
   return (await hydratePublicArticles([item]))[0] ?? null;
 }
 
+export type PublicArticleFilter = {
+  year?: number;
+  month?: number;
+  day?: number;
+  categorySlug?: string;
+  authorSlug?: string;
+  tagSlug?: string;
+};
+
+export async function listPublishedArticlesByFilter(filter: PublicArticleFilter) {
+  const items = await hydratePublicArticles(await articleRepository(db()).listPublicArchive());
+  return items.filter((item) => {
+    const date = item.publishedAt ? new Date(item.publishedAt) : null;
+    if (!date) return false;
+    const parts = publicationDateParts(date);
+    if (filter.year !== undefined && parts.year !== filter.year) return false;
+    if (filter.month !== undefined && parts.month !== filter.month) return false;
+    if (filter.day !== undefined && parts.day !== filter.day) return false;
+    if (
+      filter.categorySlug &&
+      !item.categories.some((category) => category.slug === filter.categorySlug)
+    )
+      return false;
+    if (filter.tagSlug && !item.tags.some((tag) => tag.slug === filter.tagSlug)) return false;
+    return !filter.authorSlug || item.author.slug === filter.authorSlug;
+  });
+}
+
 async function hydratePublicArticles<
-  T extends { id: string; content: string; coverMediaId: string | null },
+  T extends {
+    id: string;
+    content: string;
+    coverMediaId: string | null;
+    authorId: string;
+    organizationId: string | null;
+  },
 >(items: T[]) {
   if (!items.length) return [];
   const articleIds = items.map((item) => item.id);
@@ -395,10 +494,44 @@ async function hydratePublicArticles<
       articleId: cmsArticleCategories.articleId,
       name: cmsCategories.name,
       slug: cmsCategories.slug,
+      schemaType: cmsCategories.schemaType,
     })
     .from(cmsArticleCategories)
     .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
     .where(inArray(cmsArticleCategories.articleId, articleIds));
+  const tagRows = await db()
+    .select({
+      articleId: cmsArticleTags.articleId,
+      name: cmsTags.name,
+      slug: cmsTags.slug,
+      icon: cmsTags.icon,
+      color: cmsTags.color,
+      mark: cmsTags.mark,
+      fluentIcon: cmsTags.fluentIcon,
+    })
+    .from(cmsArticleTags)
+    .innerJoin(cmsTags, eq(cmsArticleTags.tagId, cmsTags.id))
+    .where(and(inArray(cmsArticleTags.articleId, articleIds), isNull(cmsTags.deletedAt)))
+    .orderBy(asc(cmsArticleTags.articleId), asc(cmsArticleTags.sortOrder), asc(cmsTags.name));
+  const authorRows = await articleRepository(db()).publicAuthorsByIds([
+    ...new Set(items.map((item) => item.authorId)),
+  ]);
+  const organizationIds = [
+    ...new Set(items.flatMap((item) => (item.organizationId ? [item.organizationId] : []))),
+  ];
+  const organizationRows = organizationIds.length
+    ? await db()
+        .select({
+          id: cmsOrganizations.id,
+          name: cmsOrganizations.name,
+          slug: cmsOrganizations.slug,
+          type: cmsOrganizations.type,
+        })
+        .from(cmsOrganizations)
+        .where(
+          and(inArray(cmsOrganizations.id, organizationIds), isNull(cmsOrganizations.deletedAt)),
+        )
+    : [];
   const mediaIds = new Set<string>();
   for (const item of items) {
     if (item.coverMediaId) mediaIds.add(item.coverMediaId);
@@ -418,9 +551,29 @@ async function hydratePublicArticles<
   }));
   return items.map((item) => ({
     ...item,
+    author: publicAuthor(
+      authorRows.find((author) => author.id === item.authorId) ?? {
+        id: item.authorId,
+        name: "Vincenzo Prisco",
+        username: null,
+      },
+    ),
+    organization: item.organizationId
+      ? (organizationRows.find((organization) => organization.id === item.organizationId) ?? null)
+      : null,
     categories: categoryRows
       .filter((category) => category.articleId === item.id)
-      .map(({ name, slug }) => ({ name, slug })),
+      .map(({ name, slug, schemaType }) => ({ name, slug, schemaType })),
+    tags: tagRows
+      .filter((tag) => tag.articleId === item.id)
+      .map(({ name, slug, icon, color, mark, fluentIcon }) => ({
+        name,
+        slug,
+        icon,
+        color,
+        mark,
+        fluentIcon,
+      })),
     media,
     cover: item.coverMediaId
       ? (media.find((entry) => entry.id === item.coverMediaId) ?? null)
@@ -428,14 +581,31 @@ async function hydratePublicArticles<
   }));
 }
 
+function publicAuthor(author: { id: string; name: string; username: string | null }) {
+  return {
+    name: author.name,
+    slug:
+      author.username ??
+      author.name
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, ""),
+  };
+}
+
 function collectMediaIds(nodes: Array<Record<string, unknown>> | undefined, ids: Set<string>) {
   for (const node of nodes ?? []) {
+    if (node.type === "mediaImage" && typeof node.mediaId === "string") ids.add(node.mediaId);
     if (node.type === "mediaImage" && node.attrs && typeof node.attrs === "object") {
       const mediaId = (node.attrs as Record<string, unknown>).mediaId; // oxlint-disable-line typescript/no-unsafe-type-assertion
       if (typeof mediaId === "string") ids.add(mediaId);
     }
     if (Array.isArray(node.content))
       collectMediaIds(node.content as Array<Record<string, unknown>>, ids); // oxlint-disable-line typescript/no-unsafe-type-assertion
+    if (Array.isArray(node.children))
+      collectMediaIds(node.children as Array<Record<string, unknown>>, ids); // oxlint-disable-line typescript/no-unsafe-type-assertion
   }
 }
 

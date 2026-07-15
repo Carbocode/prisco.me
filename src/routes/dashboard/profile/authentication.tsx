@@ -23,6 +23,7 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemGroup,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
@@ -114,14 +115,15 @@ function AuthenticationPage() {
   }
 
   return (
-    <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Autenticazione</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Gestisci password, verifica in due passaggi e accesso con passkey.
+    <div className="flex max-w-5xl flex-col gap-4">
+      <header>
+        <p className="text-sm font-medium text-muted-foreground">Sicurezza account</p>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">Autenticazione</h1>
+        <p className="text-sm text-muted-foreground">
+          Password, verifica in due passaggi e accesso senza password.
         </p>
-      </div>
-      <Card>
+      </header>
+      <Card size="sm">
         <CardHeader>
           <CardTitle>Password</CardTitle>
           <CardDescription>
@@ -159,7 +161,7 @@ function AuthenticationPage() {
           </form>
         </CardContent>
       </Card>
-      <Card>
+      <Card size="sm">
         <CardHeader>
           <CardTitle>Autenticazione a due fattori</CardTitle>
           <CardDescription>TOTP, dispositivi attendibili e codici di recupero.</CardDescription>
@@ -180,7 +182,7 @@ function AuthenticationPage() {
                 </FieldGroup>
               </form>
             ) : (
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2">
                 <form onSubmit={(event) => void regenerateCodes(event)}>
                   <FieldGroup>
                     <Field>
@@ -242,7 +244,7 @@ function AuthenticationPage() {
           </FieldGroup>
         </CardContent>
       </Card>
-      <Card>
+      <Card size="sm">
         <CardHeader>
           <CardTitle>Passkey</CardTitle>
           <CardDescription>
@@ -260,7 +262,7 @@ function AuthenticationPage() {
               <Button type="submit">Aggiungi passkey</Button>
             </FieldGroup>
           </form>
-          <div className="mt-6 grid gap-3">
+          <ItemGroup className="mt-4">
             {passkeys.length === 0 ? (
               <Empty>
                 <EmptyHeader>
@@ -318,7 +320,7 @@ function AuthenticationPage() {
                 </Item>
               ))
             )}
-          </div>
+          </ItemGroup>
         </CardContent>
       </Card>
     </div>

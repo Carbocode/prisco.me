@@ -552,15 +552,14 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {experience.projects.map((project) => (
-              <Link
+              <a
                 key={project.slug}
-                to="/projects/$slug"
-                params={{ slug: project.slug }}
+                href={`/progetti/${project.slug}`}
                 className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-200 transition hover:border-sky-300/35 hover:bg-sky-300/10 hover:text-sky-200"
               >
                 {project.title}
                 <span aria-hidden="true">→</span>
-              </Link>
+              </a>
             ))}
           </div>
         </div>

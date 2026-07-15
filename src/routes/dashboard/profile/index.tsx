@@ -1,18 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Link2 } from "lucide-react";
+import { Link2, Save, Unlink, UserRound } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { formString, formValues } from "@/components/auth-ui";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Item,
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemGroup,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
@@ -62,94 +82,158 @@ function ProfilePage() {
     await session.refetch();
   }
 
+  async function unlinkAccount(item: AccountItem) {
+    const result = await authClient.unlinkAccount({
+      providerId: item.providerId,
+      accountId: item.accountId,
+    });
+    if (result.error) toast.error(result.error.message ?? "Scollegamento non riuscito.");
+    else toast.success("Account scollegato.");
+    await refreshAccounts();
+  }
+
   return (
-    <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Profilo</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Gestisci identità, indirizzo email e provider collegati.
+    <div className="flex max-w-5xl flex-col gap-4">
+      <header>
+        <div className="flex items-center gap-2">
+          <h1 className="font-heading text-2xl font-semibold tracking-tight">Profilo</h1>
+          <Badge variant="outline">{user.role ?? "user"}</Badge>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Identità pubblica, recapito di accesso e provider collegati.
         </p>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Identità</CardTitle>
-          <CardDescription>
-            Ruolo: {user.role ?? "user"}. L’accesso admin può essere assegnato soltanto da un
-            amministratore.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FieldGroup>
+      </header>
+
+      <div className="grid items-start gap-4 lg:grid-cols-2">
+        <Card size="sm">
+          <CardHeader>
+            <CardTitle>Identità</CardTitle>
+            <CardDescription>
+              Nome e username mostrati nelle aree associate al tuo account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <form onSubmit={(event) => void updateIdentity(event)}>
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="profile-name">Nome</FieldLabel>
-                  <Input id="profile-name" name="name" defaultValue={user.name} required />
+                  <Input
+                    id="profile-name"
+                    name="name"
+                    autoComplete="name"
+                    defaultValue={user.name}
+                    required
+                  />
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="profile-username">Username</FieldLabel>
                   <Input
                     id="profile-username"
                     name="username"
+                    autoComplete="username"
                     defaultValue={user.username ?? ""}
                     required
                   />
                 </Field>
-                <Button type="submit">Salva identità</Button>
+                <Button size="sm" type="submit">
+                  <Save data-icon="inline-start" />
+                  Salva identità
+                </Button>
               </FieldGroup>
             </form>
-            <FieldSeparator>Indirizzo email</FieldSeparator>
+          </CardContent>
+        </Card>
+
+        <Card size="sm">
+          <CardHeader>
+            <CardTitle>Email</CardTitle>
+            <CardDescription>
+              Usata per accesso, verifiche e comunicazioni relative alla sicurezza.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <form onSubmit={(event) => void changeEmail(event)}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="profile-email">Email</FieldLabel>
+                  <FieldLabel htmlFor="profile-email">Indirizzo email</FieldLabel>
                   <Input
                     id="profile-email"
                     name="email"
                     type="email"
+                    autoComplete="email"
                     defaultValue={user.email}
                     required
                   />
                 </Field>
-                <Button type="submit" variant="outline">
+                <Button size="sm" type="submit" variant="outline">
                   Aggiorna email
                 </Button>
               </FieldGroup>
             </form>
-            <FieldSeparator>Account collegati</FieldSeparator>
-            <div className="grid gap-3">
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>Account collegati</CardTitle>
+          <CardDescription>Metodi esterni che possono essere usati per accedere.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {accounts.length ? (
+            <ItemGroup>
               {accounts.map((item) => (
-                <Item key={item.id}>
+                <Item key={item.id} variant="outline">
                   <ItemMedia variant="icon">
                     <Link2 />
                   </ItemMedia>
                   <ItemContent>
-                    <ItemTitle>{item.providerId}</ItemTitle>
+                    <ItemTitle className="capitalize">{item.providerId}</ItemTitle>
                     <ItemDescription>{item.accountId}</ItemDescription>
                   </ItemContent>
-                  {item.providerId !== "credential" && (
+                  {item.providerId !== "credential" ? (
                     <ItemActions>
-                      <Button
-                        variant="destructive"
-                        onClick={async () => {
-                          const result = await authClient.unlinkAccount({
-                            providerId: item.providerId,
-                            accountId: item.accountId,
-                          });
-                          if (result.error)
-                            toast.error(result.error.message ?? "Scollegamento non riuscito.");
-                          else toast.success("Account scollegato.");
-                          await refreshAccounts();
-                        }}
-                      >
-                        Scollega
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger render={<Button size="sm" variant="outline" />}>
+                          <Unlink data-icon="inline-start" />
+                          Scollega
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Scollegare {item.providerId}?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Verifica di avere un altro metodo di accesso prima di continuare.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annulla</AlertDialogCancel>
+                            <AlertDialogAction
+                              variant="destructive"
+                              onClick={() => void unlinkAccount(item)}
+                            >
+                              Scollega
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </ItemActions>
-                  )}
+                  ) : null}
                 </Item>
               ))}
-            </div>
-          </FieldGroup>
+            </ItemGroup>
+          ) : (
+            <Empty className="p-8">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <UserRound />
+                </EmptyMedia>
+                <EmptyTitle>Nessun provider collegato</EmptyTitle>
+                <EmptyDescription>
+                  Il tuo account usa soltanto le credenziali principali.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -39,6 +39,7 @@ import {
 import type { SimpleIcon } from "simple-icons";
 
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 type TechDefinition = {
   tint: string;
@@ -501,7 +502,7 @@ export function SkillChip({
   const visual = resolveVisual(skill ?? name ?? "");
 
   return (
-    <Badge color={visual.tint} className="gap-1.5 px-2 py-0.5 text-[11px]">
+    <Badge className={cn(visual.tint, "gap-1.5 px-2 py-0.5 text-[11px]")}>
       <BrandIcon visual={visual} size={12} />
       <span>{visual.label}</span>
     </Badge>

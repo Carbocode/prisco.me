@@ -19,11 +19,12 @@ import {
 } from "@/components/ui/sheet";
 
 const links = [
-  { to: "/" as const, label: "Home" },
-  { to: "/career" as const, label: "Carriera" },
-  { to: "/projects" as const, label: "Progetti" },
-  { to: "/contact" as const, label: "Contatti" },
-];
+  { kind: "static", to: "/", label: "Home" },
+  { kind: "static", to: "/career", label: "Carriera" },
+  { kind: "archive", archiveSlug: "progetti", label: "Progetti" },
+  { kind: "archive", archiveSlug: "blog", label: "Blog" },
+  { kind: "static", to: "/contact", label: "Contatti" },
+] as const;
 
 export default function Header({ overlay = false }: { overlay?: boolean }) {
   return (
@@ -46,8 +47,18 @@ export default function Header({ overlay = false }: { overlay?: boolean }) {
         >
           <NavigationMenuList>
             {links.map((item) => (
-              <NavigationMenuItem key={item.to}>
-                <NavigationMenuLink render={<Link to={item.to} />}>{item.label}</NavigationMenuLink>
+              <NavigationMenuItem key={item.label}>
+                <NavigationMenuLink
+                  render={
+                    item.kind === "archive" ? (
+                      <Link to="/$archiveSlug" params={{ archiveSlug: item.archiveSlug }} />
+                    ) : (
+                      <Link to={item.to} />
+                    )
+                  }
+                >
+                  {item.label}
+                </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
           </NavigationMenuList>
@@ -69,7 +80,17 @@ export default function Header({ overlay = false }: { overlay?: boolean }) {
             </SheetHeader>
             <nav aria-label="Navigazione mobile" className="grid gap-2 p-4">
               {links.map((item) => (
-                <Button key={item.to} variant="ghost" render={<Link to={item.to} />}>
+                <Button
+                  key={item.label}
+                  variant="ghost"
+                  render={
+                    item.kind === "archive" ? (
+                      <Link to="/$archiveSlug" params={{ archiveSlug: item.archiveSlug }} />
+                    ) : (
+                      <Link to={item.to} />
+                    )
+                  }
+                >
                   {item.label}
                 </Button>
               ))}

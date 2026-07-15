@@ -189,6 +189,13 @@ export default function ContactRequestForm() {
                     <Field>
                       <FieldLabel htmlFor={field.name}>Motivo del contatto*</FieldLabel>
                       <Select
+                        items={[
+                          { value: "product", label: "Sviluppo di un prodotto" },
+                          { value: "technical", label: "Collaborazione tecnica" },
+                          { value: "consulting", label: "Consulenza" },
+                          { value: "opportunity", label: "Opportunità professionale" },
+                          { value: "other", label: "Altro" },
+                        ]}
                         value={field.state.value}
                         onValueChange={(value) =>
                           value && isContactInterest(value) && field.handleChange(value)

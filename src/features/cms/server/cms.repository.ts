@@ -1,6 +1,5 @@
 import {
   and,
-  asc,
   count,
   desc,
   eq,
@@ -25,8 +24,6 @@ import {
   cmsAuditLogs,
   cmsCategories,
   cmsRedirects,
-  cmsServiceRevisions,
-  cmsServices,
 } from "@/db/schema";
 import { user } from "@/db/schema";
 
@@ -116,11 +113,18 @@ export function articleRepository(db: CmsDb) {
           excerpt: cmsArticles.excerpt,
           content: cmsArticles.content,
           publishedAt: cmsArticles.publishedAt,
+          updatedAt: cmsArticles.updatedAt,
           seoTitle: cmsArticles.seoTitle,
           seoDescription: cmsArticles.seoDescription,
           canonicalUrl: cmsArticles.canonicalUrl,
           noIndex: cmsArticles.noIndex,
           coverMediaId: cmsArticles.coverMediaId,
+          authorId: cmsArticles.authorId,
+          organizationId: cmsArticles.organizationId,
+          projectRole: cmsArticles.projectRole,
+          projectPeriod: cmsArticles.projectPeriod,
+          projectFeatured: cmsArticles.projectFeatured,
+          projectSortOrder: cmsArticles.projectSortOrder,
         })
         .from(cmsArticles)
         .where(
@@ -133,6 +137,38 @@ export function articleRepository(db: CmsDb) {
         )
         .orderBy(desc(cmsArticles.publishedAt), desc(cmsArticles.id))
         .limit(limit);
+    },
+    listPublicArchive() {
+      return db
+        .select({
+          id: cmsArticles.id,
+          title: cmsArticles.title,
+          slug: cmsArticles.slug,
+          excerpt: cmsArticles.excerpt,
+          content: cmsArticles.content,
+          publishedAt: cmsArticles.publishedAt,
+          updatedAt: cmsArticles.updatedAt,
+          seoTitle: cmsArticles.seoTitle,
+          seoDescription: cmsArticles.seoDescription,
+          canonicalUrl: cmsArticles.canonicalUrl,
+          noIndex: cmsArticles.noIndex,
+          coverMediaId: cmsArticles.coverMediaId,
+          authorId: cmsArticles.authorId,
+          organizationId: cmsArticles.organizationId,
+          projectRole: cmsArticles.projectRole,
+          projectPeriod: cmsArticles.projectPeriod,
+          projectFeatured: cmsArticles.projectFeatured,
+          projectSortOrder: cmsArticles.projectSortOrder,
+        })
+        .from(cmsArticles)
+        .where(
+          and(
+            isNull(cmsArticles.deletedAt),
+            inArray(cmsArticles.status, ["published", "scheduled"]),
+            lte(cmsArticles.publishedAt, new Date()),
+          ),
+        )
+        .orderBy(desc(cmsArticles.publishedAt), desc(cmsArticles.id));
     },
     publicBySlug(slug: string) {
       return db
@@ -148,6 +184,12 @@ export function articleRepository(db: CmsDb) {
         )
         .limit(1);
     },
+    publicAuthorsByIds(ids: string[]) {
+      return db
+        .select({ id: user.id, name: user.name, username: user.username })
+        .from(user)
+        .where(inArray(user.id, ids));
+    },
     nextRevision(articleId: string) {
       return db
         .select({ value: sql<number>`coalesce(max(${cmsArticleRevisions.revision}), 0) + 1` })
@@ -160,58 +202,6 @@ export function articleRepository(db: CmsDb) {
         .from(cmsArticleRevisions)
         .where(eq(cmsArticleRevisions.articleId, articleId))
         .orderBy(desc(cmsArticleRevisions.createdAt))
-        .limit(50);
-    },
-  };
-}
-
-export function serviceRepository(db: CmsDb) {
-  return {
-    byId: (id: string) => db.query.cmsServices.findFirst({ where: eq(cmsServices.id, id) }),
-    bySlug: (slug: string) => db.query.cmsServices.findFirst({ where: eq(cmsServices.slug, slug) }),
-    listAdmin: () =>
-      db
-        .select()
-        .from(cmsServices)
-        .where(isNull(cmsServices.deletedAt))
-        .orderBy(asc(cmsServices.sortOrder), asc(cmsServices.name)),
-    listPublic: () =>
-      db
-        .select()
-        .from(cmsServices)
-        .where(
-          and(
-            isNull(cmsServices.deletedAt),
-            eq(cmsServices.status, "published"),
-            lte(cmsServices.publishedAt, new Date()),
-          ),
-        )
-        .orderBy(asc(cmsServices.sortOrder), asc(cmsServices.name)),
-    publicBySlug: (slug: string) =>
-      db
-        .select()
-        .from(cmsServices)
-        .where(
-          and(
-            eq(cmsServices.slug, slug),
-            isNull(cmsServices.deletedAt),
-            eq(cmsServices.status, "published"),
-            lte(cmsServices.publishedAt, new Date()),
-          ),
-        )
-        .limit(1),
-    nextRevision(serviceId: string) {
-      return db
-        .select({ value: sql<number>`coalesce(max(${cmsServiceRevisions.revision}), 0) + 1` })
-        .from(cmsServiceRevisions)
-        .where(eq(cmsServiceRevisions.serviceId, serviceId));
-    },
-    revisions(serviceId: string) {
-      return db
-        .select()
-        .from(cmsServiceRevisions)
-        .where(eq(cmsServiceRevisions.serviceId, serviceId))
-        .orderBy(desc(cmsServiceRevisions.createdAt))
         .limit(50);
     },
   };
@@ -240,8 +230,6 @@ export {
   cmsAuditLogs,
   cmsCategories,
   cmsRedirects,
-  cmsServiceRevisions,
-  cmsServices,
   eq,
   isNull,
   ne,

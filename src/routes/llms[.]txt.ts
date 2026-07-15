@@ -6,7 +6,7 @@ const llmsTxt = `# Prisco.me
 
 ## Pagine principali
 - Home: https://prisco.me/
-- Progetti: https://prisco.me/projects
+- Progetti: https://prisco.me/progetti
 - Carriera: https://prisco.me/career
 - Informazioni: https://prisco.me/about
 - Contatti: https://prisco.me/contact

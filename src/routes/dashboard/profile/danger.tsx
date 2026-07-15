@@ -35,25 +35,26 @@ function DangerPage() {
   }
 
   return (
-    <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Elimina account</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Rimuovi definitivamente il tuo account e tutti i dati associati.
+    <div className="flex max-w-3xl flex-col gap-4">
+      <header>
+        <p className="text-sm font-medium text-destructive">Zona pericolosa</p>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">Elimina account</h1>
+        <p className="text-sm text-muted-foreground">
+          Rimuovi definitivamente account, credenziali e accessi associati.
         </p>
-      </div>
-      <Card>
+      </header>
+      <Card size="sm">
         <CardHeader>
           <CardTitle>Elimina account</CardTitle>
           <CardDescription>
-            Operazione definitiva: vengono rimossi utente, credenziali, sessioni, passkey e dati
-            OAuth.
+            Vengono rimossi utente, credenziali, sessioni, passkey e dati OAuth. L’operazione non
+            può essere annullata.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <AlertDialog>
             <AlertDialogTrigger render={<Button variant="destructive" />}>
-              Elimina definitivamente
+              Elimina account
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>

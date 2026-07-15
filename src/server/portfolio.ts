@@ -1,27 +1,23 @@
 import { logger } from "@sentry/cloudflare";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { asc } from "drizzle-orm";
+import { and, asc, eq, isNull, lte } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import {
   experienceProjects,
   experiences,
   experienceSkills,
-  projects as projectsTable,
-  projectCategories as projectCategoriesTable,
-  projectSections,
-  projectSkills,
+  cmsArticleCategories,
+  cmsArticles,
+  cmsArticleTags,
+  cmsCategories,
+  cmsOrganizations,
+  cmsTags,
   skills as skillsTable,
+  user,
 } from "@/db/schema";
-import type {
-  Experience,
-  LinkedProject,
-  Project,
-  ProjectCategory,
-  ProjectSection,
-  Skill,
-} from "@/lib/projects";
+import type { Experience, LinkedProject, Project, Skill } from "@/lib/projects";
 
 function toSkill(row: typeof skillsTable.$inferSelect): Skill {
   return {
@@ -37,23 +33,10 @@ function toSkill(row: typeof skillsTable.$inferSelect): Skill {
 
 // Mappe di normalizzazione: convertono i valori grezzi (stringhe) del database
 // nei tipi ristretti dell'applicazione senza ricorrere ad assertion non sicure.
-const projectCategoryByValue: Record<string, ProjectCategory> = {
-  web: "web",
-  mobile: "mobile",
-  backend: "backend",
-  experiment: "experiment",
-};
-
 const experienceKindByValue: Record<string, Experience["kind"]> = {
   work: "work",
   education: "education",
 };
-
-function parseBullets(value: string | null): string[] | undefined {
-  if (!value) return undefined;
-  const parsed: unknown = JSON.parse(value);
-  return Array.isArray(parsed) ? parsed.map(String) : undefined;
-}
 
 /**
  * Carica tutto il portfolio dal database e ne ricostruisce il grafo relazionale
@@ -67,18 +50,39 @@ async function loadPortfolio() {
   const [
     skillRows,
     projectRows,
-    projectCategoryRows,
-    sectionRows,
-    projectSkillRows,
+    projectTagRows,
     experienceRows,
     experienceSkillRows,
     experienceProjectRows,
   ] = await Promise.all([
     db.select().from(skillsTable).orderBy(asc(skillsTable.sortOrder)),
-    db.select().from(projectsTable).orderBy(asc(projectsTable.sortOrder)),
-    db.select().from(projectCategoriesTable).orderBy(asc(projectCategoriesTable.sortOrder)),
-    db.select().from(projectSections).orderBy(asc(projectSections.sortOrder)),
-    db.select().from(projectSkills).orderBy(asc(projectSkills.sortOrder)),
+    db
+      .select({
+        article: cmsArticles,
+        organizationName: cmsOrganizations.name,
+        organizationType: cmsOrganizations.type,
+        authorName: user.name,
+      })
+      .from(cmsArticles)
+      .innerJoin(cmsArticleCategories, eq(cmsArticleCategories.articleId, cmsArticles.id))
+      .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
+      .innerJoin(user, eq(cmsArticles.authorId, user.id))
+      .leftJoin(cmsOrganizations, eq(cmsArticles.organizationId, cmsOrganizations.id))
+      .where(
+        and(
+          eq(cmsCategories.slug, "progetti"),
+          eq(cmsArticles.status, "published"),
+          lte(cmsArticles.publishedAt, new Date()),
+          isNull(cmsArticles.deletedAt),
+        ),
+      )
+      .orderBy(asc(cmsArticles.projectSortOrder)),
+    db
+      .select({ articleId: cmsArticleTags.articleId, tag: cmsTags })
+      .from(cmsArticleTags)
+      .innerJoin(cmsTags, eq(cmsArticleTags.tagId, cmsTags.id))
+      .where(isNull(cmsTags.deletedAt))
+      .orderBy(asc(cmsArticleTags.articleId), asc(cmsArticleTags.sortOrder), asc(cmsTags.name)),
     db.select().from(experiences).orderBy(asc(experiences.sortOrder)),
     db.select().from(experienceSkills).orderBy(asc(experienceSkills.sortOrder)),
     db.select().from(experienceProjects).orderBy(asc(experienceProjects.sortOrder)),
@@ -86,57 +90,45 @@ async function loadPortfolio() {
 
   const skillById = new Map(skillRows.map((row) => [row.id, toSkill(row)]));
 
-  const sectionsByProject = new Map<string, ProjectSection[]>();
-  for (const row of sectionRows) {
-    const list = sectionsByProject.get(row.projectId) ?? [];
-    list.push({
-      title: row.title,
-      body: row.body,
-      bullets: parseBullets(row.bullets),
-      image: row.image ?? undefined,
-    });
-    sectionsByProject.set(row.projectId, list);
-  }
-
   const skillsByProject = new Map<string, Skill[]>();
-  for (const row of projectSkillRows) {
-    const skill = skillById.get(row.skillId);
-    if (!skill) continue;
-    const list = skillsByProject.get(row.projectId) ?? [];
-    list.push(skill);
-    skillsByProject.set(row.projectId, list);
-  }
-
-  const categoriesByProject = new Map<string, ProjectCategory[]>();
-  for (const row of projectCategoryRows) {
-    const category = projectCategoryByValue[row.category];
-    if (!category) continue;
-    const list = categoriesByProject.get(row.projectId) ?? [];
-    list.push(category);
-    categoriesByProject.set(row.projectId, list);
+  for (const row of projectTagRows) {
+    const list = skillsByProject.get(row.articleId) ?? [];
+    list.push({
+      id: row.tag.id,
+      name: row.tag.name,
+      icon: row.tag.icon,
+      color: row.tag.color,
+      mark: row.tag.mark,
+      fluentIcon: row.tag.fluentIcon,
+      marqueeRow: null,
+    });
+    skillsByProject.set(row.articleId, list);
   }
 
   const projectById = new Map<string, Project>();
   const projects: Project[] = projectRows.map((row) => {
+    const item = row.article;
     const project: Project = {
-      slug: row.slug,
-      title: row.title,
-      summary: row.summary,
-      description: row.description,
-      role: row.role,
-      company: row.company,
-      categories: categoriesByProject.get(row.id) ?? [
-        projectCategoryByValue[row.category] ?? "web",
-      ],
-      skills: skillsByProject.get(row.id) ?? [],
-      period: row.period ?? undefined,
-      image: row.image ?? undefined,
-      demoUrl: row.demoUrl ?? undefined,
-      repositoryUrl: row.repositoryUrl ?? undefined,
-      featured: row.featured,
-      sections: sectionsByProject.get(row.id) ?? [],
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      summary: item.excerpt ?? item.title,
+      description: item.seoDescription ?? item.excerpt ?? item.title,
+      role: item.projectRole ?? "Software Engineer",
+      company: row.organizationName ?? "Progetto personale",
+      organization: row.organizationName
+        ? {
+            name: row.organizationName,
+            type: row.organizationType === "education" ? "education" : "company",
+          }
+        : undefined,
+      author: { name: row.authorName },
+      skills: skillsByProject.get(item.id) ?? [],
+      period: item.projectPeriod ?? undefined,
+      featured: item.projectFeatured,
+      content: item.content,
     };
-    projectById.set(row.id, project);
+    if (item.legacyProjectId) projectById.set(item.legacyProjectId, project);
     return project;
   });
 

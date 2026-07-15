@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { parseCmsDocument } from "@/features/cms/domain/cms-document";
 import { renderCmsDocument } from "@/features/cms/editor/render-cms-document";
 import { getArticleFn } from "@/features/cms/server/article.functions";
@@ -25,18 +26,27 @@ export const Route = createFileRoute("/dashboard/cms/articles_/$articleId_/previ
 function PreviewPage() {
   const { article, media } = Route.useLoaderData();
   return (
-    <div className="grid gap-6">
-      <div>
-        <Badge variant="secondary">Anteprima · {article.status}</Badge>
-        <h1 className="mt-4 text-3xl font-semibold">{article.title}</h1>
-        {article.excerpt ? <p className="mt-2 text-muted-foreground">{article.excerpt}</p> : null}
-      </div>
-      <article className="prose max-w-3xl space-y-5 dark:prose-invert">
-        {renderCmsDocument(
-          parseCmsDocument(article.content),
-          new Map(media.map((item) => [item.id, item])),
-        )}
-      </article>
+    <div className="flex flex-col gap-4">
+      <Alert>
+        <AlertTitle>Anteprima privata · {article.status}</AlertTitle>
+        <AlertDescription>
+          Questa pagina mostra il contenuto salvato e non è indicizzata.
+        </AlertDescription>
+      </Alert>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">{article.title}</CardTitle>
+          {article.excerpt ? <p className="text-muted-foreground">{article.excerpt}</p> : null}
+        </CardHeader>
+        <CardContent>
+          <article className="prose max-w-3xl dark:prose-invert">
+            {renderCmsDocument(
+              parseCmsDocument(article.content),
+              new Map(media.map((item) => [item.id, item])),
+            )}
+          </article>
+        </CardContent>
+      </Card>
     </div>
   );
 }

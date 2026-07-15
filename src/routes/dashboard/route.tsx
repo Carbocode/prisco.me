@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   BriefcaseBusiness,
   FileText,
+  Hash,
   Image,
   KeyRound,
   LayoutDashboard,
@@ -17,6 +18,8 @@ import {
 } from "lucide-react";
 
 import { RequireAuth } from "@/components/auth-ui";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -73,20 +76,31 @@ function ProfileShell() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { isMobile, setOpenMobile } = useSidebar();
   const user = session.data!.user;
+  const pageTitle = dashboardTitle(pathname);
+  const initials = user.name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <>
       <Sidebar collapsible="icon">
         <SidebarHeader>
-          <Button size="lg" render={<Link to="/" onClick={() => setOpenMobile(false)} />}>
+          <Button
+            size="sm"
+            variant="outline"
+            render={<Link to="/" onClick={() => setOpenMobile(false)} />}
+          >
             <ArrowLeft />
-            Torna a Prisco.me
+            Prisco.me
           </Button>
           <Separator />
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Profilo</SidebarGroupLabel>
+            <SidebarGroupLabel>Account</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {profileNavigation.map((item) => (
@@ -148,7 +162,7 @@ function ProfileShell() {
           )}
           {(user.role === "admin" || user.role === "editor" || user.role === "author") && (
             <SidebarGroup>
-              <SidebarGroupLabel>Blog</SidebarGroupLabel>
+              <SidebarGroupLabel>Contenuti</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
@@ -158,7 +172,7 @@ function ProfileShell() {
                       render={<Link to="/dashboard/cms" onClick={() => setOpenMobile(false)} />}
                     >
                       <LayoutDashboard />
-                      <span>Dashboard CMS</span>
+                      <span>Panoramica</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
@@ -180,14 +194,17 @@ function ProfileShell() {
                   {(user.role === "admin" || user.role === "editor") && (
                     <SidebarMenuItem>
                       <SidebarMenuButton
-                        title="Servizi"
-                        isActive={pathname.startsWith("/dashboard/cms/services")}
+                        title="Organizzazioni"
+                        isActive={pathname.startsWith("/dashboard/cms/organizations")}
                         render={
-                          <Link to="/dashboard/cms/services" onClick={() => setOpenMobile(false)} />
+                          <Link
+                            to="/dashboard/cms/organizations"
+                            onClick={() => setOpenMobile(false)}
+                          />
                         }
                       >
                         <BriefcaseBusiness />
-                        <span>Servizi</span>
+                        <span>Organizzazioni</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   )}
@@ -201,6 +218,18 @@ function ProfileShell() {
                     >
                       <Tags />
                       <span>Categorie</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      title="Tag"
+                      isActive={pathname.startsWith("/dashboard/cms/tags")}
+                      render={
+                        <Link to="/dashboard/cms/tags" onClick={() => setOpenMobile(false)} />
+                      }
+                    >
+                      <Hash />
+                      <span>Tag</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
@@ -266,19 +295,48 @@ function ProfileShell() {
         <SidebarRail />
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-          {isMobile && (
-            <>
-              <SidebarTrigger />
-              <Separator orientation="vertical" />
-            </>
-          )}
-          <span className="text-sm font-medium">Dashboard</span>
+        <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4">
+          <div className="flex min-w-0 items-center gap-2">
+            {isMobile && (
+              <>
+                <SidebarTrigger />
+                <Separator orientation="vertical" />
+              </>
+            )}
+            <div className="min-w-0">
+              <p className="truncate text-xs text-muted-foreground">Dashboard</p>
+              <p className="truncate text-sm font-medium">{pageTitle}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{user.role ?? "user"}</Badge>
+            <Avatar className="size-8">
+              <AvatarImage src={user.image ?? undefined} alt="" />
+              <AvatarFallback>{initials || "VP"}</AvatarFallback>
+            </Avatar>
+          </div>
         </header>
-        <div className="mx-auto w-full max-w-5xl flex-1 p-4 md:p-8">
+        <main id="dashboard-content" className="mx-auto w-full max-w-7xl flex-1 p-4 md:p-6">
           <Outlet />
-        </div>
+        </main>
       </SidebarInset>
     </>
   );
+}
+
+function dashboardTitle(pathname: string) {
+  if (pathname.includes("/admin/users/new")) return "Crea utente";
+  if (pathname.includes("/admin/users")) return "Utenti";
+  if (pathname.includes("/cms/articles/new")) return "Nuovo articolo";
+  if (pathname.includes("/cms/articles/")) return "Modifica articolo";
+  if (pathname.endsWith("/cms/articles")) return "Articoli";
+  if (pathname.endsWith("/cms/organizations")) return "Organizzazioni";
+  if (pathname.endsWith("/cms/categories")) return "Categorie";
+  if (pathname.endsWith("/cms/tags")) return "Tag";
+  if (pathname.endsWith("/cms/media")) return "Media";
+  if (pathname === "/dashboard/cms" || pathname === "/dashboard/cms/") return "Centro contenuti";
+  if (pathname.endsWith("/profile/authentication")) return "Autenticazione";
+  if (pathname.endsWith("/profile/authorizations")) return "Autorizzazioni";
+  if (pathname.endsWith("/profile/danger")) return "Elimina account";
+  return "Profilo";
 }

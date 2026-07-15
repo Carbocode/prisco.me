@@ -1,31 +1,51 @@
 import { z } from "zod";
 
+import {
+  categoryArchiveSorts,
+  categorySchemaTypes,
+  defaultCategoryConfig,
+} from "@/lib/content-category";
+
 import { cmsDocumentSchema } from "./cms-document";
 import { slugPattern } from "./slug";
 
 const nullableText = (max: number) => z.string().trim().max(max).nullable().optional();
-const slug = z.string().trim().min(3).max(180).regex(slugPattern, "Slug non valido");
+const slug = z
+  .string()
+  .trim()
+  .min(3)
+  .max(180)
+  .regex(slugPattern, "Slug non valido")
+  .refine((value) => !/^\d+$/.test(value), "Lo slug non puo essere composto solo da numeri");
+const articleSlug = slug.refine(
+  (value) => !["authors", "categories", "tags"].includes(value),
+  "Slug riservato al routing pubblico",
+);
 const webUrl = z
   .string()
   .trim()
   .url()
   .refine((value) => ["http:", "https:"].includes(new URL(value).protocol));
-const canonicalUrl = z.union([webUrl, z.null()]).optional();
-const baseContent = {
+const seoContent = {
   content: cmsDocumentSchema,
   seoTitle: nullableText(70),
   seoDescription: nullableText(180),
-  canonicalUrl,
   noIndex: z.boolean().optional(),
 };
 
 export const createArticleSchema = z.object({
   title: z.string().trim().min(3).max(160),
-  slug,
+  slug: articleSlug,
   excerpt: nullableText(320),
-  ...baseContent,
+  ...seoContent,
   coverMediaId: z.string().uuid().nullable().optional(),
-  categoryIds: z.array(z.string().uuid()).max(20).default([]),
+  organizationId: z.string().uuid().nullable().optional(),
+  projectRole: nullableText(160),
+  projectPeriod: nullableText(160),
+  projectFeatured: z.boolean().optional(),
+  projectSortOrder: z.int().min(-10000).max(10000).optional(),
+  categoryIds: z.array(z.string().uuid()).length(1, "Seleziona una sola categoria"),
+  tagIds: z.array(z.string().uuid()).max(50).default([]),
 });
 export const updateArticleSchema = createArticleSchema
   .partial()
@@ -46,42 +66,38 @@ export const listArticlesSchema = z.object({
   dateTo: z.coerce.date().optional(),
 });
 
-const ctaUrl = z
-  .string()
-  .trim()
-  .refine((value) => {
-    if (value.startsWith("/")) return !value.startsWith("//");
-    try {
-      return ["http:", "https:"].includes(new URL(value).protocol);
-    } catch {
-      return false;
-    }
-  }, "URL CTA non valido");
-export const createServiceSchema = z.object({
-  name: z.string().trim().min(3).max(160),
-  slug,
-  shortDescription: nullableText(320),
-  ...baseContent,
-  imageMediaId: z.string().uuid().nullable().optional(),
-  icon: nullableText(80),
-  priceLabel: nullableText(80),
-  callToActionLabel: nullableText(100),
-  callToActionUrl: z.union([ctaUrl, z.null()]).optional(),
-  sortOrder: z.int().min(-10000).max(10000).default(0),
-});
-export const updateServiceSchema = createServiceSchema
-  .partial()
-  .extend({ id: z.string().uuid(), version: z.int().positive() });
 export const createCategorySchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug,
   description: nullableText(320),
+  schemaType: z.enum(categorySchemaTypes).default(defaultCategoryConfig.schemaType),
+  archiveSort: z.enum(categoryArchiveSorts).default(defaultCategoryConfig.archiveSort),
+  archiveEyebrow: z.string().trim().min(2).max(80).default(defaultCategoryConfig.archiveEyebrow),
 });
 export const updateCategorySchema = createCategorySchema
+  .partial()
+  .extend({ id: z.string().uuid() });
+export const createTagSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  slug,
+  categoryId: z.string().uuid(),
+  icon: nullableText(80),
+  color: z.string().trim().min(1).max(160),
+  mark: nullableText(20),
+  fluentIcon: nullableText(80),
+});
+export const updateTagSchema = createTagSchema.partial().extend({ id: z.string().uuid() });
+
+export const createOrganizationSchema = z.object({
+  name: z.string().trim().min(2).max(160),
+  slug,
+  type: z.enum(["company", "education"]),
+  description: nullableText(320),
+  websiteUrl: z.union([webUrl, z.null()]).optional(),
+});
+export const updateOrganizationSchema = createOrganizationSchema
   .partial()
   .extend({ id: z.string().uuid() });
 
 export type CreateArticleInput = z.infer<typeof createArticleSchema>;
 export type UpdateArticleInput = z.infer<typeof updateArticleSchema>;
-export type CreateServiceInput = z.infer<typeof createServiceSchema>;
-export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;

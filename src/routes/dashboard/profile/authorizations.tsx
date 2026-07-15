@@ -31,6 +31,7 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemGroup,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
@@ -136,20 +137,21 @@ function AuthorizationsPage() {
   }
 
   return (
-    <div className="grid gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Autorizzazioni</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Controlla sessioni, client OAuth 2.1/OIDC e autorizzazioni concesse.
+    <div className="flex max-w-6xl flex-col gap-4">
+      <header>
+        <p className="text-sm font-medium text-muted-foreground">Accessi e integrazioni</p>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">Autorizzazioni</h1>
+        <p className="text-sm text-muted-foreground">
+          Sessioni attive, client OAuth 2.1/OIDC e autorizzazioni concesse.
         </p>
-      </div>
-      <Card>
+      </header>
+      <Card size="sm">
         <CardHeader>
           <CardTitle>Sessioni attive</CardTitle>
           <CardDescription>Controlla e revoca gli accessi al tuo account.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3">
+          <ItemGroup>
             {sessions.length === 0 ? (
               <Empty>
                 <EmptyHeader>
@@ -190,7 +192,7 @@ function AuthorizationsPage() {
                 </Item>
               ))
             )}
-          </div>
+          </ItemGroup>
           <Button
             variant="outline"
             onClick={async () => {
@@ -204,7 +206,7 @@ function AuthorizationsPage() {
           </Button>
         </CardContent>
       </Card>
-      <Card>
+      <Card size="sm">
         <CardHeader>
           <CardTitle>OAuth Provider</CardTitle>
           <CardDescription>
@@ -248,7 +250,7 @@ function AuthorizationsPage() {
               </Alert>
             )}
             <FieldSeparator>Client registrati</FieldSeparator>
-            <div className="grid gap-3">
+            <ItemGroup>
               {clients.length === 0 ? (
                 <Empty>
                   <EmptyHeader>
@@ -346,9 +348,9 @@ function AuthorizationsPage() {
                   </Item>
                 ))
               )}
-            </div>
+            </ItemGroup>
             <FieldSeparator>Consensi concessi</FieldSeparator>
-            <div className="grid gap-3">
+            <ItemGroup>
               {consents.length === 0 ? (
                 <Empty>
                   <EmptyHeader>
@@ -383,7 +385,7 @@ function AuthorizationsPage() {
                   </Item>
                 ))
               )}
-            </div>
+            </ItemGroup>
           </FieldGroup>
         </CardContent>
       </Card>

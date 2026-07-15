@@ -11,3 +11,4 @@ export function slugify(input: string): string {
 }
 
 export const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const slugInputPattern = "(?![0-9]+$)[a-z0-9]+(?:-[a-z0-9]+)*";
