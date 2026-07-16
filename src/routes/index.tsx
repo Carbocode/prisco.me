@@ -13,6 +13,7 @@ import Sky from "@/components/sky";
 import Star from "@/components/star";
 import SubsoilDecor from "@/components/subsoil-decor";
 import { SkillChip, TechIcon } from "@/components/tech-icon";
+import type { Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/")({
@@ -21,13 +22,19 @@ export const Route = createFileRoute("/")({
       { title: "Vincenzo Prisco | Software Engineer" },
       {
         name: "description",
-        content:
-          "Portfolio personale di Vincenzo Prisco: software engineer, product builder e autore di appunti tecnici.",
+        content: "Spazio personale di Vincenzo Prisco.",
       },
       { property: "og:title", content: "Vincenzo Prisco | Software Engineer" },
       {
         property: "og:description",
-        content: "Costruisco prodotti digitali che partono da un'idea e arrivano alle persone.",
+        content: "Spazio personale di Vincenzo Prisco.",
+      },
+      { property: "og:url", content: "https://prisco.me/" },
+      { name: "twitter:url", content: "https://prisco.me/" },
+      { name: "twitter:title", content: "Vincenzo Prisco | Software Engineer" },
+      {
+        name: "twitter:description",
+        content: "Spazio personale di Vincenzo Prisco.",
       },
     ],
     links: [{ rel: "canonical", href: "https://prisco.me/" }],
@@ -44,6 +51,24 @@ function HomePage() {
   const myvetSkills = portfolio.skills.filter((skill) =>
     ["Ionic", "Capacitor", "Angular", "Cloudflare", "PostHog"].includes(skill.name),
   );
+  const skillByName = new Map(portfolio.skills.map((skill) => [skill.name, skill]));
+  const skillCards = [
+    {
+      title: "Sviluppo web",
+      skill: skillByName.get("Web Development"),
+      items: ["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"],
+    },
+    {
+      title: "Architettura software",
+      skill: skillByName.get("Software Architecture"),
+      items: ["Progettazione", "Modularita", "Manutenibilita", "Decisioni proporzionate"],
+    },
+    {
+      title: "Dal concept al prodotto",
+      skill: skillByName.get("Product Design"),
+      items: ["Analisi dell'idea", "Sviluppo iterativo", "Pubblicazione", "Miglioramento continuo"],
+    },
+  ].filter((card): card is { title: string; skill: Skill; items: string[] } => Boolean(card.skill));
 
   return (
     <div className="min-h-dvh bg-slate-950 text-slate-100">
@@ -93,26 +118,9 @@ function HomePage() {
         <div className="relative">
           <Section>
             <div className="grid gap-5 md:grid-cols-3">
-              <SkillCard
-                title="Sviluppo web"
-                technology="Web Development"
-                items={["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"]}
-              />
-              <SkillCard
-                title="Architettura software"
-                technology="Software Architecture"
-                items={["Progettazione", "Modularita", "Manutenibilita", "Decisioni proporzionate"]}
-              />
-              <SkillCard
-                title="Dal concept al prodotto"
-                technology="Product Design"
-                items={[
-                  "Analisi dell'idea",
-                  "Sviluppo iterativo",
-                  "Pubblicazione",
-                  "Miglioramento continuo",
-                ]}
-              />
+              {skillCards.map((card) => (
+                <SkillCard key={card.skill.id} {...card} />
+              ))}
             </div>
             <SkillsMarquee skills={portfolio.skills} />
           </Section>
@@ -225,18 +233,10 @@ function HomePage() {
   );
 }
 
-function SkillCard({
-  title,
-  technology,
-  items,
-}: {
-  title: string;
-  technology: string;
-  items: string[];
-}) {
+function SkillCard({ title, skill, items }: { title: string; skill: Skill; items: string[] }) {
   return (
     <article className="card-sheen rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/30 hover:bg-white/5">
-      <TechIcon name={technology} />
+      <TechIcon skill={skill} />
       <h2 className="display-font mt-5 text-xl font-semibold">{title}</h2>
       <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-300">
         {items.map((item) => (

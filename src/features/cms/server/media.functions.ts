@@ -17,7 +17,7 @@ export const listMediaFn = createServerFn({ method: "GET" }).handler(async () =>
     .where(isNull(cmsMedia.deletedAt))
     .orderBy(desc(cmsMedia.createdAt))
     .limit(100);
-  const baseUrl = mediaDeliveryBaseUrl(env.VITE_MODE, env.MEDIA_PUBLIC_URL);
+  const baseUrl = mediaDeliveryBaseUrl(import.meta.env.MODE, env.MEDIA_PUBLIC_URL);
   return items.map((item) => ({ ...item, url: mediaUrl(baseUrl, item.storageKey) }));
 });
 export const updateMediaFn = createServerFn({ method: "POST" })

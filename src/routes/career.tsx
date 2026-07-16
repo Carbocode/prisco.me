@@ -16,13 +16,19 @@ export const Route = createFileRoute("/career")({
       { title: "Carriera | Vincenzo Prisco" },
       {
         name: "description",
-        content:
-          "Il percorso di Vincenzo Prisco: dagli inizi con C# e sviluppo web a MyVet ed Egaf Edizioni.",
+        content: "Il percorso formativo e professionale di Vincenzo Prisco",
       },
       { property: "og:title", content: "Carriera | Vincenzo Prisco" },
       {
         property: "og:description",
-        content: "Esperienze, metodo e competenze di un software engineer.",
+        content: "Il percorso formativo e professionale di Vincenzo Prisco",
+      },
+      { property: "og:url", content: "https://prisco.me/career" },
+      { name: "twitter:url", content: "https://prisco.me/career" },
+      { name: "twitter:title", content: "Carriera | Vincenzo Prisco" },
+      {
+        name: "twitter:description",
+        content: "Il percorso formativo e professionale di Vincenzo Prisco",
       },
     ],
     links: [{ rel: "canonical", href: "https://prisco.me/career" }],

@@ -108,15 +108,8 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { mediaResizeHandleVariants, Resizable, ResizeHandle } from "@/components/ui/resize-handle";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { MediaBrowser } from "@/features/cms/components/media-picker";
 import { fromPlateValue, toPlateValue, type CmsDocument } from "@/features/cms/domain/cms-document";
 import { autoformatPlugin } from "@/features/editor/autoformat-plugin";
 import { BlockDraggable } from "@/features/editor/components/block-draggable";
@@ -161,7 +154,13 @@ import {
 import { EditorActionsProvider, type MediaKind } from "@/features/editor/editor-actions-context";
 import { toEmbedUrl } from "@/features/editor/embed-url";
 
-type MediaItem = { id: string; filename: string; url: string; altText: string | null };
+type MediaItem = {
+  id: string;
+  filename: string;
+  url: string;
+  altText: string | null;
+  mimeType: string;
+};
 const MediaContext = createContext<Map<string, MediaItem>>(new Map());
 
 function ParagraphElement(props: PlateElementProps) {
@@ -984,37 +983,20 @@ function ImageDialog({
   onCaptionChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
-  const items = media.map((item) => ({ value: item.id, label: item.filename }));
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <form onSubmit={onSubmit}>
+      <DialogContent className="flex max-h-[min(90dvh,56rem)] w-[calc(100%-2rem)] max-w-6xl flex-col sm:max-w-6xl">
+        <form className="flex min-h-0 flex-1 flex-col gap-4" onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>Inserisci {mediaTypeLabel(mediaType)}</DialogTitle>
             <DialogDescription>Scegli un file dalla libreria media.</DialogDescription>
           </DialogHeader>
-          <FieldGroup>
-            <Field>
-              <FieldLabel>{mediaTypeLabel(mediaType)}</FieldLabel>
-              <Select
-                items={items}
-                value={selectedMediaId}
-                onValueChange={(value) => onMediaChange(value ?? "")}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Scegli un’immagine" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {media.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.filename}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
+          <MediaBrowser
+            items={media.filter((item) => mediaKind(item.mimeType) === mediaType)}
+            value={selectedMediaId}
+            onValueChange={onMediaChange}
+          />
+          <FieldGroup className="grid sm:grid-cols-2">
             <Field>
               <FieldLabel htmlFor="plate-image-alt">Testo alternativo</FieldLabel>
               <Input
@@ -1042,6 +1024,13 @@ function ImageDialog({
       </DialogContent>
     </Dialog>
   );
+}
+
+function mediaKind(mimeType: string): "audio" | "file" | "image" | "video" {
+  if (mimeType.startsWith("audio/")) return "audio";
+  if (mimeType.startsWith("video/")) return "video";
+  if (mimeType.startsWith("image/")) return "image";
+  return "file";
 }
 
 function mediaTypeLabel(type: "audio" | "file" | "image" | "video") {

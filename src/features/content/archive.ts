@@ -13,6 +13,7 @@ export type PublicCategory = {
   schemaType: CategorySchemaType;
   archiveSort: CategoryArchiveSort;
   archiveEyebrow: string;
+  hero: { url: string; altText: string | null } | null;
 };
 
 export type ContentArchive = {
@@ -21,6 +22,7 @@ export type ContentArchive = {
   title: string;
   description: string;
   eyebrow: string;
+  hero?: { url: string; altText: string | null } | null;
   articles: PublicArticle[];
 };
 
@@ -160,6 +162,7 @@ function categoryArchive(
     title: category.name,
     description: category.description ?? `Contenuti nella categoria ${category.name}.`,
     eyebrow: category.archiveEyebrow,
+    hero: category.hero,
     articles: matching,
   };
 }

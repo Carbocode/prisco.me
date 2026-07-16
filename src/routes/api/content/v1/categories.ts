@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
-import { isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { cmsCategories } from "@/db/schema";
+import { cmsCategories, cmsMedia } from "@/db/schema";
+import { mediaDeliveryBaseUrl, mediaUrl } from "@/features/cms/domain/media";
 import { json, jsonError } from "@/features/cms/server/http";
 export const Route = createFileRoute("/api/content/v1/categories")({
   server: {
@@ -15,10 +16,24 @@ export const Route = createFileRoute("/api/content/v1/categories")({
               name: cmsCategories.name,
               slug: cmsCategories.slug,
               description: cmsCategories.description,
+              heroStorageKey: cmsMedia.storageKey,
+              heroAltText: cmsMedia.altText,
             })
             .from(cmsCategories)
+            .leftJoin(
+              cmsMedia,
+              and(eq(cmsCategories.heroMediaId, cmsMedia.id), isNull(cmsMedia.deletedAt)),
+            )
             .where(isNull(cmsCategories.deletedAt));
-          return json({ data: items });
+          const baseUrl = mediaDeliveryBaseUrl(import.meta.env.MODE, env.MEDIA_PUBLIC_URL);
+          return json({
+            data: items.map(({ heroStorageKey, heroAltText, ...category }) => ({
+              ...category,
+              hero: heroStorageKey
+                ? { url: mediaUrl(baseUrl, heroStorageKey), altText: heroAltText }
+                : null,
+            })),
+          });
         } catch (error) {
           return jsonError(error);
         }

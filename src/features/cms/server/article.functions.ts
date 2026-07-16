@@ -11,6 +11,7 @@ import {
   archiveArticle,
   createArticle,
   getAdminArticle,
+  getPreviewArticle,
   listAdminArticles,
   listArticleRevisions,
   publishArticle,
@@ -26,6 +27,9 @@ export const listArticlesFn = createServerFn({ method: "GET" })
 export const getArticleFn = createServerFn({ method: "GET" })
   .validator(z.object({ id: z.string().uuid() }))
   .handler(({ data }) => getAdminArticle(data.id));
+export const getPreviewArticleFn = createServerFn({ method: "GET" })
+  .validator(z.object({ id: z.string().uuid() }))
+  .handler(({ data }) => getPreviewArticle(data.id));
 export const createArticleFn = createServerFn({ method: "POST" })
   .validator(createArticleSchema)
   .handler(({ data }) => createArticle(data));

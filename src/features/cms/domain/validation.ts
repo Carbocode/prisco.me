@@ -73,6 +73,7 @@ export const createCategorySchema = z.object({
   schemaType: z.enum(categorySchemaTypes).default(defaultCategoryConfig.schemaType),
   archiveSort: z.enum(categoryArchiveSorts).default(defaultCategoryConfig.archiveSort),
   archiveEyebrow: z.string().trim().min(2).max(80).default(defaultCategoryConfig.archiveEyebrow),
+  heroMediaId: z.string().uuid().nullable().optional(),
 });
 export const updateCategorySchema = createCategorySchema
   .partial()

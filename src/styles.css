@@ -1,10 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-
 @import 'tailwindcss';
 
 @import 'tw-animate-css';
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/space-grotesk";
 
@@ -26,71 +23,39 @@ code {
 
 :root {
   color-scheme: dark;
-    --background:
-    oklch(1 0 0);
-  --foreground:
-    oklch(0.141 0.005 285.823);
-  --card:
-    oklch(1 0 0);
-  --card-foreground:
-    oklch(0.141 0.005 285.823);
-  --popover:
-    oklch(1 0 0);
-  --popover-foreground:
-    oklch(0.141 0.005 285.823);
-  --primary:
-    oklch(0.21 0.006 285.885);
-  --primary-foreground:
-    oklch(0.985 0 0);
-  --secondary:
-    oklch(0.967 0.001 286.375);
-  --secondary-foreground:
-    oklch(0.21 0.006 285.885);
-  --muted:
-    oklch(0.967 0.001 286.375);
-  --muted-foreground:
-    oklch(0.552 0.016 285.938);
-  --accent:
-    oklch(0.21 0.006 285.885);
-  --accent-foreground:
-    oklch(0.985 0 0);
-  --destructive:
-    oklch(0.577 0.245 27.325);
+    --background:oklch(1 0 0);
+  --foreground:oklch(0.141 0.005 285.823);
+  --card:oklch(1 0 0);
+  --card-foreground:oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.21 0.006 285.885);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: var(--color-red-100);
-  --border:
-    oklch(0.92 0.004 286.32);
-  --input:
-    oklch(0.92 0.004 286.32);
-  --ring:
-    oklch(0.705 0.015 286.067);
-  --chart-1:
-    oklch(0.865 0.127 207.078);
-  --chart-2:
-    oklch(0.715 0.143 215.221);
-  --chart-3:
-    oklch(0.609 0.126 221.723);
-  --chart-4:
-    oklch(0.52 0.105 223.128);
-  --chart-5:
-    oklch(0.45 0.085 224.283);
-  --sidebar:
-    oklch(0.985 0 0);
-  --sidebar-foreground:
-    oklch(0.141 0.005 285.823);
-  --sidebar-primary:
-    oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground:
-    oklch(0.985 0 0);
-  --sidebar-accent:
-    oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground:
-    oklch(0.21 0.006 285.885);
-  --sidebar-border:
-    oklch(0.92 0.004 286.32);
-  --sidebar-ring:
-    oklch(0.705 0.015 286.067);
-  --radius:
-    0.875rem;
+  --border:oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+  --chart-1: oklch(0.865 0.127 207.078);
+  --chart-2: oklch(0.715 0.143 215.221);
+  --chart-3: oklch(0.609 0.126 221.723);
+  --chart-4: oklch(0.52 0.105 223.128);
+  --chart-5: oklch(0.45 0.085 224.283);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: oklch(0.21 0.006 285.885);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: oklch(0.705 0.015 286.067);
+  --radius: 0.875rem;
 }
 
 @theme inline {
@@ -336,14 +301,6 @@ code {
   mask-image: linear-gradient(to bottom, black, transparent 78%);
 }
 
-.hero-orbit {
-  animation: orbit-drift 18s linear infinite;
-}
-
-.hero-orbit-reverse {
-  animation: orbit-drift 24s linear infinite reverse;
-}
-
 .card-sheen {
   position: relative;
   overflow: hidden;
@@ -362,15 +319,6 @@ code {
 .card-sheen:hover::after,
 .card-sheen:focus-within::after {
   transform: translateX(120%);
-}
-
-@keyframes orbit-drift {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .display-font {
@@ -1176,11 +1124,6 @@ code {
   .shooting-star {
     animation: none;
     opacity: 0;
-  }
-
-  .hero-orbit,
-  .hero-orbit-reverse {
-    animation: none;
   }
 
   .hero-content-enter-item {

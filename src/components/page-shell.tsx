@@ -5,19 +5,19 @@ import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
 
 type PageShellProps = PropsWithChildren<{
-  eyebrow?: string;
   title: string;
   description?: string;
   actions?: ReactNode;
   hero?: boolean;
+  heroImage?: { url: string; altText?: string | null } | null;
 }>;
 
 export function PageShell({
-  eyebrow,
   title,
   description,
   actions,
   hero = true,
+  heroImage,
   children,
 }: PageShellProps) {
   return (
@@ -25,17 +25,27 @@ export function PageShell({
       <Header />
       <main>
         {hero && (
-          <section className="relative isolate overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(88,104,160,0.3),transparent_50%)] px-6 pb-16 pt-20 sm:pb-20 sm:pt-28">
-            <div className="site-grid pointer-events-none absolute inset-0 opacity-50" />
-            <div className="pointer-events-none absolute -right-32 top-0 h-80 w-80 rounded-full bg-sky-400/10 blur-3xl" />
-            <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-              <PageHeading
-                eyebrow={eyebrow}
-                title={title}
-                description={description}
-                actions={actions}
+          <section className="relative isolate flex min-h-[28rem] items-end overflow-hidden border-b border-white/10 px-6 pb-16 pt-28 sm:min-h-[32rem] sm:pb-20 lg:pb-24">
+            {heroImage ? (
+              <img
+                src={heroImage.url}
+                alt={heroImage.altText ?? ""}
+                className="absolute inset-0 -z-30 size-full object-cover"
+                fetchPriority="high"
               />
-              <HeroArtwork eyebrow={eyebrow} />
+            ) : (
+              <div
+                className="absolute inset-0 -z-30 bg-[radial-gradient(80%_120%_at_85%_10%,rgba(56,189,248,0.14),transparent_58%),linear-gradient(145deg,#020617_0%,#0f172a_55%,#020617_100%)]"
+                aria-hidden="true"
+              />
+            )}
+            <div
+              className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,rgba(2,6,23,0.96)_0%,rgba(2,6,23,0.78)_50%,rgba(2,6,23,0.42)_100%),linear-gradient(0deg,rgba(2,6,23,0.92)_0%,transparent_70%)]"
+              aria-hidden="true"
+            />
+            <div className="site-grid pointer-events-none absolute inset-0 -z-10 opacity-35" />
+            <div className="mx-auto w-full max-w-6xl">
+              <PageHeading title={title} description={description} actions={actions} />
             </div>
           </section>
         )}
@@ -47,23 +57,20 @@ export function PageShell({
 }
 
 function PageHeading({
-  eyebrow,
   title,
   description,
   actions,
-}: Omit<PageShellProps, "children" | "hero">) {
+}: Omit<PageShellProps, "children" | "hero" | "heroImage">) {
   return (
-    <div className="flex max-w-3xl flex-col gap-6">
-      {eyebrow && (
-        <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.35em] text-sky-300">
-          <span className="h-px w-8 bg-sky-300/70" aria-hidden="true" />
-          {eyebrow}
-        </p>
-      )}
-      <h1 className="display-font max-w-4xl text-4xl font-semibold tracking-tight sm:text-6xl">
+    <div className="flex max-w-4xl flex-col gap-6 drop-shadow-[0_2px_18px_rgba(2,6,23,0.85)]">
+      <h1 className="display-font text-5xl leading-[0.95] font-semibold tracking-[-0.045em] text-white sm:text-7xl lg:text-[5.5rem]">
         {title}
       </h1>
-      {description && <p className="max-w-2xl text-lg leading-8 text-slate-300">{description}</p>}
+      {description && (
+        <p className="max-w-2xl text-base leading-7 text-slate-200 sm:text-lg sm:leading-8">
+          {description}
+        </p>
+      )}
       {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
     </div>
   );
@@ -140,46 +147,6 @@ export function SiteFooter() {
         <p>Ultimo aggiornamento: luglio 2026</p>
       </div>
     </footer>
-  );
-}
-
-function HeroArtwork({ eyebrow }: { eyebrow?: string }) {
-  const label = eyebrow?.split(" ")[0] ?? "Portfolio";
-
-  return (
-    <div
-      className="relative mx-auto hidden aspect-square w-full max-w-[390px] lg:block"
-      aria-hidden="true"
-    >
-      <div className="absolute inset-[12%] rounded-full border border-sky-300/20 bg-sky-300/[0.03] shadow-[0_0_90px_rgba(56,189,248,0.12)]" />
-      <div className="hero-orbit absolute inset-[5%] rounded-full border border-dashed border-sky-300/25" />
-      <div className="hero-orbit-reverse absolute inset-[23%] rounded-full border border-violet-300/25" />
-      <div className="absolute inset-[31%] rounded-full bg-gradient-to-br from-sky-300/20 via-violet-300/10 to-transparent blur-2xl" />
-      <div className="absolute inset-[31%] flex flex-col items-center justify-center rounded-full border border-white/15 bg-slate-950/65 shadow-2xl backdrop-blur-xl">
-        <span className="display-font text-6xl font-semibold tracking-[-0.08em] text-white">
-          VP
-        </span>
-        <span className="mt-2 text-[10px] uppercase tracking-[0.32em] text-sky-200">{label}</span>
-      </div>
-      <div className="absolute left-0 top-[18%] rounded-2xl border border-white/15 bg-slate-900/80 px-4 py-3 shadow-xl backdrop-blur-xl">
-        <span className="block text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">
-          01 / Think
-        </span>
-        <span className="mt-1 block text-sm font-medium text-white">Problema → direzione</span>
-      </div>
-      <div className="absolute bottom-[16%] right-0 rounded-2xl border border-sky-300/25 bg-sky-300/10 px-4 py-3 shadow-xl backdrop-blur-xl">
-        <span className="block text-[10px] font-semibold uppercase tracking-[0.25em] text-sky-200">
-          02 / Build
-        </span>
-        <span className="mt-1 block text-sm font-medium text-white">Codice → prodotto</span>
-      </div>
-      <div className="absolute right-[4%] top-[8%] flex h-12 w-12 items-center justify-center rounded-full border border-violet-300/30 bg-violet-300/15 text-xs font-semibold text-violet-100">
-        &lt;/&gt;
-      </div>
-      <div className="absolute bottom-[8%] left-[14%] flex h-9 w-9 items-center justify-center rounded-full border border-sky-300/30 bg-sky-300/15 text-xs text-sky-100">
-        +
-      </div>
-    </div>
   );
 }
 

@@ -1,7 +1,10 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ActionLink, PageShell, Section } from "@/components/page-shell";
 import { TechIcon } from "@/components/tech-icon";
+import type { Skill } from "@/lib/projects";
+import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -14,11 +17,19 @@ export const Route = createFileRoute("/about")({
       { property: "og:title", content: "Informazioni sul sito | Prisco.me" },
       {
         property: "og:description",
-        content: "Scopri come è costruito Prisco.me e visita la repository del progetto.",
+        content: "Scopri come è costruito Prisco.me",
+      },
+      { property: "og:url", content: "https://prisco.me/about" },
+      { name: "twitter:url", content: "https://prisco.me/about" },
+      { name: "twitter:title", content: "Informazioni sul sito | Prisco.me" },
+      {
+        name: "twitter:description",
+        content: "Scopri come è costruito Prisco.me",
       },
     ],
     links: [{ rel: "canonical", href: "https://prisco.me/about" }],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: SiteInformationPage,
 });
 
@@ -33,7 +44,7 @@ const technologyGroups = [
     title: "Routing e dati",
     description:
       "Navigazione file-based, caricamento dati e gestione degli stati con l'ecosistema TanStack.",
-    technologies: ["TanStack", "React Query"],
+    technologies: ["TanStack Start", "React Query"],
   },
   {
     title: "Infrastruttura",
@@ -49,9 +60,11 @@ const technologyGroups = [
 ] as const;
 
 function SiteInformationPage() {
+  const { data: portfolio } = useSuspenseQuery(getPortfolioQueryOptions());
+  const skillByName = new Map(portfolio.skills.map((skill) => [skill.name, skill]));
+
   return (
     <PageShell
-      eyebrow="Informazioni sul sito"
       title="Un portfolio personale, costruito come un prodotto."
       description="Prisco.me è progettato, sviluppato e mantenuto da Vincenzo Prisco. Questa pagina raccoglie le scelte tecniche che lo fanno funzionare."
     >
@@ -126,14 +139,17 @@ function SiteInformationPage() {
               <h3 className="display-font text-xl font-semibold text-white">{group.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-400">{group.description}</p>
               <div className="mt-6 flex flex-wrap gap-2">
-                {group.technologies.map((technology) => (
-                  <span
-                    key={technology}
-                    className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
-                  >
-                    <TechIcon name={technology} compact />
-                  </span>
-                ))}
+                {group.technologies
+                  .map((technology) => skillByName.get(technology))
+                  .filter((skill): skill is Skill => Boolean(skill))
+                  .map((skill) => (
+                    <span
+                      key={skill.id}
+                      className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
+                    >
+                      <TechIcon skill={skill} compact />
+                    </span>
+                  ))}
               </div>
             </article>
           ))}

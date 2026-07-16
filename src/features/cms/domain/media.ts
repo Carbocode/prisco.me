@@ -13,6 +13,10 @@ export function mediaStorageKey(
   return `cms/${date.getUTCFullYear()}/${String(date.getUTCMonth() + 1).padStart(2, "0")}/${uuid}.${mediaTypes[mimeType]}`;
 }
 
+export function mediaFilename(storageKey: string) {
+  return storageKey.slice(storageKey.lastIndexOf("/") + 1);
+}
+
 export function hasValidMediaSignature(bytes: Uint8Array, mimeType: keyof typeof mediaTypes) {
   if (mimeType === "image/webp") {
     return (
@@ -28,5 +32,5 @@ export function mediaUrl(baseUrl: string, storageKey: string) {
 }
 
 export function mediaDeliveryBaseUrl(mode: string | undefined, publicUrl: string) {
-  return mode === "dev" ? "/media" : publicUrl;
+  return mode === "development" || mode === "dev" ? "/media" : publicUrl;
 }

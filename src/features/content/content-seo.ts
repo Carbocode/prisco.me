@@ -91,6 +91,7 @@ export function archiveHead(archive: ContentArchive) {
   const path = `/${archive.slug}`;
   const url = origin + path;
   const title = `${archive.title} | Vincenzo Prisco`;
+  const image = archive.hero?.url;
   const crumbs = [{ name: archive.title, url: path }];
   const breadcrumb = breadcrumbJsonLd(crumbs, url);
   const itemListId = `${url}#item-list`;
@@ -105,9 +106,18 @@ export function archiveHead(archive: ContentArchive) {
       { property: "og:url", content: url },
       { property: "og:site_name", content: "Prisco.me" },
       { property: "og:locale", content: "it_IT" },
-      { name: "twitter:card", content: "summary" },
+      ...(image ? [{ property: "og:image", content: image }] : []),
+      ...(image && archive.hero?.altText
+        ? [{ property: "og:image:alt", content: archive.hero.altText }]
+        : []),
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+      { name: "twitter:url", content: url },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: archive.description },
+      ...(image ? [{ name: "twitter:image", content: image }] : []),
+      ...(image && archive.hero?.altText
+        ? [{ name: "twitter:image:alt", content: archive.hero.altText }]
+        : []),
       ...(archive.kind === "author" && archive.articles[0]
         ? [{ name: "author", content: archive.articles[0].author.name }]
         : []),
@@ -197,6 +207,7 @@ export function articleHead(article: PublicArticle, path: string, crumbs: Conten
         ? [{ property: "og:image:alt", content: article.cover.altText }]
         : []),
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:url", content: url },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
       ...(image ? [{ name: "twitter:image", content: image }] : []),

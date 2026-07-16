@@ -96,9 +96,9 @@ export function ContentBreadcrumb({ items }: { items: ContentCrumb[] }) {
 }
 
 export function ContentArchivePage({
-  eyebrow,
   title,
   description,
+  hero,
   articles,
   archiveSlug,
   query,
@@ -116,6 +116,7 @@ export function ContentArchivePage({
   eyebrow: string;
   title: string;
   description: string;
+  hero?: { url: string; altText: string | null } | null;
   articles: PublicArticle[];
   archiveSlug: string;
   query: string;
@@ -157,10 +158,8 @@ export function ContentArchivePage({
     year !== "all";
 
   return (
-    <PageShell eyebrow={eyebrow} title={title} description={description}>
-      <Section>
-        <ContentBreadcrumb items={[{ name: title, url: `/${archiveSlug}` }]} />
-      </Section>
+    <PageShell title={title} description={description} heroImage={hero}>
+      <ContentBreadcrumb items={[{ name: title, url: `/${archiveSlug}` }]} />
       <Section className="pt-0">
         <FieldSet>
           <FieldLegend variant="label">Filtra contenuti</FieldLegend>

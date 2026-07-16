@@ -21,11 +21,18 @@ export const Route = createFileRoute("/cookie")({
       {
         name: "description",
         content:
-          "Informativa completa sui cookie e sugli strumenti di tracciamento utilizzati da Prisco.me.",
+          "Informativa completa sui cookie e sugli strumenti di tracciamento utilizzati da Prisco.me",
       },
       { property: "og:title", content: "Cookie | Prisco.me" },
       {
         property: "og:description",
+        content: "Categorie, finalità, consenso e gestione degli strumenti di tracciamento.",
+      },
+      { property: "og:url", content: "https://prisco.me/cookie" },
+      { name: "twitter:url", content: "https://prisco.me/cookie" },
+      { name: "twitter:title", content: "Cookie | Prisco.me" },
+      {
+        name: "twitter:description",
         content: "Categorie, finalità, consenso e gestione degli strumenti di tracciamento.",
       },
     ],
@@ -38,7 +45,6 @@ function CookiePage() {
   return (
     <PageShell
       hero={false}
-      eyebrow="Cookie e tracciamento"
       title="Niente sorprese, nemmeno nei dati tecnici."
       description="Informativa completa sui cookie e sugli strumenti di tracciamento che possono essere utilizzati durante la navigazione."
     >

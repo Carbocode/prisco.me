@@ -2,11 +2,11 @@
 export type Skill = {
   id: string;
   name: string;
-  /** Slug del logo (Simple Icons / logo dedicato). Null → fallback per nome. */
+  /** Nome Iconify completo. */
   icon: string | null;
-  /** Classi Tailwind del colore del chip. Null → fallback per nome. */
+  /** Classi Tailwind del colore del chip. */
   color: string | null;
-  /** Testo di fallback quando manca il logo. */
+  /** Testo mostrato quando non sono disponibili icona e fallback Fluent. */
   mark: string | null;
   /** Icona Fluent Color di fallback. */
   fluentIcon: string | null;

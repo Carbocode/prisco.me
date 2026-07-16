@@ -6,6 +6,7 @@ import { cmsAuditLogs, cmsMedia } from "@/db/schema";
 import {
   hasValidMediaSignature,
   MAX_MEDIA_BYTES,
+  mediaFilename,
   mediaStorageKey,
   mediaTypes,
   mediaDeliveryBaseUrl,
@@ -51,6 +52,7 @@ export const Route = createFileRoute("/api/cms/media/upload")({
               "File extension does not match its media type",
             );
           const storageKey = mediaStorageKey(mimeType);
+          const filename = mediaFilename(storageKey);
           await env.CMS_MEDIA.put(storageKey, bytes, { httpMetadata: { contentType: mimeType } });
           const id = crypto.randomUUID();
           const altTextValue = form.get("altText");
@@ -63,7 +65,7 @@ export const Route = createFileRoute("/api/cms/media/upload")({
               getDb(env).insert(cmsMedia).values({
                 id,
                 storageKey,
-                filename: file.name,
+                filename,
                 mimeType,
                 sizeBytes: file.size,
                 width,
@@ -89,11 +91,11 @@ export const Route = createFileRoute("/api/cms/media/upload")({
               data: {
                 id,
                 storageKey,
-                filename: file.name,
+                filename,
                 mimeType,
                 sizeBytes: file.size,
                 url: mediaUrl(
-                  mediaDeliveryBaseUrl(env.VITE_MODE, env.MEDIA_PUBLIC_URL),
+                  mediaDeliveryBaseUrl(import.meta.env.MODE, env.MEDIA_PUBLIC_URL),
                   storageKey,
                 ),
               },

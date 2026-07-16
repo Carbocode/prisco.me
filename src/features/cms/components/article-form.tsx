@@ -1,5 +1,16 @@
-import { useNavigate } from "@tanstack/react-router";
-import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
+import { useNavigate, useRouter } from "@tanstack/react-router";
+import {
+  Archive,
+  ArchiveRestore,
+  ArrowDown,
+  ArrowUp,
+  Eye,
+  Plus,
+  Save,
+  Send,
+  Undo2,
+  X,
+} from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -66,8 +77,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
+import { MediaPicker } from "./media-picker";
+
 import { EMPTY_CMS_DOCUMENT, parseCmsDocument, type CmsDocument } from "../domain/cms-document";
-import { slugify, slugInputPattern } from "../domain/slug";
+import { slugify, slugInputPattern, slugPattern } from "../domain/slug";
 import {
   archiveArticleFn,
   createArticleFn,
@@ -94,8 +107,6 @@ type Existing = {
   publishedAt: Date | null;
   coverMediaId: string | null;
   organizationId: string | null;
-  projectRole: string | null;
-  projectPeriod: string | null;
   projectFeatured: boolean;
   projectSortOrder: number;
   categoryIds: string[];
@@ -120,6 +131,12 @@ type Media = {
   mimeType: string;
 };
 type Revision = { id: string; revision: number; createdAt: Date };
+const articleStatusLabels: Record<string, string> = {
+  archived: "Archiviato",
+  draft: "Bozza",
+  published: "Pubblicato",
+  scheduled: "Programmato",
+};
 export function ArticleForm({
   article,
   categories = [],
@@ -136,6 +153,7 @@ export function ArticleForm({
   revisions?: Revision[];
 }) {
   const navigate = useNavigate();
+  const router = useRouter();
   const isDesktop = useMediaQuery("(min-width: 1280px)");
   const [title, setTitle] = useState(article?.title ?? "");
   const [slug, setSlug] = useState(article?.slug ?? "");
@@ -152,13 +170,18 @@ export function ArticleForm({
   const [pendingCategoryId, setPendingCategoryId] = useState<string | null>(null);
   const [coverMediaId, setCoverMediaId] = useState(article?.coverMediaId ?? "");
   const [organizationId, setOrganizationId] = useState(article?.organizationId ?? "");
-  const [projectRole, setProjectRole] = useState(article?.projectRole ?? "");
-  const [projectPeriod, setProjectPeriod] = useState(article?.projectPeriod ?? "");
   const [projectFeatured, setProjectFeatured] = useState(article?.projectFeatured ?? false);
   const [projectSortOrder, setProjectSortOrder] = useState(article?.projectSortOrder ?? 0);
   const [publishedAt, setPublishedAt] = useState(
     article?.publishedAt ? localDateTime(article.publishedAt) : "",
   );
+  const [version, setVersion] = useState(article?.version ?? 0);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<{
+    type: "pending" | "success" | "error";
+    title: string;
+    description: string;
+  } | null>(null);
   const [pending, setPending] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [conflict, setConflict] = useState(false);
@@ -207,12 +230,31 @@ export function ArticleForm({
     });
     setDirty(true);
   }
-  async function save(event: React.FormEvent) {
-    event.preventDefault();
-    if (!categoryIds.length) {
-      toast.error("Seleziona almeno una categoria");
+  async function save() {
+    if (pending) return;
+    const validationError = validateArticleInput({
+      title,
+      slug,
+      categoryIds,
+      projectSortOrder,
+    });
+    if (validationError) {
+      setSaveFeedback({
+        type: "error",
+        title: "Impossibile salvare",
+        description: validationError,
+      });
+      toast.error(validationError, { id: "article-save" });
       return;
     }
+    const toastId = toast.loading(article ? "Salvataggio modifiche…" : "Creazione bozza…", {
+      id: "article-save",
+    });
+    setSaveFeedback({
+      type: "pending",
+      title: "Salvataggio in corso",
+      description: "Invio delle modifiche al server…",
+    });
     setPending(true);
     try {
       const base = {
@@ -227,20 +269,34 @@ export function ArticleForm({
         tagIds,
         coverMediaId: coverMediaId || null,
         organizationId: organizationId || null,
-        projectRole: projectRole || null,
-        projectPeriod: projectPeriod || null,
         projectFeatured,
         projectSortOrder,
       };
       const saved = article
-        ? await updateArticleFn({ data: { id: article.id, version: article.version, ...base } })
+        ? await updateArticleFn({ data: { id: article.id, version, ...base } })
         : await createArticleFn({ data: base });
+      setVersion(saved.version);
       setDirty(false);
-      toast.success("Articolo salvato");
-      void navigate({ to: "/dashboard/cms/articles/$articleId", params: { articleId: saved.id } });
+      const savedAt = new Date();
+      setLastSavedAt(savedAt);
+      setSaveFeedback({
+        type: "success",
+        title: "Modifiche salvate",
+        description: `Salvataggio completato alle ${savedAt.toLocaleTimeString("it-IT")}.`,
+      });
+      toast.success("Articolo salvato correttamente", { id: toastId });
+      if (article) void router.invalidate();
+      else
+        void navigate({ to: "/dashboard/cms/articles/$articleId", params: { articleId: saved.id } });
     } catch (error) {
-      if (error instanceof Error && error.message.includes("modified elsewhere")) setConflict(true);
-      toast.error(error instanceof Error ? error.message : "Salvataggio non riuscito");
+      const message = articleSaveError(error);
+      if (message.type === "conflict") setConflict(true);
+      setSaveFeedback({
+        type: "error",
+        title: "Salvataggio non riuscito",
+        description: message.text,
+      });
+      toast.error(message.text, { id: toastId });
     } finally {
       setPending(false);
     }
@@ -252,7 +308,7 @@ export function ArticleForm({
       await publishArticleFn({
         data: {
           id: article.id,
-          version: article.version,
+          version,
           publishedAt: publishedAt ? new Date(publishedAt) : undefined,
         },
       });
@@ -269,7 +325,7 @@ export function ArticleForm({
     if (action === "archive" && !confirm("Archiviare questo articolo?")) return;
     setPending(true);
     try {
-      const data = { id: article.id, version: article.version };
+      const data = { id: article.id, version };
       if (action === "archive") await archiveArticleFn({ data });
       else if (action === "restore") await restoreArticleFn({ data });
       else await unpublishArticleFn({ data });
@@ -286,7 +342,7 @@ export function ArticleForm({
     setPending(true);
     try {
       await restoreArticleRevisionFn({
-        data: { articleId: article.id, revisionId, version: article.version },
+        data: { articleId: article.id, revisionId, version },
       });
       toast.success("Revisione ripristinata");
       window.location.reload();
@@ -296,10 +352,17 @@ export function ArticleForm({
       setPending(false);
     }
   }
+  const statusLabel = article
+    ? (articleStatusLabels[article.status] ?? article.status)
+    : "Nuova bozza";
   return (
     <form
       className="flex flex-col xl:h-[calc(100svh-3.5rem)] xl:overflow-hidden"
-      onSubmit={(event) => void save(event)}
+      noValidate
+      onSubmit={(event) => {
+        event.preventDefault();
+        void save();
+      }}
       onChange={() => setDirty(true)}
     >
       <header className="sticky top-0 z-20 grid gap-1 border-b bg-background px-4 py-2 xl:shrink-0">
@@ -308,39 +371,50 @@ export function ArticleForm({
             <h1 className="truncate font-heading text-lg font-semibold">
               {title || (article ? "Articolo senza titolo" : "Nuovo articolo")}
             </h1>
-            <Badge variant={article ? "secondary" : "outline"}>
-              {article ? article.status : "bozza"}
-            </Badge>
-            {dirty ? <Badge variant="outline">Modifiche non salvate</Badge> : null}
+            <Badge variant={article ? "secondary" : "outline"}>Stato: {statusLabel}</Badge>
+            {dirty ? (
+              <Badge variant="outline">Modifiche non salvate</Badge>
+            ) : lastSavedAt ? (
+              <Badge variant="secondary">
+                Salvato alle {lastSavedAt.toLocaleTimeString("it-IT")}
+              </Badge>
+            ) : null}
           </div>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Azioni articolo">
+          <fieldset className="flex flex-wrap gap-2">
+            <legend className="sr-only">Azioni articolo</legend>
             {article ? (
               <Button
                 type="button"
                 variant="outline"
                 onClick={() =>
                   window.open(
-                    `/dashboard/cms/articles/${article.id}/preview`,
+                    `/preview/articles/${article.id}`,
                     "_blank",
                     "noopener,noreferrer",
                   )
                 }
               >
-                Anteprima
+                <Eye data-icon="inline-start" />
+                Apri anteprima
               </Button>
             ) : null}
-            <Button type="submit" disabled={pending}>
-              {pending ? <Spinner data-icon="inline-start" /> : null}
-              {pending ? "Salvataggio…" : "Salva bozza"}
+            <Button type="button" disabled={pending} onClick={() => void save()}>
+              {pending ? <Spinner data-icon="inline-start" /> : <Save data-icon="inline-start" />}
+              {pending ? "Salvataggio…" : article ? "Salva modifiche" : "Crea bozza"}
             </Button>
             {article && !["published", "scheduled", "archived"].includes(article.status) ? (
               <Button
-                disabled={pending}
+                disabled={pending || dirty}
                 type="button"
                 variant="secondary"
                 onClick={() => void publish()}
               >
-                {publishedAt && new Date(publishedAt) > new Date() ? "Programma" : "Pubblica"}
+                <Send data-icon="inline-start" />
+                {dirty
+                  ? "Salva prima di pubblicare"
+                  : publishedAt && new Date(publishedAt) > new Date()
+                    ? "Programma pubblicazione"
+                    : "Pubblica ora"}
               </Button>
             ) : null}
             {article && ["published", "scheduled"].includes(article.status) ? (
@@ -350,7 +424,8 @@ export function ArticleForm({
                 variant="secondary"
                 onClick={() => void changeStatus("unpublish")}
               >
-                Bozza
+                <Undo2 data-icon="inline-start" />
+                Ritira e torna in bozza
               </Button>
             ) : null}
             {article && article.status !== "archived" ? (
@@ -360,7 +435,8 @@ export function ArticleForm({
                 variant="destructive"
                 onClick={() => void changeStatus("archive")}
               >
-                Archivia
+                <Archive data-icon="inline-start" />
+                Archivia articolo
               </Button>
             ) : null}
             {article?.status === "archived" ? (
@@ -370,15 +446,22 @@ export function ArticleForm({
                 variant="secondary"
                 onClick={() => void changeStatus("restore")}
               >
-                Ripristina
+                <ArchiveRestore data-icon="inline-start" />
+                Ripristina articolo
               </Button>
             ) : null}
-          </div>
+          </fieldset>
         </div>
         <span className="text-sm text-muted-foreground">
           /{publicArchiveSlug}/{slug || "slug-articolo"}
         </span>
       </header>
+      {saveFeedback ? (
+        <Alert variant={saveFeedback.type === "error" ? "destructive" : "default"}>
+          <AlertTitle>{saveFeedback.title}</AlertTitle>
+          <AlertDescription>{saveFeedback.description}</AlertDescription>
+        </Alert>
+      ) : null}
       {conflict ? (
         <Alert variant="destructive">
           <AlertTitle>Conflitto di versione</AlertTitle>
@@ -401,7 +484,7 @@ export function ArticleForm({
             <Suspense fallback={<Skeleton className="h-96 w-full" />}>
               <CmsEditor
                 value={content}
-                media={imageMedia}
+                media={media}
                 onChange={(value) => {
                   setContent(value);
                   setDirty(true);
@@ -468,30 +551,17 @@ export function ArticleForm({
                     ) : null}
                     <Field>
                       <FieldLabel>Cover</FieldLabel>
-                      <Select
-                        items={[
-                          { value: "none", label: "Nessuna cover" },
-                          ...imageMedia.map((item) => ({ value: item.id, label: item.filename })),
-                        ]}
-                        value={coverMediaId || "none"}
-                        onValueChange={(value) =>
-                          setCoverMediaId(value === "none" ? "" : (value ?? ""))
-                        }
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectItem value="none">Nessuna cover</SelectItem>
-                            {imageMedia.map((item) => (
-                              <SelectItem key={item.id} value={item.id}>
-                                {item.filename}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
+                      <MediaPicker
+                        items={imageMedia}
+                        value={coverMediaId}
+                        label="Scegli la cover"
+                        description="Naviga la libreria immagini e seleziona la cover dell’articolo."
+                        emptyLabel="Nessuna cover"
+                        onValueChange={(value) => {
+                          setCoverMediaId(value);
+                          setDirty(true);
+                        }}
+                      />
                     </Field>
                     {categoryIds.includes(
                       categories.find((item) => item.slug === "progetti")?.id ?? "",
@@ -527,22 +597,6 @@ export function ArticleForm({
                               </SelectGroup>
                             </SelectContent>
                           </Select>
-                        </Field>
-                        <Field>
-                          <FieldLabel htmlFor="project-role">Ruolo</FieldLabel>
-                          <Input
-                            id="project-role"
-                            value={projectRole}
-                            onChange={(event) => setProjectRole(event.target.value)}
-                          />
-                        </Field>
-                        <Field>
-                          <FieldLabel htmlFor="project-period">Periodo</FieldLabel>
-                          <Input
-                            id="project-period"
-                            value={projectPeriod}
-                            onChange={(event) => setProjectPeriod(event.target.value)}
-                          />
                         </Field>
                         <Field>
                           <FieldLabel htmlFor="project-sort-order">Ordine</FieldLabel>
@@ -718,6 +772,9 @@ export function ArticleForm({
                         placeholder={title ? title.slice(0, 70) : "Usa il titolo dell’articolo"}
                         onChange={(event) => setSeoTitle(event.target.value)}
                       />
+                      <FieldDescription>
+                        Facoltativo. Se resta vuoto, viene usato il titolo dell’articolo.
+                      </FieldDescription>
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="seo-description">
@@ -732,6 +789,10 @@ export function ArticleForm({
                         }
                         onChange={(event) => setSeoDescription(event.target.value)}
                       />
+                      <FieldDescription>
+                        Facoltativa. Se resta vuota, viene usato l’estratto; se manca anche
+                        l’estratto, la descrizione viene generata dal titolo e dall’autore.
+                      </FieldDescription>
                     </Field>
                     <Field orientation="horizontal">
                       <Checkbox
@@ -836,6 +897,44 @@ export function ArticleForm({
       </AlertDialog>
     </form>
   );
+}
+
+function validateArticleInput({
+  title,
+  slug,
+  categoryIds,
+  projectSortOrder,
+}: {
+  title: string;
+  slug: string;
+  categoryIds: string[];
+  projectSortOrder: number;
+}) {
+  if (title.trim().length < 3) return "Il titolo deve contenere almeno 3 caratteri.";
+  if (!slugPattern.test(slug) || /^\d+$/.test(slug))
+    return "Lo slug deve contenere solo lettere minuscole, numeri e trattini.";
+  if (["authors", "categories", "tags"].includes(slug)) return "Questo slug è riservato.";
+  if (!categoryIds.length) return "Seleziona una categoria prima di salvare.";
+  if (!Number.isInteger(projectSortOrder) || projectSortOrder < -10000 || projectSortOrder > 10000)
+    return "L’ordine del progetto deve essere un numero intero tra -10000 e 10000.";
+  return null;
+}
+
+function articleSaveError(error: unknown) {
+  const detail = error instanceof Error ? error.message : String(error);
+  if (detail.includes("modified elsewhere") || detail.includes("CONTENT_VERSION_CONFLICT")) {
+    return {
+      type: "conflict" as const,
+      text: "L’articolo è stato modificato altrove. Ricarica la pagina prima di salvare.",
+    };
+  }
+  if (detail.includes("Slug already in use") || detail.includes("SLUG_CONFLICT")) {
+    return { type: "error" as const, text: "Lo slug è già utilizzato da un altro articolo." };
+  }
+  return {
+    type: "error" as const,
+    text: detail && detail !== "[object Object]" ? detail : "Salvataggio non riuscito.",
+  };
 }
 
 function localDateTime(value: Date) {

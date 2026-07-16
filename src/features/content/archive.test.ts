@@ -13,6 +13,7 @@ const categories: PublicCategory[] = [
     schemaType: CATEGORY_SCHEMA_TYPE.CREATIVE_WORK,
     archiveSort: CATEGORY_ARCHIVE_SORT.MANUAL,
     archiveEyebrow: "Portfolio",
+    hero: null,
   },
   {
     name: "Engineering",
@@ -21,6 +22,7 @@ const categories: PublicCategory[] = [
     schemaType: CATEGORY_SCHEMA_TYPE.ARTICLE,
     archiveSort: CATEGORY_ARCHIVE_SORT.PUBLISHED_DESC,
     archiveEyebrow: "Categoria",
+    hero: null,
   },
 ];
 

@@ -96,7 +96,7 @@ function MediaContent() {
         <p className="text-sm font-medium text-muted-foreground">{media.length} file</p>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Media</h1>
         <p className="text-sm text-muted-foreground">
-          Converti e comprimi immagini, video e audio nel browser prima dell’upload.
+          Converti e comprimi immagini, video e audio nel browser. Ogni file viene salvato con un nome UUID.
         </p>
       </header>
 
@@ -159,12 +159,12 @@ function MediaContent() {
       </Card>
 
       <Field className="max-w-md">
-        <FieldLabel htmlFor="media-search">Cerca per nome file</FieldLabel>
+        <FieldLabel htmlFor="media-search">Cerca per nome salvato</FieldLabel>
         <Input
           id="media-search"
           type="search"
           value={query}
-          placeholder="Nome del file"
+          placeholder="UUID o estensione"
           onChange={(event) => setQuery(event.target.value)}
         />
       </Field>

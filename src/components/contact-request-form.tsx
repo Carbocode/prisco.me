@@ -1,9 +1,18 @@
 import { useForm } from "@tanstack/react-form";
+import { SendIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
   contactRequestSchema,
@@ -67,8 +77,10 @@ export default function ContactRequestForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Invia una richiesta</CardTitle>
-        <CardDescription>Il prossimo prodotto inizia da una conversazione.</CardDescription>
+        <CardTitle>Partiamo da qui</CardTitle>
+        <CardDescription>
+          I campi contrassegnati con * sono obbligatori. Puoi essere sintetico.
+        </CardDescription>
       </CardHeader>
       <form
         id="contact-request-form"
@@ -80,13 +92,13 @@ export default function ContactRequestForm() {
       >
         <CardContent>
           <FieldSet>
-            <FieldGroup className="gap-6">
-              <div className="grid gap-6 md:grid-cols-2">
+            <FieldGroup>
+              <FieldGroup className="grid md:grid-cols-2">
                 <form.Field name="name">
                   {(field) => {
                     const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field>
+                      <Field data-invalid={invalid}>
                         <FieldLabel htmlFor={field.name}>Nome*</FieldLabel>
                         <Input
                           id={field.name}
@@ -111,7 +123,7 @@ export default function ContactRequestForm() {
                   {(field) => {
                     const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field>
+                      <Field data-invalid={invalid}>
                         <FieldLabel htmlFor={field.name}>Email*</FieldLabel>
                         <Input
                           id={field.name}
@@ -131,18 +143,20 @@ export default function ContactRequestForm() {
                     );
                   }}
                 </form.Field>
-              </div>
+              </FieldGroup>
 
-              <div className="grid gap-6 md:grid-cols-2">
+              <FieldGroup className="grid md:grid-cols-2">
                 <form.Field name="phone">
                   {(field) => {
                     const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field>
+                      <Field data-invalid={invalid}>
                         <FieldLabel htmlFor={field.name}>Telefono</FieldLabel>
                         <Input
                           id={field.name}
                           name={field.name}
+                          type="tel"
+                          inputMode="tel"
                           autoComplete="tel"
                           placeholder="+39 333 123 4567"
                           minLength={6}
@@ -162,7 +176,7 @@ export default function ContactRequestForm() {
                   {(field) => {
                     const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field>
+                      <Field data-invalid={invalid}>
                         <FieldLabel htmlFor={field.name}>Azienda o progetto</FieldLabel>
                         <Input
                           id={field.name}
@@ -180,13 +194,13 @@ export default function ContactRequestForm() {
                     );
                   }}
                 </form.Field>
-              </div>
+              </FieldGroup>
 
               <form.Field name="interest">
                 {(field) => {
                   const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                   return (
-                    <Field>
+                    <Field data-invalid={invalid}>
                       <FieldLabel htmlFor={field.name}>Motivo del contatto*</FieldLabel>
                       <Select
                         items={[
@@ -250,7 +264,7 @@ export default function ContactRequestForm() {
                 {(field) => {
                   const invalid = field.state.meta.isTouched && !field.state.meta.isValid;
                   return (
-                    <Field orientation="horizontal">
+                    <Field orientation="horizontal" data-invalid={invalid}>
                       <Checkbox
                         id={field.name}
                         checked={field.state.value}
@@ -259,11 +273,15 @@ export default function ContactRequestForm() {
                         required
                       />
 
-                      <FieldLabel htmlFor={field.name}>
-                        Acconsento a essere ricontattato per questa richiesta.
-                      </FieldLabel>
-
-                      {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
+                      <FieldContent>
+                        <FieldLabel htmlFor={field.name}>
+                          Acconsento a essere ricontattato per questa richiesta.*
+                        </FieldLabel>
+                        <FieldDescription>
+                          Il consenso riguarda esclusivamente questo messaggio.
+                        </FieldDescription>
+                        {invalid && <FieldError errors={toFieldErrors(field.state.meta.errors)} />}
+                      </FieldContent>
                     </Field>
                   );
                 }}
@@ -272,11 +290,26 @@ export default function ContactRequestForm() {
           </FieldSet>
         </CardContent>
       </form>
-      <CardFooter>
+      <CardFooter className="flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
-            <Button type="submit" form="contact-request-form" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? "Invio in corso..." : "Invia richiesta"}
+            <Button
+              type="submit"
+              form="contact-request-form"
+              size="lg"
+              disabled={!canSubmit || isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Spinner data-icon="inline-start" />
+                  Invio in corso
+                </>
+              ) : (
+                <>
+                  Invia il messaggio
+                  <SendIcon data-icon="inline-end" />
+                </>
+              )}
             </Button>
           )}
         </form.Subscribe>

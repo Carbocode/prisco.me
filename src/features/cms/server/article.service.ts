@@ -118,6 +118,8 @@ export async function updateArticle(input: unknown) {
   const current = await articleRepository(database).byId(data.id);
   if (!current) throw notFound("article");
   requireArticleAccess(session.user, current, "update");
+  if (current.version !== data.version)
+    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
   const revision = (await articleRepository(database).nextRevision(current.id))[0]?.value ?? 1;
   const now = new Date();
   const values = {
@@ -157,8 +159,12 @@ export async function updateArticle(input: unknown) {
           .from(cmsCategories)
           .where(inArray(cmsCategories.id, data.categoryIds))
       : sourceCategories;
-  const sourceBase = publicArchiveSlug(sourceCategories[0]?.slug);
-  const destinationBase = publicArchiveSlug(destinationCategories[0]?.slug);
+  const redirectPaths = changedSlug
+    ? {
+        source: `/${publicArchiveSlug(sourceCategories[0]?.slug)}/${current.slug}`,
+        destination: `/${publicArchiveSlug(destinationCategories[0]?.slug)}/${data.slug}`,
+      }
+    : null;
   const statements = [
     database.insert(cmsArticleRevisions).values({
       articleId: current.id,
@@ -194,11 +200,11 @@ export async function updateArticle(input: unknown) {
           ),
         ]
       : []),
-    ...(changedSlug
+    ...(redirectPaths
       ? [
           database.insert(cmsRedirects).values({
-            sourcePath: `/${sourceBase}/${current.slug}`,
-            destinationPath: `/${destinationBase}/${data.slug}`,
+            sourcePath: redirectPaths.source,
+            destinationPath: redirectPaths.destination,
             entityType: "article",
             entityId: current.id,
           }),
@@ -450,6 +456,11 @@ export async function getPublishedArticleBySlug(slug: string) {
   return (await hydratePublicArticles([item]))[0] ?? null;
 }
 
+export async function getPreviewArticle(id: string) {
+  const article = await getAdminArticle(id);
+  return (await hydratePublicArticles([article]))[0] ?? null;
+}
+
 export type PublicArticleFilter = {
   year?: number;
   month?: number;
@@ -545,7 +556,10 @@ async function hydratePublicArticles<
     : [];
   const media = mediaRows.map((item) => ({
     id: item.id,
-    url: mediaUrl(mediaDeliveryBaseUrl(env.VITE_MODE, env.MEDIA_PUBLIC_URL), item.storageKey),
+    url: mediaUrl(
+      mediaDeliveryBaseUrl(import.meta.env.MODE, env.MEDIA_PUBLIC_URL),
+      item.storageKey,
+    ),
     altText: item.altText,
     caption: item.caption,
   }));

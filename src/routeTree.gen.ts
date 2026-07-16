@@ -33,6 +33,7 @@ import { Route as DashboardCmsRouteRouteImport } from './routes/dashboard/cms/ro
 import { Route as DashboardAdminRouteRouteImport } from './routes/dashboard/admin/route'
 import { Route as DashboardProfileIndexRouteImport } from './routes/dashboard/profile/index'
 import { Route as DashboardCmsIndexRouteImport } from './routes/dashboard/cms/index'
+import { Route as PreviewArticlesArticleIdRouteImport } from './routes/preview/articles.$articleId'
 import { Route as DashboardProfileDangerRouteImport } from './routes/dashboard/profile/danger'
 import { Route as DashboardProfileAuthorizationsRouteImport } from './routes/dashboard/profile/authorizations'
 import { Route as DashboardProfileAuthenticationRouteImport } from './routes/dashboard/profile/authentication'
@@ -173,6 +174,12 @@ const DashboardCmsIndexRoute = DashboardCmsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardCmsRouteRoute,
 } as any)
+const PreviewArticlesArticleIdRoute =
+  PreviewArticlesArticleIdRouteImport.update({
+    id: '/preview/articles/$articleId',
+    path: '/preview/articles/$articleId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DashboardProfileDangerRoute = DashboardProfileDangerRouteImport.update({
   id: '/danger',
   path: '/danger',
@@ -309,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile/authentication': typeof DashboardProfileAuthenticationRoute
   '/dashboard/profile/authorizations': typeof DashboardProfileAuthorizationsRoute
   '/dashboard/profile/danger': typeof DashboardProfileDangerRoute
+  '/preview/articles/$articleId': typeof PreviewArticlesArticleIdRoute
   '/dashboard/cms/': typeof DashboardCmsIndexRoute
   '/dashboard/profile/': typeof DashboardProfileIndexRoute
   '/api/cms/media/upload': typeof ApiCmsMediaUploadRoute
@@ -350,6 +358,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile/authentication': typeof DashboardProfileAuthenticationRoute
   '/dashboard/profile/authorizations': typeof DashboardProfileAuthorizationsRoute
   '/dashboard/profile/danger': typeof DashboardProfileDangerRoute
+  '/preview/articles/$articleId': typeof PreviewArticlesArticleIdRoute
   '/dashboard/cms': typeof DashboardCmsIndexRoute
   '/dashboard/profile': typeof DashboardProfileIndexRoute
   '/api/cms/media/upload': typeof ApiCmsMediaUploadRoute
@@ -396,6 +405,7 @@ export interface FileRoutesById {
   '/dashboard/profile/authentication': typeof DashboardProfileAuthenticationRoute
   '/dashboard/profile/authorizations': typeof DashboardProfileAuthorizationsRoute
   '/dashboard/profile/danger': typeof DashboardProfileDangerRoute
+  '/preview/articles/$articleId': typeof PreviewArticlesArticleIdRoute
   '/dashboard/cms/': typeof DashboardCmsIndexRoute
   '/dashboard/profile/': typeof DashboardProfileIndexRoute
   '/api/cms/media/upload': typeof ApiCmsMediaUploadRoute
@@ -443,6 +453,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile/authentication'
     | '/dashboard/profile/authorizations'
     | '/dashboard/profile/danger'
+    | '/preview/articles/$articleId'
     | '/dashboard/cms/'
     | '/dashboard/profile/'
     | '/api/cms/media/upload'
@@ -484,6 +495,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile/authentication'
     | '/dashboard/profile/authorizations'
     | '/dashboard/profile/danger'
+    | '/preview/articles/$articleId'
     | '/dashboard/cms'
     | '/dashboard/profile'
     | '/api/cms/media/upload'
@@ -529,6 +541,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile/authentication'
     | '/dashboard/profile/authorizations'
     | '/dashboard/profile/danger'
+    | '/preview/articles/$articleId'
     | '/dashboard/cms/'
     | '/dashboard/profile/'
     | '/api/cms/media/upload'
@@ -560,6 +573,7 @@ export interface RootRouteChildren {
   MediaSplatRoute: typeof MediaSplatRoute
   OauthConsentRoute: typeof OauthConsentRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  PreviewArticlesArticleIdRoute: typeof PreviewArticlesArticleIdRoute
   ApiCmsMediaUploadRoute: typeof ApiCmsMediaUploadRoute
   ApiContentV1CategoriesRoute: typeof ApiContentV1CategoriesRoute
   ApiContentV1TagsRoute: typeof ApiContentV1TagsRoute
@@ -736,6 +750,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/cms/'
       preLoaderRoute: typeof DashboardCmsIndexRouteImport
       parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/preview/articles/$articleId': {
+      id: '/preview/articles/$articleId'
+      path: '/preview/articles/$articleId'
+      fullPath: '/preview/articles/$articleId'
+      preLoaderRoute: typeof PreviewArticlesArticleIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/profile/danger': {
       id: '/dashboard/profile/danger'
@@ -982,6 +1003,7 @@ const rootRouteChildren: RootRouteChildren = {
   MediaSplatRoute: MediaSplatRoute,
   OauthConsentRoute: OauthConsentRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  PreviewArticlesArticleIdRoute: PreviewArticlesArticleIdRoute,
   ApiCmsMediaUploadRoute: ApiCmsMediaUploadRoute,
   ApiContentV1CategoriesRoute: ApiContentV1CategoriesRoute,
   ApiContentV1TagsRoute: ApiContentV1TagsRoute,

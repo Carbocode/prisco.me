@@ -152,6 +152,7 @@ export const cmsCategories = sqliteTable(
       .notNull()
       .default(CATEGORY_ARCHIVE_SORT.PUBLISHED_DESC),
     archiveEyebrow: text("archive_eyebrow").notNull().default(defaultCategoryConfig.archiveEyebrow),
+    heroMediaId: text("hero_media_id").references(() => cmsMedia.id),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
     deletedAt: timestamp("deleted_at"),

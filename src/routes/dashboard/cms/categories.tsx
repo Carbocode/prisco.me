@@ -27,7 +27,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/select";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { MediaPicker } from "@/features/cms/components/media-picker";
 import { slugify, slugInputPattern } from "@/features/cms/domain/slug";
 import {
   archiveCategoryFn,
@@ -46,6 +47,7 @@ import {
   listCategoriesFn,
   updateCategoryFn,
 } from "@/features/cms/server/category.functions";
+import { listMediaFn } from "@/features/cms/server/media.functions";
 import {
   categoryArchiveSortLabel,
   categoryArchiveSorts,
@@ -65,16 +67,25 @@ type CategoryItem = {
   description: string | null;
   schemaType: CategorySchemaType;
   archiveSort: CategoryArchiveSort;
-  archiveEyebrow: string;
+  heroMediaId: string | null;
+};
+type CategoryMedia = {
+  id: string;
+  filename: string;
+  mimeType: string;
+  url: string;
 };
 
 export const Route = createFileRoute("/dashboard/cms/categories")({
-  loader: () => listCategoriesFn(),
+  loader: async () => {
+    const [categories, media] = await Promise.all([listCategoriesFn(), listMediaFn()]);
+    return { categories, media };
+  },
   component: CategoriesContent,
 });
 
 function CategoriesContent() {
-  const categories = Route.useLoaderData();
+  const { categories, media } = Route.useLoaderData();
   const router = useRouter();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -85,10 +96,12 @@ function CategoriesContent() {
   const [archiveSort, setArchiveSort] = useState<CategoryArchiveSort>(
     defaultCategoryConfig.archiveSort,
   );
-  const [archiveEyebrow, setArchiveEyebrow] = useState<string>(
-    defaultCategoryConfig.archiveEyebrow,
-  );
+  const [heroMediaId, setHeroMediaId] = useState("");
   const [pending, setPending] = useState(false);
+  const imageMedia = useMemo(
+    () => media.filter((item) => item.mimeType.startsWith("image/")),
+    [media],
+  );
   const columns = useMemo<ColumnDef<(typeof categories)[number]>[]>(
     () => [
       { accessorKey: "name", header: "Nome", size: 220, minSize: 160 },
@@ -106,7 +119,14 @@ function CategoriesContent() {
         minSize: 180,
         cell: ({ row }) => categoryArchiveSortLabel[row.original.archiveSort],
       },
-      { accessorKey: "archiveEyebrow", header: "Eyebrow", size: 160, minSize: 140 },
+      {
+        accessorKey: "heroMediaId",
+        header: "Immagine hero",
+        size: 220,
+        minSize: 180,
+        cell: ({ row }) =>
+          imageMedia.find((item) => item.id === row.original.heroMediaId)?.filename ?? "—",
+      },
       { accessorKey: "slug", header: "Slug", size: 220, minSize: 140 },
       { accessorKey: "description", header: "Descrizione", size: 360, minSize: 220 },
       {
@@ -118,7 +138,7 @@ function CategoriesContent() {
         enableResizing: false,
       },
     ],
-    [],
+    [imageMedia],
   );
 
   async function create(event: React.FormEvent) {
@@ -132,7 +152,7 @@ function CategoriesContent() {
           description: description || null,
           schemaType,
           archiveSort,
-          archiveEyebrow,
+          heroMediaId: heroMediaId || null,
         },
       });
       setName("");
@@ -140,7 +160,7 @@ function CategoriesContent() {
       setDescription("");
       setSchemaType(defaultCategoryConfig.schemaType);
       setArchiveSort(defaultCategoryConfig.archiveSort);
-      setArchiveEyebrow(defaultCategoryConfig.archiveEyebrow);
+      setHeroMediaId("");
       toast.success("Categoria creata");
       await router.invalidate();
     } catch (error) {
@@ -247,13 +267,17 @@ function CategoriesContent() {
                 </Select>
               </Field>
               <Field>
-                <FieldLabel htmlFor="category-archive-eyebrow">Eyebrow archivio</FieldLabel>
-                <Input
-                  id="category-archive-eyebrow"
-                  value={archiveEyebrow}
-                  onChange={(event) => setArchiveEyebrow(event.target.value)}
-                  required
+                <FieldLabel>Immagine hero</FieldLabel>
+                <MediaPicker
+                  items={imageMedia}
+                  value={heroMediaId}
+                  label="Scegli l’immagine hero"
+                  description="Naviga la libreria immagini e seleziona lo sfondo dell’archivio."
+                  onValueChange={setHeroMediaId}
                 />
+                <FieldDescription>
+                  Viene mostrata dietro al titolo nell’archivio pubblico della categoria.
+                </FieldDescription>
               </Field>
               <Button size="sm" type="submit" disabled={pending}>
                 <Plus data-icon="inline-start" />
@@ -275,6 +299,7 @@ function CategoriesContent() {
                 <CategoryRow
                   key={row.id}
                   category={row.original}
+                  media={imageMedia}
                   refresh={() => router.invalidate()}
                 />
               )}
@@ -300,9 +325,11 @@ function CategoriesContent() {
 
 function CategoryRow({
   category,
+  media,
   refresh,
 }: {
   category: CategoryItem;
+  media: CategoryMedia[];
   refresh: () => Promise<unknown>;
 }) {
   const [editing, setEditing] = useState(false);
@@ -312,7 +339,7 @@ function CategoryRow({
   const [description, setDescription] = useState(category.description ?? "");
   const [schemaType, setSchemaType] = useState(category.schemaType);
   const [archiveSort, setArchiveSort] = useState(category.archiveSort);
-  const [archiveEyebrow, setArchiveEyebrow] = useState(category.archiveEyebrow);
+  const [heroMediaId, setHeroMediaId] = useState(category.heroMediaId ?? "");
 
   async function save() {
     setPending(true);
@@ -325,7 +352,7 @@ function CategoryRow({
           description: description || null,
           schemaType,
           archiveSort,
-          archiveEyebrow,
+          heroMediaId: heroMediaId || null,
         },
       });
       setEditing(false);
@@ -416,13 +443,16 @@ function CategoryRow({
       </TableCell>
       <TableCell>
         {editing ? (
-          <Input
-            aria-label="Eyebrow archivio categoria"
-            value={archiveEyebrow}
-            onChange={(event) => setArchiveEyebrow(event.target.value)}
+          <MediaPicker
+            items={media}
+            value={heroMediaId}
+            label="Scegli l’immagine hero"
+            description={`Seleziona l’immagine hero per ${category.name}.`}
+            compact
+            onValueChange={setHeroMediaId}
           />
         ) : (
-          category.archiveEyebrow
+          (media.find((item) => item.id === category.heroMediaId)?.filename ?? "—")
         )}
       </TableCell>
       <TableCell>

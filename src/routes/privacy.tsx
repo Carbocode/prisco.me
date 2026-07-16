@@ -8,13 +8,19 @@ export const Route = createFileRoute("/privacy")({
       { title: "Privacy | Prisco.me" },
       {
         name: "description",
-        content:
-          "Informativa completa sul trattamento dei dati personali del sito personale di Vincenzo Prisco.",
+        content: "Informativa completa sul trattamento dei dati personali.",
       },
       { property: "og:title", content: "Privacy | Prisco.me" },
       {
         property: "og:description",
-        content: "Finalità, basi giuridiche, conservazione e diritti degli interessati.",
+        content: "Spazio personale di Vincenzo Prisco.",
+      },
+      { property: "og:url", content: "https://prisco.me/privacy" },
+      { name: "twitter:url", content: "https://prisco.me/privacy" },
+      { name: "twitter:title", content: "Privacy | Prisco.me" },
+      {
+        name: "twitter:description",
+        content: "Spazio personale di Vincenzo Prisco.",
       },
     ],
     links: [{ rel: "canonical", href: "https://prisco.me/privacy" }],
@@ -26,7 +32,6 @@ function PrivacyPage() {
   return (
     <PageShell
       hero={false}
-      eyebrow="Informativa privacy"
       title="I tuoi dati meritano chiarezza."
       description="Informativa sul trattamento dei dati personali effettuato tramite il sito personale prisco.me."
     >

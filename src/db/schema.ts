@@ -271,7 +271,7 @@ export const skills = sqliteTable("skills", {
     .$defaultFn(() => crypto.randomUUID()),
   /** Nome visualizzato, univoco. */
   name: text("name").notNull().unique(),
-  /** Slug del logo (Simple Icons / logo dedicato). Null → si usa il fallback. */
+  /** Nome Iconify completo (es. `simple-icons:react`). Null → si usa il fallback. */
   icon: text("icon"),
   /** Classi Tailwind che definiscono il colore del chip (tint/bg/border). */
   color: text("color"),

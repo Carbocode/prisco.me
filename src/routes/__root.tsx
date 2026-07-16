@@ -1,8 +1,11 @@
+import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
-import { Toaster } from "sonner";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { CookieConsentProvider } from "@/components/cookie-consent";
+import { Toaster } from "@/components/ui/sonner";
 import { SiteFooter } from "@/components/page-shell";
 
 import appCss from "../styles.css?url";
@@ -28,8 +31,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: "Scopri progetti, idee e appunti di Vincenzo Prisco.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://prisco.me/" },
+      { property: "og:image", content: "https://prisco.me/og/home-hero.png" },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: "Hero del portfolio di Vincenzo Prisco con cielo stellato, pianeti e nuvole.",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://prisco.me/og/home-hero.png" },
+      {
+        name: "twitter:image:alt",
+        content: "Hero del portfolio di Vincenzo Prisco con cielo stellato, pianeti e nuvole.",
+      },
       { "apple-mobile-web-app-title": "Prisco.me" },
     ],
     links: [
@@ -120,6 +135,21 @@ function RootDocument() {
           <Outlet />
           <Scripts />
         </CookieConsentProvider>
+        <TanStackDevtools
+          config={{
+            position: "bottom-right",
+          }}
+          plugins={[
+            {
+              name: "Tanstack Router",
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+            {
+              name: "Tanstack Query",
+              render: <ReactQueryDevtoolsPanel />,
+            },
+          ]}
+        />
       </body>
     </html>
   );

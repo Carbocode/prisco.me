@@ -138,7 +138,7 @@ function TagsPage() {
         <CardHeader>
           <CardTitle>Nuovo tag</CardTitle>
           <CardDescription>
-            Lo slug viene proposto dal nome; simbolo e colore sono opzionali.
+            Lo slug viene proposto dal nome; icona Iconify e colore sono opzionali.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -197,7 +197,7 @@ function TagsPage() {
                   id="tag-icon"
                   value={icon}
                   maxLength={80}
-                  placeholder="Es. code"
+                  placeholder="Es. simple-icons:react"
                   onChange={(event) => setIcon(event.target.value)}
                 />
                 <FieldDescription>
@@ -206,7 +206,7 @@ function TagsPage() {
                       skill={{ name: name || "Anteprima", icon: icon || null, color }}
                       size={12}
                     />
-                    {icon || "Fallback dal nome"}
+                    {icon || "Fallback"}
                   </Badge>
                 </FieldDescription>
               </Field>
@@ -372,13 +372,13 @@ function TagRow({
                   id={`tag-${tag.id}-icon`}
                   value={icon}
                   maxLength={80}
-                  placeholder="Es. code"
+                  placeholder="Es. simple-icons:react"
                   onChange={(event) => setIcon(event.target.value)}
                 />
                 <FieldDescription>
                   <Badge variant="outline">
                     <SkillGlyph skill={{ name, icon: icon || null, color }} size={12} />
-                    {icon || "Fallback dal nome"}
+                    {icon || "Fallback"}
                   </Badge>
                 </FieldDescription>
               </Field>
