@@ -1,4 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createClientOnlyFn } from "@tanstack/react-start";
 import { Clipboard, ImageIcon, Trash2, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -27,16 +28,20 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  processMediaForUpload,
-  type MediaProcessingUpdate,
-} from "@/features/cms/client/media-processing";
+import type { MediaProcessingUpdate } from "@/features/cms/client/media-processing";
 import { archiveMediaFn, listMediaFn, updateMediaFn } from "@/features/cms/server/media.functions";
 
 export const Route = createFileRoute("/dashboard/cms/media")({
   loader: () => listMediaFn(),
   component: MediaContent,
 });
+
+const processMediaForUpload = createClientOnlyFn(
+  async (source: File, onUpdate: (update: MediaProcessingUpdate) => void) => {
+    const mediaProcessing = await import("@/features/cms/client/media-processing");
+    return mediaProcessing.processMediaForUpload(source, onUpdate);
+  },
+);
 
 function MediaContent() {
   const media = Route.useLoaderData();
