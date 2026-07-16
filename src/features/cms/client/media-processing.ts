@@ -33,6 +33,9 @@ async function processImage(
   onUpdate: (update: MediaProcessingUpdate) => void,
 ): Promise<ProcessedMedia> {
   onUpdate({ phase: "preparing", progress: 5 });
+  const preserveAnimation =
+    source.type === "image/webp" &&
+    hasAnimatedWebPChunks(new Uint8Array(await source.arrayBuffer()));
   let bitmap: ImageBitmap;
   try {
     bitmap = await createImageBitmap(source, { imageOrientation: "from-image" });
@@ -40,6 +43,16 @@ async function processImage(
     throw new Error("Il browser non riesce a decodificare questa immagine");
   }
   try {
+    if (preserveAnimation) {
+      const file = new File([source], replaceExtension(source.name, "webp"), {
+        type: "image/webp",
+        lastModified: source.lastModified,
+      });
+      assertOutputSize(file);
+      onUpdate({ phase: "converting", progress: 100 });
+      return { file, width: bitmap.width, height: bitmap.height };
+    }
+
     const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(bitmap.width, bitmap.height));
     const width = Math.max(1, Math.round(bitmap.width * scale));
     const height = Math.max(1, Math.round(bitmap.height * scale));
@@ -66,6 +79,32 @@ async function processImage(
   } finally {
     bitmap.close();
   }
+}
+
+export function hasAnimatedWebPChunks(bytes: Uint8Array) {
+  if (bytes.length < 20 || readFourCC(bytes, 0) !== "RIFF" || readFourCC(bytes, 8) !== "WEBP") {
+    return false;
+  }
+
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  for (let offset = 12; offset + 8 <= bytes.length;) {
+    const chunkType = readFourCC(bytes, offset);
+    const chunkSize = view.getUint32(offset + 4, true);
+    if (chunkType === "ANIM" || chunkType === "ANMF") return true;
+    const nextOffset = offset + 8 + chunkSize + (chunkSize % 2);
+    if (nextOffset <= offset || nextOffset > bytes.length) return false;
+    offset = nextOffset;
+  }
+  return false;
+}
+
+function readFourCC(bytes: Uint8Array, offset: number) {
+  return String.fromCharCode(
+    bytes[offset] ?? 0,
+    bytes[offset + 1] ?? 0,
+    bytes[offset + 2] ?? 0,
+    bytes[offset + 3] ?? 0,
+  );
 }
 
 async function processAudioVideo(

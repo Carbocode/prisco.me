@@ -96,7 +96,8 @@ function MediaContent() {
         <p className="text-sm font-medium text-muted-foreground">{media.length} file</p>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Media</h1>
         <p className="text-sm text-muted-foreground">
-          Converti e comprimi immagini, video e audio nel browser. Ogni file viene salvato con un nome UUID.
+          Converti e comprimi immagini, video e audio nel browser. I WebP animati mantengono
+          l’animazione. Ogni file viene salvato con un nome UUID.
         </p>
       </header>
 
@@ -106,7 +107,8 @@ function MediaContent() {
             <FieldGroup className="grid items-end gap-2 lg:grid-cols-[1fr_1fr_auto]">
               <Field>
                 <FieldLabel htmlFor="media-file">
-                  Media · conversione automatica WebP/WebM · originale max 100 MiB
+                  Media · conversione automatica WebP/WebM · animazioni WebP preservate · originale
+                  max 100 MiB
                 </FieldLabel>
                 <Input
                   id="media-file"
