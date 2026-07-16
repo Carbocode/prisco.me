@@ -4,6 +4,7 @@ import {
   BriefcaseBusiness,
   FileText,
   Hash,
+  House,
   Image,
   KeyRound,
   LayoutDashboard,
@@ -20,6 +21,14 @@ import {
 import { RequireAuth } from "@/components/auth-ui";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -305,10 +314,7 @@ function ProfileShell() {
                 <Separator orientation="vertical" />
               </>
             )}
-            <div className="min-w-0">
-              <p className="truncate text-xs text-muted-foreground">Dashboard</p>
-              <p className="truncate text-sm font-medium">{pageTitle}</p>
-            </div>
+            <DashboardBreadcrumb pathname={pathname} pageTitle={pageTitle} />
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline">{user.role ?? "user"}</Badge>
@@ -330,6 +336,60 @@ function ProfileShell() {
       </SidebarInset>
     </>
   );
+}
+
+function DashboardBreadcrumb({ pathname, pageTitle }: { pathname: string; pageTitle: string }) {
+  const section = dashboardSection(pathname);
+
+  return (
+    <Breadcrumb className="min-w-0">
+      <BreadcrumbList className="flex-nowrap">
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Torna alla home"
+                render={<Link to="/" />}
+              />
+            }
+          >
+            <House />
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem className="hidden sm:inline-flex">
+          <BreadcrumbLink render={<Link to="/dashboard" />}>Dashboard</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator className="hidden sm:list-item" />
+        {section ? (
+          <>
+            <BreadcrumbItem className="hidden md:inline-flex">
+              <BreadcrumbLink render={<Link to={section.to} />}>{section.label}</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:list-item" />
+          </>
+        ) : null}
+        <BreadcrumbItem className="min-w-0">
+          <BreadcrumbPage className="truncate">{pageTitle}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
+
+function dashboardSection(pathname: string) {
+  if (pathname.startsWith("/dashboard/cms/") && !pathname.endsWith("/dashboard/cms/")) {
+    return { label: "Contenuti", to: "/dashboard/cms" } as const;
+  }
+  if (pathname.startsWith("/dashboard/profile/") && !pathname.endsWith("/dashboard/profile/")) {
+    return { label: "Profilo", to: "/dashboard/profile" } as const;
+  }
+  if (pathname.startsWith("/dashboard/admin/")) {
+    return { label: "Amministrazione", to: "/dashboard/admin/users" } as const;
+  }
+  return null;
 }
 
 function dashboardTitle(pathname: string) {

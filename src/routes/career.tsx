@@ -42,7 +42,7 @@ function AboutPage() {
 
   return (
     <PageShell hero={false} title="Carriera">
-      <section className="relative isolate bg-[#06101f] px-4 py-10 sm:px-6 lg:px-10">
+      <section className="relative isolate bg-[#06101f] px-4 pb-10 pt-24 sm:px-6 lg:px-10">
         <CareerGalaxy />
         <div className="relative z-10">
           <GanttJourney experiences={data.experiences} />

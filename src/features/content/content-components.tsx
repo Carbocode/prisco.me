@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Building2, CalendarDays, UserRound } from "lucide-react";
-import type { ReactNode } from "react";
+import { ArrowLeft, House } from "lucide-react";
+import { Fragment } from "react";
 
 import { PageShell, Section } from "@/components/page-shell";
 import { SkillGlyph } from "@/components/tech-icon";
@@ -72,23 +72,43 @@ export type PublicArticle = {
 
 export type ContentCrumb = { name: string; url: string };
 
-export function ContentBreadcrumb({ items }: { items: ContentCrumb[] }) {
+export function ContentBreadcrumb({
+  items,
+  className,
+}: {
+  items: ContentCrumb[];
+  className?: string;
+}) {
   return (
-    <Breadcrumb>
-      <BreadcrumbList>
+    <Breadcrumb className={className}>
+      <BreadcrumbList className="flex-nowrap">
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Torna alla home"
+                render={<Link to="/" />}
+              />
+            }
+          >
+            <House />
+          </BreadcrumbLink>
+        </BreadcrumbItem>
         {items.map((item, index) => (
-          <span className="contents" key={item.url}>
-            {index ? <BreadcrumbSeparator /> : null}
-            <BreadcrumbItem>
+          <Fragment key={item.url}>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem className="min-w-0">
               {index === items.length - 1 ? (
-                <BreadcrumbPage>{item.name}</BreadcrumbPage>
+                <BreadcrumbPage className="truncate">{item.name}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink render={<a href={item.url} aria-label={item.name} />}>
                   {item.name}
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>
-          </span>
+          </Fragment>
         ))}
       </BreadcrumbList>
     </Breadcrumb>
@@ -96,6 +116,7 @@ export function ContentBreadcrumb({ items }: { items: ContentCrumb[] }) {
 }
 
 export function ContentArchivePage({
+  eyebrow,
   title,
   description,
   hero,
@@ -158,9 +179,13 @@ export function ContentArchivePage({
     year !== "all";
 
   return (
-    <PageShell title={title} description={description} heroImage={hero}>
-      <ContentBreadcrumb items={[{ name: title, url: `/${archiveSlug}` }]} />
-      <Section className="pt-0">
+    <PageShell title={title} description={description} hero={false}>
+      <ArchiveHero eyebrow={eyebrow} title={title} description={description} hero={hero} />
+      <ContentBreadcrumb
+        className="mx-auto w-full max-w-6xl px-6 py-6 sm:py-8"
+        items={[{ name: title, url: `/${archiveSlug}` }]}
+      />
+      <Section className="pt-4 sm:pt-6">
         <FieldSet>
           <FieldLegend variant="label">Filtra contenuti</FieldLegend>
           <FieldGroup className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -310,6 +335,58 @@ export function ContentArchivePage({
   );
 }
 
+function ArchiveHero({
+  eyebrow,
+  title,
+  description,
+  hero,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  hero?: { url: string; altText: string | null } | null;
+}) {
+  return (
+    <>
+      <section className="bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28">
+        <div className="mx-auto grid w-full max-w-[96rem] gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
+          <div className="flex flex-col items-start justify-center gap-5 py-6 lg:py-12">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-300">
+              {eyebrow}
+            </p>
+            <h1 className="display-font text-4xl leading-[1.02] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+              {title}
+            </h1>
+            <p className="max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+              {description}
+            </p>
+          </div>
+          <div className="relative aspect-[4/3] min-h-[22rem] overflow-hidden bg-slate-900 sm:aspect-video sm:min-h-0">
+            {hero ? (
+              <img
+                src={hero.url}
+                alt={hero.altText ?? ""}
+                className="size-full object-cover"
+                decoding="async"
+                fetchPriority="high"
+              />
+            ) : (
+              <>
+                <div
+                  className="absolute inset-0 bg-[radial-gradient(circle_at_72%_25%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_18%_80%,rgba(167,139,250,0.18),transparent_32%),linear-gradient(135deg,#020617_0%,#0f172a_55%,#111827_100%)]"
+                  aria-hidden="true"
+                />
+                <div className="site-grid absolute inset-0 opacity-55" aria-hidden="true" />
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+      <Separator className="mx-auto max-w-6xl" />
+    </>
+  );
+}
+
 export function ArticlePageContent({
   article,
   crumbs,
@@ -317,27 +394,14 @@ export function ArticlePageContent({
   article: PublicArticle;
   crumbs: ContentCrumb[];
 }) {
-  const eyebrow = article.projectRole
-    ? `${article.projectRole}${article.projectPeriod ? ` · ${article.projectPeriod}` : ""}`
-    : formatDate(article.publishedAt);
   const archive = crumbs[0];
-  const publishedYear = article.publishedAt
-    ? String(new Date(article.publishedAt).getFullYear())
-    : null;
 
   return (
     <PageShell hero={false} title={article.title}>
-      <section className="relative isolate overflow-hidden border-b border-white/10 px-6 pb-14 pt-6 sm:pb-20 sm:pt-8">
-        <div className="site-grid pointer-events-none absolute inset-0 opacity-40" />
-        <div className="pointer-events-none absolute -right-32 top-16 size-96 rounded-full bg-sky-400/10 blur-3xl" />
-        <div className="relative mx-auto w-full max-w-6xl">
-          <div className="relative">
-            <ArticleCover article={article} variant="hero" />
-            <div
-              className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-t from-slate-950 via-slate-950/65 to-transparent"
-              aria-hidden="true"
-            />
-            <div className="absolute inset-x-0 bottom-0 flex max-w-5xl flex-col items-start gap-4 p-6 sm:gap-5 sm:p-10 lg:p-14">
+      <section className="relative isolate overflow-hidden bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28">
+        <div className="relative mx-auto w-full max-w-[96rem]">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
+            <div className="flex flex-col items-start justify-center gap-5 py-6 lg:py-12">
               <div className="flex flex-wrap gap-2">
                 {article.categories.map((category) => (
                   <Badge
@@ -349,59 +413,57 @@ export function ArticlePageContent({
                   </Badge>
                 ))}
               </div>
-              <p className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-sky-300 sm:text-xs">
-                <span className="h-px w-8 bg-sky-300/70" aria-hidden="true" />
-                {eyebrow}
-              </p>
-              <h1 className="display-font text-3xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-7xl">
+              <h1 className="display-font text-4xl leading-[1.02] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
                 {article.title}
               </h1>
               {article.excerpt ? (
-                <p className="line-clamp-3 max-w-3xl text-sm leading-6 text-slate-200 sm:text-lg sm:leading-8">
+                <p className="max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
                   {article.excerpt}
                 </p>
               ) : null}
-            </div>
-          </div>
-
-          <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:items-start">
-            <ContentBreadcrumb items={crumbs} />
-            <dl className="grid gap-5 border-l border-white/10 pl-6 text-sm sm:grid-cols-3">
-              <ArticleMeta icon={<CalendarDays aria-hidden="true" />} label="Pubblicato">
-                {publishedYear ? (
-                  <Link to="/$archiveSlug" params={{ archiveSlug: publishedYear }}>
-                    {formatDate(article.publishedAt)}
-                  </Link>
-                ) : (
-                  formatDate(article.publishedAt)
-                )}
-              </ArticleMeta>
-              <ArticleMeta icon={<UserRound aria-hidden="true" />} label="Autore">
-                <Link to="/$archiveSlug" params={{ archiveSlug: article.author.slug }}>
-                  {article.author.name}
-                </Link>
-              </ArticleMeta>
-              {article.organization ? (
-                <ArticleMeta icon={<Building2 aria-hidden="true" />} label="Organizzazione">
-                  <Link to="/$archiveSlug" params={{ archiveSlug: article.organization.slug }}>
-                    {article.organization.name}
-                  </Link>
-                </ArticleMeta>
+              {article.projectRole || article.projectPeriod ? (
+                <div className="flex flex-col gap-1 text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                  {article.projectRole ? <p>{article.projectRole}</p> : null}
+                  {article.projectPeriod ? <p>{article.projectPeriod}</p> : null}
+                </div>
               ) : null}
-            </dl>
+              <div className="flex items-center gap-3 text-sm text-slate-400">
+                <span>
+                  By{" "}
+                  <Link
+                    className="font-medium text-slate-200 underline-offset-4 hover:underline"
+                    to="/$archiveSlug"
+                    params={{ archiveSlug: article.author.slug }}
+                  >
+                    {article.author.name}
+                  </Link>
+                </span>
+                <Separator orientation="vertical" className="h-4" />
+                <time dateTime={article.publishedAt?.toISOString()}>
+                  {formatDate(article.publishedAt)}
+                </time>
+              </div>
+            </div>
+            <ArticleCover article={article} variant="hero" />
           </div>
         </div>
       </section>
 
-      <Section className="grid gap-12 lg:grid-cols-[minmax(0,46rem)_minmax(13rem,1fr)] lg:items-start lg:gap-20">
-        <article className="cms-content min-w-0">
+      <Separator className="mx-auto max-w-6xl" />
+
+      <Section className="grid gap-8 lg:grid-cols-[minmax(0,46rem)_minmax(13rem,1fr)] lg:items-start lg:gap-x-20 lg:gap-y-10">
+        <ContentBreadcrumb items={crumbs} />
+        <article className="cms-content min-w-0 lg:col-start-1">
           {renderCmsDocument(
             parseCmsDocument(article.content),
             new Map(article.media.map((item) => [item.id, item])),
           )}
         </article>
 
-        <aside className="flex flex-col gap-6 lg:sticky lg:top-24" aria-label="Dettagli articolo">
+        <aside
+          className="flex flex-col gap-6 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+          aria-label="Dettagli articolo"
+        >
           {archive ? (
             <Button
               variant="outline"
@@ -439,35 +501,13 @@ export function ArticlePageContent({
   );
 }
 
-function ArticleMeta({
-  icon,
-  label,
-  children,
-}: {
-  icon: ReactNode;
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="grid grid-cols-[1.25rem_1fr] gap-x-3">
-      <span className="mt-0.5 text-sky-300">{icon}</span>
-      <div>
-        <dt className="text-xs uppercase tracking-[0.18em] text-slate-500">{label}</dt>
-        <dd className="mt-1 font-medium text-slate-200 [&_a]:underline-offset-4 [&_a]:hover:underline">
-          {children}
-        </dd>
-      </div>
-    </div>
-  );
-}
-
 function ArticleCover({ article, variant }: { article: PublicArticle; variant: "card" | "hero" }) {
   const primaryTag = article.tags[0];
   const frameClass = cn(
     "relative isolate w-full overflow-hidden bg-slate-900",
     variant === "card"
       ? "aspect-video border-b border-white/10"
-      : "min-h-[32rem] rounded-3xl border border-white/10 shadow-2xl shadow-sky-950/30 sm:aspect-video sm:min-h-0 lg:aspect-[21/9]",
+      : "aspect-[4/3] min-h-[22rem] sm:aspect-video sm:min-h-0",
   );
 
   if (article.cover) {
@@ -481,7 +521,7 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
           decoding="async"
           fetchPriority={variant === "hero" ? "high" : "auto"}
         />
-        {primaryTag ? <CoverTag tag={primaryTag} variant={variant} /> : null}
+        {primaryTag && variant === "card" ? <CoverTag tag={primaryTag} variant={variant} /> : null}
       </div>
     );
   }
@@ -506,7 +546,7 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
         aria-hidden="true"
       />
 
-      {primaryTag ? <CoverTag tag={primaryTag} variant={variant} /> : null}
+      {primaryTag && variant === "card" ? <CoverTag tag={primaryTag} variant={variant} /> : null}
     </div>
   );
 }

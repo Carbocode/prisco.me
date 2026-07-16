@@ -26,16 +26,10 @@ const links = [
   { kind: "static", to: "/contact", label: "Contatti" },
 ] as const;
 
-export default function Header({ overlay = false }: { overlay?: boolean }) {
+export default function Header() {
   return (
-    <header
-      className={
-        overlay
-          ? "absolute inset-x-0 top-0 z-30 text-white"
-          : "relative z-20 border-b border-white/10 bg-slate-950/80 text-white backdrop-blur-md"
-      }
-    >
-      <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
+    <header className="absolute inset-x-0 top-0 z-30 text-white">
+      <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)] lg:px-8">
         <Link to="/" className="flex items-center gap-3" aria-label="Torna alla home">
           <img src="/favicon/favicon.svg" alt="" className="h-9 w-9" />
           <p className="leading-tight display-font text-lg font-semibold">Vincenzo Prisco</p>

@@ -73,7 +73,7 @@ function HomePage() {
   return (
     <div className="min-h-dvh bg-slate-950 text-slate-100">
       <Sky className="relative h-[720px] w-full max-h-[82dvh] min-h-[620px] overflow-hidden">
-        <Header overlay />
+        <Header />
 
         <section className="absolute inset-0 z-10 flex items-center justify-center px-6 pt-14">
           <div className="hero-content-enter flex max-w-3xl flex-col items-center gap-4 text-center text-white drop-shadow-[0_2px_12px_rgba(4,12,25,0.9)]">
