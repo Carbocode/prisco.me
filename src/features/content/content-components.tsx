@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, House } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, House } from "lucide-react";
 import { Fragment } from "react";
 
+import { HoverAnimatedImage } from "@/components/hover-animated-image";
 import { PageShell, Section } from "@/components/page-shell";
 import { SkillGlyph } from "@/components/tech-icon";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ import {
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -127,11 +129,13 @@ export function ContentArchivePage({
   organization,
   author,
   year,
+  page,
   onQueryChange,
   onTagChange,
   onOrganizationChange,
   onAuthorChange,
   onYearChange,
+  onPageChange,
   onReset,
 }: {
   eyebrow: string;
@@ -145,11 +149,13 @@ export function ContentArchivePage({
   organization: string;
   author: string;
   year: string;
+  page: number;
   onQueryChange: (value: string) => void;
   onTagChange: (value: string) => void;
   onOrganizationChange: (value: string) => void;
   onAuthorChange: (value: string) => void;
   onYearChange: (value: string) => void;
+  onPageChange: (value: number) => void;
   onReset: () => void;
 }) {
   const tags = uniqueTags(articles);
@@ -177,6 +183,10 @@ export function ContentArchivePage({
     organization !== "all" ||
     author !== "all" ||
     year !== "all";
+  const pageSize = 9;
+  const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, pages);
+  const visibleArticles = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   return (
     <PageShell title={title} description={description} hero={false}>
@@ -283,43 +293,85 @@ export function ContentArchivePage({
         </FieldSet>
 
         {filtered.length ? (
-          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((article) => (
-              <Card key={article.id} className="h-full pt-0">
-                <ArticleCover article={article} variant="card" />
-                <CardHeader>
-                  <CardTitle>{article.title}</CardTitle>
-                  <CardDescription>{articleMetadata(article)}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4">
-                  {article.tags.length ? (
-                    <div className="flex flex-wrap gap-2">
-                      {article.tags.slice(0, 5).map((item) => (
-                        <Badge key={item.slug} className={item.color}>
-                          <SkillGlyph skill={item} size={12} />
-                          {item.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : null}
-                  {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
-                </CardContent>
-                <CardFooter className="mt-auto">
-                  <Button
-                    variant="outline"
-                    render={
-                      <a
-                        href={`/${archiveSlug}/${article.slug}`}
-                        aria-label={`Scopri ${article.title}`}
-                      />
-                    }
-                  >
-                    Scopri il contenuto
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          <>
+            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {visibleArticles.map((article) => (
+                <Card key={article.id} className="relative h-full overflow-visible pt-0">
+                  <ArticleCover article={article} variant="card" />
+                  {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
+                  <CardHeader>
+                    <CardTitle>{article.title}</CardTitle>
+                    <CardDescription>{articleMetadata(article)}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-4">
+                    {article.tags.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {article.tags.slice(0, 5).map((item) => (
+                          <Badge key={item.slug} className={item.color}>
+                            <SkillGlyph skill={item} size={12} />
+                            {item.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : null}
+                    {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
+                  </CardContent>
+                  <CardFooter className="mt-auto">
+                    <Button
+                      variant="outline"
+                      render={
+                        <a
+                          href={`/${archiveSlug}/${article.slug}`}
+                          aria-label={`Scopri ${article.title}`}
+                        />
+                      }
+                    >
+                      Scopri il contenuto
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm tabular-nums text-muted-foreground">
+                {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)} di{" "}
+                {filtered.length}
+              </p>
+              <Pagination className="mx-0 w-auto">
+                <PaginationContent>
+                  <PaginationItem>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="outline"
+                      disabled={safePage === 1}
+                      aria-label="Pagina precedente"
+                      onClick={() => onPageChange(Math.max(1, safePage - 1))}
+                    >
+                      <ChevronLeft />
+                    </Button>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <span className="px-2 text-sm tabular-nums" aria-live="polite">
+                      Pagina {safePage} di {pages}
+                    </span>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="outline"
+                      disabled={safePage === pages}
+                      aria-label="Pagina successiva"
+                      onClick={() => onPageChange(Math.min(pages, safePage + 1))}
+                    >
+                      <ChevronRight />
+                    </Button>
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          </>
         ) : (
           <Empty className="mt-8">
             <EmptyHeader>
@@ -363,9 +415,10 @@ function ArchiveHero({
           </div>
           <div className="relative aspect-[4/3] min-h-[22rem] overflow-hidden bg-slate-900 sm:aspect-video sm:min-h-0">
             {hero ? (
-              <img
+              <HoverAnimatedImage
                 src={hero.url}
                 alt={hero.altText ?? ""}
+                containerClassName="size-full"
                 className="size-full object-cover"
                 decoding="async"
                 fetchPriority="high"
@@ -502,7 +555,6 @@ export function ArticlePageContent({
 }
 
 function ArticleCover({ article, variant }: { article: PublicArticle; variant: "card" | "hero" }) {
-  const primaryTag = article.tags[0];
   const frameClass = cn(
     "relative isolate w-full overflow-hidden bg-slate-900",
     variant === "card"
@@ -511,18 +563,31 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
   );
 
   if (article.cover) {
+    if (variant === "hero") {
+      return (
+        <div className={frameClass}>
+          <img
+            src={article.cover.url}
+            alt={article.cover.altText ?? ""}
+            className="size-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+          />
+        </div>
+      );
+    }
+
     return (
-      <div className={frameClass}>
-        <img
-          src={article.cover.url}
-          alt={article.cover.altText ?? ""}
-          className="h-full w-full object-cover"
-          loading={variant === "card" ? "lazy" : "eager"}
-          decoding="async"
-          fetchPriority={variant === "hero" ? "high" : "auto"}
-        />
-        {primaryTag && variant === "card" ? <CoverTag tag={primaryTag} variant={variant} /> : null}
-      </div>
+      <HoverAnimatedImage
+        containerClassName={frameClass}
+        src={article.cover.url}
+        alt={article.cover.altText ?? ""}
+        className="size-full object-cover"
+        loading="lazy"
+        decoding="async"
+        fetchPriority="auto"
+      />
     );
   }
 
@@ -545,32 +610,18 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
         className="absolute bottom-[18%] left-[10%] h-px w-[80%] -rotate-6 bg-gradient-to-r from-transparent via-sky-300/40 to-transparent"
         aria-hidden="true"
       />
-
-      {primaryTag && variant === "card" ? <CoverTag tag={primaryTag} variant={variant} /> : null}
     </div>
   );
 }
 
-function CoverTag({
-  tag,
-  variant,
-}: {
-  tag: PublicArticle["tags"][number];
-  variant: "card" | "hero";
-}) {
+function CardEdgeTag({ tag }: { tag: PublicArticle["tags"][number] }) {
   return (
     <Badge
-      className={cn(
-        tag.color,
-        "absolute p-0 shadow-lg backdrop-blur-md",
-        variant === "card"
-          ? "bottom-4 left-4 size-10"
-          : "right-5 top-5 size-14 sm:right-8 sm:top-8 sm:size-16",
-      )}
+      className="absolute top-6 -right-5 size-10 shadow-lg"
       aria-label={tag.name}
       title={tag.name}
     >
-      <SkillGlyph skill={tag} size={variant === "card" ? 22 : 34} />
+      <SkillGlyph skill={tag} size={22} />
     </Badge>
   );
 }

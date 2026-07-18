@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createClientOnlyFn } from "@tanstack/react-start";
-import { Clipboard, ImageIcon, Trash2, Upload } from "lucide-react";
+import { Clipboard, ImageIcon, Pencil, Trash2, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -13,10 +13,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   Empty,
   EmptyDescription,
@@ -29,7 +29,16 @@ import { Input } from "@/components/ui/input";
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import type { MediaProcessingUpdate } from "@/features/cms/client/media-processing";
-import { archiveMediaFn, listMediaFn, updateMediaFn } from "@/features/cms/server/media.functions";
+import {
+  MediaCard as MediaLibraryCard,
+  mediaDisplayName,
+} from "@/features/cms/components/media-card";
+import {
+  deleteMediaFn,
+  getMediaUsageFn,
+  listMediaFn,
+  updateMediaFn,
+} from "@/features/cms/server/media.functions";
 
 export const Route = createFileRoute("/dashboard/cms/media")({
   loader: () => listMediaFn(),
@@ -49,10 +58,14 @@ function MediaContent() {
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState(false);
   const [processing, setProcessing] = useState<MediaProcessingUpdate | null>(null);
-  const filtered = useMemo(
-    () => media.filter((item) => item.filename.toLowerCase().includes(query.toLowerCase())),
-    [media, query],
-  );
+  const filtered = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    return media.filter(
+      (item) =>
+        mediaDisplayName(item).toLowerCase().includes(normalizedQuery) ||
+        item.filename.toLowerCase().includes(normalizedQuery),
+    );
+  }, [media, query]);
 
   async function upload(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -63,13 +76,21 @@ function MediaContent() {
       toast.error("Seleziona un file");
       return;
     }
+    const name = sourceData.get("name");
+    if (typeof name !== "string" || !name.trim()) {
+      toast.error("Inserisci un nome per il media");
+      return;
+    }
     setPending(true);
     try {
       const processed = await processMediaForUpload(source, setProcessing);
       const data = new FormData();
       data.set("file", processed.file);
+      data.set("name", name.trim());
       const altText = sourceData.get("altText");
       if (typeof altText === "string") data.set("altText", altText);
+      const caption = sourceData.get("caption");
+      if (typeof caption === "string") data.set("caption", caption);
       if (processed.width) data.set("width", String(processed.width));
       if (processed.height) data.set("height", String(processed.height));
       setProcessing({ phase: "uploading", progress: 100 });
@@ -104,7 +125,7 @@ function MediaContent() {
       <Card size="sm">
         <CardContent>
           <form onSubmit={(event) => void upload(event)}>
-            <FieldGroup className="grid items-end gap-2 lg:grid-cols-[1fr_1fr_auto]">
+            <FieldGroup className="grid items-end gap-2 lg:grid-cols-2">
               <Field>
                 <FieldLabel htmlFor="media-file">
                   Media · conversione automatica WebP/WebM · animazioni WebP preservate · originale
@@ -120,6 +141,17 @@ function MediaContent() {
                 />
               </Field>
               <Field>
+                <FieldLabel htmlFor="media-name">Nome del media</FieldLabel>
+                <Input
+                  id="media-name"
+                  name="name"
+                  maxLength={120}
+                  placeholder="Es. Ritratto professionale"
+                  disabled={pending}
+                  required
+                />
+              </Field>
+              <Field>
                 <FieldLabel htmlFor="media-alt">Testo alternativo (immagini)</FieldLabel>
                 <Input
                   id="media-alt"
@@ -129,7 +161,17 @@ function MediaContent() {
                   disabled={pending}
                 />
               </Field>
-              <Button size="sm" type="submit" disabled={pending}>
+              <Field>
+                <FieldLabel htmlFor="media-caption">Didascalia</FieldLabel>
+                <Input
+                  id="media-caption"
+                  name="caption"
+                  maxLength={500}
+                  placeholder="Testo mostrato con il media"
+                  disabled={pending}
+                />
+              </Field>
+              <Button className="justify-self-start" size="sm" type="submit" disabled={pending}>
                 {pending ? (
                   <Spinner data-icon="inline-start" />
                 ) : (
@@ -161,12 +203,12 @@ function MediaContent() {
       </Card>
 
       <Field className="max-w-md">
-        <FieldLabel htmlFor="media-search">Cerca per nome salvato</FieldLabel>
+        <FieldLabel htmlFor="media-search">Cerca per nome</FieldLabel>
         <Input
           id="media-search"
           type="search"
           value={query}
-          placeholder="UUID o estensione"
+          placeholder="Nome visuale, UUID o estensione"
           onChange={(event) => setQuery(event.target.value)}
         />
       </Field>
@@ -174,7 +216,7 @@ function MediaContent() {
       {filtered.length ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((item) => (
-            <MediaCard key={item.id} item={item} refresh={() => router.invalidate()} />
+            <ManagedMediaCard key={item.id} item={item} refresh={() => router.invalidate()} />
           ))}
         </div>
       ) : (
@@ -196,24 +238,34 @@ function MediaContent() {
   );
 }
 
-function MediaCard({
+function ManagedMediaCard({
   item,
   refresh,
 }: {
   item: Awaited<ReturnType<typeof listMediaFn>>[number];
   refresh: () => Promise<unknown>;
 }) {
+  const [name, setName] = useState(mediaDisplayName(item));
   const [altText, setAltText] = useState(item.altText ?? "");
   const [caption, setCaption] = useState(item.caption ?? "");
+  const [editing, setEditing] = useState(false);
   const [pending, setPending] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [usage, setUsage] = useState(item.usage);
 
   async function save() {
     setPending(true);
     try {
       await updateMediaFn({
-        data: { id: item.id, altText: altText || null, caption: caption || null },
+        data: {
+          id: item.id,
+          name: name.trim(),
+          altText: altText || null,
+          caption: caption || null,
+        },
       });
       toast.success("Media aggiornato");
+      setEditing(false);
       await refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Aggiornamento non riuscito");
@@ -222,114 +274,131 @@ function MediaCard({
     }
   }
 
-  async function archive() {
+  async function checkBeforeDelete() {
     setPending(true);
     try {
-      await archiveMediaFn({ data: { id: item.id } });
-      toast.success("Media archiviato");
-      await refresh();
+      setUsage(await getMediaUsageFn({ data: { id: item.id } }));
+      setDeleteOpen(true);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Operazione non riuscita");
+      toast.error(error instanceof Error ? error.message : "Controllo associazioni non riuscito");
     } finally {
       setPending(false);
     }
   }
 
+  async function deleteMedia() {
+    setPending(true);
+    try {
+      await deleteMediaFn({ data: { id: item.id, confirmedUsage: usage.total } });
+      setDeleteOpen(false);
+      toast.success(
+        usage.total ? `Media eliminato e dissociato da ${usage.total} utilizzi` : "Media eliminato",
+      );
+      await refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Eliminazione non riuscita");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  const displayName = mediaDisplayName({ ...item, name });
+
   return (
-    <Card size="sm">
-      {item.mimeType === "image/webp" ? (
-        <img
-          src={item.url}
-          alt={item.altText ?? ""}
-          width={item.width ?? 640}
-          height={item.height ?? 360}
-          loading="lazy"
-          className="aspect-video w-full object-cover"
-        />
-      ) : item.mimeType === "video/webm" ? (
-        // oxlint-disable-next-line jsx-a11y/media-has-caption -- preview CMS senza traccia VTT associata
-        <video
-          src={item.url}
-          controls
-          preload="metadata"
-          className="aspect-video w-full object-cover"
-        />
-      ) : (
-        // oxlint-disable-next-line jsx-a11y/media-has-caption -- anteprima audio CMS senza trascrizione associata
-        <audio src={item.url} controls preload="metadata" className="w-full" />
-      )}
-      <CardHeader>
-        <CardTitle className="truncate">{item.filename}</CardTitle>
-        <p className="text-xs tabular-nums text-muted-foreground">
-          {Math.round(item.sizeBytes / 1024)} KiB
-          {item.width && item.height ? ` · ${item.width}×${item.height}` : ""}
-        </p>
-      </CardHeader>
-      <CardContent>
-        <FieldGroup className="gap-2">
-          <Field>
-            <FieldLabel htmlFor={`alt-${item.id}`}>Testo alternativo</FieldLabel>
-            <Input
-              id={`alt-${item.id}`}
-              value={altText}
-              maxLength={300}
-              onChange={(event) => setAltText(event.target.value)}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor={`caption-${item.id}`}>Didascalia</FieldLabel>
-            <Input
-              id={`caption-${item.id}`}
-              value={caption}
-              maxLength={500}
-              onChange={(event) => setCaption(event.target.value)}
-            />
-          </Field>
-        </FieldGroup>
-      </CardContent>
-      <CardFooter className="flex flex-wrap gap-2">
-        <Button size="sm" disabled={pending} onClick={() => void save()}>
-          {pending ? <Spinner data-icon="inline-start" /> : null}
-          Salva
-        </Button>
-        <Button
-          size="icon-sm"
-          variant="outline"
-          aria-label={`Copia URL di ${item.filename}`}
-          onClick={() =>
-            void navigator.clipboard.writeText(item.url).then(() => toast.success("URL copiato"))
-          }
-        >
-          <Clipboard />
-        </Button>
-        <AlertDialog>
-          <AlertDialogTrigger
-            render={
-              <Button
-                size="icon-sm"
-                variant="destructive"
-                aria-label={`Archivia ${item.filename}`}
-              />
-            }
-          >
-            <Trash2 />
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Archiviare “{item.filename}”?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Il media non sarà più selezionabile. Il file originale su R2 non verrà eliminato.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annulla</AlertDialogCancel>
-              <AlertDialogAction variant="destructive" onClick={() => void archive()}>
-                Archivia
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </CardFooter>
-    </Card>
+    <Collapsible open={editing} onOpenChange={setEditing}>
+      <MediaLibraryCard
+        item={{ ...item, name, altText, caption }}
+        details={
+          <CollapsibleContent>
+            <FieldGroup className="gap-2">
+              <Field>
+                <FieldLabel htmlFor={`name-${item.id}`}>Nome del media</FieldLabel>
+                <Input
+                  id={`name-${item.id}`}
+                  value={name}
+                  maxLength={120}
+                  required
+                  onChange={(event) => setName(event.target.value)}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor={`alt-${item.id}`}>Testo alternativo</FieldLabel>
+                <Input
+                  id={`alt-${item.id}`}
+                  value={altText}
+                  maxLength={300}
+                  onChange={(event) => setAltText(event.target.value)}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor={`caption-${item.id}`}>Didascalia</FieldLabel>
+                <Input
+                  id={`caption-${item.id}`}
+                  value={caption}
+                  maxLength={500}
+                  onChange={(event) => setCaption(event.target.value)}
+                />
+              </Field>
+              <Button size="sm" disabled={pending || !name.trim()} onClick={() => void save()}>
+                {pending ? <Spinner data-icon="inline-start" /> : null}
+                Salva modifiche
+              </Button>
+            </FieldGroup>
+          </CollapsibleContent>
+        }
+        actions={
+          <>
+            <CollapsibleTrigger render={<Button type="button" size="sm" variant="outline" />}>
+              <Pencil data-icon="inline-start" />
+              {editing ? "Chiudi" : "Modifica"}
+            </CollapsibleTrigger>
+            <Button
+              size="icon-sm"
+              variant="outline"
+              aria-label={`Copia URL di ${displayName}`}
+              onClick={() =>
+                void navigator.clipboard
+                  .writeText(item.url)
+                  .then(() => toast.success("URL copiato"))
+              }
+            >
+              <Clipboard />
+            </Button>
+            <Button
+              size="icon-sm"
+              variant="destructive"
+              disabled={pending}
+              aria-label={`Elimina ${displayName}`}
+              onClick={() => void checkBeforeDelete()}
+            >
+              {pending ? <Spinner /> : <Trash2 />}
+            </Button>
+          </>
+        }
+      />
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminare “{displayName}”?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {usage.total
+                ? `Il media è associato ${usage.total} ${usage.total === 1 ? "volta" : "volte"}: ${usage.articleCovers} cover, ${usage.articleContent} contenuti e ${usage.categoryHeroes} hero di categoria. Verrà dissociato da tutti questi punti e rimosso definitivamente da R2.`
+                : "Il media non risulta associato. Verrà rimosso definitivamente dalla libreria e da R2."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={pending}
+              onClick={() => void deleteMedia()}
+            >
+              {pending ? <Spinner data-icon="inline-start" /> : null}
+              Elimina definitivamente
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Collapsible>
   );
 }

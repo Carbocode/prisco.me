@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { listArticlesFn } from "@/features/cms/server/article.functions";
 import { listCategoriesFn } from "@/features/cms/server/category.functions";
+import { CATEGORY_ARCHIVE_SORT } from "@/lib/content-category";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().positive().catch(1),
@@ -99,17 +100,19 @@ function ArticlesContent() {
         cell: ({ row }) => row.original.categories.join(", ") || "—",
       },
       {
-        accessorKey: "updatedAt",
-        header: "Aggiornato",
+        id: "archiveOrder",
+        header: "Ordinamento",
         size: 170,
-        cell: ({ row }) => (
-          <span className="text-muted-foreground">
-            {row.original.updatedAt.toLocaleString("it-IT", {
-              dateStyle: "short",
-              timeStyle: "short",
-            })}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const article = row.original;
+          return (
+            <span className="tabular-nums text-muted-foreground">
+              {article.archiveSort === CATEGORY_ARCHIVE_SORT.MANUAL
+                ? article.projectSortOrder
+                : article.publishedAt?.toLocaleDateString("it-IT") || "—"}
+            </span>
+          );
+        },
       },
       {
         id: "actions",

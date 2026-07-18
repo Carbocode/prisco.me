@@ -1,6 +1,7 @@
-import { AudioLines, Check, FileIcon, ImageIcon, Search, Video } from "lucide-react";
-import { useId, useMemo, useState } from "react";
+import { ArrowDownUp, ChevronLeft, ChevronRight, ImageIcon, Search } from "lucide-react";
+import { useEffect, useId, useMemo, useState } from "react";
 
+import { HoverAnimatedImage } from "@/components/hover-animated-image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,23 +21,49 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Field, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  MediaCard as MediaLibraryCard,
+  mediaDisplayName,
+} from "@/features/cms/components/media-card";
 import { cn } from "@/lib/utils";
 
 export type MediaPickerItem = {
   id: string;
+  name?: string | null;
   filename: string;
   url: string;
   mimeType?: string;
   altText?: string | null;
+  caption?: string | null;
   width?: number | null;
   height?: number | null;
+  sizeBytes?: number;
+  createdAt?: Date;
+  usage?: {
+    total: number;
+  };
 };
+
+const pageSize = 12;
+const mediaSorts = [
+  { value: "newest", label: "Più recenti" },
+  { value: "oldest", label: "Meno recenti" },
+  { value: "usage-desc", label: "Più utilizzati" },
+  { value: "name-asc", label: "Nome A–Z" },
+  { value: "name-desc", label: "Nome Z–A" },
+] as const;
+type MediaSort = (typeof mediaSorts)[number]["value"];
 
 export function MediaPicker({
   items,
@@ -77,17 +104,18 @@ export function MediaPicker({
         }
       >
         {selected && !compact ? (
-          <img
+          <HoverAnimatedImage
             src={selected.url}
             alt=""
             width={48}
             height={48}
-            className="size-12 shrink-0 rounded-md object-cover"
+            containerClassName="size-12 shrink-0 rounded-md"
+            className="size-full object-cover"
           />
         ) : (
           <ImageIcon data-icon="inline-start" />
         )}
-        <span className="truncate">{selected?.filename ?? emptyLabel}</span>
+        <span className="truncate">{selected ? mediaDisplayName(selected) : emptyLabel}</span>
       </DialogTrigger>
       <DialogContent className="flex max-h-[min(90dvh,56rem)] w-[calc(100%-2rem)] max-w-6xl flex-col sm:max-w-6xl">
         <DialogHeader>
@@ -128,73 +156,84 @@ export function MediaBrowser({
 }) {
   const searchId = useId();
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<MediaSort>("newest");
+  const [page, setPage] = useState(1);
   const filtered = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) return items;
-    return items.filter((item) => item.filename.toLowerCase().includes(normalizedQuery));
-  }, [items, query]);
+    const matching = normalizedQuery
+      ? items.filter(
+          (item) =>
+            mediaDisplayName(item).toLowerCase().includes(normalizedQuery) ||
+            item.filename.toLowerCase().includes(normalizedQuery),
+        )
+      : items;
+    return [...matching].sort((left, right) => compareMedia(left, right, sort));
+  }, [items, query, sort]);
+  const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, pages);
+  const visible = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
+
+  useEffect(() => setPage(1), [query, sort]);
+  useEffect(() => {
+    if (page > pages) setPage(pages);
+  }, [page, pages]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <Field>
-        <FieldLabel htmlFor={searchId}>Cerca nella libreria</FieldLabel>
-        <InputGroup>
-          <InputGroupAddon>
-            <Search />
-          </InputGroupAddon>
-          <InputGroupInput
-            id={searchId}
-            type="search"
-            value={query}
-            placeholder="Cerca per nome salvato"
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </InputGroup>
-      </Field>
+      <div className="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_14rem]">
+        <Field>
+          <FieldLabel htmlFor={searchId}>Cerca nella libreria</FieldLabel>
+          <InputGroup>
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+            <InputGroupInput
+              id={searchId}
+              type="search"
+              value={query}
+              placeholder="Nome visuale o filename"
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </InputGroup>
+        </Field>
+        <Field>
+          <FieldLabel>Ordina tutto il dataset</FieldLabel>
+          <Select
+            items={mediaSorts}
+            value={sort}
+            onValueChange={(nextValue) => {
+              if (mediaSorts.some((item) => item.value === nextValue))
+                setSort(nextValue as MediaSort); // oxlint-disable-line typescript/no-unsafe-type-assertion
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <ArrowDownUp />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {mediaSorts.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </Field>
+      </div>
       <ScrollArea className="h-[min(55dvh,36rem)] min-h-48 rounded-lg border">
         {filtered.length ? (
           <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((item) => {
+            {visible.map((item) => {
               const selected = item.id === value;
               return (
-                <Button
+                <MediaLibraryCard
                   key={item.id}
-                  type="button"
-                  variant={selected ? "secondary" : "outline"}
-                  className="h-auto min-w-0 flex-col items-stretch gap-0 overflow-hidden p-0 whitespace-normal"
-                  aria-pressed={selected}
-                  onClick={() => onValueChange(item.id)}
-                >
-                  <span className="relative block aspect-video w-full overflow-hidden">
-                    {!item.mimeType || item.mimeType.startsWith("image/") ? (
-                      <img
-                        src={item.url}
-                        alt={item.altText ?? ""}
-                        width={item.width ?? 640}
-                        height={item.height ?? 360}
-                        loading="lazy"
-                        className="size-full object-cover"
-                      />
-                    ) : (
-                      <span className="flex size-full items-center justify-center text-muted-foreground">
-                        {item.mimeType.startsWith("video/") ? (
-                          <Video className="size-10" />
-                        ) : item.mimeType.startsWith("audio/") ? (
-                          <AudioLines className="size-10" />
-                        ) : (
-                          <FileIcon className="size-10" />
-                        )}
-                      </span>
-                    )}
-                    {selected ? (
-                      <span className="absolute top-2 right-2 rounded-full bg-primary p-1 text-primary-foreground">
-                        <Check />
-                        <span className="sr-only">Selezionata</span>
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className="truncate p-3 text-left">{item.filename}</span>
-                </Button>
+                  item={item}
+                  selected={selected}
+                  onSelect={() => onValueChange(item.id)}
+                />
               );
             })}
           </div>
@@ -214,6 +253,60 @@ export function MediaBrowser({
           </Empty>
         )}
       </ScrollArea>
+      {filtered.length ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm tabular-nums text-muted-foreground">
+            {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)} di{" "}
+            {filtered.length}
+          </p>
+          <Pagination className="mx-0 w-auto">
+            <PaginationContent>
+              <PaginationItem>
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="outline"
+                  disabled={safePage === 1}
+                  aria-label="Pagina precedente"
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                >
+                  <ChevronLeft />
+                </Button>
+              </PaginationItem>
+              <PaginationItem>
+                <span className="px-2 text-sm tabular-nums" aria-live="polite">
+                  Pagina {safePage} di {pages}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="outline"
+                  disabled={safePage === pages}
+                  aria-label="Pagina successiva"
+                  onClick={() => setPage((current) => Math.min(pages, current + 1))}
+                >
+                  <ChevronRight />
+                </Button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      ) : null}
     </div>
   );
+}
+
+function compareMedia(left: MediaPickerItem, right: MediaPickerItem, sort: MediaSort) {
+  if (sort === "usage-desc") {
+    const difference = (right.usage?.total ?? 0) - (left.usage?.total ?? 0);
+    if (difference) return difference;
+  }
+  if (sort === "name-asc" || sort === "name-desc") {
+    const difference = mediaDisplayName(left).localeCompare(mediaDisplayName(right), "it");
+    return sort === "name-asc" ? difference : -difference;
+  }
+  const difference = (right.createdAt?.getTime() ?? 0) - (left.createdAt?.getTime() ?? 0);
+  return sort === "oldest" ? -difference : difference;
 }

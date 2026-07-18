@@ -5,8 +5,8 @@ import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanst
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { CookieConsentProvider } from "@/components/cookie-consent";
-import { Toaster } from "@/components/ui/sonner";
 import { SiteFooter } from "@/components/page-shell";
+import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 

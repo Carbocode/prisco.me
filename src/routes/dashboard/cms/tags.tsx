@@ -1,7 +1,7 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Hash, Pencil, Plus, Trash2 } from "lucide-react";
+import { Hash, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/empty";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
@@ -76,7 +77,23 @@ function TagsPage() {
   const [icon, setIcon] = useState("");
   const [color, setColor] = useState("text-slate-200 bg-white/10 border-white/15");
   const [categoryId, setCategoryId] = useState(categories[0]?.id ?? "");
+  const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [pending, setPending] = useState(false);
+  const normalizedQuery = query.trim().toLocaleLowerCase("it-IT");
+  const filteredTags = useMemo(
+    () =>
+      tags.filter(
+        (tag) =>
+          (categoryFilter === "all" || tag.categoryId === categoryFilter) &&
+          (!normalizedQuery ||
+            tag.name.toLocaleLowerCase("it-IT").includes(normalizedQuery) ||
+            tag.slug.toLocaleLowerCase("it-IT").includes(normalizedQuery) ||
+            tag.icon?.toLocaleLowerCase("it-IT").includes(normalizedQuery)),
+      ),
+    [categoryFilter, normalizedQuery, tags],
+  );
+  const hasFilters = Boolean(normalizedQuery) || categoryFilter !== "all";
   const columns = useMemo<ColumnDef<Tag>[]>(
     () => [
       { accessorKey: "name", header: "Tag", size: 200, minSize: 150 },
@@ -237,23 +254,101 @@ function TagsPage() {
       </Card>
 
       {tags.length ? (
-        <Card size="sm">
-          <CardContent>
-            <DashboardDataTable
-              columns={columns}
-              data={tags}
-              getRowId={(tag) => tag.id}
-              renderRow={(row) => (
-                <TagRow
-                  key={row.id}
-                  tag={row.original}
-                  categories={categories}
-                  refresh={() => router.invalidate()}
+        <>
+          <Card size="sm">
+            <CardContent>
+              <form
+                onSubmit={(event) => event.preventDefault()}
+                onReset={() => {
+                  setQuery("");
+                  setCategoryFilter("all");
+                }}
+              >
+                <FieldGroup className="grid items-end gap-2 md:grid-cols-[minmax(16rem,1fr)_16rem_auto]">
+                  <Field>
+                    <FieldLabel htmlFor="tag-search">Cerca</FieldLabel>
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <Search />
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        id="tag-search"
+                        type="search"
+                        value={query}
+                        placeholder="Nome, slug o icona"
+                        onChange={(event) => setQuery(event.target.value)}
+                      />
+                    </InputGroup>
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="tag-category-filter">Categoria</FieldLabel>
+                    <Select
+                      items={[
+                        { value: "all", label: "Tutte le categorie" },
+                        ...categories.map((category) => ({
+                          value: category.id,
+                          label: category.name,
+                        })),
+                      ]}
+                      value={categoryFilter}
+                      onValueChange={(value) => setCategoryFilter(value ?? "all")}
+                    >
+                      <SelectTrigger id="tag-category-filter" className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="all">Tutte le categorie</SelectItem>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Button size="sm" type="reset" variant="outline" disabled={!hasFilters}>
+                    <X data-icon="inline-start" />
+                    Azzera
+                  </Button>
+                </FieldGroup>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card size="sm">
+            <CardContent>
+              {filteredTags.length ? (
+                <DashboardDataTable
+                  columns={columns}
+                  data={filteredTags}
+                  getRowId={(tag) => tag.id}
+                  renderRow={(row) => (
+                    <TagRow
+                      key={row.id}
+                      tag={row.original}
+                      categories={categories}
+                      refresh={() => router.invalidate()}
+                    />
+                  )}
                 />
+              ) : (
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <Search />
+                    </EmptyMedia>
+                    <EmptyTitle>Nessun tag trovato</EmptyTitle>
+                    <EmptyDescription>
+                      Modifica la ricerca o azzera i filtri per vedere tutti i tag.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
               )}
-            />
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </>
       ) : (
         <Empty>
           <EmptyHeader>

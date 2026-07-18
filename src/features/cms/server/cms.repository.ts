@@ -78,7 +78,11 @@ export function articleRepository(db: CmsDb) {
       ]);
       const categoryRows = items.length
         ? await db
-            .select({ articleId: cmsArticleCategories.articleId, name: cmsCategories.name })
+            .select({
+              articleId: cmsArticleCategories.articleId,
+              name: cmsCategories.name,
+              archiveSort: cmsCategories.archiveSort,
+            })
             .from(cmsArticleCategories)
             .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
             .where(
@@ -94,6 +98,7 @@ export function articleRepository(db: CmsDb) {
           categories: categoryRows
             .filter((category) => category.articleId === item.id)
             .map((category) => category.name),
+          archiveSort: categoryRows.find((category) => category.articleId === item.id)?.archiveSort,
         })),
         total: total[0]?.value ?? 0,
       };

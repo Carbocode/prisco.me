@@ -77,8 +77,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
-import { MediaPicker } from "./media-picker";
-
 import { EMPTY_CMS_DOCUMENT, parseCmsDocument, type CmsDocument } from "../domain/cms-document";
 import { slugify, slugInputPattern, slugPattern } from "../domain/slug";
 import {
@@ -90,6 +88,7 @@ import {
   unpublishArticleFn,
   updateArticleFn,
 } from "../server/article.functions";
+import { MediaPicker } from "./media-picker";
 const CmsEditor = lazy(() =>
   import("@/features/editor/cms-editor").then((module) => ({ default: module.CmsEditor })),
 );
@@ -177,11 +176,6 @@ export function ArticleForm({
   );
   const [version, setVersion] = useState(article?.version ?? 0);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
-  const [saveFeedback, setSaveFeedback] = useState<{
-    type: "pending" | "success" | "error";
-    title: string;
-    description: string;
-  } | null>(null);
   const [pending, setPending] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [conflict, setConflict] = useState(false);
@@ -239,21 +233,11 @@ export function ArticleForm({
       projectSortOrder,
     });
     if (validationError) {
-      setSaveFeedback({
-        type: "error",
-        title: "Impossibile salvare",
-        description: validationError,
-      });
       toast.error(validationError, { id: "article-save" });
       return;
     }
     const toastId = toast.loading(article ? "Salvataggio modifiche…" : "Creazione bozza…", {
       id: "article-save",
-    });
-    setSaveFeedback({
-      type: "pending",
-      title: "Salvataggio in corso",
-      description: "Invio delle modifiche al server…",
     });
     setPending(true);
     try {
@@ -279,23 +263,16 @@ export function ArticleForm({
       setDirty(false);
       const savedAt = new Date();
       setLastSavedAt(savedAt);
-      setSaveFeedback({
-        type: "success",
-        title: "Modifiche salvate",
-        description: `Salvataggio completato alle ${savedAt.toLocaleTimeString("it-IT")}.`,
-      });
       toast.success("Articolo salvato correttamente", { id: toastId });
       if (article) void router.invalidate();
       else
-        void navigate({ to: "/dashboard/cms/articles/$articleId", params: { articleId: saved.id } });
+        void navigate({
+          to: "/dashboard/cms/articles/$articleId",
+          params: { articleId: saved.id },
+        });
     } catch (error) {
       const message = articleSaveError(error);
       if (message.type === "conflict") setConflict(true);
-      setSaveFeedback({
-        type: "error",
-        title: "Salvataggio non riuscito",
-        description: message.text,
-      });
       toast.error(message.text, { id: toastId });
     } finally {
       setPending(false);
@@ -387,11 +364,7 @@ export function ArticleForm({
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  window.open(
-                    `/preview/articles/${article.id}`,
-                    "_blank",
-                    "noopener,noreferrer",
-                  )
+                  window.open(`/preview/articles/${article.id}`, "_blank", "noopener,noreferrer")
                 }
               >
                 <Eye data-icon="inline-start" />
@@ -456,12 +429,6 @@ export function ArticleForm({
           /{publicArchiveSlug}/{slug || "slug-articolo"}
         </span>
       </header>
-      {saveFeedback ? (
-        <Alert variant={saveFeedback.type === "error" ? "destructive" : "default"}>
-          <AlertTitle>{saveFeedback.title}</AlertTitle>
-          <AlertDescription>{saveFeedback.description}</AlertDescription>
-        </Alert>
-      ) : null}
       {conflict ? (
         <Alert variant="destructive">
           <AlertTitle>Conflitto di versione</AlertTitle>

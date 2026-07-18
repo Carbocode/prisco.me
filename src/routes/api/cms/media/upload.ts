@@ -53,24 +53,32 @@ export const Route = createFileRoute("/api/cms/media/upload")({
             );
           const storageKey = mediaStorageKey(mimeType);
           const filename = mediaFilename(storageKey);
-          await env.CMS_MEDIA.put(storageKey, bytes, { httpMetadata: { contentType: mimeType } });
-          const id = crypto.randomUUID();
+          const nameValue = form.get("name");
+          const name = typeof nameValue === "string" ? nameValue.trim().slice(0, 120) : "";
+          if (!name) throw new CmsError(400, "MEDIA_NAME_REQUIRED", "Media name is required");
           const altTextValue = form.get("altText");
           const altText =
             typeof altTextValue === "string" ? altTextValue.slice(0, 300) || null : null;
+          const captionValue = form.get("caption");
+          const caption =
+            typeof captionValue === "string" ? captionValue.trim().slice(0, 500) || null : null;
           const width = formDimension(form.get("width"));
           const height = formDimension(form.get("height"));
+          await env.CMS_MEDIA.put(storageKey, bytes, { httpMetadata: { contentType: mimeType } });
+          const id = crypto.randomUUID();
           try {
             await getDb(env).batch([
               getDb(env).insert(cmsMedia).values({
                 id,
                 storageKey,
                 filename,
+                name,
                 mimeType,
                 sizeBytes: file.size,
                 width,
                 height,
                 altText,
+                caption,
                 createdById: session.user.id,
               }),
               getDb(env)

@@ -17,6 +17,7 @@ import { archiveHead, articleHead } from "@/features/content/content-seo";
 import { listPublishedArticlesByFilterFn } from "@/features/content/content.functions";
 
 const searchSchema = z.object({
+  page: z.coerce.number().int().positive().optional().catch(undefined),
   q: z.string().max(120).optional().catch(undefined),
   tag: z.string().max(180).optional().catch(undefined),
   organization: z.string().max(180).optional().catch(undefined),
@@ -118,6 +119,7 @@ function ArchiveContent({ archive }: { archive: ContentArchive }) {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const updateSearch = (changes: {
+    page?: number;
     q?: string;
     tag?: string;
     organization?: string;
@@ -129,20 +131,28 @@ function ArchiveContent({ archive }: { archive: ContentArchive }) {
     <ContentArchivePage
       {...archive}
       archiveSlug={archive.slug}
+      page={search.page ?? 1}
       query={search.q ?? ""}
       tag={search.tag ?? "all"}
       organization={search.organization ?? "all"}
       author={search.author ?? "all"}
       year={search.year ?? "all"}
-      onQueryChange={(q) => updateSearch({ q: q || undefined })}
-      onTagChange={(tag) => updateSearch({ tag: tag === "all" ? undefined : tag })}
+      onQueryChange={(q) => updateSearch({ q: q || undefined, page: 1 })}
+      onTagChange={(tag) => updateSearch({ tag: tag === "all" ? undefined : tag, page: 1 })}
       onOrganizationChange={(organization) =>
-        updateSearch({ organization: organization === "all" ? undefined : organization })
+        updateSearch({
+          organization: organization === "all" ? undefined : organization,
+          page: 1,
+        })
       }
-      onAuthorChange={(author) => updateSearch({ author: author === "all" ? undefined : author })}
-      onYearChange={(year) => updateSearch({ year: year === "all" ? undefined : year })}
+      onAuthorChange={(author) =>
+        updateSearch({ author: author === "all" ? undefined : author, page: 1 })
+      }
+      onYearChange={(year) => updateSearch({ year: year === "all" ? undefined : year, page: 1 })}
+      onPageChange={(page) => updateSearch({ page })}
       onReset={() =>
         updateSearch({
+          page: 1,
           q: undefined,
           tag: undefined,
           organization: undefined,

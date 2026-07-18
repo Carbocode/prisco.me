@@ -86,6 +86,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type FormEvent
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
+import { HoverAnimatedImage } from "@/components/hover-animated-image";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -284,7 +285,12 @@ const MediaImageElement = withHOC(
                 className={mediaResizeHandleVariants({ direction: "left" })}
                 options={{ direction: "left" }}
               />
-              <img src={item.url} alt={element.alt || item.altText || ""} />
+              <HoverAnimatedImage
+                src={item.url}
+                alt={element.alt || item.altText || ""}
+                containerClassName="w-full"
+                className="w-full"
+              />
               <ResizeHandle
                 className={mediaResizeHandleVariants({ direction: "right" })}
                 options={{ direction: "right" }}

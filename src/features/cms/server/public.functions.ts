@@ -37,6 +37,11 @@ export const listPublicCategoriesFn = createServerFn({ method: "GET" }).handler(
   const baseUrl = mediaDeliveryBaseUrl(import.meta.env.MODE, env.MEDIA_PUBLIC_URL);
   return categories.map(({ heroStorageKey, heroAltText, ...category }) => ({
     ...category,
-    hero: heroStorageKey ? { url: mediaUrl(baseUrl, heroStorageKey), altText: heroAltText } : null,
+    hero: heroStorageKey
+      ? {
+          url: mediaUrl(baseUrl, heroStorageKey),
+          altText: heroAltText,
+        }
+      : null,
   }));
 });

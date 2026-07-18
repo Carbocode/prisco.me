@@ -39,6 +39,7 @@ export const cmsMedia = sqliteTable(
     id: id(),
     storageKey: text("storage_key").notNull(),
     filename: text("filename").notNull(),
+    name: text("name"),
     mimeType: text("mime_type").notNull(),
     sizeBytes: integer("size_bytes").notNull(),
     width: integer("width"),
