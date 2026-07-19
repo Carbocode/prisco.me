@@ -10,6 +10,7 @@ import {
   serializeCmsDocument,
 } from "../domain/cms-document";
 import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
+import { mediaIdsInDocument } from "../domain/media-associations";
 import { publicationDateParts } from "../domain/publication-date";
 import {
   createArticleSchema,
@@ -546,7 +547,9 @@ async function hydratePublicArticles<
   const mediaIds = new Set<string>();
   for (const item of items) {
     if (item.coverMediaId) mediaIds.add(item.coverMediaId);
-    collectMediaIds(parseCmsDocument(item.content).content, mediaIds);
+    for (const mediaId of mediaIdsInDocument(parseCmsDocument(item.content))) {
+      mediaIds.add(mediaId);
+    }
   }
   const mediaRows = mediaIds.size
     ? await db()
@@ -607,20 +610,6 @@ function publicAuthor(author: { id: string; name: string; username: string | nul
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, ""),
   };
-}
-
-function collectMediaIds(nodes: Array<Record<string, unknown>> | undefined, ids: Set<string>) {
-  for (const node of nodes ?? []) {
-    if (node.type === "mediaImage" && typeof node.mediaId === "string") ids.add(node.mediaId);
-    if (node.type === "mediaImage" && node.attrs && typeof node.attrs === "object") {
-      const mediaId = (node.attrs as Record<string, unknown>).mediaId; // oxlint-disable-line typescript/no-unsafe-type-assertion
-      if (typeof mediaId === "string") ids.add(mediaId);
-    }
-    if (Array.isArray(node.content))
-      collectMediaIds(node.content as Array<Record<string, unknown>>, ids); // oxlint-disable-line typescript/no-unsafe-type-assertion
-    if (Array.isArray(node.children))
-      collectMediaIds(node.children as Array<Record<string, unknown>>, ids); // oxlint-disable-line typescript/no-unsafe-type-assertion
-  }
 }
 
 function encodeCursor(publishedAt: Date, id: string) {

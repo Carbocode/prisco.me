@@ -13,32 +13,17 @@ import Sky from "@/components/sky";
 import Star from "@/components/star";
 import SubsoilDecor from "@/components/subsoil-decor";
 import { SkillChip, TechIcon } from "@/components/tech-icon";
+import { pageHead } from "@/lib/page-head";
 import type { Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Vincenzo Prisco | Software Engineer" },
-      {
-        name: "description",
-        content: "Spazio personale di Vincenzo Prisco.",
-      },
-      { property: "og:title", content: "Vincenzo Prisco | Software Engineer" },
-      {
-        property: "og:description",
-        content: "Spazio personale di Vincenzo Prisco.",
-      },
-      { property: "og:url", content: "https://prisco.me/" },
-      { name: "twitter:url", content: "https://prisco.me/" },
-      { name: "twitter:title", content: "Vincenzo Prisco | Software Engineer" },
-      {
-        name: "twitter:description",
-        content: "Spazio personale di Vincenzo Prisco.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://prisco.me/" }],
-  }),
+  head: () =>
+    pageHead({
+      title: "Vincenzo Prisco | Software Engineer",
+      description: "Spazio personale di Vincenzo Prisco.",
+      path: "/",
+    }),
   loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: HomePage,
 });

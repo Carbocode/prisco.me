@@ -1,30 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { ActionLink, PageShell, Section } from "@/components/page-shell";
+import { pageHead } from "@/lib/page-head";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy | Prisco.me" },
-      {
-        name: "description",
-        content: "Informativa completa sul trattamento dei dati personali.",
-      },
-      { property: "og:title", content: "Privacy | Prisco.me" },
-      {
-        property: "og:description",
-        content: "Spazio personale di Vincenzo Prisco.",
-      },
-      { property: "og:url", content: "https://prisco.me/privacy" },
-      { name: "twitter:url", content: "https://prisco.me/privacy" },
-      { name: "twitter:title", content: "Privacy | Prisco.me" },
-      {
-        name: "twitter:description",
-        content: "Spazio personale di Vincenzo Prisco.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://prisco.me/privacy" }],
-  }),
+  head: () =>
+    pageHead({
+      title: "Privacy | Prisco.me",
+      description: "Informativa completa sul trattamento dei dati personali.",
+      socialDescription: "Spazio personale di Vincenzo Prisco.",
+      path: "/privacy",
+    }),
   component: PrivacyPage,
 });
 

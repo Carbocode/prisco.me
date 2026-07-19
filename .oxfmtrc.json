@@ -6,6 +6,7 @@
   "endOfLine": "lf",
   "sortImports": true,
   "ignorePatterns": [
+    ".agents",
     "src/routeTree.gen.ts",
     "src/styles.css",
     "worker-configuration.d.ts",

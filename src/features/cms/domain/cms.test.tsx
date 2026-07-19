@@ -242,6 +242,6 @@ describe("CMS domain", () => {
     expect(html).toContain('type="checkbox"');
     expect(html).toContain('class="cms-content-table"');
     expect(html).toContain('<th scope="col">');
-    expect(plateHtml).toContain('<details open="">');
+    expect(plateHtml).toContain('<details open="" class="cms-toggle">');
   });
 });

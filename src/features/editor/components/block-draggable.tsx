@@ -59,7 +59,7 @@ export const BlockDraggable: RenderNodeWrapper = (props) => {
     return false;
   }, [editor, element, path]);
 
-  if (!enabled) return;
+  if (!enabled) return undefined;
 
   return (draggableProps) => <Draggable {...draggableProps} />;
 };
