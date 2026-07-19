@@ -7,9 +7,14 @@ import { PlateElement } from "platejs/react";
 
 import { Button } from "@/components/ui/button";
 
+function requireToggleId(value: unknown) {
+  if (typeof value !== "string") throw new Error("Toggle elements require a string ID");
+  return value;
+}
+
 export function ToggleElement(props: PlateElementProps) {
   const element = props.element;
-  const state = useToggleButtonState(element.id as string);
+  const state = useToggleButtonState(requireToggleId(element.id));
   const { buttonProps, open } = useToggleButton(state);
 
   return (

@@ -34,7 +34,7 @@ function createDebouncedCodeDrawingRenderer(
 ) {
   let lastRequestId = 0;
 
-  return debounce(async (code: string | undefined, drawingType: string | undefined) => {
+  return debounce(async (code: string | undefined, drawingType: CodeDrawingType | undefined) => {
     lastRequestId += 1;
     const requestId = lastRequestId;
 
@@ -49,7 +49,7 @@ function createDebouncedCodeDrawingRenderer(
     setError(null);
 
     try {
-      const imageData = await renderCodeDrawing(drawingType as CodeDrawingType, code);
+      const imageData = await renderCodeDrawing(drawingType, code);
       if (lastRequestId === requestId) {
         setImage(imageData);
         setError(null);
@@ -78,7 +78,7 @@ function useCodeDrawingElement({ element }: { element: TCodeDrawingElement }) {
   );
 
   React.useEffect(() => {
-    debouncedRender(element.data?.code, element.data?.drawingType);
+    void debouncedRender(element.data?.code, element.data?.drawingType);
     return () => {
       debouncedRender.cancel();
     };
@@ -115,8 +115,8 @@ export function CodeDrawingElement(props: PlateElementProps<TCodeDrawingElement>
   );
 
   const code = element.data?.code ?? "";
-  const drawingType = (element.data?.drawingType ?? "Mermaid") as CodeDrawingType;
-  const drawingMode = (element.data?.drawingMode ?? "Both") as ViewMode;
+  const drawingType = element.data?.drawingType ?? "Mermaid";
+  const drawingMode = element.data?.drawingMode ?? "Both";
 
   return (
     <PlateElement {...props}>

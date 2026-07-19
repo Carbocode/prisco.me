@@ -239,6 +239,7 @@ export function CodeLineElement(props: PlateElementProps) {
 }
 
 export function CodeSyntaxLeaf(props: PlateLeafProps<TCodeSyntaxLeaf>) {
-  const tokenClassName = props.leaf.className as string;
+  const tokenClassName =
+    typeof props.leaf.className === "string" ? props.leaf.className : undefined;
   return <PlateLeaf className={tokenClassName} {...props} />;
 }

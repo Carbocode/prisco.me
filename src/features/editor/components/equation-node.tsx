@@ -177,8 +177,8 @@ const EquationPopoverContent = ({
 
     if (isInline) {
       editor.tf.select(element, { focus: true, next: true });
-    } else {
-      editor.getApi(BlockSelectionPlugin).blockSelection.set(element.id as string);
+    } else if (typeof element.id === "string") {
+      editor.getApi(BlockSelectionPlugin).blockSelection.set(element.id);
     }
   };
 

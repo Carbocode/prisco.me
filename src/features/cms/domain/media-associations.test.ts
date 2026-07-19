@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import type { CmsDocument } from "./cms-document";
-import { countMediaInDocument, removeMediaFromDocument } from "./media-associations";
+import {
+  countMediaInDocument,
+  mediaIdsInDocument,
+  removeMediaFromDocument,
+} from "./media-associations";
 
 const document: CmsDocument = {
   type: "doc",
@@ -32,6 +36,10 @@ describe("media associations", () => {
     expect(countMediaInDocument(document, "media-a")).toBe(2);
     expect(countMediaInDocument(document, "media-b")).toBe(1);
     expect(countMediaInDocument(document, "missing")).toBe(0);
+  });
+
+  it("collects unique media IDs from every supported nesting shape", () => {
+    expect([...mediaIdsInDocument(document)]).toEqual(["media-a", "media-b"]);
   });
 
   it("removes matching media nodes while preserving the rest of the document", () => {

@@ -71,13 +71,13 @@ export function EmojiPopover({
   setIsOpen,
 }: {
   children: React.ReactNode;
-  control: React.ReactNode;
+  control: React.ReactElement;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }) {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger render={control as React.ReactElement} />
+      <PopoverTrigger render={control} />
       <PopoverContent
         align="start"
         className="w-auto border-0 bg-transparent p-0 shadow-none ring-0"
@@ -215,7 +215,7 @@ const RowOfButtons = React.memo(function RowOfButtons({
 function EmojiPickerContent({
   emojiLibrary,
   i18n,
-  isSearching = false,
+  isSearching,
   refs,
   searchResult,
   settings = EmojiSettings,
@@ -424,9 +424,9 @@ function PickAnEmoji({ i18n }: Pick<UseEmojiPickerType, "i18n">) {
 
 function EmojiPickerPreview({
   emoji,
-  hasFound = true,
+  hasFound,
   i18n,
-  isSearching = false,
+  isSearching,
   ...props
 }: Pick<UseEmojiPickerType, "emoji" | "hasFound" | "i18n" | "isSearching">) {
   const showPickEmoji = !emoji && (!isSearching || hasFound);

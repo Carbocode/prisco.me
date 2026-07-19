@@ -7,32 +7,17 @@ import { PageShell } from "@/components/page-shell";
 import Star from "@/components/star";
 import { SkillChip } from "@/components/tech-icon";
 import { Button } from "@/components/ui/button";
+import { pageHead } from "@/lib/page-head";
 import type { Experience, Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/career")({
-  head: () => ({
-    meta: [
-      { title: "Carriera | Vincenzo Prisco" },
-      {
-        name: "description",
-        content: "Il percorso formativo e professionale di Vincenzo Prisco",
-      },
-      { property: "og:title", content: "Carriera | Vincenzo Prisco" },
-      {
-        property: "og:description",
-        content: "Il percorso formativo e professionale di Vincenzo Prisco",
-      },
-      { property: "og:url", content: "https://prisco.me/career" },
-      { name: "twitter:url", content: "https://prisco.me/career" },
-      { name: "twitter:title", content: "Carriera | Vincenzo Prisco" },
-      {
-        name: "twitter:description",
-        content: "Il percorso formativo e professionale di Vincenzo Prisco",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://prisco.me/career" }],
-  }),
+  head: () =>
+    pageHead({
+      title: "Carriera | Vincenzo Prisco",
+      description: "Il percorso formativo e professionale di Vincenzo Prisco",
+      path: "/career",
+    }),
   loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: AboutPage,
 });

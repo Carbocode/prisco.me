@@ -7,29 +7,21 @@ import Star from "@/components/star";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { pageHead } from "@/lib/page-head";
+import { SITE, siteUrl } from "@/lib/site";
 
 const contactPageDescription =
   "Racconta a Vincenzo Prisco cosa stai costruendo: prodotto, collaborazione tecnica o nuova opportunità.";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
-    meta: [
-      { title: "Contatti | Vincenzo Prisco" },
-      { name: "description", content: contactPageDescription },
-      { property: "og:title", content: "Contatti | Vincenzo Prisco" },
-      {
-        property: "og:description",
-        content: "Parliamo del tuo prossimo prodotto, di una sfida tecnica o di una nuova idea.",
-      },
-      { property: "og:url", content: "https://prisco.me/contact" },
-      { name: "twitter:url", content: "https://prisco.me/contact" },
-      { name: "twitter:title", content: "Contatti | Vincenzo Prisco" },
-      {
-        name: "twitter:description",
-        content: "Parliamo del tuo prossimo prodotto, di una sfida tecnica o di una nuova idea.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://prisco.me/contact" }],
+    ...pageHead({
+      title: "Contatti | Vincenzo Prisco",
+      description: contactPageDescription,
+      socialDescription:
+        "Parliamo del tuo prossimo prodotto, di una sfida tecnica o di una nuova idea.",
+      path: "/contact",
+    }),
     scripts: [
       {
         type: "application/ld+json",
@@ -38,10 +30,10 @@ export const Route = createFileRoute("/contact")({
           "@type": "ContactPage",
           name: "Contatti | Vincenzo Prisco",
           description: contactPageDescription,
-          url: "https://prisco.me/contact",
-          inLanguage: "it-IT",
-          mainEntity: { "@id": "https://prisco.me/#person" },
-          isPartOf: { "@id": "https://prisco.me/#website" },
+          url: siteUrl("/contact"),
+          inLanguage: SITE.language,
+          mainEntity: { "@id": SITE.personId },
+          isPartOf: { "@id": SITE.websiteId },
         }),
       },
     ],

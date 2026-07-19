@@ -3,32 +3,18 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ActionLink, PageShell, Section } from "@/components/page-shell";
 import { TechIcon } from "@/components/tech-icon";
+import { pageHead } from "@/lib/page-head";
 import type { Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "Informazioni sul sito | Prisco.me" },
-      {
-        name: "description",
-        content: "Tecnologie, strumenti e repository del sito personale di Vincenzo Prisco.",
-      },
-      { property: "og:title", content: "Informazioni sul sito | Prisco.me" },
-      {
-        property: "og:description",
-        content: "Scopri come è costruito Prisco.me",
-      },
-      { property: "og:url", content: "https://prisco.me/about" },
-      { name: "twitter:url", content: "https://prisco.me/about" },
-      { name: "twitter:title", content: "Informazioni sul sito | Prisco.me" },
-      {
-        name: "twitter:description",
-        content: "Scopri come è costruito Prisco.me",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://prisco.me/about" }],
-  }),
+  head: () =>
+    pageHead({
+      title: "Informazioni sul sito | Prisco.me",
+      description: "Tecnologie, strumenti e repository del sito personale di Vincenzo Prisco.",
+      socialDescription: "Scopri come è costruito Prisco.me",
+      path: "/about",
+    }),
   loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: SiteInformationPage,
 });

@@ -220,10 +220,9 @@ function children(
       );
     case "toggle":
       return (
-        <div key={key} className="cms-toggle" style={blockStyle(node)}>
-          <span className="cms-toggle__marker" aria-hidden="true" />
-          <div className="cms-toggle__title">{nested}</div>
-        </div>
+        <details key={key} open className="cms-toggle" style={blockStyle(node)}>
+          <summary className="cms-toggle__title">{nested}</summary>
+        </details>
       );
     case "tr":
       return <tr key={key}>{nested}</tr>;
@@ -390,15 +389,14 @@ function children(
       );
     }
     case "code_drawing": {
-      const data =
-        node.data && typeof node.data === "object" ? (node.data as Record<string, unknown>) : {};
-      const drawingCode = typeof data.code === "string" ? data.code : "";
+      const data = node.data && typeof node.data === "object" ? node.data : undefined;
+      const drawingCode = stringAttr(data && Reflect.get(data, "code")) ?? "";
       if (!drawingCode) return null;
       return (
         <pre
           key={key}
           className="cms-code-drawing"
-          data-drawing-type={stringAttr(data.drawingType)}
+          data-drawing-type={stringAttr(data && Reflect.get(data, "drawingType"))}
         >
           <code>{drawingCode}</code>
         </pre>
