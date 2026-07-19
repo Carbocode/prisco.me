@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { LockKeyhole } from "lucide-react";
 import type { PropsWithChildren, ReactNode } from "react";
 
 import Header from "@/components/header";
@@ -79,7 +80,7 @@ function PageHeading({
 export function SiteFooter() {
   return (
     <footer className="border-t border-white/10 bg-black px-6 py-12 text-sm text-slate-400">
-      <div className="mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
+      <div className="mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
         <div className="max-w-sm">
           <p className="display-font text-lg font-semibold text-white">Vincenzo Prisco</p>
           <p className="mt-3 leading-6">
@@ -116,16 +117,17 @@ export function SiteFooter() {
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
             Informazioni
           </p>
-          <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Informazioni legali">
+          <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Informazioni">
             <Button variant="link" render={<Link to="/about" />}>
               Informazioni sul sito
             </Button>
-            <Button variant="link" render={<Link to="/privacy" />}>
-              Privacy
-            </Button>
-            <Button variant="link" render={<Link to="/cookie" />}>
-              Cookie
-            </Button>
+          </nav>
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+            Social links
+          </p>
+          <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Social links">
             <Button
               variant="link"
               render={
@@ -141,6 +143,23 @@ export function SiteFooter() {
             </Button>
           </nav>
         </div>
+      </div>
+      <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col gap-4 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+          Privacy e accesso
+        </p>
+        <nav className="flex flex-wrap items-center gap-3" aria-label="Privacy e accesso">
+          <Button variant="link" render={<Link to="/privacy" />}>
+            Privacy
+          </Button>
+          <Button variant="link" render={<Link to="/cookie" />}>
+            Cookie
+          </Button>
+          <Button variant="outline" nativeButton={false} render={<Link to="/dashboard" />}>
+            <LockKeyhole data-icon="inline-start" />
+            Admin dashboard
+          </Button>
+        </nav>
       </div>
       <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col gap-2 border-t border-white/10 pt-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
         <p>© {new Date().getFullYear()} Vincenzo Prisco. Tutti i diritti riservati.</p>
