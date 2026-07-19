@@ -9,6 +9,7 @@
 
 body {
   @apply m-0;
+  position: relative;
   font-family:
     'Plus Jakarta Sans', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
     'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
