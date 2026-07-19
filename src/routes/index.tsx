@@ -12,9 +12,9 @@ import Sky from "@/components/sky";
 import Star from "@/components/star";
 import SubsoilDecor from "@/components/subsoil-decor";
 import { SkillChip, TechIcon } from "@/components/tech-icon";
-import { pageHead } from "@/lib/page-head";
 import { listPublishedArticlesFn } from "@/features/cms/server/public.functions";
 import { ArticleCard } from "@/features/content/content-components";
+import { pageHead } from "@/lib/page-head";
 import type { Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
@@ -25,7 +25,13 @@ export const Route = createFileRoute("/")({
       description: "Spazio personale di Vincenzo Prisco.",
       path: "/",
     }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
+  loader: async ({ context }) => {
+    const [, articles] = await Promise.all([
+      context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
+      listPublishedArticlesFn({ data: { limit: 2, categorySlug: "progetti" } }),
+    ]);
+    return { articles };
+  },
   component: HomePage,
 });
 
