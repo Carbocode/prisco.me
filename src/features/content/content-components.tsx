@@ -359,7 +359,7 @@ export function ContentArchivePage({
           <>
             <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {visibleArticles.map((article) => (
-                <Card key={article.id} className="relative h-full overflow-visible pt-0">
+                <Card key={article.id} className="relative h-full min-w-0 pt-0">
                   <ArticleCover article={article} variant="card" />
                   {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
                   <CardHeader>
@@ -464,7 +464,7 @@ function ArchiveHero({
   return (
     <>
       <section className="bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28">
-        <div className="mx-auto grid w-full max-w-[96rem] gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
+        <div className="mx-auto grid w-full min-w-0 max-w-[96rem] gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
           <div className="flex flex-col items-start justify-center gap-5 py-6 lg:py-12">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-300">
               {eyebrow}
@@ -476,7 +476,7 @@ function ArchiveHero({
               {description}
             </p>
           </div>
-          <div className="relative aspect-[4/3] min-h-[22rem] overflow-hidden bg-slate-900 sm:aspect-video sm:min-h-0">
+          <div className="relative aspect-[4/3] min-h-[22rem] min-w-0 max-w-full overflow-hidden bg-slate-900 sm:aspect-video sm:min-h-0">
             {hero ? (
               <HoverAnimatedImage
                 src={hero.url}
@@ -619,7 +619,7 @@ export function ArticlePageContent({
 
 function ArticleCover({ article, variant }: { article: PublicArticle; variant: "card" | "hero" }) {
   const frameClass = cn(
-    "relative isolate w-full overflow-hidden bg-slate-900",
+    "relative isolate w-full min-w-0 max-w-full overflow-hidden bg-slate-900",
     variant === "card"
       ? "aspect-video border-b border-white/10"
       : "aspect-[4/3] min-h-[22rem] sm:aspect-video sm:min-h-0",
@@ -680,7 +680,7 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
 function CardEdgeTag({ tag }: { tag: PublicArticle["tags"][number] }) {
   return (
     <Badge
-      className="absolute top-6 -right-5 size-10 shadow-lg"
+      className="absolute top-3 right-3 size-10 shadow-lg"
       aria-label={tag.name}
       title={tag.name}
     >
