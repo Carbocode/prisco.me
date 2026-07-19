@@ -143,6 +143,43 @@ export function articleRepository(db: CmsDb) {
         .orderBy(desc(cmsArticles.publishedAt), desc(cmsArticles.id))
         .limit(limit);
     },
+    listPublicByCategory(categorySlug: string, limit = 20) {
+      return db
+        .select({
+          id: cmsArticles.id,
+          title: cmsArticles.title,
+          slug: cmsArticles.slug,
+          excerpt: cmsArticles.excerpt,
+          content: cmsArticles.content,
+          publishedAt: cmsArticles.publishedAt,
+          updatedAt: cmsArticles.updatedAt,
+          seoTitle: cmsArticles.seoTitle,
+          seoDescription: cmsArticles.seoDescription,
+          canonicalUrl: cmsArticles.canonicalUrl,
+          noIndex: cmsArticles.noIndex,
+          coverMediaId: cmsArticles.coverMediaId,
+          authorId: cmsArticles.authorId,
+          organizationId: cmsArticles.organizationId,
+          projectRole: cmsArticles.projectRole,
+          projectPeriod: cmsArticles.projectPeriod,
+          projectFeatured: cmsArticles.projectFeatured,
+          projectSortOrder: cmsArticles.projectSortOrder,
+        })
+        .from(cmsArticles)
+        .innerJoin(cmsArticleCategories, eq(cmsArticleCategories.articleId, cmsArticles.id))
+        .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
+        .where(
+          and(
+            eq(cmsCategories.slug, categorySlug),
+            isNull(cmsCategories.deletedAt),
+            isNull(cmsArticles.deletedAt),
+            inArray(cmsArticles.status, ["published", "scheduled"]),
+            lte(cmsArticles.publishedAt, new Date()),
+          ),
+        )
+        .orderBy(desc(cmsArticles.publishedAt), desc(cmsArticles.id))
+        .limit(limit);
+    },
     listPublicArchive() {
       return db
         .select({

@@ -432,8 +432,12 @@ export async function restoreArticleRevision(input: {
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
   return articleRepository(database).byId(current.id);
 }
-export async function listPublishedArticles(limit?: number) {
-  const items = await articleRepository(db()).listPublic(Math.min(limit ?? 20, 50));
+export async function listPublishedArticles(limit?: number, categorySlug?: string) {
+  const safeLimit = Math.min(limit ?? 20, 50);
+  const repository = articleRepository(db());
+  const items = categorySlug
+    ? await repository.listPublicByCategory(categorySlug, safeLimit)
+    : await repository.listPublic(safeLimit);
   return hydratePublicArticles(items);
 }
 export async function listPublishedArticlesPage(limit = 20, cursor?: string) {
