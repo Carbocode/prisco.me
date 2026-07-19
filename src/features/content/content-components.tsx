@@ -359,40 +359,7 @@ export function ContentArchivePage({
           <>
             <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {visibleArticles.map((article) => (
-                <Card key={article.id} className="relative h-full min-w-0 pt-0">
-                  <ArticleCover article={article} variant="card" />
-                  {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
-                  <CardHeader>
-                    <CardTitle>{article.title}</CardTitle>
-                    <CardDescription>{articleMetadata(article)}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-4">
-                    {article.tags.length ? (
-                      <div className="flex flex-wrap gap-2">
-                        {article.tags.slice(0, 5).map((item) => (
-                          <Badge key={item.slug} className={item.color}>
-                            <SkillGlyph skill={item} size={12} />
-                            {item.name}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : null}
-                    {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
-                  </CardContent>
-                  <CardFooter className="mt-auto">
-                    <Button
-                      variant="outline"
-                      render={
-                        <a
-                          href={`/${archiveSlug}/${article.slug}`}
-                          aria-label={`Scopri ${article.title}`}
-                        />
-                      }
-                    >
-                      Scopri il contenuto
-                    </Button>
-                  </CardFooter>
-                </Card>
+                <ArticleCard key={article.id} article={article} archiveSlug={archiveSlug} />
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
@@ -447,6 +414,48 @@ export function ContentArchivePage({
         )}
       </Section>
     </PageShell>
+  );
+}
+
+export function ArticleCard({
+  article,
+  archiveSlug,
+}: {
+  article: PublicArticle;
+  archiveSlug: string;
+}) {
+  return (
+    <Card className="relative h-full min-w-0 pt-0">
+      <ArticleCover article={article} variant="card" />
+      {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
+      <CardHeader>
+        <CardTitle>{article.title}</CardTitle>
+        <CardDescription>{articleMetadata(article)}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {article.tags.length ? (
+          <div className="flex flex-wrap gap-2">
+            {article.tags.slice(0, 5).map((item) => (
+              <Badge key={item.slug} className={item.color}>
+                <SkillGlyph skill={item} size={12} />
+                {item.name}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+        {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
+      </CardContent>
+      <CardFooter className="mt-auto">
+        <Button
+          variant="outline"
+          render={
+            <a href={`/${archiveSlug}/${article.slug}`} aria-label={`Scopri ${article.title}`} />
+          }
+        >
+          Scopri il contenuto
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 

@@ -7,13 +7,14 @@ import Header from "@/components/header";
 import Jupiter from "@/components/jupiter";
 import Moon from "@/components/moon";
 import { ActionLink, Section, SiteFooter } from "@/components/page-shell";
-import { ProjectCard } from "@/components/project-card";
 import { SkillsMarquee } from "@/components/skills-marquee";
 import Sky from "@/components/sky";
 import Star from "@/components/star";
 import SubsoilDecor from "@/components/subsoil-decor";
 import { SkillChip, TechIcon } from "@/components/tech-icon";
 import { pageHead } from "@/lib/page-head";
+import { listPublishedArticlesFn } from "@/features/cms/server/public.functions";
+import { ArticleCard } from "@/features/content/content-components";
 import type { Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
@@ -30,9 +31,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { data: portfolio } = useSuspenseQuery(getPortfolioQueryOptions());
-  const otherProjects = portfolio.projects.filter((project) =>
-    ["swiftui", "myvet-diet"].includes(project.slug),
-  );
+  const { articles } = Route.useLoaderData();
   const myvetSkills = portfolio.skills.filter((skill) =>
     ["Ionic", "Capacitor", "Angular", "Cloudflare", "PostHog"].includes(skill.name),
   );
@@ -165,8 +164,12 @@ function HomePage() {
               description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
             />
             <div className="mt-8 grid gap-5 md:grid-cols-2">
-              {otherProjects.map((project) => (
-                <ProjectCard key={project.slug} project={project} compact />
+              {articles.map((article) => (
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  archiveSlug={article.categories[0]?.slug ?? "progetti"}
+                />
               ))}
             </div>
           </Section>

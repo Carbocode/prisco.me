@@ -9,8 +9,13 @@ import { cmsCategories, cmsMedia, cmsRedirects } from "@/db/schema";
 import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
 import { getPublishedArticleBySlug, listPublishedArticles } from "./article.service";
 export const listPublishedArticlesFn = createServerFn({ method: "GET" })
-  .validator(z.object({ limit: z.number().min(1).max(50).default(20) }))
-  .handler(({ data }) => listPublishedArticles(data.limit));
+  .validator(
+    z.object({
+      limit: z.number().min(1).max(50).default(20),
+      categorySlug: z.string().min(1).max(180).optional(),
+    }),
+  )
+  .handler(({ data }) => listPublishedArticles(data.limit, data.categorySlug));
 export const getPublishedArticleFn = createServerFn({ method: "GET" })
   .validator(z.object({ slug: z.string().min(1).max(180) }))
   .handler(({ data }) => getPublishedArticleBySlug(data.slug));
