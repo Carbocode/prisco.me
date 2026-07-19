@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ChevronLeft, ChevronRight, House } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, House, SlidersHorizontal } from "lucide-react";
 import { Fragment } from "react";
 
 import { HoverAnimatedImage } from "@/components/hover-animated-image";
@@ -23,6 +23,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -183,10 +193,114 @@ export function ContentArchivePage({
     organization !== "all" ||
     author !== "all" ||
     year !== "all";
+  const activeFilterCount = [
+    Boolean(query.trim()),
+    tag !== "all",
+    organization !== "all",
+    author !== "all",
+    year !== "all",
+  ].filter(Boolean).length;
   const pageSize = 9;
   const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, pages);
   const visibleArticles = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
+
+  const renderFilterFields = (idSuffix: "mobile" | "desktop", includeReset: boolean) => (
+    <FieldGroup className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <Field>
+        <FieldLabel htmlFor={`content-search-${idSuffix}`}>Cerca</FieldLabel>
+        <Input
+          id={`content-search-${idSuffix}`}
+          value={query}
+          onChange={(event) => onQueryChange(event.target.value)}
+          placeholder="Titolo o descrizione"
+        />
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`content-tag-${idSuffix}`}>Tag</FieldLabel>
+        <Select value={tag} onValueChange={(value) => onTagChange(value ?? "all")}>
+          <SelectTrigger id={`content-tag-${idSuffix}`} className="w-full">
+            <SelectValue placeholder="Tutti i tag" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="all">Tutti</SelectItem>
+              {tags.map((item) => (
+                <SelectItem key={item.slug} value={item.slug}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`content-organization-${idSuffix}`}>Organizzazione</FieldLabel>
+        <Select
+          value={organization}
+          onValueChange={(value) => onOrganizationChange(value ?? "all")}
+        >
+          <SelectTrigger id={`content-organization-${idSuffix}`} className="w-full">
+            <SelectValue placeholder="Tutte" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="all">Tutte</SelectItem>
+              {organizations.map((item) => (
+                <SelectItem key={item.slug} value={item.slug}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`content-author-${idSuffix}`}>Autore</FieldLabel>
+        <Select value={author} onValueChange={(value) => onAuthorChange(value ?? "all")}>
+          <SelectTrigger id={`content-author-${idSuffix}`} className="w-full">
+            <SelectValue placeholder="Tutti" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="all">Tutti</SelectItem>
+              {authors.map((item) => (
+                <SelectItem key={item.slug} value={item.slug}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
+      <Field>
+        <FieldLabel htmlFor={`content-year-${idSuffix}`}>Data</FieldLabel>
+        <Select value={year} onValueChange={(value) => onYearChange(value ?? "all")}>
+          <SelectTrigger id={`content-year-${idSuffix}`} className="w-full">
+            <SelectValue placeholder="Tutte le date" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="all">Tutte le date</SelectItem>
+              {years.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>
+      {includeReset ? (
+        <Field>
+          <FieldLabel className="sr-only">Azioni filtri</FieldLabel>
+          <Button type="button" variant="outline" onClick={onReset} disabled={!hasFilters}>
+            Azzera filtri
+          </Button>
+        </Field>
+      ) : null}
+    </FieldGroup>
+  );
 
   return (
     <PageShell title={title} description={description} hero={false}>
@@ -196,100 +310,49 @@ export function ContentArchivePage({
         items={[{ name: title, url: `/${archiveSlug}` }]}
       />
       <Section className="pt-4 sm:pt-6">
-        <FieldSet>
+        <div className="sm:hidden">
+          <Drawer showSwipeHandle>
+            <DrawerTrigger
+              render={
+                <Button type="button" variant="outline" size="lg" className="min-h-11 w-full" />
+              }
+            >
+              <SlidersHorizontal data-icon="inline-start" />
+              Filtri
+              {activeFilterCount ? (
+                <Badge variant="secondary" aria-label={`${activeFilterCount} filtri attivi`}>
+                  {activeFilterCount}
+                </Badge>
+              ) : null}
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Filtra contenuti</DrawerTitle>
+                <DrawerDescription>
+                  Scegli uno o più criteri. I risultati si aggiornano subito.
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="flex-1 overflow-y-auto p-4">
+                <FieldSet>
+                  <FieldLegend className="sr-only">Filtra contenuti</FieldLegend>
+                  {renderFilterFields("mobile", false)}
+                </FieldSet>
+              </div>
+              <DrawerFooter>
+                <Button type="button" variant="outline" onClick={onReset} disabled={!hasFilters}>
+                  Azzera filtri
+                </Button>
+                <DrawerClose render={<Button type="button" size="lg" />}>
+                  Mostra {filtered.length} {filtered.length === 1 ? "risultato" : "risultati"}
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </div>
+
+        <FieldSet className="hidden sm:block">
           <FieldLegend variant="label">Filtra contenuti</FieldLegend>
-          <FieldGroup className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <Field>
-              <FieldLabel htmlFor="content-search">Cerca</FieldLabel>
-              <Input
-                id="content-search"
-                value={query}
-                onChange={(event) => onQueryChange(event.target.value)}
-                placeholder="Titolo o descrizione"
-              />
-            </Field>
-            <Field>
-              <FieldLabel>Tag</FieldLabel>
-              <Select value={tag} onValueChange={(value) => onTagChange(value ?? "all")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tutti i tag" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">Tutti</SelectItem>
-                    {tags.map((item) => (
-                      <SelectItem key={item.slug} value={item.slug}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <FieldLabel>Organizzazione</FieldLabel>
-              <Select
-                value={organization}
-                onValueChange={(value) => onOrganizationChange(value ?? "all")}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tutte" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">Tutte</SelectItem>
-                    {organizations.map((item) => (
-                      <SelectItem key={item.slug} value={item.slug}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <FieldLabel>Autore</FieldLabel>
-              <Select value={author} onValueChange={(value) => onAuthorChange(value ?? "all")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tutti" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">Tutti</SelectItem>
-                    {authors.map((item) => (
-                      <SelectItem key={item.slug} value={item.slug}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <FieldLabel>Data</FieldLabel>
-              <Select value={year} onValueChange={(value) => onYearChange(value ?? "all")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Tutte le date" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">Tutte le date</SelectItem>
-                    {years.map((item) => (
-                      <SelectItem key={item} value={item}>
-                        {item}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <FieldLabel className="sr-only">Azioni filtri</FieldLabel>
-              <Button type="button" variant="outline" onClick={onReset} disabled={!hasFilters}>
-                Azzera filtri
-              </Button>
-            </Field>
-          </FieldGroup>
+          {renderFilterFields("desktop", true)}
         </FieldSet>
 
         {filtered.length ? (
