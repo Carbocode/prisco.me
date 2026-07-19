@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 
-import { AuthControls } from "@/components/auth-controls";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -58,10 +57,6 @@ export default function Header() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div className="ml-auto hidden w-44 items-center justify-end md:flex">
-          <AuthControls />
-        </div>
-
         <Sheet>
           <SheetTrigger render={<Button variant="outline" size="icon" className="md:hidden" />}>
             <Menu />
@@ -70,7 +65,7 @@ export default function Header() {
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Navigazione</SheetTitle>
-              <SheetDescription>Sezioni del sito e account.</SheetDescription>
+              <SheetDescription>Sezioni del sito.</SheetDescription>
             </SheetHeader>
             <nav aria-label="Navigazione mobile" className="grid gap-2 p-4">
               {links.map((item) => (
@@ -88,7 +83,6 @@ export default function Header() {
                   {item.label}
                 </Button>
               ))}
-              <AuthControls />
             </nav>
           </SheetContent>
         </Sheet>
