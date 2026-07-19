@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { KeyRound, ScanFace } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
 import { AuthPage, formString, formValues } from "@/components/auth-ui";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,7 +16,9 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
+import { getTurnstileSiteKey } from "@/server/turnstile";
 
 const searchSchema = z.object({
   mode: z.enum(["login", "register"]).catch("login"),
@@ -24,6 +27,7 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
+  loader: () => getTurnstileSiteKey(),
   head: () => ({
     meta: [{ title: "Accedi o registrati | Prisco.me" }, { name: "robots", content: "noindex" }],
   }),
@@ -32,44 +36,119 @@ export const Route = createFileRoute("/login")({
 
 function AccessPage() {
   const search = Route.useSearch();
+  const turnstileSiteKey = Route.useLoaderData();
   const navigate = useNavigate();
   const session = authClient.useSession();
   const [mode, setMode] = useState(search.mode);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileRevision, setTurnstileRevision] = useState(0);
   const callbackURL = search.callbackURL ?? "/dashboard/profile";
 
   useEffect(() => {
     if (session.data) void navigate({ href: callbackURL });
   }, [callbackURL, navigate, session.data]);
 
+  const resetTurnstile = useCallback(() => {
+    setTurnstileToken(null);
+    setTurnstileRevision((revision) => revision + 1);
+  }, []);
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setMessage("La verifica anti-bot è scaduta. Attendi la nuova verifica e riprova.");
+    resetTurnstile();
+  }, [resetTurnstile]);
+
+  const handleTurnstileError = useCallback(() => {
+    setTurnstileToken(null);
+    setMessage("Il servizio di verifica anti-bot non è disponibile. Riprova tra poco.");
+  }, []);
+
+  function captchaFetchOptions(token: string, onRetryAfter: (value: string | null) => void) {
+    return {
+      headers: { "x-captcha-response": token },
+      onError: ({ response }: { response: Response }) => {
+        onRetryAfter(response.headers.get("X-Retry-After"));
+      },
+    };
+  }
+
+  function authErrorMessage(
+    error: { status?: number; code?: string; message?: string },
+    retryAfter: string | null,
+    fallback: string,
+  ) {
+    if (error.status === 429) {
+      return retryAfter
+        ? `Troppi tentativi. Riprova tra ${retryAfter} secondi.`
+        : "Troppi tentativi. Attendi qualche istante e riprova.";
+    }
+    if (error.code === "MISSING_RESPONSE") return "Completa la verifica anti-bot.";
+    if (error.code === "VERIFICATION_FAILED" || error.status === 403)
+      return "Verifica anti-bot non valida o scaduta. Riprova.";
+    if (error.code === "UNKNOWN_ERROR" || (error.status ?? 0) >= 500)
+      return "Il servizio di verifica anti-bot non è disponibile. Riprova tra poco.";
+    return error.message ?? fallback;
+  }
+
   async function signIn(event: React.FormEvent<HTMLFormElement>) {
     const data = formValues(event);
+    if (!turnstileToken) {
+      setMessage("Completa la verifica anti-bot prima di accedere.");
+      return;
+    }
     setPending(true);
     setMessage("");
+    let retryAfter: string | null = null;
     const identifier = formString(data, "identifier");
     const password = formString(data, "password");
     const result = identifier.includes("@")
-      ? await authClient.signIn.email({ email: identifier, password, callbackURL })
-      : await authClient.signIn.username({ username: identifier, password, callbackURL });
+      ? await authClient.signIn.email({
+          email: identifier,
+          password,
+          callbackURL,
+          fetchOptions: captchaFetchOptions(turnstileToken, (value) => (retryAfter = value)),
+        })
+      : await authClient.signIn.username({
+          username: identifier,
+          password,
+          callbackURL,
+          fetchOptions: captchaFetchOptions(turnstileToken, (value) => (retryAfter = value)),
+        });
     setPending(false);
-    if (result.error) setMessage(result.error.message ?? "Accesso non riuscito.");
+    if (result.error) {
+      setMessage(authErrorMessage(result.error, retryAfter, "Accesso non riuscito."));
+      resetTurnstile();
+    }
   }
 
   async function signUp(event: React.FormEvent<HTMLFormElement>) {
     const data = formValues(event);
+    if (!turnstileToken) {
+      setMessage("Completa la verifica anti-bot prima di registrarti.");
+      return;
+    }
     setPending(true);
     setMessage("");
+    let retryAfter: string | null = null;
     const result = await authClient.signUp.email({
       name: formString(data, "name"),
       username: formString(data, "username"),
       email: formString(data, "email"),
       password: formString(data, "password"),
       callbackURL,
+      fetchOptions: captchaFetchOptions(turnstileToken, (value) => (retryAfter = value)),
     });
     setPending(false);
-    if (result.error) setMessage(result.error.message ?? "Registrazione non riuscita.");
-    else void navigate({ href: callbackURL });
+    if (result.error) {
+      setMessage(authErrorMessage(result.error, retryAfter, "Registrazione non riuscita."));
+      resetTurnstile();
+    } else void navigate({ href: callbackURL });
   }
 
   async function passkeySignIn() {
@@ -110,14 +189,31 @@ function AccessPage() {
                     required
                   />
                 </Field>
-                <Button disabled={pending} type="submit">
-                  <KeyRound size={17} className="mr-2" />
-                  Accedi
+                <Field>
+                  <TurnstileWidget
+                    key={`login-${turnstileRevision}`}
+                    siteKey={turnstileSiteKey}
+                    onVerify={handleTurnstileVerify}
+                    onExpire={handleTurnstileExpire}
+                    onError={handleTurnstileError}
+                  />
+                  <FieldDescription>
+                    La verifica protegge l’account dai tentativi di accesso automatici.
+                  </FieldDescription>
+                </Field>
+                <Button disabled={pending || !turnstileToken} type="submit">
+                  {pending ? (
+                    <Spinner data-icon="inline-start" />
+                  ) : (
+                    <KeyRound data-icon="inline-start" />
+                  )}
+                  {pending ? "Accesso…" : "Accedi"}
                 </Button>
                 <p>
                   Non hai ancora un account?{" "}
                   <Button
                     variant="link"
+                    nativeButton={false}
                     render={
                       <Link
                         to="/login"
@@ -125,6 +221,7 @@ function AccessPage() {
                         onClick={() => {
                           setMode("register");
                           setMessage("");
+                          resetTurnstile();
                         }}
                       />
                     }
@@ -139,7 +236,7 @@ function AccessPage() {
                   onClick={() => void passkeySignIn()}
                   variant="outline"
                 >
-                  <ScanFace size={17} className="mr-2" />
+                  <ScanFace data-icon="inline-start" />
                   Accedi con passkey
                 </Button>
               </FieldGroup>
@@ -184,13 +281,27 @@ function AccessPage() {
                     Almeno 8 caratteri. Il ruolo iniziale è sempre Utente.
                   </FieldDescription>
                 </Field>
-                <Button disabled={pending} type="submit">
-                  Crea account
+                <Field>
+                  <TurnstileWidget
+                    key={`register-${turnstileRevision}`}
+                    siteKey={turnstileSiteKey}
+                    onVerify={handleTurnstileVerify}
+                    onExpire={handleTurnstileExpire}
+                    onError={handleTurnstileError}
+                  />
+                  <FieldDescription>
+                    La verifica protegge la registrazione dagli account automatici.
+                  </FieldDescription>
+                </Field>
+                <Button disabled={pending || !turnstileToken} type="submit">
+                  {pending && <Spinner data-icon="inline-start" />}
+                  {pending ? "Creazione…" : "Crea account"}
                 </Button>
                 <p>
                   Hai già un account?{" "}
                   <Button
                     variant="link"
+                    nativeButton={false}
                     render={
                       <Link
                         to="/login"
@@ -198,6 +309,7 @@ function AccessPage() {
                         onClick={() => {
                           setMode("login");
                           setMessage("");
+                          resetTurnstile();
                         }}
                       />
                     }

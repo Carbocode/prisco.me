@@ -7,6 +7,7 @@ interface __BaseEnv_Env {
 	CF_VERSION_METADATA: WorkerVersionMetadata;
 	SENTRY_DNS: "https://1b376c7d10b15705ff1a40c2f8f140cb@o4510675457540096.ingest.de.sentry.io/4510702232862800";
 	MEDIA_PUBLIC_URL: "https://media.prisco.me";
+	TURNSTILE_SITE_KEY: "0x4AAAAAACM4BBOgqLsfgNUy";
 	VITE_MODE: string;
 	SENTRY_AUTH_TOKEN: string;
 	VITE_PUBLIC_POSTHOG_KEY: string;
@@ -24,7 +25,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "SENTRY_DNS" | "MEDIA_PUBLIC_URL" | "VITE_MODE" | "SENTRY_AUTH_TOKEN" | "VITE_PUBLIC_POSTHOG_KEY" | "VITE_PUBLIC_POSTHOG_HOST" | "SENTRY_LOG_LEVEL" | "VITE_CF_TS_KEY" | "CF_TS_KEY" | "BETTER_AUTH_SECRET">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "SENTRY_DNS" | "MEDIA_PUBLIC_URL" | "TURNSTILE_SITE_KEY" | "VITE_MODE" | "SENTRY_AUTH_TOKEN" | "VITE_PUBLIC_POSTHOG_KEY" | "VITE_PUBLIC_POSTHOG_HOST" | "SENTRY_LOG_LEVEL" | "VITE_CF_TS_KEY" | "CF_TS_KEY" | "BETTER_AUTH_SECRET">> {}
 }
 
 // Begin runtime types
