@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "setup:worktree": "bun scripts/setup-worktree.js",
     "dev": "vite",
     "dev:wrangler": "npm run build && wrangler dev --config dist/server/wrangler.json --persist-to .wrangler/state",
     "build": "vite build",
