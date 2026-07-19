@@ -4,13 +4,13 @@ import { useEffect, useState, type PropsWithChildren } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const COOKIE_CONSENT_STORAGE_KEY = "prisco-cookie-consent";
 const COOKIE_CONSENT_EVENT = "prisco-cookie-consent-change";
@@ -64,27 +64,27 @@ export function openCookiePreferences() {
 
 function CookieBanner({ onChoose }: { onChoose: (consent: CookieConsent) => void }) {
   return (
-    <Dialog open>
-      <DialogContent showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>Preferenze cookie</DialogTitle>
-          <DialogDescription>
-            Il sito usa strumenti tecnici per funzionare. PostHog, usato per analisi aggregate,
-            parte solo se scegli di accettare.
-          </DialogDescription>
-        </DialogHeader>
-        <Button variant="link" render={<Link to="/cookie" />}>
+    <Card className="fixed inset-x-4 bottom-4 z-40 sm:right-4 sm:left-auto sm:w-md" size="sm">
+      <CardHeader>
+        <CardTitle>Preferenze cookie</CardTitle>
+        <CardDescription>
+          Il sito usa strumenti tecnici per funzionare. PostHog, usato per analisi aggregate, parte
+          solo se scegli di accettare.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button nativeButton={false} variant="link" render={<Link to="/cookie" />}>
           Leggi la cookie policy
         </Button>
-        <DialogFooter>
-          <Button variant="outline" type="button" onClick={() => onChoose("rejected")}>
-            Rifiuta analisi
-          </Button>
-          <Button type="button" onClick={() => onChoose("accepted")}>
-            Accetta analisi
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+      <CardFooter className="justify-end gap-2">
+        <Button variant="outline" type="button" onClick={() => onChoose("rejected")}>
+          Rifiuta analisi
+        </Button>
+        <Button type="button" onClick={() => onChoose("accepted")}>
+          Accetta analisi
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
