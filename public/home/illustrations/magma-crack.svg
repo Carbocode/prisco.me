@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 100" fill="none">
+  <defs>
+    <linearGradient id="edge" x1="12" y1="8" x2="52" y2="96" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".88"/><stop offset=".42" stop-color="#fff9dd" stop-opacity=".72"/><stop offset="1" stop-color="#ffad45" stop-opacity=".32"/></linearGradient>
+    <filter id="glow" x="-80%" y="-30%" width="260%" height="170%"><feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#ff5a16" flood-opacity=".72"/><feDropShadow dx="-2" dy="-2" stdDeviation="3" flood-color="#fff9dd" flood-opacity=".25"/></filter>
+  </defs>
+  <path d="m30 2 8 24-14 18 16 18-12 24 6 12" stroke="#ff6f20" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity=".18" filter="url(#glow)"/>
+  <path d="m30 2 8 24-14 18 16 18-12 24 6 12" stroke="url(#edge)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

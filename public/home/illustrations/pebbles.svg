@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 52" fill="none">
+  <defs>
+    <radialGradient id="fill" cx="0" cy="0" r="1" gradientTransform="translate(26 18) rotate(48) scale(88)"><stop stop-color="#f6dec1" stop-opacity=".62"/><stop offset=".46" stop-color="#9c7353" stop-opacity=".4"/><stop offset="1" stop-color="#3d281c" stop-opacity=".72"/></radialGradient>
+    <linearGradient id="edge" x1="12" y1="8" x2="82" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".88"/><stop offset=".42" stop-color="#f6dec1" stop-opacity=".54"/><stop offset="1" stop-color="#9c7353" stop-opacity=".14"/></linearGradient>
+    <filter id="glass" x="-35%" y="-55%" width="170%" height="220%"><feDropShadow dx="-3" dy="-2" stdDeviation="4" flood-color="#f6dec1" flood-opacity=".14" result="light"/><feDropShadow in="light" dx="3" dy="6" stdDeviation="5" flood-color="#160d08" flood-opacity=".52" result="drops"/><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="alpha"/><feOffset in="alpha" dx="-4" dy="-5" result="offset"/><feComposite in="offset" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="mask"/><feFlood flood-color="#f6dec1" flood-opacity=".34" result="color"/><feComposite in="color" in2="mask" operator="in" result="inner"/><feBlend in="inner" in2="drops"/></filter>
+    <filter id="blur"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <g fill="url(#fill)" stroke="url(#edge)" stroke-width="1.2" filter="url(#glass)"><ellipse cx="24" cy="35" rx="22" ry="14"/><ellipse cx="60" cy="39" rx="16" ry="10"/><ellipse cx="82" cy="30" rx="12" ry="8"/></g>
+  <g filter="url(#blur)"><ellipse cx="18" cy="29" rx="10" ry="4" fill="#fff" opacity=".34"/><ellipse cx="78" cy="26" rx="6" ry="3.5" fill="#f6dec1" opacity=".3"/></g>
+</svg>

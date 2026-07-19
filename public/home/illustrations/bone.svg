@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60" fill="none">
+  <defs>
+    <radialGradient id="fill" cx="0" cy="0" r="1" gradientTransform="translate(26 18) rotate(48) scale(88)"><stop stop-color="#fff" stop-opacity=".62"/><stop offset=".46" stop-color="#eadcc2" stop-opacity=".4"/><stop offset="1" stop-color="#9b8769" stop-opacity=".72"/></radialGradient>
+    <linearGradient id="edge" x1="12" y1="8" x2="82" y2="58" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".88"/><stop offset=".42" stop-color="#fff" stop-opacity=".54"/><stop offset="1" stop-color="#eadcc2" stop-opacity=".14"/></linearGradient>
+    <filter id="glass" x="-35%" y="-55%" width="170%" height="220%"><feDropShadow dx="-3" dy="-2" stdDeviation="4" flood-color="#fff" flood-opacity=".14" result="light"/><feDropShadow in="light" dx="3" dy="6" stdDeviation="5" flood-color="#24170c" flood-opacity=".52" result="drops"/><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="alpha"/><feOffset in="alpha" dx="-4" dy="-5" result="offset"/><feComposite in="offset" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="mask"/><feFlood flood-color="#fff" flood-opacity=".34" result="color"/><feComposite in="color" in2="mask" operator="in" result="inner"/><feBlend in="inner" in2="drops"/></filter>
+    <filter id="blur"><feGaussianBlur stdDeviation="5"/></filter>
+    <path id="shape" d="M28 19c-5-6-14-5-15 2-7 4-5 14 4 16-1 9 10 13 16 5h34c6 8 17 4 16-5 9-2 11-12 4-16-1-7-10-8-15-2-4 0-7 4-7 8H35c0-4-3-8-7-8Z"/>
+    <clipPath id="clip"><use href="#shape"/></clipPath>
+  </defs>
+  <g transform="rotate(-18 50 30)"><use href="#shape" fill="url(#fill)" filter="url(#glass)"/><g clip-path="url(#clip)" filter="url(#blur)"><ellipse cx="30" cy="17" rx="24" ry="10" fill="#fff" opacity=".34"/><ellipse cx="72" cy="43" rx="25" ry="12" fill="#8c7255" opacity=".38"/></g><use href="#shape" fill="none" stroke="url(#edge)" stroke-width="1.2"/><path d="M35 31h30" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".22"/></g>
+</svg>
