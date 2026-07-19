@@ -92,22 +92,27 @@ function HomePage() {
           </div>
         </section>
 
-        <Moon className="absolute left-[12%] top-[10%] w-45" />
-        <Jupiter className="absolute right-[14%] top-[12%] w-42" />
-        <CloudCarousel />
-        <Star size="sm" className="absolute left-[8%] top-[12%]" />
-        <Star size="md" className="absolute left-[18%] top-[8%]" />
-        <Star size="md" className="absolute left-[30%] top-[14%]" />
-        <Star size="sm" className="absolute left-[40%] top-[6%]" />
-        <Star size="md" className="absolute left-[52%] top-[12%]" />
-        <Star size="lg" className="absolute left-[60%] top-[8%]" />
-        <Star size="sm" className="absolute right-[22%] top-[22%]" />
-        <Star size="md" className="absolute right-[30%] top-[36%]" />
-        <Star size="md" className="absolute left-[36%] top-[30%]" />
-        <Star size="sm" className="absolute left-[12%] top-[32%]" />
-        <Star size="md" className="absolute right-[12%] top-[34%]" />
-        <Star size="lg" className="absolute left-[50%] top-[44%]" />
-        <Star size="sm" className="absolute right-[8%] top-[48%]" />
+        <div
+          className="pointer-events-none absolute inset-y-0 left-1/2 z-0 w-full min-w-[48rem] -translate-x-1/2 md:inset-0 md:min-w-0 md:translate-x-0"
+          aria-hidden="true"
+        >
+          <Moon className="absolute left-[12%] top-[10%] z-10 w-45" />
+          <Jupiter className="absolute right-[14%] top-[12%] z-10 w-42" />
+          <CloudCarousel />
+          <Star size="sm" className="absolute left-[8%] top-[12%] z-0" />
+          <Star size="md" className="absolute left-[18%] top-[8%] z-0" />
+          <Star size="md" className="absolute left-[30%] top-[14%] z-0" />
+          <Star size="sm" className="absolute left-[40%] top-[6%] z-0" />
+          <Star size="md" className="absolute left-[52%] top-[12%] z-0" />
+          <Star size="lg" className="absolute left-[60%] top-[8%] z-0" />
+          <Star size="sm" className="absolute right-[22%] top-[22%] z-0" />
+          <Star size="md" className="absolute right-[30%] top-[36%] z-0" />
+          <Star size="md" className="absolute left-[36%] top-[30%] z-0" />
+          <Star size="sm" className="absolute left-[12%] top-[32%] z-0" />
+          <Star size="md" className="absolute right-[12%] top-[34%] z-0" />
+          <Star size="lg" className="absolute left-[50%] top-[44%] z-0" />
+          <Star size="sm" className="absolute right-[8%] top-[48%] z-0" />
+        </div>
       </Sky>
 
       <DesertScene className="-mt-px" skills={portfolio.skills} />

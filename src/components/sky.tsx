@@ -206,16 +206,18 @@ export default function Sky({ className, children, ...props }: SkyProps) {
 
   return (
     <div className={classes} {...props}>
-      <img
-        src="/home/small-stars.svg"
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="shooting-stars" aria-hidden="true">
-        {stars.map((item) => (
-          <ShootingStar key={item.id} item={item} isVisible={isVisible} onComplete={removeStar} />
-        ))}
+      <div className="absolute inset-y-0 left-1/2 w-full min-w-[48rem] -translate-x-1/2 md:inset-0 md:min-w-0 md:translate-x-0">
+        <img
+          src="/home/small-stars.svg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="shooting-stars" aria-hidden="true">
+          {stars.map((item) => (
+            <ShootingStar key={item.id} item={item} isVisible={isVisible} onComplete={removeStar} />
+          ))}
+        </div>
       </div>
       <div className="relative z-10 h-full">{children}</div>
     </div>

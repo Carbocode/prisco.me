@@ -105,7 +105,7 @@ export default function CloudCarousel() {
   );
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden" aria-hidden="true">
       {clouds.map((cloud) => (
         <CloudMotion
           key={cloud.instanceId}
@@ -233,7 +233,11 @@ function CloudMotion({
       }}
     >
       <motion.div style={{ x }}>
-        <Cloud variant={cloud.variant} style={{ width: cloud.width + "rem" }} />
+        <Cloud
+          variant={cloud.variant}
+          className="max-w-none"
+          style={{ width: cloud.width + "rem" }}
+        />
       </motion.div>
     </div>
   );

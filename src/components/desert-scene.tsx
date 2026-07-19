@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { SkillGlyph } from "@/components/tech-icon";
 import type { Skill } from "@/lib/projects";
@@ -22,13 +22,16 @@ const TUMBLEWEEDS = [
 ];
 
 // Nominal travel distance (the -16vw → 116vw sweep at a typical viewport) used
-// to sync rotation to horizontal motion.
+// to derive one constant pixel speed for every viewport size.
 const NOMINAL_TRAVEL_PX = 1.32 * 1440;
 
-function rollPeriod(size: number, travelSeconds: number) {
+function travelSpeed(travelSeconds: number) {
+  return NOMINAL_TRAVEL_PX / travelSeconds;
+}
+
+function rollPeriod(size: number, speed: number) {
   const circumference = Math.PI * size;
-  const rotations = NOMINAL_TRAVEL_PX / circumference;
-  return travelSeconds / rotations;
+  return circumference / speed;
 }
 
 /*
@@ -49,6 +52,8 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
   // the server and fill on mount so the random picks never trip up hydration.
   const pool = skills.filter((skill) => skill.icon);
   const [picks, setPicks] = useState<(Skill | undefined)[]>(() => TUMBLEWEEDS.map(() => undefined));
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const [sceneWidth, setSceneWidth] = useState(1440);
 
   useEffect(() => {
     if (pool.length === 0) return;
@@ -56,8 +61,20 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skills]);
 
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return undefined;
+
+    const updateWidth = () => setSceneWidth(scene.clientWidth);
+    const resizeObserver = new ResizeObserver(updateWidth);
+    updateWidth();
+    resizeObserver.observe(scene);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
   return (
-    <div className={classes} aria-hidden="true" {...props}>
+    <div ref={sceneRef} className={classes} aria-hidden="true" {...props}>
       <svg
         viewBox="0 0 1440 520"
         preserveAspectRatio="xMidYMax slice"
@@ -120,7 +137,7 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
 
       {/* tumbleweeds rolling and hopping across the dunes */}
       {TUMBLEWEEDS.map((tw, index) => (
-        <RollingTumbleweed key={index} config={tw} skill={picks[index]} />
+        <RollingTumbleweed key={index} config={tw} sceneWidth={sceneWidth} skill={picks[index]} />
       ))}
     </div>
   );
@@ -128,13 +145,17 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
 
 function RollingTumbleweed({
   config,
+  sceneWidth,
   skill,
 }: {
   config: (typeof TUMBLEWEEDS)[number];
+  sceneWidth: number;
   skill?: Skill;
 }) {
   const { size, bottom, travel, bounce, delay, reverse } = config;
-  const roll = rollPeriod(size, travel);
+  const speed = travelSpeed(travel);
+  const travelDuration = (sceneWidth * 1.32) / speed;
+  const roll = rollPeriod(size, speed);
 
   return (
     <div
@@ -143,7 +164,7 @@ function RollingTumbleweed({
         bottom: `${bottom}%`,
         width: size,
         height: size,
-        animationDuration: `${travel}s`,
+        animationDuration: `${travelDuration}s`,
         animationDelay: `${delay}s`,
       }}
     >
