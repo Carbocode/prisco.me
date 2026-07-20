@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { pageHead } from "@/lib/page-head";
 import { SITE, siteUrl } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 const contactPageDescription =
   "Racconta a Vincenzo Prisco cosa stai costruendo: prodotto, collaborazione tecnica o nuova opportunità.";
@@ -92,7 +93,7 @@ function ContactPage() {
         <ContactSky />
 
         <section className="relative z-10 border-b border-white/10 px-6 py-20 sm:py-28 lg:py-32">
-          <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+          <div className="mx-auto grid w-full max-w-6xl gap-16 xl:grid-cols-[1.15fr_0.85fr] xl:items-end">
             <div className="flex flex-col items-start gap-7">
               <Badge variant="outline">Canale aperto</Badge>
               <h1 className="display-font max-w-4xl text-5xl leading-[0.94] font-semibold tracking-[-0.055em] text-white sm:text-7xl lg:text-[5.75rem]">
@@ -128,26 +129,108 @@ function ContactPage() {
               </div>
             </div>
 
-            <div className="lg:pb-2">
-              <p className="mb-6 text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
-                Come comincia
-              </p>
-              <ol className="flex flex-col">
-                {conversationSteps.map((step, index) => (
-                  <li key={step.actor}>
-                    <div className="grid grid-cols-[5rem_1fr] gap-4 py-6">
-                      <p className="text-sm font-semibold text-sky-300">{step.actor}</p>
-                      <div className="flex flex-col gap-2">
-                        <h2 className="display-font text-xl font-semibold text-white">
-                          {step.title}
-                        </h2>
-                        <p className="text-sm leading-6 text-slate-400">{step.description}</p>
+            <div className="relative lg:mx-auto lg:w-full lg:max-w-3xl xl:mx-0 xl:max-w-none xl:pb-2 xl:pl-8">
+              <div
+                className="absolute -inset-8 hidden rounded-[3rem] border border-sky-300/10 xl:block"
+                aria-hidden="true"
+              />
+              <div
+                className="absolute -inset-2 hidden rounded-[2.5rem] border border-white/[0.06] xl:block"
+                aria-hidden="true"
+              />
+              <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-slate-950/60 p-5 shadow-[0_32px_90px_rgba(2,6,23,0.58),0_0_70px_rgba(56,189,248,0.08)] backdrop-blur-sm sm:p-7">
+                <div
+                  className="pointer-events-none absolute -right-24 -top-28 size-72 rounded-full border border-sky-300/15"
+                  aria-hidden="true"
+                />
+                <div
+                  className="pointer-events-none absolute -right-12 -top-16 size-48 rounded-full border border-white/10"
+                  aria-hidden="true"
+                />
+                <div
+                  className="pointer-events-none absolute right-12 top-8 size-2 rounded-full bg-sky-300 shadow-[0_0_24px_8px_rgba(125,211,252,0.45)]"
+                  aria-hidden="true"
+                />
+
+                <div className="relative mb-8 flex items-center gap-4">
+                  <p className="shrink-0 text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">
+                    Come comincia
+                  </p>
+                  <div className="h-px flex-1 bg-gradient-to-r from-sky-300/50 to-transparent" />
+                </div>
+
+                <ol className="relative flex flex-col gap-2">
+                  {conversationSteps.map((step, index) => (
+                    <li
+                      key={step.actor}
+                      className="relative grid grid-cols-[3.25rem_1fr] gap-4 sm:grid-cols-[4rem_1fr]"
+                    >
+                      <div className="relative flex justify-center" aria-hidden="true">
+                        {index < conversationSteps.length - 1 ? (
+                          <div className="absolute left-1/2 top-11 h-[calc(100%+0.5rem)] w-px -translate-x-1/2 bg-gradient-to-b from-sky-300/70 via-violet-300/35 to-sky-300/20" />
+                        ) : null}
+                        <div
+                          className={cn(
+                            "relative z-10 flex size-11 items-center justify-center rounded-full border font-mono text-[0.65rem] font-semibold tracking-[0.14em] sm:size-12",
+                            index === conversationSteps.length - 1
+                              ? "border-sky-100 bg-sky-300 text-slate-950 shadow-[0_0_30px_rgba(125,211,252,0.48)]"
+                              : "border-sky-300/35 bg-slate-950 text-sky-300 shadow-[inset_0_0_18px_rgba(56,189,248,0.08)]",
+                          )}
+                        >
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
                       </div>
-                    </div>
-                    {index < conversationSteps.length - 1 ? <Separator /> : null}
-                  </li>
-                ))}
-              </ol>
+
+                      <div
+                        className={cn(
+                          "relative mb-5 flex min-w-0 flex-col gap-2 overflow-hidden rounded-[1.5rem] px-5 py-5 sm:px-6",
+                          index === conversationSteps.length - 1
+                            ? "bg-sky-300 shadow-[0_18px_50px_rgba(14,165,233,0.2)]"
+                            : "border border-white/10 bg-white/[0.035]",
+                        )}
+                      >
+                        {index === conversationSteps.length - 1 ? (
+                          <span className="pointer-events-none absolute -right-2 -top-9 font-mono text-8xl font-semibold tracking-tighter text-slate-950/[0.07]">
+                            03
+                          </span>
+                        ) : null}
+                        <p
+                          className={cn(
+                            "relative text-xs font-semibold uppercase tracking-[0.24em]",
+                            index === conversationSteps.length - 1
+                              ? "text-slate-700"
+                              : "text-sky-300",
+                          )}
+                        >
+                          {step.actor}
+                        </p>
+                        <div className="relative flex flex-col gap-2">
+                          <h2
+                            className={cn(
+                              "display-font text-xl font-semibold tracking-tight sm:text-2xl",
+                              index === conversationSteps.length - 1
+                                ? "text-slate-950"
+                                : "text-white",
+                            )}
+                          >
+                            {step.title}
+                          </h2>
+                          <p
+                            className={cn(
+                              "text-sm leading-6",
+                              index === conversationSteps.length - 1
+                                ? "text-slate-800"
+                                : "text-slate-400",
+                            )}
+                          >
+                            {step.description}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
           </div>
         </section>
