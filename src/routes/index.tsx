@@ -61,7 +61,7 @@ function HomePage() {
   ].filter((card): card is { title: string; skill: Skill; items: string[] } => Boolean(card.skill));
 
   return (
-    <div className="min-h-dvh bg-slate-950 text-slate-100">
+    <div className="mx-auto min-h-dvh w-full max-w-[1728px] overflow-x-clip bg-slate-950 text-slate-100">
       <Sky className="relative h-[720px] w-full max-h-[82dvh] min-h-[620px] overflow-hidden">
         <Header />
 
@@ -105,7 +105,7 @@ function HomePage() {
         </div>
       </Sky>
 
-      <DesertScene className="-mt-px" skills={portfolio.skills} />
+      <DesertScene className="relative -mt-[min(23.125vw,400px)]" skills={portfolio.skills} />
 
       <div className="earth-cross-section relative -mt-px">
         <div className="earth-strata pointer-events-none absolute inset-0" aria-hidden="true" />

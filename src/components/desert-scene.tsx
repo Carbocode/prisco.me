@@ -16,6 +16,25 @@ const TUMBLEWEEDS = [
 
 const NOMINAL_TRAVEL_PX = 1.32 * 1440;
 
+// Ordine dal piano piu lontano a quello piu vicino.
+const MOUNTAIN_LAYERS = [
+  { src: "/home/mountain-3.svg", bottom: "57%" },
+  { src: "/home/mountain-2.svg", bottom: "52%" },
+  { src: "/home/mountain-1.svg", bottom: "46%" },
+];
+
+// I file con il numero piu alto formano i piani lontani; i numeri bassi
+// avanzano verso l'osservatore e coprono progressivamente la base del livello precedente.
+const DUNE_LAYERS = [
+  { src: "/home/dune-7.svg", bottom: "8%" },
+  { src: "/home/dune-6.svg", bottom: "6.65%" },
+  { src: "/home/dune-5.svg", bottom: "5.3%" },
+  { src: "/home/dune-4.svg", bottom: "4%" },
+  { src: "/home/dune-3.svg", bottom: "2.65%" },
+  { src: "/home/dune-2.svg", bottom: "0%" },
+  { src: "/home/dune-1.svg", bottom: "0%" },
+];
+
 function travelSpeed(travelSeconds: number) {
   return NOMINAL_TRAVEL_PX / travelSeconds;
 }
@@ -25,7 +44,7 @@ function rollPeriod(size: number, speed: number) {
 }
 
 export default function DesertScene({ className, skills = [], ...props }: DesertSceneProps) {
-  const classes = ["pointer-events-none relative w-full select-none overflow-hidden", className]
+  const classes = ["pointer-events-none relative w-full select-none", className]
     .filter(Boolean)
     .join(" ");
   const pool = skills.filter((skill) => skill.icon);
@@ -53,11 +72,29 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
 
   return (
     <div ref={sceneRef} className={classes} aria-hidden="true" {...props}>
-      <img
-        src="/home/illustrations/desert-landscape.svg"
-        alt=""
-        className="block h-[340px] w-full object-cover object-bottom sm:h-[440px] lg:h-[520px]"
-      />
+      <div className="relative aspect-[1280/841] w-full overflow-hidden">
+        {MOUNTAIN_LAYERS.map((layer) => (
+          <img
+            key={layer.src}
+            src={layer.src}
+            alt=""
+            className="absolute left-0 h-auto w-full"
+            style={{ bottom: layer.bottom }}
+          />
+        ))}
+
+        <img src="/home/lake.svg" alt="" className="absolute inset-x-0 bottom-0 h-[64.8%] w-full" />
+
+        {DUNE_LAYERS.map((layer) => (
+          <img
+            key={layer.src}
+            src={layer.src}
+            alt=""
+            className="absolute -left-2 h-auto w-[calc(100%+1rem)] max-w-none"
+            style={{ bottom: layer.bottom }}
+          />
+        ))}
+      </div>
 
       {TUMBLEWEEDS.map((tw, index) => (
         <RollingTumbleweed key={index} config={tw} sceneWidth={sceneWidth} skill={picks[index]} />

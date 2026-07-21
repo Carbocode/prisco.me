@@ -142,7 +142,9 @@ code {
 .earth-cross-section {
   background: linear-gradient(
     180deg,
-    #201710 0%,
+    #8f5755 0,
+    #5a3531 36px,
+    #201710 96px,
     #2a1d13 10%,
     #33210f 24%,
     #3a2416 40%,

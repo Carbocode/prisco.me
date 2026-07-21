@@ -130,7 +130,7 @@ function RootDocument() {
       <head>
         <HeadContent />
       </head>
-      <body className="min-h-dvh w-full">
+      <body className="min-h-dvh w-full bg-slate-950">
         <CookieConsentProvider>
           <Outlet />
           <Scripts />
