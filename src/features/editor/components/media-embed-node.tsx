@@ -5,7 +5,8 @@
 import type { TElement } from "platejs";
 import { PlateElement, type PlateElementProps } from "platejs/react";
 
-import { toEmbedUrl } from "@/features/editor/embed-url";
+import { EmbedPreview } from "@/features/editor/embed-preview";
+import { openGraphPreview, toEmbedUrl } from "@/features/editor/embed-url";
 
 export function MediaEmbedElement(props: PlateElementProps) {
   const element = props.element as TElement & { url?: string };
@@ -25,9 +26,7 @@ export function MediaEmbedElement(props: PlateElementProps) {
             />
           </div>
         ) : (
-          <a href={element.url} target="_blank" rel="noreferrer">
-            {element.url}
-          </a>
+          <EmbedPreview url={element.url} metadata={openGraphPreview(element.metadata)} />
         )}
       </div>
       {props.children}
