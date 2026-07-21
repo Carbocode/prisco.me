@@ -63,10 +63,10 @@ function HomePage() {
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[1728px] overflow-x-clip bg-slate-950 text-slate-100">
       <Sky className="relative h-[820px] w-full max-h-[90dvh] min-h-[700px] overflow-hidden">
-        <Header />
+        <Header className="hero-header-enter" />
 
         <section className="absolute inset-0 z-10 flex items-center justify-center px-6 pt-14">
-          <div className="hero-content-enter flex max-w-3xl flex-col items-center gap-4 text-center text-white drop-shadow-[0_2px_12px_rgba(4,12,25,0.9)]">
+          <div className="hero-content-enter hero-content-contrast flex max-w-3xl flex-col items-center gap-4 text-center text-white">
             <h1 className="hero-content-enter-item display-font text-3xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
               CIAO, sono Vincenzo!
             </h1>
@@ -89,19 +89,71 @@ function HomePage() {
           <Moon className="absolute left-[12%] top-[10%] z-10 w-45" />
           <Jupiter className="absolute right-[14%] top-[12%] z-10 w-42" />
           <CloudCarousel />
-          <Star size="sm" className="absolute left-[8%] top-[12%] z-0" />
-          <Star size="md" className="absolute left-[18%] top-[8%] z-0" />
-          <Star size="md" className="absolute left-[30%] top-[14%] z-0" />
-          <Star size="sm" className="absolute left-[40%] top-[6%] z-0" />
-          <Star size="md" className="absolute left-[52%] top-[12%] z-0" />
-          <Star size="lg" className="absolute left-[60%] top-[8%] z-0" />
-          <Star size="sm" className="absolute right-[22%] top-[22%] z-0" />
-          <Star size="md" className="absolute right-[30%] top-[36%] z-0" />
-          <Star size="md" className="absolute left-[36%] top-[30%] z-0" />
-          <Star size="sm" className="absolute left-[12%] top-[32%] z-0" />
-          <Star size="md" className="absolute right-[12%] top-[34%] z-0" />
-          <Star size="lg" className="absolute left-[50%] top-[44%] z-0" />
-          <Star size="sm" className="absolute right-[8%] top-[48%] z-0" />
+          <Star
+            size="sm"
+            className="star-enter absolute left-[8%] top-[12%] z-0"
+            style={{ animationDelay: "120ms" }}
+          />
+          <Star
+            size="md"
+            className="star-enter absolute left-[18%] top-[8%] z-0"
+            style={{ animationDelay: "180ms" }}
+          />
+          <Star
+            size="md"
+            className="star-enter absolute left-[30%] top-[14%] z-0"
+            style={{ animationDelay: "240ms" }}
+          />
+          <Star
+            size="sm"
+            className="star-enter absolute left-[40%] top-[6%] z-0"
+            style={{ animationDelay: "300ms" }}
+          />
+          <Star
+            size="md"
+            className="star-enter absolute left-[52%] top-[12%] z-0"
+            style={{ animationDelay: "360ms" }}
+          />
+          <Star
+            size="lg"
+            className="star-enter absolute left-[60%] top-[8%] z-0"
+            style={{ animationDelay: "420ms" }}
+          />
+          <Star
+            size="sm"
+            className="star-enter absolute right-[22%] top-[22%] z-0"
+            style={{ animationDelay: "480ms" }}
+          />
+          <Star
+            size="md"
+            className="star-enter absolute right-[30%] top-[36%] z-0"
+            style={{ animationDelay: "540ms" }}
+          />
+          <Star
+            size="md"
+            className="star-enter absolute left-[36%] top-[30%] z-0"
+            style={{ animationDelay: "600ms" }}
+          />
+          <Star
+            size="sm"
+            className="star-enter absolute left-[12%] top-[32%] z-0"
+            style={{ animationDelay: "660ms" }}
+          />
+          <Star
+            size="md"
+            className="star-enter absolute right-[12%] top-[34%] z-0"
+            style={{ animationDelay: "720ms" }}
+          />
+          <Star
+            size="lg"
+            className="star-enter absolute left-[50%] top-[44%] z-0"
+            style={{ animationDelay: "780ms" }}
+          />
+          <Star
+            size="sm"
+            className="star-enter absolute right-[8%] top-[48%] z-0"
+            style={{ animationDelay: "840ms" }}
+          />
         </div>
       </Sky>
 

@@ -96,13 +96,13 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
   return (
     <div ref={sceneRef} className={classes} aria-hidden="true" {...props}>
       <div className="relative aspect-[1280/841] w-full overflow-hidden">
-        {MOUNTAIN_LAYERS.map((layer) => (
+        {MOUNTAIN_LAYERS.map((layer, index) => (
           <img
             key={layer.src}
             src={layer.src}
             alt=""
-            className="absolute left-0 h-auto w-full"
-            style={{ bottom: layer.bottom }}
+            className="mountain-enter absolute left-0 h-auto w-full"
+            style={{ bottom: layer.bottom, animationDelay: `${150 + index * 130}ms` }}
           />
         ))}
 
