@@ -82,15 +82,7 @@ import {
   withHOC,
   type PlateElementProps,
 } from "platejs/react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type CSSProperties,
-  type FormEvent,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { toast } from "sonner";
@@ -283,8 +275,7 @@ const MediaImageElement = withHOC(
     };
     const item = media.get(element.mediaId ?? "");
     const mediaType = element.mediaType ?? "image";
-    const imageFrameStyle: (CSSProperties & { "--cms-image-max-width"?: string }) | undefined =
-      naturalAspectRatio ? { "--cms-image-max-width": `${32 * naturalAspectRatio}rem` } : undefined;
+    const imageMaxWidth = naturalAspectRatio ? 32 * 16 * naturalAspectRatio : "100%";
 
     return (
       <PlateElement {...props} as="figure">
@@ -292,9 +283,8 @@ const MediaImageElement = withHOC(
           {item && mediaType === "image" ? (
             <Resizable
               align="center"
-              className="group cms-editor__image-frame"
-              options={{ align: "center", maxWidth: "100%", minWidth: 120 }}
-              style={imageFrameStyle}
+              className="group"
+              options={{ align: "center", maxWidth: imageMaxWidth, minWidth: 120 }}
             >
               <ResizeHandle
                 className={mediaResizeHandleVariants({ direction: "left" })}
