@@ -85,6 +85,7 @@ import {
 import { createContext, useContext, useEffect, useMemo, useState, type FormEvent } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { toast } from "sonner";
 
 import { HoverAnimatedImage } from "@/components/hover-animated-image";
 import { Button } from "@/components/ui/button";
@@ -110,8 +111,10 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { mediaResizeHandleVariants, Resizable, ResizeHandle } from "@/components/ui/resize-handle";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { MediaBrowser } from "@/features/cms/components/media-picker";
 import { fromPlateValue, toPlateValue, type CmsDocument } from "@/features/cms/domain/cms-document";
+import { getEmbedPreviewFn } from "@/features/cms/server/embed.functions";
 import { autoformatPlugin } from "@/features/editor/autoformat-plugin";
 import { BlockDraggable } from "@/features/editor/components/block-draggable";
 import { CalloutElement } from "@/features/editor/components/callout-node";
@@ -153,7 +156,7 @@ import {
   ToolbarGroup,
 } from "@/features/editor/components/toolbar";
 import { EditorActionsProvider, type MediaKind } from "@/features/editor/editor-actions-context";
-import { toEmbedUrl } from "@/features/editor/embed-url";
+import { toPublicHttpUrl } from "@/features/editor/embed-url";
 
 type MediaItem = {
   id: string;
@@ -502,6 +505,7 @@ export function CmsEditor({
   const [imageCaption, setImageCaption] = useState("");
   const [embedDialogOpen, setEmbedDialogOpen] = useState(false);
   const [embedUrl, setEmbedUrl] = useState("");
+  const [embedLoading, setEmbedLoading] = useState(false);
   const mediaMap = useMemo(() => new Map(media.map((item) => [item.id, item])), [media]);
   const editor = usePlateEditor({
     plugins: editorPlugins,
@@ -552,14 +556,27 @@ export function CmsEditor({
     setImageCaption("");
   }
 
-  function insertEmbed(event: FormEvent<HTMLFormElement>) {
+  async function insertEmbed(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const url = embedUrl.trim();
-    if (!toEmbedUrl(url)) return;
-    editor.tf.insertNodes({ type: "mediaEmbed", url, children: [{ text: "" }] });
-    editor.tf.focus();
-    setEmbedDialogOpen(false);
-    setEmbedUrl("");
+    if (!toPublicHttpUrl(url)) return;
+    setEmbedLoading(true);
+    try {
+      const preview = await getEmbedPreviewFn({ data: { url } });
+      editor.tf.insertNodes({
+        type: "mediaEmbed",
+        url,
+        metadata: preview.metadata,
+        children: [{ text: "" }],
+      });
+      editor.tf.focus();
+      setEmbedDialogOpen(false);
+      setEmbedUrl("");
+    } catch {
+      toast.error("Non è stato possibile leggere i metadati del link");
+    } finally {
+      setEmbedLoading(false);
+    }
   }
 
   const actions = useMemo(
@@ -625,6 +642,7 @@ export function CmsEditor({
               url={embedUrl}
               onUrlChange={setEmbedUrl}
               onSubmit={insertEmbed}
+              loading={embedLoading}
             />
           </Plate>
         </EditorActionsProvider>
@@ -639,12 +657,14 @@ function EmbedDialog({
   url,
   onUrlChange,
   onSubmit,
+  loading,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   url: string;
   onUrlChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  loading: boolean;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -652,7 +672,10 @@ function EmbedDialog({
         <form onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>Inserisci un embed</DialogTitle>
-            <DialogDescription>Incolla un link YouTube o Vimeo da incorporare.</DialogDescription>
+            <DialogDescription>
+              YouTube e Vimeo saranno mostrati come video; gli altri link useranno titolo,
+              descrizione e immagine Open Graph.
+            </DialogDescription>
           </DialogHeader>
           <FieldGroup>
             <Field>
@@ -660,7 +683,7 @@ function EmbedDialog({
               <Input
                 id="plate-embed-url"
                 value={url}
-                placeholder="https://www.youtube.com/watch?v=…"
+                placeholder="https://esempio.it/pagina"
                 onChange={(event) => onUrlChange(event.target.value)}
                 required
               />
@@ -668,7 +691,8 @@ function EmbedDialog({
           </FieldGroup>
           <DialogFooter>
             <DialogClose render={<Button type="button" variant="outline" />}>Annulla</DialogClose>
-            <Button type="submit" disabled={!toEmbedUrl(url)}>
+            <Button type="submit" disabled={!toPublicHttpUrl(url) || loading}>
+              {loading ? <Spinner data-icon="inline-start" /> : null}
               Inserisci
             </Button>
           </DialogFooter>

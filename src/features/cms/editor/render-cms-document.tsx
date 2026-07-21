@@ -5,7 +5,8 @@ import { renderToString } from "katex";
 import "katex/dist/katex.min.css";
 import type { CSSProperties, ReactNode } from "react";
 
-import { toEmbedUrl } from "../../editor/embed-url";
+import { EmbedPreview } from "../../editor/embed-preview";
+import { openGraphPreview, toEmbedUrl } from "../../editor/embed-url";
 import { toPlateValue, type CmsDocument } from "../domain/cms-document";
 
 function katexHtml(tex: unknown, displayMode: boolean): string {
@@ -375,7 +376,15 @@ function children(
       );
     case "mediaEmbed": {
       const embedUrl = toEmbedUrl(node.url);
-      if (!embedUrl) return null;
+      if (!embedUrl) {
+        return (
+          <EmbedPreview
+            key={key}
+            url={stringAttr(node.url)}
+            metadata={openGraphPreview(node.metadata)}
+          />
+        );
+      }
       return (
         <div key={key} className="cms-embed">
           <iframe

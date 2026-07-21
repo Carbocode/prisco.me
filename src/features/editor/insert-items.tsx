@@ -152,7 +152,7 @@ export const INSERT_GROUPS: InsertGroupDef[] = [
       {
         icon: <Film />,
         label: "Embed",
-        keywords: ["youtube", "vimeo", "incorpora"],
+        keywords: ["link", "youtube", "vimeo", "open graph", "incorpora"],
         run: (ctx) => ctx.onEmbed(),
       },
     ],

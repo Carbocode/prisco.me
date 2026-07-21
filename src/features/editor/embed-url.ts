@@ -40,3 +40,35 @@ export function toEmbedUrl(value: unknown): string | null {
 
   return null;
 }
+
+export function toPublicHttpUrl(value: unknown): string | null {
+  if (typeof value !== "string" || value.length === 0) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+export type OpenGraphPreview = {
+  title: string;
+  description?: string;
+  image?: string;
+  siteName?: string;
+};
+
+export function openGraphPreview(value: unknown): OpenGraphPreview | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const title = Reflect.get(value, "title");
+  const description = Reflect.get(value, "description");
+  const image = Reflect.get(value, "image");
+  const siteName = Reflect.get(value, "siteName");
+  if (typeof title !== "string") return undefined;
+  return {
+    title,
+    description: typeof description === "string" ? description : undefined,
+    image: typeof image === "string" ? image : undefined,
+    siteName: typeof siteName === "string" ? siteName : undefined,
+  };
+}
