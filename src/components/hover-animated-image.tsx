@@ -2,7 +2,7 @@ import { useRef, type ImgHTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-type HoverAnimatedImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "onLoad"> & {
+type HoverAnimatedImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   containerClassName?: string;
 };
 
@@ -15,6 +15,7 @@ export function HoverAnimatedImage({
   alt,
   className,
   containerClassName,
+  onLoad,
   ...props
 }: HoverAnimatedImageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -26,6 +27,7 @@ export function HoverAnimatedImage({
         alt={alt}
         className={cn(className, "opacity-0 group-hover/animated-webp:opacity-100")}
         onLoad={(event) => {
+          onLoad?.(event);
           const image = event.currentTarget;
           const canvas = canvasRef.current;
           if (!canvas || !image.naturalWidth || !image.naturalHeight) return;

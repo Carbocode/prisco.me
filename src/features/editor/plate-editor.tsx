@@ -82,7 +82,15 @@ import {
   withHOC,
   type PlateElementProps,
 } from "platejs/react";
-import { createContext, useContext, useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+} from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { toast } from "sonner";
@@ -266,6 +274,7 @@ const MediaImageElement = withHOC(
   function MediaImageElement(props: PlateElementProps) {
     const media = useContext(MediaContext);
     const width = useResizableValue("width");
+    const [naturalAspectRatio, setNaturalAspectRatio] = useState<number>();
     const element = props.element as TElement & {
       alt?: string;
       caption?: string;
@@ -274,6 +283,8 @@ const MediaImageElement = withHOC(
     };
     const item = media.get(element.mediaId ?? "");
     const mediaType = element.mediaType ?? "image";
+    const imageFrameStyle: (CSSProperties & { "--cms-image-max-width"?: string }) | undefined =
+      naturalAspectRatio ? { "--cms-image-max-width": `${32 * naturalAspectRatio}rem` } : undefined;
 
     return (
       <PlateElement {...props} as="figure">
@@ -281,8 +292,9 @@ const MediaImageElement = withHOC(
           {item && mediaType === "image" ? (
             <Resizable
               align="center"
-              className="group"
+              className="group cms-editor__image-frame"
               options={{ align: "center", maxWidth: "100%", minWidth: 120 }}
+              style={imageFrameStyle}
             >
               <ResizeHandle
                 className={mediaResizeHandleVariants({ direction: "left" })}
@@ -293,6 +305,12 @@ const MediaImageElement = withHOC(
                 alt={element.alt || item.altText || ""}
                 containerClassName="w-full"
                 className="w-full"
+                onLoad={(event) => {
+                  const image = event.currentTarget;
+                  if (image.naturalWidth && image.naturalHeight) {
+                    setNaturalAspectRatio(image.naturalWidth / image.naturalHeight);
+                  }
+                }}
               />
               <ResizeHandle
                 className={mediaResizeHandleVariants({ direction: "right" })}
