@@ -194,18 +194,10 @@ code {
  */
 @keyframes tumbleweed-travel {
   from {
-    transform: translateX(-16vw);
+    transform: translateX(0);
   }
   to {
-    transform: translateX(116vw);
-  }
-}
-@keyframes tumbleweed-travel-reverse {
-  from {
-    transform: translateX(116vw);
-  }
-  to {
-    transform: translateX(-16vw);
+    transform: translateX(var(--tumbleweed-distance));
   }
 }
 /*
@@ -220,10 +212,10 @@ code {
     animation-timing-function: cubic-bezier(0.2, 0.7, 0.35, 1);
   }
   7% {
-    transform: translateY(-4px) scaleX(1) scaleY(1);
+    transform: translateY(calc(var(--tumbleweed-hop) * -0.125)) scaleX(1) scaleY(1);
   }
   34% {
-    transform: translateY(-32px) scaleX(0.95) scaleY(1.06);
+    transform: translateY(calc(var(--tumbleweed-hop) * -1)) scaleX(0.95) scaleY(1.06);
     animation-timing-function: cubic-bezier(0.55, 0, 0.75, 0.35);
   }
   58% {
@@ -231,10 +223,10 @@ code {
     animation-timing-function: cubic-bezier(0.2, 0.7, 0.35, 1);
   }
   63% {
-    transform: translateY(-3px) scaleX(1) scaleY(1);
+    transform: translateY(calc(var(--tumbleweed-hop) * -0.09)) scaleX(1) scaleY(1);
   }
   78% {
-    transform: translateY(-13px) scaleX(0.98) scaleY(1.03);
+    transform: translateY(calc(var(--tumbleweed-hop) * -0.4)) scaleX(0.98) scaleY(1.03);
     animation-timing-function: cubic-bezier(0.55, 0, 0.75, 0.35);
   }
   93% {
@@ -253,17 +245,7 @@ code {
     transform: rotate(360deg);
   }
 }
-@keyframes tumbleweed-roll-reverse {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-.tumbleweed-travel,
-.tumbleweed-travel-reverse {
+.tumbleweed-travel {
   position: absolute;
   left: 0;
   animation-iteration-count: infinite;
@@ -273,9 +255,6 @@ code {
 .tumbleweed-travel {
   animation-name: tumbleweed-travel;
 }
-.tumbleweed-travel-reverse {
-  animation-name: tumbleweed-travel-reverse;
-}
 .tumbleweed-bounce {
   animation: tumbleweed-bounce ease-in-out infinite;
   will-change: transform;
@@ -284,14 +263,8 @@ code {
   animation: tumbleweed-roll linear infinite;
   will-change: transform;
 }
-.tumbleweed-roll-reverse {
-  animation: tumbleweed-roll-reverse linear infinite;
-  will-change: transform;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .tumbleweed-travel,
-  .tumbleweed-travel-reverse {
+  .tumbleweed-travel {
     display: none;
   }
 }
