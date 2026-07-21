@@ -142,7 +142,9 @@ code {
 .earth-cross-section {
   background: linear-gradient(
     180deg,
-    #201710 0%,
+    #8f5755 0,
+    #5a3531 36px,
+    #201710 96px,
     #2a1d13 10%,
     #33210f 24%,
     #3a2416 40%,
@@ -192,18 +194,10 @@ code {
  */
 @keyframes tumbleweed-travel {
   from {
-    transform: translateX(-16vw);
+    transform: translateX(0);
   }
   to {
-    transform: translateX(116vw);
-  }
-}
-@keyframes tumbleweed-travel-reverse {
-  from {
-    transform: translateX(116vw);
-  }
-  to {
-    transform: translateX(-16vw);
+    transform: translateX(var(--tumbleweed-distance));
   }
 }
 /*
@@ -218,10 +212,10 @@ code {
     animation-timing-function: cubic-bezier(0.2, 0.7, 0.35, 1);
   }
   7% {
-    transform: translateY(-4px) scaleX(1) scaleY(1);
+    transform: translateY(calc(var(--tumbleweed-hop) * -0.125)) scaleX(1) scaleY(1);
   }
   34% {
-    transform: translateY(-32px) scaleX(0.95) scaleY(1.06);
+    transform: translateY(calc(var(--tumbleweed-hop) * -1)) scaleX(0.95) scaleY(1.06);
     animation-timing-function: cubic-bezier(0.55, 0, 0.75, 0.35);
   }
   58% {
@@ -229,10 +223,10 @@ code {
     animation-timing-function: cubic-bezier(0.2, 0.7, 0.35, 1);
   }
   63% {
-    transform: translateY(-3px) scaleX(1) scaleY(1);
+    transform: translateY(calc(var(--tumbleweed-hop) * -0.09)) scaleX(1) scaleY(1);
   }
   78% {
-    transform: translateY(-13px) scaleX(0.98) scaleY(1.03);
+    transform: translateY(calc(var(--tumbleweed-hop) * -0.4)) scaleX(0.98) scaleY(1.03);
     animation-timing-function: cubic-bezier(0.55, 0, 0.75, 0.35);
   }
   93% {
@@ -251,17 +245,7 @@ code {
     transform: rotate(360deg);
   }
 }
-@keyframes tumbleweed-roll-reverse {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-.tumbleweed-travel,
-.tumbleweed-travel-reverse {
+.tumbleweed-travel {
   position: absolute;
   left: 0;
   animation-iteration-count: infinite;
@@ -271,9 +255,6 @@ code {
 .tumbleweed-travel {
   animation-name: tumbleweed-travel;
 }
-.tumbleweed-travel-reverse {
-  animation-name: tumbleweed-travel-reverse;
-}
 .tumbleweed-bounce {
   animation: tumbleweed-bounce ease-in-out infinite;
   will-change: transform;
@@ -282,14 +263,8 @@ code {
   animation: tumbleweed-roll linear infinite;
   will-change: transform;
 }
-.tumbleweed-roll-reverse {
-  animation: tumbleweed-roll-reverse linear infinite;
-  will-change: transform;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .tumbleweed-travel,
-  .tumbleweed-travel-reverse {
+  .tumbleweed-travel {
     display: none;
   }
 }
@@ -1010,6 +985,59 @@ code {
   }
 }
 
+.hero-content-contrast {
+  position: relative;
+  isolation: isolate;
+  filter: drop-shadow(0 3px 7px rgba(2, 6, 23, 0.78))
+    drop-shadow(0 12px 26px rgba(2, 6, 23, 0.52));
+}
+
+.hero-content-contrast::before {
+  position: absolute;
+  inset: -2.5rem -4rem;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(2, 6, 23, 0.4) 0%,
+    rgba(2, 6, 23, 0.18) 42%,
+    transparent 74%
+  );
+  filter: blur(20px);
+  content: '';
+}
+
+.star-enter {
+  opacity: 0;
+  transform: scale(0.74) rotate(-20deg);
+  transform-origin: center;
+  animation: star-enter 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes star-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.74) rotate(-20deg);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1.06) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.hero-content-enter {
+  opacity: 0;
+  transform: translateY(clamp(10rem, 24vh, 15rem)) scale(0.97);
+  transform-origin: center bottom;
+  animation: hero-content-rise 1400ms 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
 .hero-content-enter-item {
   opacity: 0;
   transform: translateY(14px);
@@ -1017,19 +1045,67 @@ code {
 }
 
 .hero-content-enter-item:nth-child(1) {
-  animation-delay: 80ms;
+  animation-delay: 720ms;
 }
 
 .hero-content-enter-item:nth-child(2) {
-  animation-delay: 160ms;
+  animation-delay: 820ms;
 }
 
 .hero-content-enter-item:nth-child(3) {
-  animation-delay: 240ms;
+  animation-delay: 920ms;
 }
 
 .hero-content-enter-item:nth-child(4) {
-  animation-delay: 320ms;
+  animation-delay: 1020ms;
+}
+
+.mountain-enter {
+  opacity: 0;
+  transform: translateY(3rem) scale(0.92);
+  transform-origin: center bottom;
+  animation: mountain-enter 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.hero-header-enter {
+  opacity: 0;
+  transform: translateY(-2.5rem);
+  animation: hero-header-enter 700ms 2050ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes hero-content-rise {
+  from {
+    opacity: 0;
+    transform: translateY(clamp(10rem, 24vh, 15rem)) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mountain-enter {
+  from {
+    opacity: 0;
+    transform: translateY(3rem) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes hero-header-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-2.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes hero-content-item-in {
@@ -1119,7 +1195,11 @@ code {
     opacity: 0;
   }
 
-  .hero-content-enter-item {
+  .hero-content-enter,
+  .hero-content-enter-item,
+  .mountain-enter,
+  .hero-header-enter,
+  .star-enter {
     opacity: 1;
     transform: none;
     animation: none;

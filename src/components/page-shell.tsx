@@ -22,7 +22,7 @@ export function PageShell({
   children,
 }: PageShellProps) {
   return (
-    <div className="min-h-dvh bg-slate-950 text-slate-100">
+    <div className="mx-auto min-h-dvh w-full max-w-[1728px] overflow-x-clip bg-slate-950 text-slate-100">
       <Header />
       <main>
         {hero && (
