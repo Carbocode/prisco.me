@@ -14,14 +14,15 @@ import { cn } from "@/lib/utils";
 
 export const mediaResizeHandleVariants = cva(
   cn(
-    "top-0 flex w-6 select-none flex-col justify-center",
-    "after:flex after:h-16 after:w-[3px] after:rounded-[6px] after:bg-ring after:opacity-0 after:content-['_'] group-hover:after:opacity-100",
+    "flex select-none justify-center",
+    "after:flex after:rounded-[6px] after:bg-ring after:opacity-0 after:content-['_'] group-hover:after:opacity-100",
   ),
   {
     variants: {
       direction: {
-        left: "-left-3 -ml-3 pl-3",
-        right: "-right-3 -mr-3 items-end pr-3",
+        bottom: "-bottom-3 left-0 h-6 w-full items-end pb-3 after:h-[3px] after:w-16",
+        left: "top-0 -left-3 -ml-3 h-full w-6 flex-col pl-3 after:h-16 after:w-[3px]",
+        right: "top-0 -right-3 -mr-3 h-full w-6 flex-col items-end pr-3 after:h-16 after:w-[3px]",
       },
     },
   },

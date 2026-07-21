@@ -279,21 +279,17 @@ const MediaImageElement = withHOC(
             <Resizable
               align="center"
               className="group"
-              options={{ align: "center", maxWidth: "100%", minWidth: 120 }}
+              options={{ align: "left", maxWidth: "100%", minWidth: 120 }}
             >
-              <ResizeHandle
-                className={mediaResizeHandleVariants({ direction: "left" })}
-                options={{ direction: "left" }}
-              />
               <HoverAnimatedImage
                 src={item.url}
                 alt={element.alt || item.altText || ""}
                 containerClassName="w-full"
-                className="w-full"
+                className="h-auto w-full"
               />
               <ResizeHandle
-                className={mediaResizeHandleVariants({ direction: "right" })}
-                options={{ direction: "right" }}
+                className={mediaResizeHandleVariants({ direction: "bottom" })}
+                options={{ direction: "bottom" }}
               />
             </Resizable>
           ) : null}
