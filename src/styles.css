@@ -736,10 +736,6 @@ code {
   counter-reset: cms-plate-list;
 }
 
-.cms-editor__image-frame {
-  max-width: min(100%, var(--cms-image-max-width, 100%));
-}
-
 .cms-editor__content figure img,
 .cms-editor__content figure video {
   display: block;
