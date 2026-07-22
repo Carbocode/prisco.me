@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 import CloudCarousel from "@/components/cloud-carousel";
 import DesertScene from "@/components/desert-scene";
@@ -11,7 +11,7 @@ import { SkillsMarquee } from "@/components/skills-marquee";
 import Sky from "@/components/sky";
 import Star from "@/components/star";
 import SubsoilDecor from "@/components/subsoil-decor";
-import { SkillChip, TechIcon } from "@/components/tech-icon";
+import { TechIcon } from "@/components/tech-icon";
 import { listPublishedArticlesFn } from "@/features/cms/server/public.functions";
 import { ArticleCard } from "@/features/content/content-components";
 import { pageHead } from "@/lib/page-head";
@@ -26,27 +26,25 @@ export const Route = createFileRoute("/")({
       path: "/",
     }),
   loader: async ({ context }) => {
-    const [, articles] = await Promise.all([
+    const [, projects, articles] = await Promise.all([
       context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
       listPublishedArticlesFn({ data: { limit: 2, categorySlug: "progetti" } }),
+      listPublishedArticlesFn({ data: { limit: 2, categorySlug: "blog" } }),
     ]);
-    return { articles };
+    return { projects, articles };
   },
   component: HomePage,
 });
 
 function HomePage() {
   const { data: portfolio } = useSuspenseQuery(getPortfolioQueryOptions());
-  const { articles } = Route.useLoaderData();
-  const myvetSkills = portfolio.skills.filter((skill) =>
-    ["Ionic", "Capacitor", "Angular", "Cloudflare", "PostHog"].includes(skill.name),
-  );
+  const { projects, articles } = Route.useLoaderData();
   const skillByName = new Map(portfolio.skills.map((skill) => [skill.name, skill]));
   const skillCards = [
     {
-      title: "Sviluppo web",
-      skill: skillByName.get("Web Development"),
-      items: ["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"],
+      title: "Dal concept al prodotto",
+      skill: skillByName.get("Product Design"),
+      items: ["Analisi dell'idea", "Sviluppo iterativo", "Pubblicazione", "Miglioramento continuo"],
     },
     {
       title: "Architettura software",
@@ -54,9 +52,9 @@ function HomePage() {
       items: ["Progettazione", "Modularita", "Manutenibilita", "Decisioni proporzionate"],
     },
     {
-      title: "Dal concept al prodotto",
-      skill: skillByName.get("Product Design"),
-      items: ["Analisi dell'idea", "Sviluppo iterativo", "Pubblicazione", "Miglioramento continuo"],
+      title: "Sviluppo web & mobile",
+      skill: skillByName.get("Web Development"),
+      items: ["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"],
     },
   ].filter((card): card is { title: string; skill: Skill; items: string[] } => Boolean(card.skill));
 
@@ -74,9 +72,9 @@ function HomePage() {
               Benvenuti nel mio sito personale, uno spazio dedicato a me
             </p>
             <div className="hero-content-enter-item flex flex-wrap justify-center gap-2 pt-1">
-              <ActionLink href="/progetti">Scopri i progetti</ActionLink>
-              <ActionLink href="/contact" variant="secondary">
-                Parliamo del tuo prodotto
+              <ActionLink href="/contact">Parliamo del tuo prodotto</ActionLink>
+              <ActionLink href="/progetti" variant="secondary">
+                Scopri i progetti
               </ActionLink>
             </div>
           </div>
@@ -169,48 +167,32 @@ function HomePage() {
                 <SkillCard key={card.skill.id} {...card} />
               ))}
             </div>
+          </Section>
+
+          <Section className="pt-0">
             <SkillsMarquee skills={portfolio.skills} />
           </Section>
 
           <Section className="pt-0">
-            <SectionIntro
-              eyebrow="In evidenza"
-              title="Un'idea trasformata in un prodotto reale"
-              description="MyVet e il progetto che ha segnato il mio percorso: un ecosistema digitale costruito per proprietari e professionisti della pet care."
-            />
-            <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8">
+            <div className="grid gap-8 rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+              <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-                  MyVet User e MyVet Business
+                  Carriera
                 </p>
-                <h3 className="display-font mt-4 text-3xl font-semibold">
-                  Due applicazioni, un unico ecosistema.
-                </h3>
+                <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
+                  Esperienze, responsabilita e crescita professionale.
+                </h2>
                 <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-                  Una piattaforma ibrida realizzata con Ionic, Capacitor e Angular per cercare
-                  professionisti, prenotare appuntamenti, gestire clienti e custodire la storia
-                  clinica degli animali.
+                  Un percorso costruito tra sviluppo, architettura software e prodotti digitali,
+                  raccontato attraverso i ruoli, le tecnologie e i progetti che lo hanno segnato.
                 </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {myvetSkills.map((skill) => (
-                    <SkillChip key={skill.id} skill={skill} />
-                  ))}
-                </div>
-                <ActionLink href="/progetti/myvet" variant="secondary">
-                  Scopri il progetto
-                </ActionLink>
               </div>
-              <div className="flex flex-col justify-center rounded-2xl border border-white/10 bg-white/3 p-8">
-                <p className="text-sm leading-7 text-slate-300">
-                  Ho contribuito all'evoluzione del progetto dall'ideazione alla pubblicazione,
-                  lavorando su sviluppo, architettura, problem solving e qualita del prodotto.
+              <div className="flex flex-col items-start gap-5 lg:items-end lg:text-right">
+                <p className="max-w-sm text-sm leading-7 text-slate-300">
+                  Dalle prime esperienze alle sfide piu recenti, con il contesto dietro ogni
+                  passaggio.
                 </p>
-                <Link
-                  to="/career"
-                  className="mt-6 text-sm font-semibold text-sky-300 hover:text-sky-200"
-                >
-                  Scopri il mio percorso <span aria-hidden="true">→</span>
-                </Link>
+                <ActionLink href="/career">Esplora la mia carriera</ActionLink>
               </div>
             </div>
           </Section>
@@ -218,39 +200,44 @@ function HomePage() {
           <Section className="pt-0">
             <SectionIntro
               eyebrow="Portfolio"
-              title="Altri progetti che mi hanno fatto crescere"
+              title="Progetti che mi hanno fatto crescere"
               description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
+            />
+            <div className="mt-8 grid gap-5 md:grid-cols-2">
+              {projects.map((project) => (
+                <ArticleCard
+                  key={project.id}
+                  article={project}
+                  archiveSlug={project.categories[0]?.slug ?? "progetti"}
+                />
+              ))}
+            </div>
+            <div className="mt-8">
+              <ActionLink href="/progetti" variant="secondary">
+                Scopri tutti i progetti
+              </ActionLink>
+            </div>
+          </Section>
+
+          <Section className="pt-0">
+            <SectionIntro
+              eyebrow="Dal blog"
+              title="Articoli e appunti dal mio percorso"
+              description="Approfondimenti su sviluppo, architettura software e sulle decisioni che danno forma ai prodotti digitali."
             />
             <div className="mt-8 grid gap-5 md:grid-cols-2">
               {articles.map((article) => (
                 <ArticleCard
                   key={article.id}
                   article={article}
-                  archiveSlug={article.categories[0]?.slug ?? "progetti"}
+                  archiveSlug={article.categories[0]?.slug ?? "blog"}
                 />
               ))}
             </div>
-          </Section>
-
-          <Section className="pt-0">
-            <div className="grid gap-8 rounded-2xl border border-white/10 bg-white/3 p-8 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-                  Chi sono
-                </p>
-                <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
-                  Programmare per me significa continuare a imparare.
-                </h2>
-              </div>
-              <div>
-                <p className="leading-8 text-slate-300">
-                  Ho iniziato a programmare a 15 anni. Da allora ho cercato di unire curiosita
-                  tecnica, pensiero critico e attenzione alla qualita del prodotto.
-                </p>
-                <ActionLink href="/career" variant="secondary">
-                  Conosciamoci meglio
-                </ActionLink>
-              </div>
+            <div className="mt-8">
+              <ActionLink href="/blog" variant="secondary">
+                Leggi tutti gli articoli
+              </ActionLink>
             </div>
           </Section>
 
