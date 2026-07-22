@@ -1,12 +1,12 @@
+import { Icon } from "@iconify/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 
 import ContactRequestForm from "@/components/contact-request-form";
 import { PageShell } from "@/components/page-shell";
 import Star from "@/components/star";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { pageHead } from "@/lib/page-head";
 import { SITE, siteUrl } from "@/lib/site";
 
@@ -44,17 +44,20 @@ export const Route = createFileRoute("/contact")({
 const conversationSteps = [
   {
     actor: "Tu",
+    icon: "fluent-emoji:index-pointing-at-the-viewer",
     title: "Porta il contesto.",
     description: "Un obiettivo, un problema o anche solo un’intuizione ancora da mettere a fuoco.",
   },
   {
     actor: "Io",
+    icon: "fluent-emoji:backhand-index-pointing-left",
     title: "Faccio le domande giuste.",
     description:
       "Leggo con attenzione e cerco il punto da cui può partire una conversazione utile.",
   },
   {
     actor: "Insieme",
+    icon: "fluent-emoji:handshake",
     title: "Troviamo il prossimo passo.",
     description: "Una call, un confronto tecnico o semplicemente una direzione più chiara.",
   },
@@ -91,10 +94,9 @@ function ContactPage() {
       <div className="relative isolate overflow-hidden bg-[#06101f]">
         <ContactSky />
 
-        <section className="relative z-10 border-b border-white/10 px-6 py-20 sm:py-28 lg:py-32">
+        <section className="relative z-10 px-6 pt-20 pb-12 sm:pt-28 sm:pb-16 lg:pt-32">
           <div className="mx-auto grid w-full max-w-6xl gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
             <div className="flex flex-col items-start gap-7">
-              <Badge variant="outline">Canale aperto</Badge>
               <h1 className="display-font max-w-4xl text-5xl leading-[0.94] font-semibold tracking-[-0.055em] text-white sm:text-7xl lg:text-[5.75rem]">
                 Parliamo di quello che vuoi <span className="text-sky-300">costruire.</span>
               </h1>
@@ -132,19 +134,24 @@ function ContactPage() {
               <p className="mb-6 text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
                 Come comincia
               </p>
-              <ol className="flex flex-col">
-                {conversationSteps.map((step, index) => (
-                  <li key={step.actor}>
-                    <div className="grid grid-cols-[5rem_1fr] gap-4 py-6">
-                      <p className="text-sm font-semibold text-sky-300">{step.actor}</p>
-                      <div className="flex flex-col gap-2">
-                        <h2 className="display-font text-xl font-semibold text-white">
-                          {step.title}
-                        </h2>
-                        <p className="text-sm leading-6 text-slate-400">{step.description}</p>
-                      </div>
+              <ol className="relative flex flex-col gap-4 before:absolute before:top-8 before:bottom-8 before:left-10 before:w-px before:bg-white/15 sm:before:left-12">
+                {conversationSteps.map((step) => (
+                  <li
+                    key={step.actor}
+                    className="relative grid grid-cols-[5rem_1fr] items-center gap-4 sm:grid-cols-[6rem_1fr]"
+                  >
+                    <div className="relative z-10 flex flex-col items-center gap-2">
+                      <p className="display-font text-center text-sm font-semibold text-sky-300">
+                        {step.actor}
+                      </p>
+                      <Icon icon={step.icon} className="size-16 sm:size-20" aria-hidden="true" />
                     </div>
-                    {index < conversationSteps.length - 1 ? <Separator /> : null}
+                    <Card size="sm">
+                      <CardHeader>
+                        <CardTitle>{step.title}</CardTitle>
+                        <CardDescription>{step.description}</CardDescription>
+                      </CardHeader>
+                    </Card>
                   </li>
                 ))}
               </ol>
@@ -152,24 +159,11 @@ function ContactPage() {
           </div>
         </section>
 
-        <section id="scrivimi" className="relative z-10 px-6 py-20 sm:py-28">
-          <div className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
-            <div className="flex max-w-md flex-col gap-6 lg:sticky lg:top-10 lg:self-start">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-300">
-                Il primo messaggio
-              </p>
-              <h2 className="display-font text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Dimmi cosa hai in mente.
-              </h2>
-              <p className="leading-7 text-slate-400">
-                Più del brief perfetto, mi interessa capire il contesto: dove sei, cosa vuoi
-                cambiare e perché vale la pena farlo.
-              </p>
-              <Separator />
-              <p className="text-sm leading-6 text-slate-500">
-                I dati inviati vengono usati esclusivamente per rispondere alla tua richiesta.
-              </p>
-            </div>
+        <section id="scrivimi" className="relative z-10 px-6 pt-12 pb-20 sm:pt-16 sm:pb-28">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+            <h2 className="display-font text-center text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              Dimmi cosa hai in mente.
+            </h2>
 
             <ContactRequestForm />
           </div>
