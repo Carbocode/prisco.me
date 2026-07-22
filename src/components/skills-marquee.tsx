@@ -39,17 +39,25 @@ function buildRows(skills: Skill[]): SkillMarqueeRow[] {
 
 export function SkillsMarquee({ skills }: { skills: Skill[] }) {
   const rows = useMemo(() => buildRows(skills), [skills]);
+  const repeatedRows = [...rows, ...rows];
 
   if (rows.length === 0) return null;
 
   return (
     <div
-      className="skills-marquee relative mt-8 min-w-0 max-w-full space-y-3 overflow-hidden"
+      className="relative mt-8 min-w-0 max-w-full lg:grid lg:grid-cols-[minmax(15rem,0.42fr)_minmax(0,1fr)]"
       aria-label="Competenze tecniche"
     >
-      {rows.map((row) => (
-        <MarqueeRow key={row.row} row={row} />
-      ))}
+      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6 text-center lg:relative lg:inset-auto lg:justify-start lg:text-left">
+        <h2 className="hero-content-contrast display-font px-5 py-3 text-2xl font-semibold sm:text-3xl lg:filter-none lg:before:hidden">
+          Tutte le tecnologia a disposizione delle tue idee.
+        </h2>
+      </div>
+      <div className="skills-marquee min-w-0 space-y-3 overflow-hidden">
+        {repeatedRows.map((row, index) => (
+          <MarqueeRow key={`${index}-${row.row}`} row={row} />
+        ))}
+      </div>
     </div>
   );
 }
