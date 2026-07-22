@@ -169,11 +169,11 @@ function HomePage() {
             </div>
           </Section>
 
-          <Section className="pt-0">
+          <Section className="pt-0 sm:pt-0">
             <SkillsMarquee skills={portfolio.skills} />
           </Section>
 
-          <Section className="pt-0">
+          <Section className="pt-0 sm:pt-0">
             <div className="grid gap-8 rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
@@ -197,7 +197,7 @@ function HomePage() {
             </div>
           </Section>
 
-          <Section className="pt-0">
+          <Section className="pt-0 sm:pt-0">
             <SectionIntro
               eyebrow="Portfolio"
               title="Progetti che mi hanno fatto crescere"
@@ -219,7 +219,7 @@ function HomePage() {
             </div>
           </Section>
 
-          <Section className="pt-0">
+          <Section className="pt-0 sm:pt-0">
             <SectionIntro
               eyebrow="Dal blog"
               title="Articoli e appunti dal mio percorso"
@@ -241,7 +241,7 @@ function HomePage() {
             </div>
           </Section>
 
-          <section className="relative isolate overflow-hidden px-6 pb-28 pt-24 text-center">
+          <section className="relative isolate overflow-hidden px-6 pt-16 pb-20 text-center sm:pt-20 sm:pb-24">
             {/* the molten core: a glow rising from the very bottom of the earth */}
             <div
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_128%,#ffd27a_0%,#ff8a2b_16%,#f0531a_32%,#b8300d_50%,#5c1305_68%,transparent_82%)]"

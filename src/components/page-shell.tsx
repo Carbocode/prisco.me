@@ -4,6 +4,7 @@ import type { PropsWithChildren, ReactNode } from "react";
 
 import Header from "@/components/header";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type PageShellProps = PropsWithChildren<{
   title: string;
@@ -173,7 +174,9 @@ export function SiteFooter() {
 
 export function Section({ children, className = "" }: PropsWithChildren<{ className?: string }>) {
   return (
-    <section className={`mx-auto w-full max-w-6xl px-6 py-16 sm:py-24 ${className}`}>
+    <section
+      className={cn("mx-auto w-full max-w-6xl px-6 pt-12 pb-12 sm:pt-16 sm:pb-16", className)}
+    >
       {children}
     </section>
   );
