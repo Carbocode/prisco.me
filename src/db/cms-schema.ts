@@ -105,7 +105,6 @@ export const cmsArticles = sqliteTable(
     projectPeriod: text("project_period"),
     projectFeatured: integer("project_featured", { mode: "boolean" }).notNull().default(false),
     projectSortOrder: integer("project_sort_order").notNull().default(0),
-    legacyProjectId: text("legacy_project_id"),
     lastEditedById: text("last_edited_by_id")
       .notNull()
       .references(() => user.id),
@@ -124,7 +123,6 @@ export const cmsArticles = sqliteTable(
     index("cms_articles_updated_at_idx").on(table.updatedAt),
     index("cms_articles_author_updated_at_idx").on(table.authorId, table.updatedAt),
     index("cms_articles_organization_idx").on(table.organizationId),
-    uniqueIndex("cms_articles_legacy_project_uidx").on(table.legacyProjectId),
     index("cms_articles_deleted_at_idx").on(table.deletedAt),
     check(
       "cms_articles_status_check",

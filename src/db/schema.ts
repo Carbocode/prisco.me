@@ -294,45 +294,6 @@ export const skills = sqliteTable("skills", {
     .default(sql`(unixepoch() * 1000)`),
 });
 
-/** Progetti del portfolio. */
-export const projects = sqliteTable("projects", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  slug: text("slug").notNull().unique(),
-  title: text("title").notNull(),
-  summary: text("summary").notNull(),
-  description: text("description").notNull(),
-  role: text("role").notNull(),
-  company: text("company").notNull(),
-  category: text("category").notNull(),
-  period: text("period"),
-  image: text("image"),
-  demoUrl: text("demo_url"),
-  repositoryUrl: text("repository_url"),
-  featured: integer("featured", { mode: "boolean" }).notNull().default(false),
-  sortOrder: integer("sort_order").notNull().default(0),
-  createdAt: integer("created_at", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
-});
-
-/** Sezioni descrittive di un progetto (una-a-molti). */
-export const projectSections = sqliteTable("project_sections", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  projectId: text("project_id")
-    .notNull()
-    .references(() => projects.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  body: text("body").notNull(),
-  /** Elenco puntato, serializzato in JSON. */
-  bullets: text("bullets"),
-  image: text("image"),
-  sortOrder: integer("sort_order").notNull().default(0),
-});
-
 /**
  * Esperienze di carriera e formazione mostrate nella pagina "Chi sono".
  * `kind` distingue lavoro e formazione; `org` raggruppa più ruoli della stessa
@@ -360,34 +321,6 @@ export const experiences = sqliteTable("experiences", {
     .default(sql`(unixepoch() * 1000)`),
 });
 
-/** Collegamento molti-a-molti tra progetti e skill. */
-export const projectSkills = sqliteTable(
-  "project_skills",
-  {
-    projectId: text("project_id")
-      .notNull()
-      .references(() => projects.id, { onDelete: "cascade" }),
-    skillId: text("skill_id")
-      .notNull()
-      .references(() => skills.id, { onDelete: "cascade" }),
-    sortOrder: integer("sort_order").notNull().default(0),
-  },
-  (table) => [primaryKey({ columns: [table.projectId, table.skillId] })],
-);
-
-/** Collegamento molti-a-molti tra progetti e categorie. */
-export const projectCategories = sqliteTable(
-  "project_categories",
-  {
-    projectId: text("project_id")
-      .notNull()
-      .references(() => projects.id, { onDelete: "cascade" }),
-    category: text("category").notNull(),
-    sortOrder: integer("sort_order").notNull().default(0),
-  },
-  (table) => [primaryKey({ columns: [table.projectId, table.category] })],
-);
-
 /** Collegamento molti-a-molti tra esperienze e skill. */
 export const experienceSkills = sqliteTable(
   "experience_skills",
@@ -403,24 +336,19 @@ export const experienceSkills = sqliteTable(
   (table) => [primaryKey({ columns: [table.experienceId, table.skillId] })],
 );
 
-/** Collegamento molti-a-molti tra esperienze e progetti. */
+/** Collegamento molti-a-molti tra esperienze e articoli CMS di tipo progetto. */
 export const experienceProjects = sqliteTable(
   "experience_projects",
   {
     experienceId: text("experience_id")
       .notNull()
       .references(() => experiences.id, { onDelete: "cascade" }),
-    projectId: text("project_id")
-      .notNull()
-      .references(() => projects.id, { onDelete: "cascade" }),
+    articleId: text("article_id").notNull(),
     sortOrder: integer("sort_order").notNull().default(0),
   },
-  (table) => [primaryKey({ columns: [table.experienceId, table.projectId] })],
+  (table) => [primaryKey({ columns: [table.experienceId, table.articleId] })],
 );
 
 export type SkillRow = InferSelectModel<typeof skills>;
 export type NewSkillRow = InferInsertModel<typeof skills>;
-export type ProjectRow = InferSelectModel<typeof projects>;
-export type NewProjectRow = InferInsertModel<typeof projects>;
-export type ProjectSectionRow = InferSelectModel<typeof projectSections>;
 export type ExperienceRow = InferSelectModel<typeof experiences>;

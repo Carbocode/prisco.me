@@ -128,7 +128,7 @@ async function loadPortfolio() {
       featured: item.projectFeatured,
       content: item.content,
     };
-    if (item.legacyProjectId) projectById.set(item.legacyProjectId, project);
+    projectById.set(item.id, project);
     return project;
   });
 
@@ -143,7 +143,7 @@ async function loadPortfolio() {
 
   const projectsByExperience = new Map<string, LinkedProject[]>();
   for (const row of experienceProjectRows) {
-    const project = projectById.get(row.projectId);
+    const project = projectById.get(row.articleId);
     if (!project) continue;
     const list = projectsByExperience.get(row.experienceId) ?? [];
     list.push({ slug: project.slug, title: project.title, summary: project.summary });
