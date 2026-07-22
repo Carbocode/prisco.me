@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import type { HTMLAttributes } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -71,21 +71,26 @@ export default function Header({ className, ...props }: HTMLAttributes<HTMLEleme
               <SheetDescription>Sezioni del sito.</SheetDescription>
             </SheetHeader>
             <nav aria-label="Navigazione mobile" className="grid gap-2 p-4">
-              {links.map((item) => (
-                <Button
-                  key={item.label}
-                  variant="ghost"
-                  render={
-                    item.kind === "archive" ? (
-                      <Link to="/$archiveSlug" params={{ archiveSlug: item.archiveSlug }} />
-                    ) : (
-                      <Link to={item.to} />
-                    )
-                  }
-                >
-                  {item.label}
-                </Button>
-              ))}
+              {links.map((item) =>
+                item.kind === "archive" ? (
+                  <Link
+                    key={item.label}
+                    className={buttonVariants({ variant: "ghost" })}
+                    to="/$archiveSlug"
+                    params={{ archiveSlug: item.archiveSlug }}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <Link
+                    key={item.label}
+                    className={buttonVariants({ variant: "ghost" })}
+                    to={item.to}
+                  >
+                    {item.label}
+                  </Link>
+                ),
+              )}
             </nav>
           </SheetContent>
         </Sheet>

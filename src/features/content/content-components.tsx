@@ -14,7 +14,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -96,14 +96,8 @@ export function ContentBreadcrumb({
       <BreadcrumbList className="flex-nowrap">
         <BreadcrumbItem>
           <BreadcrumbLink
-            render={
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Torna alla home"
-                render={<Link to="/" />}
-              />
-            }
+            className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+            render={<Link to="/" aria-label="Torna alla home" />}
           >
             <House />
           </BreadcrumbLink>
@@ -446,14 +440,13 @@ export function ArticleCard({
         {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
       </CardContent>
       <CardFooter className="mt-auto">
-        <Button
-          variant="outline"
-          render={
-            <a href={`/${archiveSlug}/${article.slug}`} aria-label={`Scopri ${article.title}`} />
-          }
+        <a
+          className={buttonVariants({ variant: "outline" })}
+          href={`/${archiveSlug}/${article.slug}`}
+          aria-label={`Scopri ${article.title}`}
         >
           Scopri il contenuto
-        </Button>
+        </a>
       </CardFooter>
     </Card>
   );
@@ -590,13 +583,14 @@ export function ArticlePageContent({
           aria-label="Dettagli articolo"
         >
           {archive ? (
-            <Button
-              variant="outline"
-              render={<a href={archive.url} aria-label={`Torna a ${archive.name}`} />}
+            <a
+              className={buttonVariants({ variant: "outline" })}
+              href={archive.url}
+              aria-label={`Torna a ${archive.name}`}
             >
               <ArrowLeft data-icon="inline-start" />
               Torna a {archive.name}
-            </Button>
+            </a>
           ) : null}
           <Separator />
           <div className="flex flex-col gap-3">

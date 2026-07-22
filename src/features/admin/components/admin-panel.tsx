@@ -30,7 +30,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -387,10 +387,10 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
             Ruoli, accessi, blocchi e credenziali degli account.
           </p>
         </div>
-        <Button size="sm" render={<Link to="/dashboard/admin/users/new" />}>
+        <Link className={buttonVariants({ size: "sm" })} to="/dashboard/admin/users/new">
           <UserPlus data-icon="inline-start" />
           Nuovo utente
-        </Button>
+        </Link>
       </header>
 
       <Card size="sm">

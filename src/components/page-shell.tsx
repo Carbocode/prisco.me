@@ -3,7 +3,7 @@ import { LockKeyhole } from "lucide-react";
 import type { PropsWithChildren, ReactNode } from "react";
 
 import Header from "@/components/header";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 type PageShellProps = PropsWithChildren<{
   title: string;
@@ -93,24 +93,30 @@ export function SiteFooter() {
             Navigazione
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Navigazione footer">
-            <Button
-              variant="link"
-              render={<Link to="/$archiveSlug" params={{ archiveSlug: "progetti" }} />}
+            <Link
+              className={buttonVariants({ variant: "link" })}
+              to="/$archiveSlug"
+              params={{ archiveSlug: "progetti" }}
             >
               Progetti
-            </Button>
-            <Button
-              variant="link"
-              render={<Link to="/$archiveSlug" params={{ archiveSlug: "blog" }} />}
+            </Link>
+            <Link
+              className={buttonVariants({ variant: "link" })}
+              to="/$archiveSlug"
+              params={{ archiveSlug: "blog" }}
             >
               Blog
-            </Button>
-            <Button variant="link" render={<Link to="/contact" />}>
+            </Link>
+            <Link className={buttonVariants({ variant: "link" })} to="/contact">
               Contatti
-            </Button>
-            <Button variant="link" render={<a href="/rss.xml" aria-label="Feed RSS" />}>
+            </Link>
+            <a
+              className={buttonVariants({ variant: "link" })}
+              href="/rss.xml"
+              aria-label="Feed RSS"
+            >
               Feed RSS
-            </Button>
+            </a>
           </nav>
         </div>
         <div>
@@ -118,9 +124,9 @@ export function SiteFooter() {
             Informazioni
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Informazioni">
-            <Button variant="link" render={<Link to="/about" />}>
+            <Link className={buttonVariants({ variant: "link" })} to="/about">
               Informazioni sul sito
-            </Button>
+            </Link>
           </nav>
         </div>
         <div>
@@ -128,19 +134,15 @@ export function SiteFooter() {
             Social links
           </p>
           <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Social links">
-            <Button
-              variant="link"
-              render={
-                <a
-                  href="https://www.linkedin.com/in/vincenzoprisco/"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="LinkedIn"
-                />
-              }
+            <a
+              className={buttonVariants({ variant: "link" })}
+              href="https://www.linkedin.com/in/vincenzoprisco/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
             >
               LinkedIn
-            </Button>
+            </a>
           </nav>
         </div>
       </div>
@@ -149,16 +151,16 @@ export function SiteFooter() {
           Privacy e accesso
         </p>
         <nav className="flex flex-wrap items-center gap-3" aria-label="Privacy e accesso">
-          <Button variant="link" render={<Link to="/privacy" />}>
+          <Link className={buttonVariants({ variant: "link" })} to="/privacy">
             Privacy
-          </Button>
-          <Button variant="link" render={<Link to="/cookie" />}>
+          </Link>
+          <Link className={buttonVariants({ variant: "link" })} to="/cookie">
             Cookie
-          </Button>
-          <Button variant="outline" nativeButton={false} render={<Link to="/dashboard" />}>
+          </Link>
+          <Link className={buttonVariants({ variant: "outline" })} to="/dashboard">
             <LockKeyhole data-icon="inline-start" />
             Admin dashboard
-          </Button>
+          </Link>
         </nav>
       </div>
       <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col gap-2 border-t border-white/10 pt-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { PostHogProvider } from "posthog-js/react";
 import { useEffect, useState, type PropsWithChildren } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -73,9 +73,9 @@ function CookieBanner({ onChoose }: { onChoose: (consent: CookieConsent) => void
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button nativeButton={false} variant="link" render={<Link to="/cookie" />}>
+        <Link className={buttonVariants({ variant: "link" })} to="/cookie">
           Leggi la cookie policy
-        </Button>
+        </Link>
       </CardContent>
       <CardFooter className="justify-end gap-2">
         <Button variant="outline" type="button" onClick={() => onChoose("rejected")}>

@@ -29,7 +29,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -99,14 +99,14 @@ function ProfileShell() {
     <>
       <Sidebar collapsible="icon">
         <SidebarHeader>
-          <Button
-            size="sm"
-            variant="outline"
-            render={<Link to="/" onClick={() => setOpenMobile(false)} />}
+          <Link
+            className={buttonVariants({ size: "sm", variant: "outline" })}
+            to="/"
+            onClick={() => setOpenMobile(false)}
           >
             <ArrowLeft />
             Prisco.me
-          </Button>
+          </Link>
           <Separator />
         </SidebarHeader>
         <SidebarContent>
@@ -346,14 +346,8 @@ function DashboardBreadcrumb({ pathname, pageTitle }: { pathname: string; pageTi
       <BreadcrumbList className="flex-nowrap">
         <BreadcrumbItem>
           <BreadcrumbLink
-            render={
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Torna alla home"
-                render={<Link to="/" />}
-              />
-            }
+            className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+            render={<Link to="/" aria-label="Torna alla home" />}
           >
             <House />
           </BreadcrumbLink>

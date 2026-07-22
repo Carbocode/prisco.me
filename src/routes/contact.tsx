@@ -5,7 +5,7 @@ import ContactRequestForm from "@/components/contact-request-form";
 import { PageShell } from "@/components/page-shell";
 import Star from "@/components/star";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { pageHead } from "@/lib/page-head";
 import { SITE, siteUrl } from "@/lib/site";
@@ -103,28 +103,24 @@ function ContactPage() {
                 avere già tutte le risposte: basta un punto da cui iniziare.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button
-                  size="lg"
-                  render={<a href="#scrivimi" aria-label="Vai al modulo di contatto" />}
+                <a
+                  className={buttonVariants({ size: "lg" })}
+                  href="#scrivimi"
+                  aria-label="Vai al modulo di contatto"
                 >
                   Scrivimi
                   <ArrowDown data-icon="inline-end" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  render={
-                    <a
-                      href="https://www.linkedin.com/in/vincenzoprisco/"
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label="Apri il profilo LinkedIn di Vincenzo Prisco"
-                    />
-                  }
+                </a>
+                <a
+                  className={buttonVariants({ size: "lg", variant: "outline" })}
+                  href="https://www.linkedin.com/in/vincenzoprisco/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Apri il profilo LinkedIn di Vincenzo Prisco"
                 >
                   LinkedIn
                   <ArrowUpRight data-icon="inline-end" />
-                </Button>
+                </a>
               </div>
             </div>
 

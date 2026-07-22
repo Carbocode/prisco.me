@@ -6,7 +6,7 @@ import { z } from "zod";
 import { AuthPage, formString, formValues } from "@/components/auth-ui";
 import { TurnstileWidget } from "@/components/turnstile-widget";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
@@ -211,23 +211,18 @@ function AccessPage() {
                 </Button>
                 <p>
                   Non hai ancora un account?{" "}
-                  <Button
-                    variant="link"
-                    nativeButton={false}
-                    render={
-                      <Link
-                        to="/login"
-                        search={{ mode: "register", callbackURL: search.callbackURL }}
-                        onClick={() => {
-                          setMode("register");
-                          setMessage("");
-                          resetTurnstile();
-                        }}
-                      />
-                    }
+                  <Link
+                    className={buttonVariants({ variant: "link" })}
+                    to="/login"
+                    search={{ mode: "register", callbackURL: search.callbackURL }}
+                    onClick={() => {
+                      setMode("register");
+                      setMessage("");
+                      resetTurnstile();
+                    }}
                   >
                     Registrati
-                  </Button>
+                  </Link>
                 </p>
                 <FieldSeparator>oppure</FieldSeparator>
                 <Button
@@ -299,23 +294,18 @@ function AccessPage() {
                 </Button>
                 <p>
                   Hai già un account?{" "}
-                  <Button
-                    variant="link"
-                    nativeButton={false}
-                    render={
-                      <Link
-                        to="/login"
-                        search={{ mode: "login", callbackURL: search.callbackURL }}
-                        onClick={() => {
-                          setMode("login");
-                          setMessage("");
-                          resetTurnstile();
-                        }}
-                      />
-                    }
+                  <Link
+                    className={buttonVariants({ variant: "link" })}
+                    to="/login"
+                    search={{ mode: "login", callbackURL: search.callbackURL }}
+                    onClick={() => {
+                      setMode("login");
+                      setMessage("");
+                      resetTurnstile();
+                    }}
                   >
                     Accedi
-                  </Button>
+                  </Link>
                 </p>
               </FieldGroup>
             </form>
