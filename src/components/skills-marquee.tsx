@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { SkillChip } from "@/components/tech-icon";
+import usePageVisible from "@/hooks/use-page-visible";
 import type { Skill } from "@/lib/projects";
 
 type SkillMarqueeRow = {
@@ -40,6 +41,7 @@ function buildRows(skills: Skill[]): SkillMarqueeRow[] {
 export function SkillsMarquee({ skills }: { skills: Skill[] }) {
   const rows = useMemo(() => buildRows(skills), [skills]);
   const repeatedRows = [...rows, ...rows];
+  const isVisible = usePageVisible();
 
   if (rows.length === 0) return null;
 
@@ -55,14 +57,14 @@ export function SkillsMarquee({ skills }: { skills: Skill[] }) {
       </div>
       <div className="skills-marquee min-w-0 space-y-3 overflow-hidden">
         {repeatedRows.map((row, index) => (
-          <MarqueeRow key={`${index}-${row.row}`} row={row} />
+          <MarqueeRow key={`${index}-${row.row}`} row={row} isVisible={isVisible} />
         ))}
       </div>
     </div>
   );
 }
 
-function MarqueeRow({ row }: { row: SkillMarqueeRow }) {
+function MarqueeRow({ row, isVisible }: { row: SkillMarqueeRow; isVisible: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const groupRef = useRef<HTMLDivElement>(null);
   // How many times a single set of chips must repeat so that one marquee "half"
@@ -102,7 +104,10 @@ function MarqueeRow({ row }: { row: SkillMarqueeRow }) {
         ]
           .filter(Boolean)
           .join(" ")}
-        style={{ animationDuration: (row.duration ?? 34) + "s" }}
+        style={{
+          animationDuration: (row.duration ?? 34) + "s",
+          animationPlayState: isVisible ? "running" : "paused",
+        }}
       >
         <SkillGroup ref={groupRef} items={row.items} repeat={repeat} />
         <SkillGroup items={row.items} repeat={repeat} ariaHidden />

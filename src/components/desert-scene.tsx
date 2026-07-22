@@ -2,6 +2,7 @@ import type { CSSProperties, HTMLAttributes } from "react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import { SkillGlyph } from "@/components/tech-icon";
+import usePageVisible from "@/hooks/use-page-visible";
 import type { Skill } from "@/lib/projects";
 
 type DesertSceneProps = HTMLAttributes<HTMLDivElement> & {
@@ -77,6 +78,7 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
   const pool = skills.filter((skill) => skill.icon);
   const sceneRef = useRef<HTMLDivElement>(null);
   const [sceneWidth, setSceneWidth] = useState(1440);
+  const isVisible = usePageVisible();
   const picks = TUMBLEWEEDS.map((_, index) =>
     pool.length > 0 ? pool[(index * 5 + 2) % pool.length] : undefined,
   );
@@ -123,6 +125,7 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
                   config={tw}
                   sceneWidth={sceneWidth}
                   skill={picks[index]}
+                  isVisible={isVisible}
                 />
               ) : null,
             )}
@@ -137,10 +140,12 @@ function RollingTumbleweed({
   config,
   sceneWidth,
   skill,
+  isVisible,
 }: {
   config: (typeof TUMBLEWEEDS)[number];
   sceneWidth: number;
   skill?: Skill;
+  isVisible: boolean;
 }) {
   const { bottom, sizeRatio, minSize, maxSize, travel, bounce, delay } = config;
   const size = Math.round(Math.min(maxSize, Math.max(minSize, sceneWidth * sizeRatio)));
@@ -154,6 +159,7 @@ function RollingTumbleweed({
     height: size,
     animationDuration: `${travelDuration}s`,
     animationDelay: `${delay}s`,
+    animationPlayState: isVisible ? "running" : "paused",
     "--tumbleweed-distance": `${sceneWidth + size * 2}px`,
     "--tumbleweed-hop": `${Math.round(size * 0.43)}px`,
   } as CSSProperties;
@@ -162,12 +168,19 @@ function RollingTumbleweed({
     <div className="tumbleweed-travel" style={travelStyle}>
       <div
         className="tumbleweed-bounce"
-        style={{ animationDuration: `${bounce}s`, animationDelay: `${delay}s` }}
+        style={{
+          animationDuration: `${bounce}s`,
+          animationDelay: `${delay}s`,
+          animationPlayState: isVisible ? "running" : "paused",
+        }}
       >
         <div className="relative" style={{ width: size, height: size }}>
           <div
             className="tumbleweed-roll absolute inset-0"
-            style={{ animationDuration: `${roll}s` }}
+            style={{
+              animationDuration: `${roll}s`,
+              animationPlayState: isVisible ? "running" : "paused",
+            }}
           >
             <img src="/home/illustrations/tumbleweed.svg" alt="" className="h-full w-full" />
           </div>

@@ -287,84 +287,6 @@ function GanttJourney({ experiences }: { experiences: Experience[] }) {
   const plotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let snapTimer: ReturnType<typeof setTimeout> | undefined;
-    let wheelLocked = false;
-
-    // On mobile the block-by-block snap fights native touch scrolling, so we let the page
-    // scroll freely and only keep the active-block highlight (handled in `update`).
-    const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
-
-    const lastSeg = segments[segments.length - 1];
-    const lastTop = lastSeg ? ganttY(Math.max(0, lastSeg.startIndex)) : 0;
-
-    // The clamped target scroll position that centers a given block. Clamping to 0 is why
-    // the first block needs the "nearest by real target" comparison below (it sits at the
-    // very top of the page), rather than comparing raw block tops.
-    const targetFor = (index: number) => {
-      const el = plotRef.current;
-      const seg = segments[index];
-      if (!el || !seg) return null;
-      return Math.max(
-        0,
-        el.getBoundingClientRect().top +
-          window.scrollY +
-          ganttY(Math.max(0, seg.startIndex)) -
-          window.innerHeight / 2,
-      );
-    };
-
-    const nearestIndex = () => {
-      let index = 0;
-      let best = Number.POSITIVE_INFINITY;
-      for (let i = 0; i < segments.length; i++) {
-        const target = targetFor(i);
-        if (target == null) continue;
-        const distance = Math.abs(target - window.scrollY);
-        if (distance < best) {
-          best = distance;
-          index = i;
-        }
-      }
-      return index;
-    };
-
-    const goTo = (index: number) => {
-      const target = targetFor(index);
-      if (target != null) window.scrollTo({ top: target, behavior: "smooth" });
-    };
-
-    // Each scroll gesture is one step between blocks. Free scrolling only resumes at the
-    // edges: above the first block (up to the header) and below the last (down to the footer).
-    const onWheel = (event: WheelEvent) => {
-      const el = plotRef.current;
-      if (!el || isMobile() || Math.abs(event.deltaY) < 1) return;
-      const rect = el.getBoundingClientRect();
-      const mid = window.innerHeight / 2;
-      if (rect.top >= mid || rect.bottom <= mid) return; // outside the gantt → free scroll
-      const next = nearestIndex() + (event.deltaY > 0 ? 1 : -1);
-      if (next < 0 || next >= segments.length) return; // edge → release to header/footer
-      event.preventDefault();
-      if (wheelLocked) return;
-      wheelLocked = true;
-      goTo(next);
-      window.setTimeout(() => {
-        wheelLocked = false;
-      }, 650);
-    };
-
-    // Fallback for keyboard / scrollbar scrolling: settle on the nearest block once the
-    // scroll stops, but stay free above the first block and below the last.
-    const snap = () => {
-      const el = plotRef.current;
-      if (!el || isMobile()) return;
-      const readingLine = window.innerHeight / 2 - el.getBoundingClientRect().top;
-      if (readingLine < 0 || readingLine > lastTop) return;
-      const target = targetFor(nearestIndex());
-      if (target != null && Math.abs(target - window.scrollY) > 4) {
-        window.scrollTo({ top: target, behavior: "smooth" });
-      }
-    };
-
     const update = () => {
       const el = plotRef.current;
       if (!el) return;
@@ -375,19 +297,14 @@ function GanttJourney({ experiences }: { experiences: Experience[] }) {
         else break;
       }
       setActiveId(current ? current.experience.id : null);
-      clearTimeout(snapTimer);
-      snapTimer = setTimeout(snap, 140);
     };
 
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
-    window.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
-      window.removeEventListener("wheel", onWheel);
-      clearTimeout(snapTimer);
     };
   }, [segments]);
 
