@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 import { DashboardDataTable } from "@/components/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -81,10 +81,10 @@ function CmsDashboardContent() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button size="sm" render={<Link to="/dashboard/cms/articles/new" />}>
+          <Link className={buttonVariants({ size: "sm" })} to="/dashboard/cms/articles/new">
             <FilePlus2 data-icon="inline-start" />
             Nuovo articolo
-          </Button>
+          </Link>
         </div>
       </header>
 
@@ -100,14 +100,14 @@ function CmsDashboardContent() {
           <CardTitle>Attività recente</CardTitle>
           <CardDescription>Gli ultimi contenuti modificati, ordinati per data.</CardDescription>
           <CardAction>
-            <Button
-              size="sm"
-              variant="ghost"
-              render={<Link to="/dashboard/cms/articles" search={{ page: 1 }} />}
+            <Link
+              className={buttonVariants({ size: "sm", variant: "ghost" })}
+              to="/dashboard/cms/articles"
+              search={{ page: 1 }}
             >
               Tutti gli articoli
               <ArrowRight data-icon="inline-end" />
-            </Button>
+            </Link>
           </CardAction>
         </CardHeader>
         <CardContent>

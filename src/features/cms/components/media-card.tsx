@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { HoverAnimatedImage } from "@/components/hover-animated-image";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -139,18 +139,15 @@ function MediaPreview({ item }: { item: MediaCardItem }) {
           // oxlint-disable-next-line jsx-a11y/media-has-caption -- anteprima audio CMS senza trascrizione associata
           <audio src={item.url} controls className="w-full" />
         ) : (
-          <Button
-            render={
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Apri ${displayName}`}
-              />
-            }
+          <a
+            className={buttonVariants()}
+            href={item.url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Apri ${displayName}`}
           >
             Apri il file
-          </Button>
+          </a>
         )}
       </DialogContent>
     </Dialog>

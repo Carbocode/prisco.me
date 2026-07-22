@@ -1,6 +1,6 @@
 import { getSkillColor, SkillGlyph } from "@/components/tech-icon";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -70,12 +70,13 @@ export function ProjectCard({ project, compact = false }: { project: Project; co
         <CardDescription>{compact ? project.summary : project.description}</CardDescription>
       </CardContent>
       <CardFooter className="mt-auto">
-        <Button
-          variant="outline"
-          render={<a href={`/progetti/${project.slug}`} aria-label={`Scopri ${project.title}`} />}
+        <a
+          className={buttonVariants({ variant: "outline" })}
+          href={`/progetti/${project.slug}`}
+          aria-label={`Scopri ${project.title}`}
         >
           Scopri il progetto
-        </Button>
+        </a>
       </CardFooter>
     </Card>
   );

@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { DashboardDataTable } from "@/components/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -123,33 +123,23 @@ function ArticlesContent() {
         enableResizing: false,
         cell: ({ row }) => (
           <ButtonGroup>
-            <Button
-              size="icon-sm"
-              variant="outline"
+            <Link
+              className={buttonVariants({ size: "icon-sm", variant: "outline" })}
               aria-label={`Modifica ${row.original.title}`}
-              render={
-                <Link
-                  to="/dashboard/cms/articles/$articleId"
-                  params={{ articleId: row.original.id }}
-                />
-              }
+              to="/dashboard/cms/articles/$articleId"
+              params={{ articleId: row.original.id }}
             >
               <Pencil />
-            </Button>
-            <Button
-              size="icon-sm"
-              variant="outline"
+            </Link>
+            <Link
+              className={buttonVariants({ size: "icon-sm", variant: "outline" })}
               aria-label={`Anteprima ${row.original.title}`}
-              render={
-                <Link
-                  to="/dashboard/cms/articles/$articleId/preview"
-                  params={{ articleId: row.original.id }}
-                  target="_blank"
-                />
-              }
+              to="/dashboard/cms/articles/$articleId/preview"
+              params={{ articleId: row.original.id }}
+              target="_blank"
             >
               <Eye />
-            </Button>
+            </Link>
           </ButtonGroup>
         ),
       },
@@ -167,10 +157,10 @@ function ArticlesContent() {
             Cerca, filtra e apri un contenuto senza cambiare contesto.
           </p>
         </div>
-        <Button size="sm" render={<Link to="/dashboard/cms/articles/new" />}>
+        <Link className={buttonVariants({ size: "sm" })} to="/dashboard/cms/articles/new">
           <FilePlus2 data-icon="inline-start" />
           Nuovo articolo
-        </Button>
+        </Link>
       </header>
 
       <Card size="sm">
@@ -321,7 +311,9 @@ function ArticlesContent() {
                 Azzera filtri
               </Button>
             ) : (
-              <Button render={<Link to="/dashboard/cms/articles/new" />}>Nuovo articolo</Button>
+              <Link className={buttonVariants()} to="/dashboard/cms/articles/new">
+                Nuovo articolo
+              </Link>
             )}
           </EmptyContent>
         </Empty>

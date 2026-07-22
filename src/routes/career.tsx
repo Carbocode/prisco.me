@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PageShell } from "@/components/page-shell";
 import Star from "@/components/star";
 import { SkillChip } from "@/components/tech-icon";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { pageHead } from "@/lib/page-head";
 import type { Experience, Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
@@ -477,14 +477,17 @@ function CareerCta() {
           Hai una sfida che merita di diventare realtà? Raccontamela: il prossimo blocco di questa
           storia potremmo costruirlo insieme.
         </p>
-        <Button
-          render={<Link to="/contact" />}
-          size="lg"
-          className="mt-7 rounded-full bg-gradient-to-r from-violet-300 to-fuchsia-400 px-6 font-semibold text-violet-950 shadow-lg shadow-fuchsia-950/30 hover:brightness-110"
+        <Link
+          to="/contact"
+          className={buttonVariants({
+            size: "lg",
+            className:
+              "mt-7 rounded-full bg-gradient-to-r from-violet-300 to-fuchsia-400 px-6 font-semibold text-violet-950 shadow-lg shadow-fuchsia-950/30 hover:brightness-110",
+          })}
         >
           Scriviamo il prossimo capitolo
           <span aria-hidden="true">→</span>
-        </Button>
+        </Link>
       </div>
     </aside>
   );
