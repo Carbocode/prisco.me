@@ -9,14 +9,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const links = [
   { kind: "static", to: "/", label: "Home" },
@@ -37,10 +30,7 @@ export default function Header({ className, ...props }: HTMLAttributes<HTMLEleme
           <p className="leading-tight display-font text-lg font-semibold">Vincenzo Prisco</p>
         </Link>
 
-        <NavigationMenu
-          aria-label="Navigazione principale"
-          className="absolute left-1/2 hidden -translate-x-1/2 md:flex"
-        >
+        <NavigationMenu aria-label="Navigazione principale" className="ml-auto hidden md:flex">
           <NavigationMenuList>
             {links.map((item) => (
               <NavigationMenuItem key={item.label}>
@@ -66,11 +56,8 @@ export default function Header({ className, ...props }: HTMLAttributes<HTMLEleme
             <span className="sr-only">Apri menu</span>
           </SheetTrigger>
           <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Navigazione</SheetTitle>
-              <SheetDescription>Sezioni del sito.</SheetDescription>
-            </SheetHeader>
-            <nav aria-label="Navigazione mobile" className="grid gap-2 p-4">
+            <SheetTitle className="sr-only">Navigazione</SheetTitle>
+            <nav aria-label="Navigazione mobile" className="grid gap-2 p-4 pt-16">
               {links.map((item) =>
                 item.kind === "archive" ? (
                   <Link
