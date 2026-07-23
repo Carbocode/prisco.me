@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Toaster } from "@/components/ui/sonner";
 import {
   Sidebar,
   SidebarContent,
@@ -67,9 +68,12 @@ export const Route = createFileRoute("/dashboard")({
 
 function ProfileRoute() {
   return (
-    <RequireAuth>
-      <ProfileLayout />
-    </RequireAuth>
+    <>
+      <RequireAuth>
+        <ProfileLayout />
+      </RequireAuth>
+      <Toaster theme="dark" />
+    </>
   );
 }
 
