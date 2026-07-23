@@ -47,8 +47,7 @@ function FallbackIcon({ visual }: { visual: ResolvedVisual }) {
 
 function BrandIcon({ visual, size }: { visual: ResolvedVisual; size: number }) {
   const iconName =
-    normalizeIconName(visual.iconName) ??
-    (visual.fluent ? `fluent-color:${visual.fluent}` : null);
+    normalizeIconName(visual.iconName) ?? (visual.fluent ? `fluent-color:${visual.fluent}` : null);
   const [loadedIcon, setLoadedIcon] = useState<{ name: string; data: IconifyIcon } | null>(null);
 
   useEffect(() => {

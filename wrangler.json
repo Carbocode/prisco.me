@@ -33,7 +33,6 @@
     "binding": "CF_VERSION_METADATA"
   },
   "vars": {
-    "SENTRY_DNS": "https://1b376c7d10b15705ff1a40c2f8f140cb@o4510675457540096.ingest.de.sentry.io/4510702232862800",
     "MEDIA_PUBLIC_URL": "https://media.prisco.me",
     "TURNSTILE_SITE_KEY": "0x4AAAAAACM4BBOgqLsfgNUy"
   },

@@ -1,3 +1,5 @@
+import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import spaceGroteskFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
@@ -7,8 +9,6 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { SiteFooter } from "@/components/page-shell";
 
-import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
-import spaceGroteskFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {

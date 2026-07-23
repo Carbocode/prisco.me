@@ -54,9 +54,10 @@ function CookiePage() {
           <Alert>
             <AlertTitle>Stato attuale del consenso</AlertTitle>
             <AlertDescription>
-              Il banner distingue gli strumenti necessari da quelli analitici. Il codice PostHog non
-              viene inizializzato prima di una scelta positiva dell&apos;utente. Il rifiuto non
-              limita la consultazione delle pagine o l&apos;invio del modulo di contatto.
+              Il banner distingue il monitoraggio tecnico necessario dalle analisi facoltative.
+              PostHog rileva errori e Web Vitals senza persistenza nel browser; pageview,
+              interazioni e session replay restano disattivati senza consenso. Il rifiuto non limita
+              il sito.
             </AlertDescription>
             <Button type="button" onClick={openCookiePreferences}>
               Modifica le preferenze
@@ -164,9 +165,9 @@ function CookiePage() {
                   ],
                   [
                     "PostHog",
-                    "Analisi aggregate dell'utilizzo e miglioramento del sito.",
-                    "Solo dopo consenso esplicito.",
-                    "Secondo la configurazione del servizio.",
+                    "Errori e Web Vitals in modalità tecnica; analisi di utilizzo e session replay in modalità facoltativa.",
+                    "Modalità tecnica necessaria; funzionalità analitiche solo dopo consenso.",
+                    "Nessuna persistenza locale in modalità tecnica; secondo la configurazione del servizio dopo consenso.",
                   ],
                 ].map(([name, purpose, activation, duration]) => (
                   <TableRow key={name}>
@@ -188,16 +189,15 @@ function CookiePage() {
 
           <LegalSection title="5. PostHog e analisi facoltativa">
             <p>
-              Il progetto può utilizzare PostHog come strumento di product analytics. L&apos;SDK
-              viene montato dall&apos;applicazione soltanto quando il valore di consenso analitico è
-              <em>accepted</em>; in assenza di scelta o in caso di rifiuto il provider non viene
-              inizializzato.
+              Il progetto utilizza PostHog anche per monitorare errori applicativi e Web Vitals.
+              Questa modalità tecnica è inizializzata senza cookie o localStorage PostHog, senza
+              profili persona, autocapture, pageview, session replay, survey o feature flag.
             </p>
             <p>
-              L&apos;analisi può riguardare pagine visitate, eventi tecnici, informazioni sul
-              dispositivo, referrer e interazioni con le funzionalità, nella misura prevista dalla
-              configurazione. Non deve essere utilizzata per finalità pubblicitarie o per
-              identificare una persona oltre quanto necessario alla metrica dichiarata.
+              Soltanto dopo il consenso vengono abilitate persistenza, pageview, autocapture e
+              session replay. L&apos;analisi facoltativa può riguardare pagine visitate,
+              informazioni sul dispositivo, referrer e interazioni con le funzionalità, nella misura
+              prevista dalla configurazione. Non è utilizzata per finalità pubblicitarie.
             </p>
             <p>
               Il consenso è libero, specifico, informato e revocabile. La revoca non rende illeciti
@@ -214,7 +214,8 @@ function CookiePage() {
             </p>
             <p>
               La scelta viene memorizzata localmente nel browser. Se l&apos;utente rifiuta, gli
-              strumenti analitici rimangono disattivati. Se accetta, PostHog viene inizializzato
+              strumenti analitici rimangono disattivati e PostHog continua soltanto in modalità
+              tecnica senza persistenza. Se accetta, vengono abilitate le funzionalità analitiche
               dopo l&apos;aggiornamento dello stato dell&apos;applicazione.
             </p>
             <p>
@@ -228,10 +229,10 @@ function CookiePage() {
           <LegalSection title="7. Base giuridica e conseguenze del rifiuto">
             <p>
               Gli strumenti strettamente necessari si fondano sulla necessità di fornire il servizio
-              richiesto dall&apos;utente e, ove applicabile, sul legittimo interesse alla sicurezza.
-              Gli strumenti analitici si fondano sul consenso ai sensi dell&apos;articolo 6,
-              paragrafo 1, lettera a), del Regolamento (UE) 2016/679 e delle norme nazionali
-              applicabili.
+              richiesto dall&apos;utente e, ove applicabile, sul legittimo interesse alla sicurezza,
+              alla diagnosi degli errori e alla continuità tecnica. Gli strumenti analitici si
+              fondano sul consenso ai sensi dell&apos;articolo 6, paragrafo 1, lettera a), del
+              Regolamento (UE) 2016/679 e delle norme nazionali applicabili.
             </p>
             <p>
               Il rifiuto o la revoca del consenso non comportano limitazioni alla consultazione del

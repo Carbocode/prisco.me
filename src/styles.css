@@ -153,6 +153,11 @@ code {
   );
 }
 
+.earth-cross-section > .relative > section {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 42rem;
+}
+
 /*
  * Faint, uneven sediment banding layered over the cross-section to sell the
  * "slice of earth" reading without looking like ruled lines. Kept low-opacity
@@ -680,90 +685,78 @@ code {
 }
 
 .hero-content-enter {
-  opacity: 0;
   transform: translateY(clamp(10rem, 24vh, 15rem)) scale(0.97);
   transform-origin: center bottom;
-  animation: hero-content-rise 1400ms 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: hero-content-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
 }
 
 .hero-content-enter-item {
-  opacity: 0;
   transform: translateY(14px);
-  animation: hero-content-item-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: hero-content-item-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .hero-content-enter-item:nth-child(1) {
-  animation-delay: 720ms;
+  animation-delay: 40ms;
 }
 
 .hero-content-enter-item:nth-child(2) {
-  animation-delay: 820ms;
+  animation-delay: 90ms;
 }
 
 .hero-content-enter-item:nth-child(3) {
-  animation-delay: 920ms;
+  animation-delay: 140ms;
 }
 
 .hero-content-enter-item:nth-child(4) {
-  animation-delay: 1020ms;
+  animation-delay: 190ms;
 }
 
 .mountain-enter {
-  opacity: 0;
   transform: translateY(3rem) scale(0.92);
   transform-origin: center bottom;
-  animation: mountain-enter 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: mountain-enter 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
 }
 
 .hero-header-enter {
-  opacity: 0;
   transform: translateY(-2.5rem);
-  animation: hero-header-enter 700ms 2050ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: hero-header-enter 500ms 80ms cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
 }
 
 @keyframes hero-content-rise {
   from {
-    opacity: 0;
     transform: translateY(clamp(10rem, 24vh, 15rem)) scale(0.97);
   }
   to {
-    opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
 @keyframes mountain-enter {
   from {
-    opacity: 0;
     transform: translateY(3rem) scale(0.92);
   }
   to {
-    opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
 @keyframes hero-header-enter {
   from {
-    opacity: 0;
     transform: translateY(-2.5rem);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes hero-content-item-in {
   from {
-    opacity: 0;
     transform: translateY(14px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -786,24 +779,77 @@ code {
   z-index: 1;
 }
 
-.shooting-star {
+.shooting-star-runner {
   position: absolute;
+  width: var(--shooting-star-distance);
+  height: 2px;
+  transform: rotate(135deg) scaleX(0);
+  transform-origin: left center;
+  animation: shooting-star-flight
+    calc(var(--shooting-star-duration) + 8s)
+    linear
+    var(--shooting-star-delay)
+    infinite;
+}
+
+.shooting-star-runner::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, transparent, #fff);
+}
+
+.shooting-star-runner::after {
+  position: absolute;
+  top: 50%;
+  right: -1px;
   width: 2px;
   height: 2px;
+  content: "";
   background: #fff;
   border-radius: 50%;
   box-shadow:
     0 0 4px #fff,
     0 0 8px rgba(255, 255, 255, 0.8);
+  transform: translateY(-50%);
 }
 
-.shooting-star-trail {
-  position: absolute;
-  top: 0;
-  left: 0; /* Anchor to the start position */
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #fff);
-  pointer-events: none;
+@keyframes shooting-star-flight {
+  0%,
+  2% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(0);
+  }
+  4% {
+    opacity: 1;
+  }
+  12% {
+    opacity: 1;
+    transform: rotate(135deg) scaleX(1);
+  }
+  20%,
+  100% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(1);
+  }
+}
+
+.cloud-carousel {
+  contain: layout paint;
+}
+
+.cloud-carousel-item {
+  left: 0;
+  width: var(--cloud-width);
+  transform: translate3d(calc(-100% - 24px), 0, 0);
+  animation: cloud-carousel-travel var(--cloud-duration) linear var(--cloud-delay) infinite;
+  will-change: transform;
+}
+
+@keyframes cloud-carousel-travel {
+  to {
+    transform: translate3d(calc(100vw + 24px), 0, 0);
+  }
 }
 
 .skills-marquee {
@@ -839,9 +885,14 @@ code {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shooting-star {
+  .shooting-star-runner {
     animation: none;
     opacity: 0;
+  }
+
+  .cloud-carousel-item {
+    animation-play-state: paused;
+    will-change: auto;
   }
 
   .hero-content-enter,

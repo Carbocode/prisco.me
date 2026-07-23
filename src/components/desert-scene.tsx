@@ -1,8 +1,7 @@
 import type { CSSProperties, HTMLAttributes } from "react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment } from "react";
 
 import { SkillGlyph } from "@/components/tech-icon";
-import usePageVisible from "@/hooks/use-page-visible";
 import type { Skill } from "@/lib/projects";
 
 type DesertSceneProps = HTMLAttributes<HTMLDivElement> & {
@@ -13,9 +12,9 @@ const TUMBLEWEEDS = [
   {
     afterDune: "/home/dune-5.svg",
     bottom: "43%",
-    sizeRatio: 0.032,
-    minSize: 22,
-    maxSize: 50,
+    size: "clamp(22px, 3.2vw, 50px)",
+    hop: "clamp(9px, 1.38vw, 22px)",
+    iconSize: 18,
     travel: 27,
     bounce: 2.1,
     delay: 0,
@@ -23,9 +22,9 @@ const TUMBLEWEEDS = [
   {
     afterDune: "/home/dune-4.svg",
     bottom: "35%",
-    sizeRatio: 0.042,
-    minSize: 28,
-    maxSize: 64,
+    size: "clamp(28px, 4.2vw, 64px)",
+    hop: "clamp(12px, 1.81vw, 28px)",
+    iconSize: 23,
     travel: 22,
     bounce: 1.8,
     delay: 6,
@@ -33,16 +32,14 @@ const TUMBLEWEEDS = [
   {
     afterDune: "/home/dune-3.svg",
     bottom: "27%",
-    sizeRatio: 0.052,
-    minSize: 32,
-    maxSize: 78,
+    size: "clamp(32px, 5.2vw, 78px)",
+    hop: "clamp(14px, 2.24vw, 34px)",
+    iconSize: 28,
     travel: 18,
     bounce: 1.5,
     delay: 12,
   },
 ];
-
-const NOMINAL_TRAVEL_PX = 1.32 * 1440;
 
 // Ordine dal piano piu lontano a quello piu vicino.
 const MOUNTAIN_LAYERS = [
@@ -63,40 +60,17 @@ const DUNE_LAYERS = [
   { src: "/home/dune-1.svg", bottom: "0%" },
 ];
 
-function travelSpeed(travelSeconds: number) {
-  return NOMINAL_TRAVEL_PX / travelSeconds;
-}
-
-function rollPeriod(size: number, speed: number) {
-  return (Math.PI * size) / speed;
-}
-
 export default function DesertScene({ className, skills = [], ...props }: DesertSceneProps) {
   const classes = ["pointer-events-none relative w-full select-none", className]
     .filter(Boolean)
     .join(" ");
   const pool = skills.filter((skill) => skill.icon);
-  const sceneRef = useRef<HTMLDivElement>(null);
-  const [sceneWidth, setSceneWidth] = useState(1440);
-  const isVisible = usePageVisible();
   const picks = TUMBLEWEEDS.map((_, index) =>
     pool.length > 0 ? pool[(index * 5 + 2) % pool.length] : undefined,
   );
 
-  useEffect(() => {
-    const scene = sceneRef.current;
-    if (!scene) return undefined;
-
-    const updateWidth = () => setSceneWidth(scene.clientWidth);
-    const resizeObserver = new ResizeObserver(updateWidth);
-    updateWidth();
-    resizeObserver.observe(scene);
-
-    return () => resizeObserver.disconnect();
-  }, []);
-
   return (
-    <div ref={sceneRef} className={classes} aria-hidden="true" {...props}>
+    <div className={classes} aria-hidden="true" {...props}>
       <div className="relative aspect-[1280/841] w-full overflow-hidden">
         {MOUNTAIN_LAYERS.map((layer, index) => (
           <img
@@ -126,13 +100,7 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
             />
             {TUMBLEWEEDS.map((tw, index) =>
               tw.afterDune === layer.src ? (
-                <RollingTumbleweed
-                  key={`${layer.src}-${index}`}
-                  config={tw}
-                  sceneWidth={sceneWidth}
-                  skill={picks[index]}
-                  isVisible={isVisible}
-                />
+                <RollingTumbleweed key={`${layer.src}-${index}`} config={tw} skill={picks[index]} />
               ) : null,
             )}
           </Fragment>
@@ -144,30 +112,21 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
 
 function RollingTumbleweed({
   config,
-  sceneWidth,
   skill,
-  isVisible,
 }: {
   config: (typeof TUMBLEWEEDS)[number];
-  sceneWidth: number;
   skill?: Skill;
-  isVisible: boolean;
 }) {
-  const { bottom, sizeRatio, minSize, maxSize, travel, bounce, delay } = config;
-  const size = Math.round(Math.min(maxSize, Math.max(minSize, sceneWidth * sizeRatio)));
-  const speed = travelSpeed(travel);
-  const travelDuration = (sceneWidth + size * 2) / speed;
-  const roll = rollPeriod(size, speed);
+  const { bottom, size, hop, iconSize, travel, bounce, delay } = config;
   const travelStyle = {
     bottom,
-    left: -size,
+    left: `calc(-1 * ${size})`,
     width: size,
     height: size,
-    animationDuration: `${travelDuration}s`,
+    animationDuration: `${travel}s`,
     animationDelay: `${delay}s`,
-    animationPlayState: isVisible ? "running" : "paused",
-    "--tumbleweed-distance": `${sceneWidth + size * 2}px`,
-    "--tumbleweed-hop": `${Math.round(size * 0.43)}px`,
+    "--tumbleweed-distance": `calc(100vw + ${size} + ${size})`,
+    "--tumbleweed-hop": hop,
   } as CSSProperties;
 
   return (
@@ -177,25 +136,20 @@ function RollingTumbleweed({
         style={{
           animationDuration: `${bounce}s`,
           animationDelay: `${delay}s`,
-          animationPlayState: isVisible ? "running" : "paused",
         }}
       >
-        <div className="relative" style={{ width: size, height: size }}>
+        <div className="relative size-full">
           <div
             className="tumbleweed-roll absolute inset-0"
             style={{
-              animationDuration: `${roll}s`,
-              animationPlayState: isVisible ? "running" : "paused",
+              animationDuration: `${Math.max(0.9, travel / 14)}s`,
             }}
           >
             <img src="/home/illustrations/tumbleweed.svg" alt="" className="h-full w-full" />
           </div>
           {skill && (
-            <div
-              className="absolute inset-0 flex items-center justify-center text-amber-50/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]"
-              style={{ width: size, height: size }}
-            >
-              <SkillGlyph skill={skill} size={Math.round(size * 0.42)} />
+            <div className="absolute inset-0 flex size-full items-center justify-center text-amber-50/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
+              <SkillGlyph skill={skill} size={iconSize} />
             </div>
           )}
         </div>
