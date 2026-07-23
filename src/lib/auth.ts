@@ -14,7 +14,22 @@ type AuthEnv = Env & {
   CF_TS_KEY?: string;
 };
 
-export function createAuth(env: AuthEnv) {
+export function isLocalHostname(hostname: string) {
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname === "[::1]"
+  );
+}
+
+export function isLocalRequest(request: Request) {
+  return isLocalHostname(new URL(request.url).hostname);
+}
+
+export function createAuth(env: AuthEnv, options: { captchaEnabled?: boolean } = {}) {
+  const captchaEnabled = options.captchaEnabled ?? true;
+
   return betterAuth({
     appName: "Prisco.me",
     baseURL: {
@@ -53,9 +68,11 @@ export function createAuth(env: AuthEnv) {
       captcha({
         provider: "cloudflare-turnstile",
         secretKey: env.TURNSTILE_SECRET ?? env.CF_TS_KEY ?? "",
-        endpoints: ["/sign-in/email", "/sign-in/username", "/sign-up/email"],
+        endpoints: captchaEnabled
+          ? ["/sign-in/email", "/sign-in/username", "/sign-up/email"]
+          : ["/__captcha-disabled-on-localhost"],
         expectedAction: "turnstile-spin-v2",
-        allowedHostnames: ["prisco.me", "localhost", "127.0.0.1"],
+        allowedHostnames: ["prisco.me"],
       }),
       admin({ defaultRole: "user", adminRoles: ["admin"], ac: cmsAccessControl, roles: cmsRoles }),
       username(),

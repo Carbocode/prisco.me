@@ -9,6 +9,7 @@ import {
   KeyRound,
   LayoutDashboard,
   LogOut,
+  Mail,
   ShieldCheck,
   Tags,
   TriangleAlert,
@@ -165,6 +166,21 @@ function ProfileShell() {
                     >
                       <Users />
                       <span>Lista utenti</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      title="Richieste di contatto"
+                      isActive={
+                        pathname === "/dashboard/admin/contacts" ||
+                        pathname === "/dashboard/admin/contacts/"
+                      }
+                      render={
+                        <Link to="/dashboard/admin/contacts" onClick={() => setOpenMobile(false)} />
+                      }
+                    >
+                      <Mail />
+                      <span>Richieste di contatto</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -387,6 +403,7 @@ function dashboardSection(pathname: string) {
 }
 
 function dashboardTitle(pathname: string) {
+  if (pathname.includes("/admin/contacts")) return "Richieste di contatto";
   if (pathname.includes("/admin/users/new")) return "Crea utente";
   if (pathname.includes("/admin/users")) return "Utenti";
   if (pathname.includes("/cms/articles/new")) return "Nuovo articolo";

@@ -43,6 +43,7 @@ import { Route as DashboardCmsMediaRouteImport } from './routes/dashboard/cms/me
 import { Route as DashboardCmsCategoriesRouteImport } from './routes/dashboard/cms/categories'
 import { Route as DashboardCmsArticlesRouteImport } from './routes/dashboard/cms/articles'
 import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard/admin/users'
+import { Route as DashboardAdminContactsRouteImport } from './routes/dashboard/admin/contacts'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as DashboardCmsArticlesNewRouteImport } from './routes/dashboard/cms/articles_.new'
 import { Route as DashboardCmsArticlesArticleIdRouteImport } from './routes/dashboard/cms/articles_.$articleId'
@@ -228,6 +229,11 @@ const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => DashboardAdminRouteRoute,
 } as any)
+const DashboardAdminContactsRoute = DashboardAdminContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => DashboardAdminRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -307,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/$archiveSlug/': typeof ArchiveSlugIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/contacts': typeof DashboardAdminContactsRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/cms/articles': typeof DashboardCmsArticlesRoute
   '/dashboard/cms/categories': typeof DashboardCmsCategoriesRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/$archiveSlug': typeof ArchiveSlugIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/contacts': typeof DashboardAdminContactsRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/cms/articles': typeof DashboardCmsArticlesRoute
   '/dashboard/cms/categories': typeof DashboardCmsCategoriesRoute
@@ -396,6 +404,7 @@ export interface FileRoutesById {
   '/$archiveSlug/': typeof ArchiveSlugIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/contacts': typeof DashboardAdminContactsRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/dashboard/cms/articles': typeof DashboardCmsArticlesRoute
   '/dashboard/cms/categories': typeof DashboardCmsCategoriesRoute
@@ -444,6 +453,7 @@ export interface FileRouteTypes {
     | '/$archiveSlug/'
     | '/dashboard/'
     | '/api/auth/$'
+    | '/dashboard/admin/contacts'
     | '/dashboard/admin/users'
     | '/dashboard/cms/articles'
     | '/dashboard/cms/categories'
@@ -486,6 +496,7 @@ export interface FileRouteTypes {
     | '/$archiveSlug'
     | '/dashboard'
     | '/api/auth/$'
+    | '/dashboard/admin/contacts'
     | '/dashboard/admin/users'
     | '/dashboard/cms/articles'
     | '/dashboard/cms/categories'
@@ -532,6 +543,7 @@ export interface FileRouteTypes {
     | '/$archiveSlug/'
     | '/dashboard/'
     | '/api/auth/$'
+    | '/dashboard/admin/contacts'
     | '/dashboard/admin/users'
     | '/dashboard/cms/articles'
     | '/dashboard/cms/categories'
@@ -821,6 +833,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminUsersRouteImport
       parentRoute: typeof DashboardAdminRouteRoute
     }
+    '/dashboard/admin/contacts': {
+      id: '/dashboard/admin/contacts'
+      path: '/contacts'
+      fullPath: '/dashboard/admin/contacts'
+      preLoaderRoute: typeof DashboardAdminContactsRouteImport
+      parentRoute: typeof DashboardAdminRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -908,11 +927,13 @@ const ArchiveSlugRouteRouteWithChildren =
   ArchiveSlugRouteRoute._addFileChildren(ArchiveSlugRouteRouteChildren)
 
 interface DashboardAdminRouteRouteChildren {
+  DashboardAdminContactsRoute: typeof DashboardAdminContactsRoute
   DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
   DashboardAdminUsersNewRoute: typeof DashboardAdminUsersNewRoute
 }
 
 const DashboardAdminRouteRouteChildren: DashboardAdminRouteRouteChildren = {
+  DashboardAdminContactsRoute: DashboardAdminContactsRoute,
   DashboardAdminUsersRoute: DashboardAdminUsersRoute,
   DashboardAdminUsersNewRoute: DashboardAdminUsersNewRoute,
 }

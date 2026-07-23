@@ -37,6 +37,7 @@ export const Route = createFileRoute("/login")({
 function AccessPage() {
   const search = Route.useSearch();
   const turnstileSiteKey = Route.useLoaderData();
+  const captchaEnabled = Boolean(turnstileSiteKey);
   const navigate = useNavigate();
   const session = authClient.useSession();
   const [mode, setMode] = useState(search.mode);
@@ -98,7 +99,7 @@ function AccessPage() {
 
   async function signIn(event: React.FormEvent<HTMLFormElement>) {
     const data = formValues(event);
-    if (!turnstileToken) {
+    if (captchaEnabled && !turnstileToken) {
       setMessage("Completa la verifica anti-bot prima di accedere.");
       return;
     }
@@ -112,13 +113,17 @@ function AccessPage() {
           email: identifier,
           password,
           callbackURL,
-          fetchOptions: captchaFetchOptions(turnstileToken, (value) => (retryAfter = value)),
+          fetchOptions: turnstileToken
+            ? captchaFetchOptions(turnstileToken, (value) => (retryAfter = value))
+            : undefined,
         })
       : await authClient.signIn.username({
           username: identifier,
           password,
           callbackURL,
-          fetchOptions: captchaFetchOptions(turnstileToken, (value) => (retryAfter = value)),
+          fetchOptions: turnstileToken
+            ? captchaFetchOptions(turnstileToken, (value) => (retryAfter = value))
+            : undefined,
         });
     setPending(false);
     if (result.error) {
@@ -129,7 +134,7 @@ function AccessPage() {
 
   async function signUp(event: React.FormEvent<HTMLFormElement>) {
     const data = formValues(event);
-    if (!turnstileToken) {
+    if (captchaEnabled && !turnstileToken) {
       setMessage("Completa la verifica anti-bot prima di registrarti.");
       return;
     }
@@ -142,7 +147,9 @@ function AccessPage() {
       email: formString(data, "email"),
       password: formString(data, "password"),
       callbackURL,
-      fetchOptions: captchaFetchOptions(turnstileToken, (value) => (retryAfter = value)),
+      fetchOptions: turnstileToken
+        ? captchaFetchOptions(turnstileToken, (value) => (retryAfter = value))
+        : undefined,
     });
     setPending(false);
     if (result.error) {
@@ -189,19 +196,21 @@ function AccessPage() {
                     required
                   />
                 </Field>
-                <Field>
-                  <TurnstileWidget
-                    key={`login-${turnstileRevision}`}
-                    siteKey={turnstileSiteKey}
-                    onVerify={handleTurnstileVerify}
-                    onExpire={handleTurnstileExpire}
-                    onError={handleTurnstileError}
-                  />
-                  <FieldDescription>
-                    La verifica protegge l’account dai tentativi di accesso automatici.
-                  </FieldDescription>
-                </Field>
-                <Button disabled={pending || !turnstileToken} type="submit">
+                {turnstileSiteKey ? (
+                  <Field>
+                    <TurnstileWidget
+                      key={`login-${turnstileRevision}`}
+                      siteKey={turnstileSiteKey}
+                      onVerify={handleTurnstileVerify}
+                      onExpire={handleTurnstileExpire}
+                      onError={handleTurnstileError}
+                    />
+                    <FieldDescription>
+                      La verifica protegge l’account dai tentativi di accesso automatici.
+                    </FieldDescription>
+                  </Field>
+                ) : null}
+                <Button disabled={pending || (captchaEnabled && !turnstileToken)} type="submit">
                   {pending ? (
                     <Spinner data-icon="inline-start" />
                   ) : (
@@ -276,19 +285,21 @@ function AccessPage() {
                     Almeno 8 caratteri. Il ruolo iniziale è sempre Utente.
                   </FieldDescription>
                 </Field>
-                <Field>
-                  <TurnstileWidget
-                    key={`register-${turnstileRevision}`}
-                    siteKey={turnstileSiteKey}
-                    onVerify={handleTurnstileVerify}
-                    onExpire={handleTurnstileExpire}
-                    onError={handleTurnstileError}
-                  />
-                  <FieldDescription>
-                    La verifica protegge la registrazione dagli account automatici.
-                  </FieldDescription>
-                </Field>
-                <Button disabled={pending || !turnstileToken} type="submit">
+                {turnstileSiteKey ? (
+                  <Field>
+                    <TurnstileWidget
+                      key={`register-${turnstileRevision}`}
+                      siteKey={turnstileSiteKey}
+                      onVerify={handleTurnstileVerify}
+                      onExpire={handleTurnstileExpire}
+                      onError={handleTurnstileError}
+                    />
+                    <FieldDescription>
+                      La verifica protegge la registrazione dagli account automatici.
+                    </FieldDescription>
+                  </Field>
+                ) : null}
+                <Button disabled={pending || (captchaEnabled && !turnstileToken)} type="submit">
                   {pending && <Spinner data-icon="inline-start" />}
                   {pending ? "Creazione…" : "Crea account"}
                 </Button>
