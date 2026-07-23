@@ -108,7 +108,13 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
           />
         ))}
 
-        <img src="/home/lake.svg" alt="" className="absolute inset-x-0 bottom-0 h-[64.8%] w-full" />
+        <div
+          className="absolute inset-x-0 bottom-0 h-[64.8%] w-full"
+          style={{
+            background:
+              "linear-gradient(to bottom, #92abd0 0%, #4c5677 21.9%, #37425c 35.6%, #0a1622 68.5%, #0a1622 100%)",
+          }}
+        />
 
         {DUNE_LAYERS.map((layer) => (
           <Fragment key={layer.src}>
