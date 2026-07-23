@@ -8,6 +8,8 @@ import { CookieConsentProvider } from "@/components/cookie-consent";
 import { SiteFooter } from "@/components/page-shell";
 import { Toaster } from "@/components/ui/sonner";
 
+import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import spaceGroteskFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -49,6 +51,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      {
+        rel: "preload",
+        href: interFont,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        href: spaceGroteskFont,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
       { rel: "manifest", href: "/favicon/site.webmanifest" },
       {
         rel: "apple-touch-icon",
