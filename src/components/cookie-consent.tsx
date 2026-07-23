@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { PostHogProvider } from "posthog-js/react";
-import { useEffect, useState, type PropsWithChildren } from "react";
+import { lazy, Suspense, useEffect, useState, type PropsWithChildren } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -16,10 +15,11 @@ const COOKIE_CONSENT_STORAGE_KEY = "prisco-cookie-consent";
 const COOKIE_CONSENT_EVENT = "prisco-cookie-consent-change";
 type CookieConsent = "accepted" | "rejected";
 
-const postHogOptions = {
-  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-  defaults: "2025-11-30",
-} as const;
+const AnalyticsProvider = lazy(() =>
+  import("@/components/analytics-provider").then((module) => ({
+    default: module.AnalyticsProvider,
+  })),
+);
 
 export function CookieConsentProvider({ children }: PropsWithChildren) {
   const [consent, setConsent] = useState<CookieConsent | null>(null);
@@ -44,9 +44,9 @@ export function CookieConsentProvider({ children }: PropsWithChildren) {
   return (
     <>
       {consent === "accepted" ? (
-        <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={postHogOptions}>
-          {children}
-        </PostHogProvider>
+        <Suspense fallback={children}>
+          <AnalyticsProvider>{children}</AnalyticsProvider>
+        </Suspense>
       ) : (
         children
       )}
