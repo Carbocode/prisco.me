@@ -1,5 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Hydrate } from "@tanstack/react-start";
+import { visible } from "@tanstack/react-start/hydration";
 
 import CloudCarousel from "@/components/cloud-carousel";
 import DesertScene from "@/components/desert-scene";
@@ -172,116 +174,118 @@ function HomePage() {
 
       <DesertScene className="relative -mt-[min(23.125vw,400px)]" skills={portfolio.skills} />
 
-      <div className="earth-cross-section relative -mt-px">
-        <div className="earth-strata pointer-events-none absolute inset-0" aria-hidden="true" />
-        <SubsoilDecor />
-        <div className="relative">
-          <Section>
-            <div className="grid gap-5 md:grid-cols-3">
-              {skillCards.map((card) => (
-                <SkillCard key={card.title} {...card} />
-              ))}
-            </div>
-          </Section>
+      <Hydrate when={visible({ rootMargin: "100px" })}>
+        <div className="earth-cross-section relative -mt-px">
+          <div className="earth-strata pointer-events-none absolute inset-0" aria-hidden="true" />
+          <SubsoilDecor />
+          <div className="relative">
+            <Section>
+              <div className="grid gap-5 md:grid-cols-3">
+                {skillCards.map((card) => (
+                  <SkillCard key={card.title} {...card} />
+                ))}
+              </div>
+            </Section>
 
-          <Section className="pt-0 sm:pt-0">
-            <SkillsMarquee skills={portfolio.skills} />
-          </Section>
+            <Section className="pt-0 sm:pt-0">
+              <SkillsMarquee skills={portfolio.skills} />
+            </Section>
 
-          <Section className="pt-0 sm:pt-0">
-            <div className="grid gap-8 rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-                  Carriera
-                </p>
-                <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
-                  Esperienze, responsabilita e crescita professionale.
+            <Section className="pt-0 sm:pt-0">
+              <div className="grid gap-8 rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
+                    Carriera
+                  </p>
+                  <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
+                    Esperienze, responsabilita e crescita professionale.
+                  </h2>
+                  <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+                    Un percorso costruito tra sviluppo, architettura software e prodotti digitali,
+                    raccontato attraverso i ruoli, le tecnologie e i progetti che lo hanno segnato.
+                  </p>
+                </div>
+                <div className="flex flex-col items-start gap-5 lg:items-end lg:text-right">
+                  <p className="max-w-sm text-sm leading-7 text-slate-300">
+                    Dalle prime esperienze alle sfide piu recenti, con il contesto dietro ogni
+                    passaggio.
+                  </p>
+                  <ActionLink href="/career">Esplora la mia carriera</ActionLink>
+                </div>
+              </div>
+            </Section>
+
+            <Section className="pt-0 sm:pt-0">
+              <SectionIntro
+                eyebrow="Portfolio"
+                title="Progetti che mi hanno fatto crescere"
+                description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
+              />
+              <div className="mt-8 grid gap-5 md:grid-cols-2">
+                {projects.map((project) => (
+                  <ArticleCard
+                    key={project.id}
+                    article={project}
+                    archiveSlug={project.categories[0]?.slug ?? "progetti"}
+                  />
+                ))}
+              </div>
+              <div className="mt-8">
+                <ActionLink href="/progetti" variant="secondary">
+                  Scopri tutti i progetti
+                </ActionLink>
+              </div>
+            </Section>
+
+            <Section className="pt-0 sm:pt-0">
+              <SectionIntro
+                eyebrow="Dal blog"
+                title="Articoli e appunti dal mio percorso"
+                description="Approfondimenti su sviluppo, architettura software e sulle decisioni che danno forma ai prodotti digitali."
+              />
+              <div className="mt-8 grid gap-5 md:grid-cols-2">
+                {articles.map((article) => (
+                  <ArticleCard
+                    key={article.id}
+                    article={article}
+                    archiveSlug={article.categories[0]?.slug ?? "blog"}
+                  />
+                ))}
+              </div>
+              <div className="mt-8">
+                <ActionLink href="/blog" variant="secondary">
+                  Leggi tutti gli articoli
+                </ActionLink>
+              </div>
+            </Section>
+
+            <section className="relative isolate overflow-hidden px-6 pt-16 pb-20 text-center sm:pt-20 sm:pb-24">
+              {/* the molten core: a glow rising from the very bottom of the earth */}
+              <div
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_128%,#ffd27a_0%,#ff8a2b_16%,#f0531a_32%,#b8300d_50%,#5c1305_68%,transparent_82%)]"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(255,190,110,0.55),transparent_75%)] blur-2xl"
+                aria-hidden="true"
+              />
+              <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
+                <span className="rounded-full border border-orange-200/40 bg-orange-950/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-orange-100 backdrop-blur-sm">
+                  Il nucleo
+                </span>
+                <h2 className="display-font text-3xl font-semibold text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-4xl">
+                  Hai un'idea da trasformare in prodotto?
                 </h2>
-                <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-                  Un percorso costruito tra sviluppo, architettura software e prodotti digitali,
-                  raccontato attraverso i ruoli, le tecnologie e i progetti che lo hanno segnato.
+                <p className="leading-7 text-orange-50/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+                  Raccontami cosa stai costruendo e vediamo insieme da dove partire.
                 </p>
+                <ActionLink href="/contact">Scrivimi</ActionLink>
               </div>
-              <div className="flex flex-col items-start gap-5 lg:items-end lg:text-right">
-                <p className="max-w-sm text-sm leading-7 text-slate-300">
-                  Dalle prime esperienze alle sfide piu recenti, con il contesto dietro ogni
-                  passaggio.
-                </p>
-                <ActionLink href="/career">Esplora la mia carriera</ActionLink>
-              </div>
-            </div>
-          </Section>
-
-          <Section className="pt-0 sm:pt-0">
-            <SectionIntro
-              eyebrow="Portfolio"
-              title="Progetti che mi hanno fatto crescere"
-              description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
-            />
-            <div className="mt-8 grid gap-5 md:grid-cols-2">
-              {projects.map((project) => (
-                <ArticleCard
-                  key={project.id}
-                  article={project}
-                  archiveSlug={project.categories[0]?.slug ?? "progetti"}
-                />
-              ))}
-            </div>
-            <div className="mt-8">
-              <ActionLink href="/progetti" variant="secondary">
-                Scopri tutti i progetti
-              </ActionLink>
-            </div>
-          </Section>
-
-          <Section className="pt-0 sm:pt-0">
-            <SectionIntro
-              eyebrow="Dal blog"
-              title="Articoli e appunti dal mio percorso"
-              description="Approfondimenti su sviluppo, architettura software e sulle decisioni che danno forma ai prodotti digitali."
-            />
-            <div className="mt-8 grid gap-5 md:grid-cols-2">
-              {articles.map((article) => (
-                <ArticleCard
-                  key={article.id}
-                  article={article}
-                  archiveSlug={article.categories[0]?.slug ?? "blog"}
-                />
-              ))}
-            </div>
-            <div className="mt-8">
-              <ActionLink href="/blog" variant="secondary">
-                Leggi tutti gli articoli
-              </ActionLink>
-            </div>
-          </Section>
-
-          <section className="relative isolate overflow-hidden px-6 pt-16 pb-20 text-center sm:pt-20 sm:pb-24">
-            {/* the molten core: a glow rising from the very bottom of the earth */}
-            <div
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_128%,#ffd27a_0%,#ff8a2b_16%,#f0531a_32%,#b8300d_50%,#5c1305_68%,transparent_82%)]"
-              aria-hidden="true"
-            />
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(255,190,110,0.55),transparent_75%)] blur-2xl"
-              aria-hidden="true"
-            />
-            <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
-              <span className="rounded-full border border-orange-200/40 bg-orange-950/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-orange-100 backdrop-blur-sm">
-                Il nucleo
-              </span>
-              <h2 className="display-font text-3xl font-semibold text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-4xl">
-                Hai un'idea da trasformare in prodotto?
-              </h2>
-              <p className="leading-7 text-orange-50/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
-                Raccontami cosa stai costruendo e vediamo insieme da dove partire.
-              </p>
-              <ActionLink href="/contact">Scrivimi</ActionLink>
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
-      </div>
-      <SiteFooter />
+        <SiteFooter />
+      </Hydrate>
     </div>
   );
 }

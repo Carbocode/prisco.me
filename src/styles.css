@@ -779,24 +779,77 @@ code {
   z-index: 1;
 }
 
-.shooting-star {
+.shooting-star-runner {
   position: absolute;
+  width: var(--shooting-star-distance);
+  height: 2px;
+  transform: rotate(135deg) scaleX(0);
+  transform-origin: left center;
+  animation: shooting-star-flight
+    calc(var(--shooting-star-duration) + 8s)
+    linear
+    var(--shooting-star-delay)
+    infinite;
+}
+
+.shooting-star-runner::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, transparent, #fff);
+}
+
+.shooting-star-runner::after {
+  position: absolute;
+  top: 50%;
+  right: -1px;
   width: 2px;
   height: 2px;
+  content: "";
   background: #fff;
   border-radius: 50%;
   box-shadow:
     0 0 4px #fff,
     0 0 8px rgba(255, 255, 255, 0.8);
+  transform: translateY(-50%);
 }
 
-.shooting-star-trail {
-  position: absolute;
-  top: 0;
-  left: 0; /* Anchor to the start position */
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #fff);
-  pointer-events: none;
+@keyframes shooting-star-flight {
+  0%,
+  2% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(0);
+  }
+  4% {
+    opacity: 1;
+  }
+  12% {
+    opacity: 1;
+    transform: rotate(135deg) scaleX(1);
+  }
+  20%,
+  100% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(1);
+  }
+}
+
+.cloud-carousel {
+  contain: layout paint;
+}
+
+.cloud-carousel-item {
+  left: 0;
+  width: var(--cloud-width);
+  transform: translate3d(calc(-100% - 24px), 0, 0);
+  animation: cloud-carousel-travel var(--cloud-duration) linear var(--cloud-delay) infinite;
+  will-change: transform;
+}
+
+@keyframes cloud-carousel-travel {
+  to {
+    transform: translate3d(calc(100vw + 24px), 0, 0);
+  }
 }
 
 .skills-marquee {
@@ -832,9 +885,14 @@ code {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shooting-star {
+  .shooting-star-runner {
     animation: none;
     opacity: 0;
+  }
+
+  .cloud-carousel-item {
+    animation-play-state: paused;
+    will-change: auto;
   }
 
   .hero-content-enter,
