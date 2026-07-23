@@ -45,8 +45,9 @@ export function CookieConsentProvider({ children }: PropsWithChildren) {
 
   return (
     <>
-      <Suspense fallback={children}>
-        <AnalyticsProvider analyticsConsent={consent === "accepted"}>{children}</AnalyticsProvider>
+      {children}
+      <Suspense fallback={null}>
+        <AnalyticsProvider analyticsConsent={consent === "accepted"} />
       </Suspense>
       {consent === null && showBanner && (
         <Suspense fallback={null}>

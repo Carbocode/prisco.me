@@ -1,5 +1,5 @@
-import { PostHogErrorBoundary, PostHogProvider, usePostHog } from "posthog-js/react";
-import { useEffect, type PropsWithChildren } from "react";
+import { PostHogProvider, usePostHog } from "posthog-js/react";
+import { useEffect } from "react";
 
 const postHogOptions = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
@@ -51,14 +51,10 @@ function PostHogConsentMode({ analyticsConsent }: { analyticsConsent: boolean })
   return null;
 }
 
-export function AnalyticsProvider({
-  analyticsConsent,
-  children,
-}: PropsWithChildren<{ analyticsConsent: boolean }>) {
+export function AnalyticsProvider({ analyticsConsent }: { analyticsConsent: boolean }) {
   return (
     <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={postHogOptions}>
       <PostHogConsentMode analyticsConsent={analyticsConsent} />
-      <PostHogErrorBoundary>{children}</PostHogErrorBoundary>
     </PostHogProvider>
   );
 }
