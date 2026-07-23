@@ -267,34 +267,6 @@ export type ContactRequest = InferSelectModel<typeof contactRequests>;
 export type NewContactRequest = InferInsertModel<typeof contactRequests>;
 
 /**
- * Competenze tecniche. Ogni skill conserva il proprio logo (`icon`) e il colore
- * (`color`) usati per il rendering, così da poterli aggiornare manualmente dal
- * database senza toccare il codice. `mark` e `fluentIcon` sono i fallback usati
- * quando non esiste un logo dedicato.
- */
-export const skills = sqliteTable("skills", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  /** Nome visualizzato, univoco. */
-  name: text("name").notNull().unique(),
-  /** Nome Iconify completo (es. `simple-icons:react`). Null → si usa il fallback. */
-  icon: text("icon"),
-  /** Classi Tailwind che definiscono il colore del chip (tint/bg/border). */
-  color: text("color"),
-  /** Testo di fallback quando non c'è un logo (es. "TS"). */
-  mark: text("mark"),
-  /** Nome dell'icona Fluent Color usata come ultimo fallback. */
-  fluentIcon: text("fluent_icon"),
-  /** Riga del marquee in home (1-4). Null → non compare nel marquee. */
-  marqueeRow: integer("marquee_row"),
-  sortOrder: integer("sort_order").notNull().default(0),
-  createdAt: integer("created_at", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
-});
-
-/**
  * Esperienze di carriera e formazione mostrate nella pagina "Chi sono".
  * `kind` distingue lavoro e formazione; `org` raggruppa più ruoli della stessa
  * organizzazione nella stessa colonna del gantt.
@@ -321,21 +293,6 @@ export const experiences = sqliteTable("experiences", {
     .default(sql`(unixepoch() * 1000)`),
 });
 
-/** Collegamento molti-a-molti tra esperienze e skill. */
-export const experienceSkills = sqliteTable(
-  "experience_skills",
-  {
-    experienceId: text("experience_id")
-      .notNull()
-      .references(() => experiences.id, { onDelete: "cascade" }),
-    skillId: text("skill_id")
-      .notNull()
-      .references(() => skills.id, { onDelete: "cascade" }),
-    sortOrder: integer("sort_order").notNull().default(0),
-  },
-  (table) => [primaryKey({ columns: [table.experienceId, table.skillId] })],
-);
-
 /** Collegamento molti-a-molti tra esperienze e articoli CMS di tipo progetto. */
 export const experienceProjects = sqliteTable(
   "experience_projects",
@@ -349,6 +306,4 @@ export const experienceProjects = sqliteTable(
   (table) => [primaryKey({ columns: [table.experienceId, table.articleId] })],
 );
 
-export type SkillRow = InferSelectModel<typeof skills>;
-export type NewSkillRow = InferInsertModel<typeof skills>;
 export type ExperienceRow = InferSelectModel<typeof experiences>;

@@ -192,6 +192,8 @@ export const cmsTags = sqliteTable(
     color: text("color").notNull().default("text-slate-200 bg-white/10 border-white/15"),
     mark: text("mark"),
     fluentIcon: text("fluent_icon"),
+    /** Riga del marquee in home (1-4). Null → non compare nel marquee. */
+    marqueeRow: integer("marquee_row"),
     legacySkillId: text("legacy_skill_id"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),

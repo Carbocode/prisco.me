@@ -7,19 +7,17 @@ import { getDb } from "@/db";
 import {
   experienceProjects,
   experiences,
-  experienceSkills,
   cmsArticleCategories,
   cmsArticles,
   cmsArticleTags,
   cmsCategories,
   cmsOrganizations,
   cmsTags,
-  skills as skillsTable,
   user,
 } from "@/db/schema";
 import type { Experience, LinkedProject, Project, Skill } from "@/lib/projects";
 
-function toSkill(row: typeof skillsTable.$inferSelect): Skill {
+function toSkill(row: typeof cmsTags.$inferSelect): Skill {
   return {
     id: row.id,
     name: row.name,
@@ -47,15 +45,7 @@ const experienceKindByValue: Record<string, Experience["kind"]> = {
 async function loadPortfolio() {
   const db = getDb(env);
 
-  const [
-    skillRows,
-    projectRows,
-    projectTagRows,
-    experienceRows,
-    experienceSkillRows,
-    experienceProjectRows,
-  ] = await Promise.all([
-    db.select().from(skillsTable).orderBy(asc(skillsTable.sortOrder)),
+  const [projectRows, projectTagRows, experienceRows, experienceProjectRows] = await Promise.all([
     db
       .select({
         article: cmsArticles,
@@ -81,28 +71,49 @@ async function loadPortfolio() {
       .select({ articleId: cmsArticleTags.articleId, tag: cmsTags })
       .from(cmsArticleTags)
       .innerJoin(cmsTags, eq(cmsArticleTags.tagId, cmsTags.id))
-      .where(isNull(cmsTags.deletedAt))
+      .innerJoin(cmsArticles, eq(cmsArticleTags.articleId, cmsArticles.id))
+      .innerJoin(cmsArticleCategories, eq(cmsArticleCategories.articleId, cmsArticles.id))
+      .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
+      .where(
+        and(
+          eq(cmsCategories.slug, "progetti"),
+          eq(cmsArticles.status, "published"),
+          lte(cmsArticles.publishedAt, new Date()),
+          isNull(cmsArticles.deletedAt),
+          isNull(cmsTags.deletedAt),
+        ),
+      )
       .orderBy(asc(cmsArticleTags.articleId), asc(cmsArticleTags.sortOrder), asc(cmsTags.name)),
     db.select().from(experiences).orderBy(asc(experiences.sortOrder)),
-    db.select().from(experienceSkills).orderBy(asc(experienceSkills.sortOrder)),
-    db.select().from(experienceProjects).orderBy(asc(experienceProjects.sortOrder)),
+    db
+      .select({
+        experienceId: experienceProjects.experienceId,
+        articleId: experienceProjects.articleId,
+        sortOrder: experienceProjects.sortOrder,
+      })
+      .from(experienceProjects)
+      .innerJoin(cmsArticles, eq(experienceProjects.articleId, cmsArticles.id))
+      .innerJoin(cmsArticleCategories, eq(cmsArticleCategories.articleId, cmsArticles.id))
+      .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
+      .where(
+        and(
+          eq(cmsCategories.slug, "progetti"),
+          eq(cmsArticles.status, "published"),
+          lte(cmsArticles.publishedAt, new Date()),
+          isNull(cmsArticles.deletedAt),
+        ),
+      )
+      .orderBy(asc(experienceProjects.sortOrder)),
   ]);
 
-  const skillById = new Map(skillRows.map((row) => [row.id, toSkill(row)]));
-
   const skillsByProject = new Map<string, Skill[]>();
+  const skillById = new Map<string, Skill>();
   for (const row of projectTagRows) {
+    const skill = toSkill(row.tag);
     const list = skillsByProject.get(row.articleId) ?? [];
-    list.push({
-      id: row.tag.id,
-      name: row.tag.name,
-      icon: row.tag.icon,
-      color: row.tag.color,
-      mark: row.tag.mark,
-      fluentIcon: row.tag.fluentIcon,
-      marqueeRow: null,
-    });
+    list.push(skill);
     skillsByProject.set(row.articleId, list);
+    skillById.set(skill.id, skill);
   }
 
   const projectById = new Map<string, Project>();
@@ -133,11 +144,14 @@ async function loadPortfolio() {
   });
 
   const skillsByExperience = new Map<string, Skill[]>();
-  for (const row of experienceSkillRows) {
-    const skill = skillById.get(row.skillId);
-    if (!skill) continue;
+  for (const row of experienceProjectRows) {
+    const projectSkills = skillsByProject.get(row.articleId);
+    if (!projectSkills) continue;
     const list = skillsByExperience.get(row.experienceId) ?? [];
-    list.push(skill);
+    const linkedIds = new Set(list.map((skill) => skill.id));
+    for (const skill of projectSkills) {
+      if (!linkedIds.has(skill.id)) list.push(skill);
+    }
     skillsByExperience.set(row.experienceId, list);
   }
 
@@ -167,7 +181,7 @@ async function loadPortfolio() {
   }));
 
   return {
-    skills: skillRows.map(toSkill),
+    skills: [...skillById.values()],
     projects,
     experiences: experiencesList,
   };
