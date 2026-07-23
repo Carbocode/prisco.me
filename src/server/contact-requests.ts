@@ -1,10 +1,12 @@
 import { logger } from "@sentry/cloudflare";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { desc } from "drizzle-orm";
 import z from "zod";
 
 import { getDb } from "@/db";
 import { contactRequests } from "@/db/schema";
+import { requireSession } from "@/features/cms/server/cms-auth";
 
 export const contactRequestSchema = z.object({
   name: z.string().trim().min(2, "Inserisci il tuo nome").max(120, "Troppo Lungo"),
@@ -30,6 +32,13 @@ export const contactRequestSchema = z.object({
 });
 
 export type ContactRequestValues = z.input<typeof contactRequestSchema>;
+
+export const listContactRequests = createServerFn({ method: "GET" }).handler(async () => {
+  const session = await requireSession();
+  if (session.user.role !== "admin") throw new Error("Permission denied");
+
+  return getDb(env).select().from(contactRequests).orderBy(desc(contactRequests.createdAt));
+});
 
 export const createContactRequest = createServerFn({ method: "POST" })
   .validator(contactRequestSchema)
