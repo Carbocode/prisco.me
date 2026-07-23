@@ -35,8 +35,8 @@
   background: var(--background);
 }
 
-.cms-editor__toolbar > [data-slot='select'] [data-slot='select-trigger'],
-.cms-editor__toolbar > [data-slot='select-trigger'] {
+.cms-editor__toolbar > [data-slot="select"] [data-slot="select-trigger"],
+.cms-editor__toolbar > [data-slot="select-trigger"] {
   min-width: 9rem;
 }
 
@@ -173,7 +173,7 @@
   inset: 0;
   z-index: 2;
   background: color-mix(in srgb, var(--primary) 18%, transparent);
-  content: '';
+  content: "";
   pointer-events: none;
 }
 
@@ -199,7 +199,7 @@
   background: var(--card);
 }
 
-.cms-editor__media[data-selected='true'] {
+.cms-editor__media[data-selected="true"] {
   border-color: var(--ring);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 25%, transparent);
 }
@@ -235,26 +235,26 @@
   transition: opacity 150ms ease;
 }
 
-.cms-plate-block[data-dragging='true'] {
+.cms-plate-block[data-dragging="true"] {
   opacity: 0.4;
 }
 
-.cms-plate-block[data-drop-line='top']::before,
-.cms-plate-block[data-drop-line='bottom']::after {
+.cms-plate-block[data-drop-line="top"]::before,
+.cms-plate-block[data-drop-line="bottom"]::after {
   position: absolute;
   right: 0;
   left: 0;
   height: 2px;
   border-radius: 999px;
   background: var(--primary);
-  content: '';
+  content: "";
 }
 
-.cms-plate-block[data-drop-line='top']::before {
+.cms-plate-block[data-drop-line="top"]::before {
   top: -0.25rem;
 }
 
-.cms-plate-block[data-drop-line='bottom']::after {
+.cms-plate-block[data-drop-line="bottom"]::after {
   bottom: -0.25rem;
 }
 
@@ -290,20 +290,20 @@
 .cms-plate-list-marker::before {
   display: inline-block;
   width: 1rem;
-  content: '•';
+  content: "•";
   text-align: center;
 }
 
-.cms-plate-list-item[data-list-type='decimal'] {
+.cms-plate-list-item[data-list-type="decimal"] {
   counter-increment: cms-plate-list;
 }
 
-.cms-plate-list-item[data-list-type='decimal'] > .cms-plate-list-marker::before {
-  content: counter(cms-plate-list) '.';
+.cms-plate-list-item[data-list-type="decimal"] > .cms-plate-list-marker::before {
+  content: counter(cms-plate-list) ".";
 }
 
-.cms-plate-list-item:has([data-checked='true']),
-.cms-task-list-item[data-checked='true'] {
+.cms-plate-list-item:has([data-checked="true"]),
+.cms-task-list-item[data-checked="true"] {
   color: var(--muted-foreground);
   text-decoration: line-through;
 }
