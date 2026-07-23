@@ -1,4 +1,3 @@
-import { icons as fluentColorIcons } from "@iconify-json/fluent-color";
 import { Icon, loadIcon } from "@iconify/react";
 import type { IconifyIcon } from "@iconify/react";
 import { useEffect, useState } from "react";
@@ -42,25 +41,14 @@ function normalizeIconName(iconName: string | null) {
   return iconName?.includes(":") ? iconName : null;
 }
 
-function FallbackIcon({ visual, size }: { visual: ResolvedVisual; size: number }) {
-  const fluentIcon = visual.fluent ? fluentColorIcons.icons[visual.fluent] : undefined;
-  if (fluentIcon) {
-    return (
-      <svg
-        viewBox={`0 0 ${fluentIcon.width ?? fluentColorIcons.width ?? 24} ${fluentIcon.height ?? fluentColorIcons.height ?? 24}`}
-        width={size}
-        height={size}
-        aria-hidden="true"
-        dangerouslySetInnerHTML={{ __html: fluentIcon.body }}
-      />
-    );
-  }
-
+function FallbackIcon({ visual }: { visual: ResolvedVisual }) {
   return visual.mark ? <span aria-hidden="true">{visual.mark}</span> : null;
 }
 
 function BrandIcon({ visual, size }: { visual: ResolvedVisual; size: number }) {
-  const iconName = normalizeIconName(visual.iconName);
+  const iconName =
+    normalizeIconName(visual.iconName) ??
+    (visual.fluent ? `fluent-color:${visual.fluent}` : null);
   const [loadedIcon, setLoadedIcon] = useState<{ name: string; data: IconifyIcon } | null>(null);
 
   useEffect(() => {
@@ -84,7 +72,7 @@ function BrandIcon({ visual, size }: { visual: ResolvedVisual; size: number }) {
     return <Icon icon={loadedIcon.data} width={size} height={size} aria-hidden="true" />;
   }
 
-  return <FallbackIcon visual={visual} size={size} />;
+  return <FallbackIcon visual={visual} />;
 }
 
 export function TechIcon({ skill, compact = false }: { skill: SkillVisual; compact?: boolean }) {
