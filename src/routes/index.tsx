@@ -14,7 +14,7 @@ import SubsoilDecor from "@/components/subsoil-decor";
 import { TechIcon } from "@/components/tech-icon";
 import type { SkillVisual } from "@/components/tech-icon";
 import { listPublishedArticlesFn } from "@/features/cms/server/public.functions";
-import { ArticleCard } from "@/features/content/content-components";
+import { ArticleCard } from "@/features/content/article-card";
 import { pageHead } from "@/lib/page-head";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 

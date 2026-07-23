@@ -212,6 +212,9 @@ export default function Sky({ className, children, ...props }: SkyProps) {
           alt=""
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="shooting-stars" aria-hidden="true">
           {stars.map((item) => (
