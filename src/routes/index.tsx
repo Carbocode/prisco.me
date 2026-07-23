@@ -12,11 +12,44 @@ import Sky from "@/components/sky";
 import Star from "@/components/star";
 import SubsoilDecor from "@/components/subsoil-decor";
 import { TechIcon } from "@/components/tech-icon";
+import type { SkillVisual } from "@/components/tech-icon";
 import { listPublishedArticlesFn } from "@/features/cms/server/public.functions";
 import { ArticleCard } from "@/features/content/content-components";
 import { pageHead } from "@/lib/page-head";
-import type { Skill } from "@/lib/projects";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
+
+const skillCards: { title: string; skill: SkillVisual; items: string[] }[] = [
+  {
+    title: "Dal concept al prodotto",
+    skill: {
+      name: "Product Design",
+      color: "text-pink-200 bg-pink-300/15 border-pink-300/25",
+      mark: "PD",
+      fluentIcon: "design-ideas-24",
+    },
+    items: ["Analisi dell'idea", "Sviluppo iterativo", "Pubblicazione", "Miglioramento continuo"],
+  },
+  {
+    title: "Architettura software",
+    skill: {
+      name: "Software Architecture",
+      color: "text-sky-200 bg-sky-300/15 border-sky-300/25",
+      mark: "SA",
+      fluentIcon: "layer-diagonal-person-24",
+    },
+    items: ["Progettazione", "Modularita", "Manutenibilita", "Decisioni proporzionate"],
+  },
+  {
+    title: "Sviluppo web & mobile",
+    skill: {
+      name: "Web Development",
+      color: "text-blue-200 bg-blue-300/15 border-blue-300/25",
+      mark: "W",
+      fluentIcon: "globe-24",
+    },
+    items: ["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"],
+  },
+];
 
 export const Route = createFileRoute("/")({
   head: () =>
@@ -39,24 +72,6 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const { data: portfolio } = useSuspenseQuery(getPortfolioQueryOptions());
   const { projects, articles } = Route.useLoaderData();
-  const skillByName = new Map(portfolio.skills.map((skill) => [skill.name, skill]));
-  const skillCards = [
-    {
-      title: "Dal concept al prodotto",
-      skill: skillByName.get("Product Design"),
-      items: ["Analisi dell'idea", "Sviluppo iterativo", "Pubblicazione", "Miglioramento continuo"],
-    },
-    {
-      title: "Architettura software",
-      skill: skillByName.get("Software Architecture"),
-      items: ["Progettazione", "Modularita", "Manutenibilita", "Decisioni proporzionate"],
-    },
-    {
-      title: "Sviluppo web & mobile",
-      skill: skillByName.get("Web Development"),
-      items: ["Applicazioni moderne", "Frontend e backend", "Prodotti multipiattaforma"],
-    },
-  ].filter((card): card is { title: string; skill: Skill; items: string[] } => Boolean(card.skill));
 
   return (
     <div className="mx-auto min-h-dvh w-full max-w-[1728px] overflow-x-clip bg-slate-950 text-slate-100">
@@ -164,7 +179,7 @@ function HomePage() {
           <Section>
             <div className="grid gap-5 md:grid-cols-3">
               {skillCards.map((card) => (
-                <SkillCard key={card.skill.id} {...card} />
+                <SkillCard key={card.title} {...card} />
               ))}
             </div>
           </Section>
@@ -271,7 +286,15 @@ function HomePage() {
   );
 }
 
-function SkillCard({ title, skill, items }: { title: string; skill: Skill; items: string[] }) {
+function SkillCard({
+  title,
+  skill,
+  items,
+}: {
+  title: string;
+  skill: SkillVisual;
+  items: string[];
+}) {
   return (
     <article className="card-sheen rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/30 hover:bg-white/5">
       <TechIcon skill={skill} />
