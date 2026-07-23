@@ -23,6 +23,8 @@ export default function Star({ size = "md", alt, className, ...props }: StarProp
       className={[sizeClass, className].filter(Boolean).join(" ")}
       width="100"
       height="100"
+      loading="eager"
+      decoding="async"
       {...props}
     />
   );
