@@ -216,11 +216,7 @@ function HomePage() {
             </Section>
 
             <Section className="pt-0 sm:pt-0">
-              <SectionIntro
-                eyebrow="Portfolio"
-                title="Progetti che mi hanno fatto crescere"
-                description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
-              />
+              <SectionIntro title="Lavori portati a termine" description="e di cui vado fiero" />
               <div className="mt-8 grid gap-5 md:grid-cols-2">
                 {projects.map((project) => (
                   <ArticleCard
@@ -239,9 +235,8 @@ function HomePage() {
 
             <Section className="pt-0 sm:pt-0">
               <SectionIntro
-                eyebrow="Dal blog"
-                title="Articoli e appunti dal mio percorso"
-                description="Approfondimenti su sviluppo, architettura software e sulle decisioni che danno forma ai prodotti digitali."
+                title="Il mio punto di visa"
+                description="sulla tecnologia al servizio della società"
               />
               <div className="mt-8 grid gap-5 md:grid-cols-2">
                 {articles.map((article) => (
@@ -312,20 +307,13 @@ function SkillCard({
   );
 }
 
-function SectionIntro({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-}) {
+function SectionIntro({ title, description }: { title: string; description: string }) {
   return (
     <div className="max-w-3xl">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">{eyebrow}</p>
-      <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">{title}</h2>
-      <p className="mt-4 leading-7 text-slate-400">{description}</p>
+      <h2 className="display-font text-4xl font-semibold leading-tight sm:text-5xl">{title}</h2>
+      <p className="mt-3 text-xl font-medium leading-snug text-slate-200 sm:text-2xl">
+        {description}
+      </p>
     </div>
   );
 }
