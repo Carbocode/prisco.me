@@ -13,5 +13,5 @@ const cloudSources: Record<CloudVariant, string> = {
 };
 
 export default function Cloud({ variant = 1, alt, className, ...props }: CloudProps) {
-  return <img src={cloudSources[variant]} alt={alt ?? "Cloud"} className={className} {...props} />;
+  return <img src={cloudSources[variant]} alt={alt ?? ""} className={className} {...props} />;
 }

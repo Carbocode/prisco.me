@@ -19,7 +19,7 @@ export default function Star({ size = "md", alt, className, ...props }: StarProp
   return (
     <img
       src="/home/star.svg"
-      alt={alt ?? "Star"}
+      alt={alt ?? ""}
       className={[sizeClass, className].filter(Boolean).join(" ")}
       width="100"
       height="100"
