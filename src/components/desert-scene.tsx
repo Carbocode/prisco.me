@@ -15,6 +15,7 @@ const TUMBLEWEEDS = [
     size: "clamp(22px, 3.2vw, 50px)",
     hop: "clamp(9px, 1.38vw, 22px)",
     travel: 27,
+    mobileTravel: 15,
     bounce: 2.1,
     delay: 0,
   },
@@ -24,6 +25,7 @@ const TUMBLEWEEDS = [
     size: "clamp(28px, 4.2vw, 64px)",
     hop: "clamp(12px, 1.81vw, 28px)",
     travel: 22,
+    mobileTravel: 13,
     bounce: 1.8,
     delay: 6,
   },
@@ -33,6 +35,7 @@ const TUMBLEWEEDS = [
     size: "clamp(32px, 5.2vw, 78px)",
     hop: "clamp(14px, 2.24vw, 34px)",
     travel: 18,
+    mobileTravel: 11,
     bounce: 1.5,
     delay: 12,
   },
@@ -143,16 +146,19 @@ function RollingTumbleweed({
   skill?: Skill;
   onRestart: () => void;
 }) {
-  const { bottom, size, hop, travel, bounce, delay } = config;
+  const { bottom, size, hop, travel, mobileTravel, bounce, delay } = config;
   const travelStyle = {
     bottom,
     left: `calc(-1 * ${size})`,
     width: size,
     height: size,
-    animationDuration: `${travel}s`,
     animationDelay: `${delay}s`,
     "--tumbleweed-distance": `calc(100vw + ${size} + ${size})`,
     "--tumbleweed-hop": hop,
+    "--tumbleweed-travel-duration": `${travel}s`,
+    "--tumbleweed-mobile-travel-duration": `${mobileTravel}s`,
+    "--tumbleweed-roll-duration": `${Math.max(0.9, travel / 14)}s`,
+    "--tumbleweed-mobile-roll-duration": `${Math.max(0.72, mobileTravel / 14)}s`,
   } as CSSProperties;
 
   return (
@@ -173,12 +179,7 @@ function RollingTumbleweed({
         }}
       >
         <div className="relative size-full">
-          <div
-            className="tumbleweed-roll absolute inset-0"
-            style={{
-              animationDuration: `${Math.max(0.9, travel / 14)}s`,
-            }}
-          >
+          <div className="tumbleweed-roll absolute inset-0">
             <img
               src="/home/illustrations/tumbleweed.svg"
               alt=""

@@ -256,12 +256,23 @@ code {
 }
 .tumbleweed-travel {
   animation-name: tumbleweed-travel;
+  animation-duration: var(--tumbleweed-travel-duration);
 }
 .tumbleweed-bounce {
   animation: tumbleweed-bounce ease-in-out infinite;
 }
 .tumbleweed-roll {
   animation: tumbleweed-roll linear infinite;
+  animation-duration: var(--tumbleweed-roll-duration);
+}
+@media (max-width: 640px) {
+  .tumbleweed-travel {
+    animation-duration: var(--tumbleweed-mobile-travel-duration);
+  }
+
+  .tumbleweed-roll {
+    animation-duration: var(--tumbleweed-mobile-roll-duration);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .tumbleweed-travel {
