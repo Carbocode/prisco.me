@@ -1,7 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Hydrate } from "@tanstack/react-start";
 import { visible } from "@tanstack/react-start/hydration";
+import { ArrowRight } from "lucide-react";
 
 import CloudCarousel from "@/components/cloud-carousel";
 import DesertScene from "@/components/desert-scene";
@@ -216,7 +217,12 @@ function HomePage() {
             </Section>
 
             <Section className="pt-0 sm:pt-0">
-              <SectionIntro title="Lavori portati a termine" description="e di cui vado fiero" />
+              <SectionIntro
+                title="Lavori portati a termine"
+                description="e di cui vado fiero"
+                archiveSlug="progetti"
+                linkLabel="Vedi tutti i progetti"
+              />
               <div className="mt-8 grid gap-5 md:grid-cols-2">
                 {projects.map((project) => (
                   <ArticleCard
@@ -226,17 +232,14 @@ function HomePage() {
                   />
                 ))}
               </div>
-              <div className="mt-8">
-                <ActionLink href="/progetti" variant="secondary">
-                  Scopri tutti i progetti
-                </ActionLink>
-              </div>
             </Section>
 
             <Section className="pt-0 sm:pt-0">
               <SectionIntro
                 title="Il mio punto di visa"
                 description="sulla tecnologia al servizio della società"
+                archiveSlug="blog"
+                linkLabel="Vedi tutti gli articoli"
               />
               <div className="mt-8 grid gap-5 md:grid-cols-2">
                 {articles.map((article) => (
@@ -246,11 +249,6 @@ function HomePage() {
                     archiveSlug={article.categories[0]?.slug ?? "blog"}
                   />
                 ))}
-              </div>
-              <div className="mt-8">
-                <ActionLink href="/blog" variant="secondary">
-                  Leggi tutti gli articoli
-                </ActionLink>
               </div>
             </Section>
 
@@ -307,13 +305,36 @@ function SkillCard({
   );
 }
 
-function SectionIntro({ title, description }: { title: string; description: string }) {
+function SectionIntro({
+  title,
+  description,
+  archiveSlug,
+  linkLabel,
+}: {
+  title: string;
+  description: string;
+  archiveSlug: string;
+  linkLabel: string;
+}) {
   return (
-    <div className="max-w-3xl">
-      <h2 className="display-font text-4xl font-semibold leading-tight sm:text-5xl">{title}</h2>
-      <p className="mt-3 text-xl font-medium leading-snug text-slate-200 sm:text-2xl">
-        {description}
-      </p>
+    <div className="flex items-center justify-between gap-6">
+      <div className="max-w-3xl">
+        <h2 className="display-font text-4xl font-semibold leading-tight sm:text-5xl">{title}</h2>
+        <p className="mt-3 text-xl font-medium leading-snug text-slate-200 sm:text-2xl">
+          {description}
+        </p>
+      </div>
+      <Link
+        to="/$archiveSlug"
+        params={{ archiveSlug }}
+        aria-label={linkLabel}
+        className="group shrink-0 text-slate-200 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-4 focus-visible:ring-offset-[#33210f]"
+      >
+        <ArrowRight
+          className="size-8 transition-transform group-hover:translate-x-1 sm:size-10"
+          aria-hidden="true"
+        />
+      </Link>
     </div>
   );
 }
