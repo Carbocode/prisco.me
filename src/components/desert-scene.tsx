@@ -14,7 +14,6 @@ const TUMBLEWEEDS = [
     bottom: "43%",
     size: "clamp(22px, 3.2vw, 50px)",
     hop: "clamp(9px, 1.38vw, 22px)",
-    iconSize: 18,
     travel: 27,
     bounce: 2.1,
     delay: 0,
@@ -24,7 +23,6 @@ const TUMBLEWEEDS = [
     bottom: "35%",
     size: "clamp(28px, 4.2vw, 64px)",
     hop: "clamp(12px, 1.81vw, 28px)",
-    iconSize: 23,
     travel: 22,
     bounce: 1.8,
     delay: 6,
@@ -34,7 +32,6 @@ const TUMBLEWEEDS = [
     bottom: "27%",
     size: "clamp(32px, 5.2vw, 78px)",
     hop: "clamp(14px, 2.24vw, 34px)",
-    iconSize: 28,
     travel: 18,
     bounce: 1.5,
     delay: 12,
@@ -117,7 +114,7 @@ function RollingTumbleweed({
   config: (typeof TUMBLEWEEDS)[number];
   skill?: Skill;
 }) {
-  const { bottom, size, hop, iconSize, travel, bounce, delay } = config;
+  const { bottom, size, hop, travel, bounce, delay } = config;
   const travelStyle = {
     bottom,
     left: `calc(-1 * ${size})`,
@@ -132,7 +129,7 @@ function RollingTumbleweed({
   return (
     <div className="tumbleweed-travel" style={travelStyle}>
       <div
-        className="tumbleweed-bounce"
+        className="tumbleweed-bounce size-full"
         style={{
           animationDuration: `${bounce}s`,
           animationDelay: `${delay}s`,
@@ -155,7 +152,9 @@ function RollingTumbleweed({
           </div>
           {skill && (
             <div className="absolute inset-0 flex size-full items-center justify-center text-amber-50/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
-              <SkillGlyph skill={skill} size={iconSize} />
+              <div className="size-[42%]">
+                <SkillGlyph skill={skill} size="100%" />
+              </div>
             </div>
           )}
         </div>
