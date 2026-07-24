@@ -317,24 +317,30 @@ function SectionIntro({
   linkLabel: string;
 }) {
   return (
-    <div className="flex items-center justify-between gap-6">
-      <div className="max-w-3xl">
-        <h2 className="display-font text-4xl font-semibold leading-tight sm:text-5xl">{title}</h2>
-        <p className="mt-3 text-xl font-medium leading-snug text-slate-200 sm:text-2xl">
+    <Link
+      to="/$archiveSlug"
+      params={{ archiveSlug }}
+      aria-label={linkLabel}
+      className="group relative grid grid-cols-[minmax(0,1fr)_auto] items-end gap-6 border-y border-white/15 py-7 transition-colors hover:border-orange-200/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-200 focus-visible:ring-offset-4 focus-visible:ring-offset-[#33210f] sm:py-10"
+    >
+      <span
+        className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-r from-orange-300/0 via-orange-200/0 to-orange-200/0 transition-colors group-hover:from-orange-300/6 group-hover:via-orange-200/3"
+        aria-hidden="true"
+      />
+      <span className="max-w-4xl">
+        <span className="display-font block text-4xl font-semibold leading-[0.95] tracking-tight text-white transition-transform duration-300 group-hover:translate-x-1 sm:text-6xl">
+          {title}
+        </span>
+        <span className="mt-4 block text-2xl font-medium leading-tight text-orange-100 sm:text-3xl">
           {description}
-        </p>
-      </div>
-      <Link
-        to="/$archiveSlug"
-        params={{ archiveSlug }}
-        aria-label={linkLabel}
-        className="group shrink-0 text-slate-200 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-4 focus-visible:ring-offset-[#33210f]"
+        </span>
+      </span>
+      <span
+        className="mb-1 flex size-12 shrink-0 items-center justify-center rounded-full border border-orange-100/30 bg-orange-200/10 text-orange-50 transition-all duration-300 group-hover:translate-x-1 group-hover:border-orange-100/60 group-hover:bg-orange-200/20 sm:size-16"
+        aria-hidden="true"
       >
-        <ArrowRight
-          className="size-8 transition-transform group-hover:translate-x-1 sm:size-10"
-          aria-hidden="true"
-        />
-      </Link>
-    </div>
+        <ArrowRight className="size-6 sm:size-8" />
+      </span>
+    </Link>
   );
 }
