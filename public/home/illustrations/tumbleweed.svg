@@ -1,1 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 100 100"><defs><filter id="c" width="160%" height="180%" x="-30%" y="-30%" color-interpolation-filters="sRGB"><feDropShadow dx="-2" dy="-2" flood-color="#ffe5b2" flood-opacity=".22" result="light" stdDeviation="3"/><feDropShadow dx="3" dy="6" flood-color="#1a0e07" flood-opacity=".5" in="light" result="drops" stdDeviation="5"/><feGaussianBlur in="SourceAlpha" result="alpha" stdDeviation="4"/><feOffset dx="-4" dy="-5" in="alpha" result="offset"/><feComposite in="offset" in2="SourceAlpha" k2="-1" k3="1" operator="arithmetic" result="mask"/><feFlood flood-color="#fff2cf" flood-opacity=".3" result="color"/><feComposite in="color" in2="mask" operator="in" result="inner"/><feBlend in="inner" in2="drops"/></filter><filter id="d"><feGaussianBlur stdDeviation="4"/></filter><radialGradient id="a" cx="0" cy="0" r="1" gradientTransform="rotate(48 -12.075 48.437)scale(82)"><stop stop-color="#fff2cf" stop-opacity=".5"/><stop offset=".42" stop-color="#c99758" stop-opacity=".28"/><stop offset="1" stop-color="#5f3d22" stop-opacity=".58"/></radialGradient><linearGradient id="b" x1="18" x2="82" y1="12" y2="88" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".86"/><stop offset=".48" stop-color="#e9bd7a" stop-opacity=".5"/><stop offset="1" stop-color="#7e512d" stop-opacity=".2"/></linearGradient></defs><circle cx="50" cy="50" r="46" fill="url(#a)" stroke="url(#b)" stroke-width="2" filter="url(#c)"/><g stroke="url(#b)" stroke-linecap="round" stroke-width="1.6" opacity=".7"><circle cx="50" cy="50" r="31"/><path d="M12 44c28-14 50-10 76 2M16 60c26 14 48 10 70-2M40 10c-6 28-2 52 6 80m16-78c8 28 4 52-4 76M20 30l60 42m-54 2 52-48"/></g><ellipse cx="38" cy="27" fill="#fff" filter="url(#d)" opacity=".18" rx="15" ry="7" transform="rotate(-22 38 27)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" shape-rendering="geometricPrecision">
+  <defs>
+    <radialGradient id="body" cx="0" cy="0" r="1" gradientTransform="translate(36 30) rotate(47) scale(72)">
+      <stop stop-color="#F6D49A" stop-opacity=".34"/>
+      <stop offset=".55" stop-color="#B97838" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#5A3219" stop-opacity=".38"/>
+    </radialGradient>
+    <linearGradient id="twig" x1="18" y1="14" x2="82" y2="88" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5D39A"/>
+      <stop offset=".48" stop-color="#C1874C"/>
+      <stop offset="1" stop-color="#71401F"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="50" cy="50" r="44" fill="url(#body)" stroke="url(#twig)" stroke-width="2.4"/>
+
+  <g stroke="url(#twig)" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke-width="2" opacity=".9">
+      <path d="M17 35c17-13 43-18 66-4"/>
+      <path d="M11 51c20-11 55-12 78 1"/>
+      <path d="M17 68c22 10 45 9 66-3"/>
+      <path d="M34 13c-10 21-9 53 3 74"/>
+      <path d="M52 7c-9 24-8 62 1 86"/>
+      <path d="M69 13c11 22 12 52 1 74"/>
+    </g>
+
+    <g stroke-width="1.65" opacity=".78">
+      <path d="M18 27c20 13 47 34 65 51"/>
+      <path d="M12 62c19-15 45-35 72-43"/>
+      <path d="M26 82c13-24 32-49 54-61"/>
+      <path d="M22 20c25 12 47 38 60 62"/>
+      <path d="M9 44c25 8 56 24 77 43"/>
+      <path d="M13 75c20-5 54-25 72-49"/>
+    </g>
+
+    <g stroke-width="1.25" opacity=".62">
+      <path d="M25 31c17 3 34 14 48 31"/>
+      <path d="M29 72c14-19 29-31 47-38"/>
+      <path d="M39 20c18 16 26 38 24 62"/>
+      <path d="M20 55c19 4 41 3 61-5"/>
+      <path d="M35 88c7-18 23-39 43-52"/>
+      <path d="M16 40c20 18 39 29 68 35"/>
+    </g>
+  </g>
+
+  <g fill="#EBC58A" opacity=".7">
+    <circle cx="26" cy="32" r="1.8"/>
+    <circle cx="72" cy="29" r="1.5"/>
+    <circle cx="82" cy="55" r="1.7"/>
+    <circle cx="65" cy="77" r="1.6"/>
+    <circle cx="35" cy="73" r="1.4"/>
+    <circle cx="19" cy="54" r="1.5"/>
+  </g>
+</svg>
