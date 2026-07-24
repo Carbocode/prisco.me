@@ -45,7 +45,7 @@ function FallbackIcon({ visual }: { visual: ResolvedVisual }) {
   return visual.mark ? <span aria-hidden="true">{visual.mark}</span> : null;
 }
 
-function BrandIcon({ visual, size }: { visual: ResolvedVisual; size: number }) {
+function BrandIcon({ visual, size }: { visual: ResolvedVisual; size: number | string }) {
   const iconName =
     normalizeIconName(visual.iconName) ?? (visual.fluent ? `fluent-color:${visual.fluent}` : null);
   const [loadedIcon, setLoadedIcon] = useState<{ name: string; data: IconifyIcon } | null>(null);
@@ -95,7 +95,7 @@ export function TechIcon({ skill, compact = false }: { skill: SkillVisual; compa
 
 /** Just the brand logo, no badge/box around it. Colour comes from the
  *  surrounding `currentColor` for monochrome brand marks. */
-export function SkillGlyph({ skill, size = 24 }: { skill: SkillVisual; size?: number }) {
+export function SkillGlyph({ skill, size = 24 }: { skill: SkillVisual; size?: number | string }) {
   const visual = resolveVisual(skill);
   return <BrandIcon visual={visual} size={size} />;
 }
