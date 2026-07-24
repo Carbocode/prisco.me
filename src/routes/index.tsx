@@ -82,7 +82,7 @@ function HomePage() {
 
         <section className="absolute inset-0 z-10 flex items-center justify-center px-6 pt-14">
           <div className="hero-content-enter hero-content-contrast flex max-w-3xl flex-col items-center gap-4 text-center text-white">
-            <h1 className="hero-content-enter-item display-font text-3xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="hero-content-enter-item display-font text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               CIAO, sono Vincenzo!
             </h1>
             <p className="hero-content-enter-item max-w-xl text-sm font-medium leading-6 text-white sm:text-base sm:leading-7">
