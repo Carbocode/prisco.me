@@ -182,7 +182,13 @@ function RollingTumbleweed({
               animationPlayState: isVisible ? "running" : "paused",
             }}
           >
-            <img src="/home/illustrations/tumbleweed.svg" alt="" className="h-full w-full" />
+            <img
+              src="/home/illustrations/tumbleweed.svg"
+              alt=""
+              width="100"
+              height="100"
+              className="block h-auto w-full"
+            />
           </div>
           {skill && (
             <div
