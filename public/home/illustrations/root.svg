@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 90" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 90" fill="none" shape-rendering="geometricPrecision">
   <defs>
     <linearGradient id="edge" x1="8" y1="4" x2="34" y2="86" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".8"/><stop offset=".42" stop-color="#f3d4ae" stop-opacity=".54"/><stop offset="1" stop-color="#9c6037" stop-opacity=".18"/></linearGradient>
     <filter id="glow" x="-80%" y="-30%" width="260%" height="170%"><feDropShadow dx="-2" dy="-2" stdDeviation="4" flood-color="#f3d4ae" flood-opacity=".16"/><feDropShadow dx="3" dy="5" stdDeviation="5" flood-color="#160a05" flood-opacity=".52"/></filter>

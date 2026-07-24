@@ -220,7 +220,7 @@ function CloudMotion({
   return (
     <div
       ref={elementRef}
-      className="absolute will-change-transform"
+      className="absolute"
       style={{
         top: cloud.top + "%",
         left: cloud.startProgress * 100 + "%",
