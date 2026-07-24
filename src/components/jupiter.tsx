@@ -10,6 +10,9 @@ export default function Jupiter({ className, alt, ...props }: JupiterProps) {
       width="450"
       height="450"
       className={className}
+      loading="eager"
+      decoding="async"
+      fetchPriority="high"
       {...props}
     />
   );

@@ -46,8 +46,9 @@ function PrivacyPage() {
                 poter rispondere alla richiesta.
               </li>
               <li>
-                Gli strumenti di analisi, incluso PostHog, vengono caricati solo dopo una scelta
-                positiva nel banner cookie.
+                PostHog rileva errori e Web Vitals in modalità tecnica, senza persistenza nel
+                browser; analisi di utilizzo e session replay richiedono una scelta positiva nel
+                banner.
               </li>
               <li>
                 Le richieste degli interessati possono essere esercitate tramite la pagina{" "}
@@ -184,7 +185,7 @@ function PrivacyPage() {
               />
               <PurposeCard
                 title="Sicurezza e continuità"
-                body="Prevenire abusi, attacchi, invii automatizzati e malfunzionamenti, nonché garantire disponibilità e integrità del servizio."
+                body="Prevenire abusi, attacchi, invii automatizzati e malfunzionamenti, diagnosticare errori e misurare i Web Vitals, nonché garantire disponibilità e integrità del servizio."
                 basis="Art. 6, par. 1, lett. f) GDPR: legittimo interesse alla sicurezza del sito."
               />
               <PurposeCard
@@ -244,16 +245,16 @@ function PrivacyPage() {
               <li>hosting, runtime e servizi edge necessari a pubblicare il sito;</li>
               <li>database e servizi di persistenza utilizzati per le richieste del modulo;</li>
               <li>
-                servizi di monitoraggio degli errori e sicurezza, attivati per diagnosticare
-                incidenti;
+                PostHog in modalità tecnica, senza persistenza nel browser, per diagnosticare errori
+                e misurare i Web Vitals;
               </li>
               <li>
                 CMS headless e servizi collegati alla pubblicazione degli articoli, se coinvolti
                 nella richiesta effettuata dall&apos;utente;
               </li>
               <li>
-                strumenti analitici, esclusivamente dopo il consenso, secondo la configurazione
-                descritta nella policy cookie.
+                funzionalità analitiche e session replay di PostHog, esclusivamente dopo il
+                consenso, secondo la configurazione descritta nella policy cookie.
               </li>
             </ul>
             <p>

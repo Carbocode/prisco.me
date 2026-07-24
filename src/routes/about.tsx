@@ -36,7 +36,7 @@ const technologyGroups = [
     title: "Infrastruttura",
     description:
       "Deploy edge e persistenza serverless per il form di contatto, con osservabilità integrata.",
-    technologies: ["Cloudflare", "D1", "Drizzle ORM", "Sentry"],
+    technologies: ["Cloudflare", "D1", "Drizzle ORM", "PostHog"],
   },
   {
     title: "Contenuti e misurazione",

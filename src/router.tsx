@@ -17,10 +17,6 @@ export function getRouter() {
     defaultPreloadStaleTime: 0,
   });
 
-  if (!import.meta.env.SSR) {
-    void import("./lib/sentry-client").then(({ initSentry }) => initSentry(router));
-  }
-
   setupRouterSsrQueryIntegration({
     router,
     queryClient: context.queryClient,

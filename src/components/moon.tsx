@@ -10,6 +10,9 @@ export default function Moon({ className, alt, ...props }: MoonProps) {
       width="450"
       height="450"
       className={className}
+      loading="eager"
+      decoding="async"
+      fetchPriority="high"
       {...props}
     />
   );

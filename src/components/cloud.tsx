@@ -28,6 +28,8 @@ export default function Cloud({ variant = 1, alt, className, ...props }: CloudPr
       width={dimensions.width}
       height={dimensions.height}
       className={className}
+      loading="eager"
+      decoding="async"
       {...props}
     />
   );

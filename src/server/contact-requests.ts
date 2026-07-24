@@ -1,4 +1,3 @@
-import { logger } from "@sentry/cloudflare";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { desc } from "drizzle-orm";
@@ -44,7 +43,7 @@ export const createContactRequest = createServerFn({ method: "POST" })
   .validator(contactRequestSchema)
   .handler(async ({ data }) => {
     try {
-      logger.info("Inizio inserimento richiesta di contatto", {
+      console.info("Inizio inserimento richiesta di contatto", {
         action: "contact_request_create_start",
       });
 
@@ -61,16 +60,17 @@ export const createContactRequest = createServerFn({ method: "POST" })
         })
         .returning({ id: contactRequests.id });
 
-      logger.info("Richiesta di contatto inserita con successo", {
+      console.info("Richiesta di contatto inserita con successo", {
         action: "contact_request_create_success",
         id: inserted?.id ?? null,
       });
 
       return { id: inserted?.id ?? null };
     } catch (error) {
-      logger.error("Richiesta di contatto non andata a buon fine", {
+      console.error("Richiesta di contatto non andata a buon fine", {
         action: "contact_request_create_error",
-        error,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
       });
       throw error;
     }

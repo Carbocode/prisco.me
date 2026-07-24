@@ -1,7 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-
 import { SkillChip } from "@/components/tech-icon";
-import usePageVisible from "@/hooks/use-page-visible";
 import type { Skill } from "@/lib/projects";
 
 type SkillMarqueeRow = {
@@ -39,9 +36,8 @@ function buildRows(skills: Skill[]): SkillMarqueeRow[] {
 }
 
 export function SkillsMarquee({ skills }: { skills: Skill[] }) {
-  const rows = useMemo(() => buildRows(skills), [skills]);
+  const rows = buildRows(skills);
   const repeatedRows = [...rows, ...rows];
-  const isVisible = usePageVisible();
 
   if (rows.length === 0) return null;
 
@@ -57,46 +53,16 @@ export function SkillsMarquee({ skills }: { skills: Skill[] }) {
       </div>
       <div className="skills-marquee min-w-0 space-y-3 overflow-hidden">
         {repeatedRows.map((row, index) => (
-          <MarqueeRow key={`${index}-${row.row}`} row={row} isVisible={isVisible} />
+          <MarqueeRow key={`${index}-${row.row}`} row={row} />
         ))}
       </div>
     </div>
   );
 }
 
-function MarqueeRow({ row, isVisible }: { row: SkillMarqueeRow; isVisible: boolean }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const groupRef = useRef<HTMLDivElement>(null);
-  // How many times a single set of chips must repeat so that one marquee "half"
-  // is at least as wide as the viewport. The track then renders two halves and
-  // scrolls -50%, so the row always spans edge to edge with no gaps.
-  const [repeat, setRepeat] = useState(1);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const group = groupRef.current;
-    if (!container || !group) return () => {};
-
-    const update = () => {
-      const containerWidth = container.offsetWidth;
-      // Width of the currently rendered set divided by the repeat count gives
-      // the width of a single set of chips.
-      const setWidth = group.offsetWidth / repeat;
-      if (containerWidth === 0 || setWidth === 0) return;
-      // One extra repeat as a safety margin so the row is comfortably covered.
-      const needed = Math.max(1, Math.ceil(containerWidth / setWidth) + 1);
-      setRepeat((current) => (current === needed ? current : needed));
-    };
-
-    update();
-
-    const observer = new ResizeObserver(update);
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [repeat]);
-
+function MarqueeRow({ row }: { row: SkillMarqueeRow }) {
   return (
-    <div ref={containerRef} className="overflow-hidden">
+    <div className="overflow-hidden">
       <div
         className={[
           "skills-marquee-track",
@@ -106,30 +72,19 @@ function MarqueeRow({ row, isVisible }: { row: SkillMarqueeRow; isVisible: boole
           .join(" ")}
         style={{
           animationDuration: (row.duration ?? 34) + "s",
-          animationPlayState: isVisible ? "running" : "paused",
         }}
       >
-        <SkillGroup ref={groupRef} items={row.items} repeat={repeat} />
-        <SkillGroup items={row.items} repeat={repeat} ariaHidden />
+        <SkillGroup items={row.items} />
+        <SkillGroup items={row.items} ariaHidden />
       </div>
     </div>
   );
 }
 
-function SkillGroup({
-  ref,
-  items,
-  repeat,
-  ariaHidden = false,
-}: {
-  ref?: React.Ref<HTMLDivElement>;
-  items: Skill[];
-  repeat: number;
-  ariaHidden?: boolean;
-}) {
+function SkillGroup({ items, ariaHidden = false }: { items: Skill[]; ariaHidden?: boolean }) {
   return (
-    <div ref={ref} className="skills-marquee-group" aria-hidden={ariaHidden}>
-      {Array.from({ length: repeat }).map((_, copy) =>
+    <div className="skills-marquee-group" aria-hidden={ariaHidden}>
+      {Array.from({ length: 4 }).map((_, copy) =>
         items.map((skill) => <SkillChip key={`${copy}-${skill.id}`} skill={skill} />),
       )}
     </div>

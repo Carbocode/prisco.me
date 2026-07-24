@@ -1,4 +1,3 @@
-import { logger } from "@sentry/cloudflare";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { and, asc, eq, isNull, lte } from "drizzle-orm";
@@ -188,10 +187,10 @@ async function loadPortfolio() {
 }
 
 export const getPortfolio = createServerFn({ method: "GET" }).handler(async () => {
-  logger.info("Inizio recupero portfolio dal database", { action: "get_portfolio_start" });
+  console.info("Inizio recupero portfolio dal database", { action: "get_portfolio_start" });
   try {
     const data = await loadPortfolio();
-    logger.info("Portfolio recuperato con successo", {
+    console.info("Portfolio recuperato con successo", {
       action: "get_portfolio_success",
       skills: data.skills.length,
       projects: data.projects.length,
@@ -199,9 +198,10 @@ export const getPortfolio = createServerFn({ method: "GET" }).handler(async () =
     });
     return data;
   } catch (error) {
-    logger.error("Errore durante il recupero del portfolio", {
+    console.error("Errore durante il recupero del portfolio", {
       action: "get_portfolio_error",
-      error,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
     });
     throw error;
   }

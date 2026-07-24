@@ -49,6 +49,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
@@ -67,9 +68,12 @@ export const Route = createFileRoute("/dashboard")({
 
 function ProfileRoute() {
   return (
-    <RequireAuth>
-      <ProfileLayout />
-    </RequireAuth>
+    <>
+      <RequireAuth>
+        <ProfileLayout />
+      </RequireAuth>
+      <Toaster theme="dark" />
+    </>
   );
 }
 

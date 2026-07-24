@@ -1,3 +1,5 @@
+import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import spaceGroteskFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
@@ -6,7 +8,6 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { SiteFooter } from "@/components/page-shell";
-import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 
@@ -49,6 +50,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      {
+        rel: "preload",
+        href: interFont,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "preload",
+        href: spaceGroteskFont,
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
       { rel: "manifest", href: "/favicon/site.webmanifest" },
       {
         rel: "apple-touch-icon",
@@ -116,12 +131,7 @@ function NotFoundComponent() {
 }
 
 function App() {
-  return (
-    <>
-      <Outlet />
-      <Toaster theme="dark" />
-    </>
-  );
+  return <Outlet />;
 }
 
 function RootDocument() {
