@@ -1,5 +1,5 @@
 import type { CSSProperties, HTMLAttributes } from "react";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 import { SkillGlyph } from "@/components/tech-icon";
 import type { Skill } from "@/lib/projects";
@@ -62,9 +62,31 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
     .filter(Boolean)
     .join(" ");
   const pool = skills.filter((skill) => skill.icon);
-  const picks = TUMBLEWEEDS.map((_, index) =>
-    pool.length > 0 ? pool[(index * 5 + 2) % pool.length] : undefined,
-  );
+  const [skillIndices, setSkillIndices] = useState(() => TUMBLEWEEDS.map((_, index) => index));
+
+  const randomizeSkill = (laneIndex: number) => {
+    setSkillIndices((currentIndices) => {
+      if (pool.length < 2) return currentIndices;
+
+      const occupiedIndices = new Set(
+        currentIndices
+          .filter((_, index) => index !== laneIndex)
+          .map((skillIndex) => skillIndex % pool.length),
+      );
+      const currentSkillIndex = currentIndices[laneIndex] % pool.length;
+      const availableIndices = pool
+        .map((_, index) => index)
+        .filter((index) => index !== currentSkillIndex && !occupiedIndices.has(index));
+      const fallbackIndices = pool
+        .map((_, index) => index)
+        .filter((index) => index !== currentSkillIndex);
+      const candidates = availableIndices.length > 0 ? availableIndices : fallbackIndices;
+      const nextSkillIndex = candidates[Math.floor(Math.random() * candidates.length)];
+      const nextIndices = [...currentIndices];
+      nextIndices[laneIndex] = nextSkillIndex;
+      return nextIndices;
+    });
+  };
 
   return (
     <div className={classes} aria-hidden="true" {...props}>
@@ -97,7 +119,12 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
             />
             {TUMBLEWEEDS.map((tw, index) =>
               tw.afterDune === layer.src ? (
-                <RollingTumbleweed key={`${layer.src}-${index}`} config={tw} skill={picks[index]} />
+                <RollingTumbleweed
+                  key={`${layer.src}-${index}`}
+                  config={tw}
+                  skill={pool.length > 0 ? pool[skillIndices[index] % pool.length] : undefined}
+                  onRestart={() => randomizeSkill(index)}
+                />
               ) : null,
             )}
           </Fragment>
@@ -110,9 +137,11 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
 function RollingTumbleweed({
   config,
   skill,
+  onRestart,
 }: {
   config: (typeof TUMBLEWEEDS)[number];
   skill?: Skill;
+  onRestart: () => void;
 }) {
   const { bottom, size, hop, travel, bounce, delay } = config;
   const travelStyle = {
@@ -127,7 +156,15 @@ function RollingTumbleweed({
   } as CSSProperties;
 
   return (
-    <div className="tumbleweed-travel" style={travelStyle}>
+    <div
+      className="tumbleweed-travel"
+      style={travelStyle}
+      onAnimationIteration={(event) => {
+        if (event.target === event.currentTarget) {
+          onRestart();
+        }
+      }}
+    >
       <div
         className="tumbleweed-bounce size-full"
         style={{
