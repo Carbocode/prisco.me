@@ -104,6 +104,7 @@ function article(overrides: Partial<PublicArticle>): PublicArticle {
     slug: "article",
     excerpt: null,
     content: '{"type":"doc","content":[]}',
+    readingTimeMinutes: 1,
     publishedAt: new Date("2025-01-01T10:00:00Z"),
     updatedAt: new Date("2025-01-02T10:00:00Z"),
     seoTitle: null,

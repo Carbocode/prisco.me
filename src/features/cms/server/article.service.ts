@@ -12,6 +12,7 @@ import {
 import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
 import { mediaIdsInDocument } from "../domain/media-associations";
 import { publicationDateParts } from "../domain/publication-date";
+import { estimateReadingTimeMinutes } from "../domain/reading-time";
 import {
   createArticleSchema,
   listArticlesSchema,
@@ -79,6 +80,7 @@ export async function createArticle(input: unknown) {
           excerpt: data.excerpt,
           content: serializeCmsDocument(data.content),
           contentVersion: CURRENT_CONTENT_VERSION,
+          readingTimeMinutes: estimateReadingTimeMinutes(data.content),
           coverMediaId: data.coverMediaId,
           authorId: session.user.id,
           organizationId: data.organizationId,
@@ -130,6 +132,7 @@ export async function updateArticle(input: unknown) {
     ...(data.content !== undefined && {
       content: serializeCmsDocument(data.content),
       contentVersion: CURRENT_CONTENT_VERSION,
+      readingTimeMinutes: estimateReadingTimeMinutes(data.content),
     }),
     ...(data.coverMediaId !== undefined && { coverMediaId: data.coverMediaId }),
     ...(data.organizationId !== undefined && { organizationId: data.organizationId }),
@@ -406,6 +409,7 @@ export async function restoreArticleRevision(input: {
         excerpt: snapshot.excerpt,
         content: snapshot.content,
         contentVersion: snapshot.contentVersion,
+        readingTimeMinutes: estimateReadingTimeMinutes(parseCmsDocument(snapshot.content)),
         coverMediaId: snapshot.coverMediaId,
         organizationId: snapshot.organizationId,
         projectRole: snapshot.projectRole,

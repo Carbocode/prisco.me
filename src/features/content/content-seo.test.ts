@@ -91,6 +91,7 @@ function article(overrides: Partial<PublicArticle> = {}): PublicArticle {
     slug: "architettura",
     excerpt: "Una guida pratica.",
     content: '{"type":"doc","content":[]}',
+    readingTimeMinutes: 1,
     publishedAt: new Date("2026-02-10T10:00:00Z"),
     updatedAt: new Date("2026-02-12T10:00:00Z"),
     seoTitle: null,

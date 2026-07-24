@@ -114,5 +114,12 @@ function articleMetadata(article: PublicArticle) {
     ? new Date(article.publishedAt).toLocaleDateString("it-IT")
     : "Pubblicazione";
 
-  return [date, article.author.name, article.organization?.name].filter(Boolean).join(" · ");
+  return [
+    date,
+    `${article.readingTimeMinutes} min di lettura`,
+    article.author.name,
+    article.organization?.name,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 }
