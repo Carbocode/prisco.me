@@ -6,7 +6,9 @@ export default function Moon({ className, alt, ...props }: MoonProps) {
   return (
     <img
       src="/home/moon.svg"
-      alt={alt ?? "Moon"}
+      alt={alt ?? ""}
+      width="450"
+      height="450"
       className={className}
       loading="eager"
       decoding="async"

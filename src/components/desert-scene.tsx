@@ -145,7 +145,13 @@ function RollingTumbleweed({
               animationDuration: `${Math.max(0.9, travel / 14)}s`,
             }}
           >
-            <img src="/home/illustrations/tumbleweed.svg" alt="" className="h-full w-full" />
+            <img
+              src="/home/illustrations/tumbleweed.svg"
+              alt=""
+              width="100"
+              height="100"
+              className="block h-auto w-full"
+            />
           </div>
           {skill && (
             <div className="absolute inset-0 flex size-full items-center justify-center text-amber-50/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">

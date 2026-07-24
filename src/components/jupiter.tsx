@@ -6,7 +6,9 @@ export default function Jupiter({ className, alt, ...props }: JupiterProps) {
   return (
     <img
       src="/home/jupiter.svg"
-      alt={alt ?? "Jupiter"}
+      alt={alt ?? ""}
+      width="450"
+      height="450"
       className={className}
       loading="eager"
       decoding="async"

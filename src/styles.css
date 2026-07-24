@@ -259,11 +259,9 @@ code {
 }
 .tumbleweed-bounce {
   animation: tumbleweed-bounce ease-in-out infinite;
-  will-change: transform;
 }
 .tumbleweed-roll {
   animation: tumbleweed-roll linear infinite;
-  will-change: transform;
 }
 @media (prefers-reduced-motion: reduce) {
   .tumbleweed-travel {

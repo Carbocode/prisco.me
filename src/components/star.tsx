@@ -34,7 +34,7 @@ export default function Star({ size = "md", alt, className, onLoad, ...props }: 
     <img
       ref={imageRef}
       src="/home/star.svg"
-      alt={alt ?? "Star"}
+      alt={alt ?? ""}
       className={[
         sizeClass,
         baseClassName,
