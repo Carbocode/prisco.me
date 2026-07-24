@@ -94,6 +94,7 @@ export const cmsArticles = sqliteTable(
     excerpt: text("excerpt"),
     content: text("content").notNull(),
     contentVersion: integer("content_version").notNull().default(1),
+    readingTimeMinutes: integer("reading_time_minutes").notNull().default(1),
     coverMediaId: text("cover_media_id").references(() => cmsMedia.id),
     status: text("status").notNull().default("draft"),
     publishedAt: timestamp("published_at"),

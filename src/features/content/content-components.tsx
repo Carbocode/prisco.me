@@ -57,6 +57,7 @@ export type PublicArticle = {
   slug: string;
   excerpt: string | null;
   content: string;
+  readingTimeMinutes: number;
   publishedAt: Date | null;
   updatedAt: Date;
   seoTitle: string | null;
@@ -560,6 +561,8 @@ export function ArticlePageContent({
                 <time dateTime={article.publishedAt?.toISOString()}>
                   {formatDate(article.publishedAt)}
                 </time>
+                <Separator orientation="vertical" className="h-4" />
+                <span>{formatReadingTime(article.readingTimeMinutes)}</span>
               </div>
             </div>
             <ArticleCover article={article} variant="hero" />
@@ -696,6 +699,10 @@ function formatDate(date: Date | null) {
   return date ? new Date(date).toLocaleDateString("it-IT") : "Pubblicazione";
 }
 
+function formatReadingTime(minutes: number) {
+  return `${minutes} min di lettura`;
+}
+
 function uniqueTags(articles: PublicArticle[]) {
   const tags = new Map<string, PublicArticle["tags"][number]>();
   for (const article of articles) {
@@ -731,7 +738,12 @@ function uniqueYears(articles: PublicArticle[]) {
 }
 
 function articleMetadata(article: PublicArticle) {
-  return [formatDate(article.publishedAt), article.author.name, article.organization?.name]
+  return [
+    formatDate(article.publishedAt),
+    formatReadingTime(article.readingTimeMinutes),
+    article.author.name,
+    article.organization?.name,
+  ]
     .filter(Boolean)
     .join(" · ");
 }
