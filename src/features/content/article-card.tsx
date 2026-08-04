@@ -17,47 +17,87 @@ import type { PublicArticle } from "./content-components";
 export function ArticleCard({
   article,
   archiveSlug,
+  variant = "card",
 }: {
   article: PublicArticle;
   archiveSlug: string;
+  variant?: "card" | "list";
 }) {
-  return (
-    <Card className="relative h-full min-w-0 pt-0">
-      <ArticleCover article={article} />
-      {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
-      <CardHeader>
-        <CardTitle>{article.title}</CardTitle>
-        <CardDescription>{articleMetadata(article)}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {article.tags.length ? (
-          <div className="flex flex-wrap gap-2">
-            {article.tags.slice(0, 5).map((item) => (
-              <Badge key={item.slug} className={item.color}>
-                <SkillGlyph skill={item} size={12} />
-                {item.name}
-              </Badge>
-            ))}
+  const href = `/${archiveSlug}/${article.slug}`;
+
+  if (variant === "list") {
+    return (
+      <a
+        href={href}
+        aria-label={`Leggi ${article.title}`}
+        className="group block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950"
+      >
+        <article className="grid gap-5 py-5 sm:grid-cols-[minmax(12rem,18rem)_1fr] sm:items-start sm:gap-7">
+          <ArticleCover article={article} variant="list" />
+          <div className="flex min-w-0 flex-col gap-3 sm:py-2">
+            <CardDescription>{articleMetadata(article)}</CardDescription>
+            <CardTitle className="transition-colors group-hover:text-sky-300">
+              {article.title}
+            </CardTitle>
+            {article.tags.length ? <ArticleTags article={article} /> : null}
+            {article.excerpt ? (
+              <CardDescription className="max-w-3xl leading-6">{article.excerpt}</CardDescription>
+            ) : null}
+            <span className="mt-auto pt-1 text-sm font-semibold text-sky-300">
+              Leggi l’articolo →
+            </span>
           </div>
-        ) : null}
-        {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
-      </CardContent>
-      <CardFooter className="mt-auto">
-        <a
-          className={buttonVariants({ variant: "outline" })}
-          href={`/${archiveSlug}/${article.slug}`}
-          aria-label={`Scopri ${article.title}`}
-        >
-          Scopri il contenuto
-        </a>
-      </CardFooter>
-    </Card>
+        </article>
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      aria-label={`Leggi ${article.title}`}
+      className="group block h-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950"
+    >
+      <Card className="relative h-full min-w-0 pt-0 transition group-hover:ring-sky-300/50">
+        <ArticleCover article={article} variant="card" />
+        {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
+        <CardHeader>
+          <CardTitle className="transition-colors group-hover:text-sky-300">
+            {article.title}
+          </CardTitle>
+          <CardDescription>{articleMetadata(article)}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          {article.tags.length ? <ArticleTags article={article} /> : null}
+          {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
+        </CardContent>
+        <CardFooter className="mt-auto">
+          <span className={buttonVariants({ variant: "outline" })}>Scopri il contenuto</span>
+        </CardFooter>
+      </Card>
+    </a>
   );
 }
 
-function ArticleCover({ article }: { article: PublicArticle }) {
+function ArticleTags({ article }: { article: PublicArticle }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {article.tags.slice(0, 5).map((item) => (
+        <Badge key={item.slug} className={item.color}>
+          <SkillGlyph skill={item} size={12} />
+          {item.name}
+        </Badge>
+      ))}
+    </div>
+  );
+}
+
+function ArticleCover({ article, variant }: { article: PublicArticle; variant: "card" | "list" }) {
   const frameClass = cn(
-    "relative isolate aspect-video w-full min-w-0 max-w-full overflow-hidden border-b border-white/10 bg-slate-900",
+    "relative isolate w-full min-w-0 max-w-full overflow-hidden bg-slate-900",
+    variant === "card"
+      ? "aspect-video border-b border-white/10"
+      : "aspect-video rounded-lg ring-1 ring-white/10 sm:aspect-[4/3]",
   );
 
   if (article.cover) {

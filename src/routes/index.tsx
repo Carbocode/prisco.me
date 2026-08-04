@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Hydrate } from "@tanstack/react-start";
 import { visible } from "@tanstack/react-start/hydration";
+import { ArrowRight } from "lucide-react";
 
 import CloudCarousel from "@/components/cloud-carousel";
 import DesertScene from "@/components/desert-scene";
@@ -9,6 +10,7 @@ import Header from "@/components/header";
 import Jupiter from "@/components/jupiter";
 import Moon from "@/components/moon";
 import { ActionLink, Section, SiteFooter } from "@/components/page-shell";
+import { ShowcaseCard } from "@/components/showcase-card";
 import { SkillsMarquee } from "@/components/skills-marquee";
 import Sky from "@/components/sky";
 import Star from "@/components/star";
@@ -81,12 +83,15 @@ function HomePage() {
         <Header className="hero-header-enter" />
 
         <section className="absolute inset-0 z-10 flex items-center justify-center px-6 pt-14">
-          <div className="hero-content-enter hero-content-contrast flex max-w-3xl flex-col items-center gap-4 text-center text-white">
-            <h1 className="hero-content-enter-item display-font text-3xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-              CIAO, sono Vincenzo!
+          <div className="hero-content-enter hero-content-contrast flex max-w-4xl flex-col items-center gap-5 text-center text-white">
+            <h1 className="hero-content-enter-item display-font text-4xl leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+              Ciao, sono Vincenzo.
+              <br />
+              Creo esperienze digitali.
             </h1>
-            <p className="hero-content-enter-item max-w-xl text-sm font-medium leading-6 text-white sm:text-base sm:leading-7">
-              Benvenuti nel mio sito personale, uno spazio dedicato a me
+            <p className="hero-content-enter-item max-w-2xl text-sm font-medium leading-6 text-white sm:text-base sm:leading-7">
+              Software engineer e product builder: progetto esperienze chiare, architetture solide e
+              software pensato per durare.
             </p>
             <div className="hero-content-enter-item flex flex-wrap justify-center gap-2 pt-1">
               <ActionLink href="/contact">Parliamo del tuo prodotto</ActionLink>
@@ -192,13 +197,10 @@ function HomePage() {
             </Section>
 
             <Section className="pt-0 sm:pt-0">
-              <div className="grid gap-8 rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+              <div className="grid gap-8 rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8 backdrop-blur-md sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-                    Carriera
-                  </p>
-                  <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
-                    Esperienze, responsabilita e crescita professionale.
+                  <h2 className="display-font text-3xl font-semibold sm:text-4xl">
+                    Esperienze, responsabilità e crescita professionale.
                   </h2>
                   <p className="mt-4 max-w-2xl leading-7 text-slate-300">
                     Un percorso costruito tra sviluppo, architettura software e prodotti digitali,
@@ -216,11 +218,7 @@ function HomePage() {
             </Section>
 
             <Section className="pt-0 sm:pt-0">
-              <SectionIntro
-                eyebrow="Portfolio"
-                title="Progetti che mi hanno fatto crescere"
-                description="Esperimenti e prodotti che raccontano il mio modo di affrontare architettura, mobile e dominio applicativo."
-              />
+              <SectionIntro title="Tutti i progetti consegnati" href="/progetti" />
               <div className="mt-8 grid gap-5 md:grid-cols-2">
                 {projects.map((project) => (
                   <ArticleCard
@@ -230,19 +228,10 @@ function HomePage() {
                   />
                 ))}
               </div>
-              <div className="mt-8">
-                <ActionLink href="/progetti" variant="secondary">
-                  Scopri tutti i progetti
-                </ActionLink>
-              </div>
             </Section>
 
             <Section className="pt-0 sm:pt-0">
-              <SectionIntro
-                eyebrow="Dal blog"
-                title="Articoli e appunti dal mio percorso"
-                description="Approfondimenti su sviluppo, architettura software e sulle decisioni che danno forma ai prodotti digitali."
-              />
+              <SectionIntro title="Notizie e opinioni sulla tecnologia" href="/blog" />
               <div className="mt-8 grid gap-5 md:grid-cols-2">
                 {articles.map((article) => (
                   <ArticleCard
@@ -251,11 +240,6 @@ function HomePage() {
                     archiveSlug={article.categories[0]?.slug ?? "blog"}
                   />
                 ))}
-              </div>
-              <div className="mt-8">
-                <ActionLink href="/blog" variant="secondary">
-                  Leggi tutti gli articoli
-                </ActionLink>
               </div>
             </Section>
 
@@ -300,32 +284,37 @@ function SkillCard({
   items: string[];
 }) {
   return (
-    <article className="card-sheen rounded-2xl border border-white/10 bg-white/3 p-6 transition hover:border-sky-300/30 hover:bg-white/5">
+    <ShowcaseCard>
       <TechIcon skill={skill} />
-      <h2 className="display-font mt-5 text-xl font-semibold">{title}</h2>
+      <h2 className="display-font mt-5 text-2xl leading-tight font-semibold">{title}</h2>
       <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-300">
         {items.map((item) => (
-          <li key={item}>✦ {item}</li>
+          <li key={item} className="flex items-baseline gap-2">
+            <span className="text-lg leading-none text-sky-300" aria-hidden="true">
+              ✦
+            </span>
+            <span>{item}</span>
+          </li>
         ))}
       </ul>
-    </article>
+    </ShowcaseCard>
   );
 }
 
-function SectionIntro({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-}) {
+function SectionIntro({ title, href }: { title: string; href: string }) {
   return (
-    <div className="max-w-3xl">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">{eyebrow}</p>
-      <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">{title}</h2>
-      <p className="mt-4 leading-7 text-slate-400">{description}</p>
-    </div>
+    <a
+      href={href}
+      className="group flex w-full items-center justify-between gap-6 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950"
+      aria-label={`${title}: vai alla sezione`}
+    >
+      <h2 className="display-font text-3xl font-semibold transition-colors group-hover:text-sky-300 sm:text-4xl">
+        {title}
+      </h2>
+      <ArrowRight
+        className="size-8 shrink-0 transition-transform group-hover:translate-x-1 sm:size-10"
+        aria-hidden="true"
+      />
+    </a>
   );
 }

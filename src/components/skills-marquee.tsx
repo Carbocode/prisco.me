@@ -48,7 +48,7 @@ export function SkillsMarquee({ skills }: { skills: Skill[] }) {
     >
       <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6 text-center lg:relative lg:inset-auto lg:justify-start lg:text-left">
         <h2 className="hero-content-contrast display-font px-5 py-3 text-2xl font-semibold sm:text-3xl lg:filter-none lg:before:hidden">
-          Tutte le tecnologia a disposizione delle tue idee.
+          Tutte le tecnologie a disposizione delle tue idee.
         </h2>
       </div>
       <div className="skills-marquee min-w-0 space-y-3 overflow-hidden">
