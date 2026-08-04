@@ -2,7 +2,7 @@
 
 @import 'tw-animate-css';
 @import "@fontsource-variable/inter";
-@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/bricolage-grotesque";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -97,7 +97,7 @@ code {
   --font-sans:
     'Inter Variable', sans-serif;
   --font-heading:
-    'Space Grotesk Variable', sans-serif;
+    'Bricolage Grotesque Variable', sans-serif;
   --radius-2xl:
     calc(var(--radius) * 1.8);
   --radius-3xl:
@@ -298,7 +298,8 @@ code {
 }
 
 .display-font {
-  font-family: 'Space Grotesk Variable', 'Inter Variable', sans-serif;
+  font-family: 'Bricolage Grotesque Variable', sans-serif;
+  font-weight: 800;
 }
 
 

@@ -16,14 +16,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -48,6 +40,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { parseCmsDocument } from "@/features/cms/domain/cms-document";
 import { renderCmsDocument } from "@/features/cms/editor/render-cms-document";
+import { ArticleCard } from "@/features/content/article-card";
 import type { CategorySchemaType } from "@/lib/content-category";
 import { cn } from "@/lib/utils";
 
@@ -352,9 +345,14 @@ export function ContentArchivePage({
 
         {filtered.length ? (
           <>
-            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 divide-y divide-white/10">
               {visibleArticles.map((article) => (
-                <ArticleCard key={article.id} article={article} archiveSlug={archiveSlug} />
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  archiveSlug={archiveSlug}
+                  variant="list"
+                />
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
@@ -409,47 +407,6 @@ export function ContentArchivePage({
         )}
       </Section>
     </PageShell>
-  );
-}
-
-export function ArticleCard({
-  article,
-  archiveSlug,
-}: {
-  article: PublicArticle;
-  archiveSlug: string;
-}) {
-  return (
-    <Card className="relative h-full min-w-0 pt-0">
-      <ArticleCover article={article} variant="card" />
-      {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
-      <CardHeader>
-        <CardTitle>{article.title}</CardTitle>
-        <CardDescription>{articleMetadata(article)}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {article.tags.length ? (
-          <div className="flex flex-wrap gap-2">
-            {article.tags.slice(0, 5).map((item) => (
-              <Badge key={item.slug} className={item.color}>
-                <SkillGlyph skill={item} size={12} />
-                {item.name}
-              </Badge>
-            ))}
-          </div>
-        ) : null}
-        {article.excerpt ? <CardDescription>{article.excerpt}</CardDescription> : null}
-      </CardContent>
-      <CardFooter className="mt-auto">
-        <a
-          className={buttonVariants({ variant: "outline" })}
-          href={`/${archiveSlug}/${article.slug}`}
-          aria-label={`Scopri ${article.title}`}
-        >
-          Scopri il contenuto
-        </a>
-      </CardFooter>
-    </Card>
   );
 }
 
@@ -683,18 +640,6 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
   );
 }
 
-function CardEdgeTag({ tag }: { tag: PublicArticle["tags"][number] }) {
-  return (
-    <Badge
-      className="absolute top-3 right-3 size-10 shadow-lg"
-      aria-label={tag.name}
-      title={tag.name}
-    >
-      <SkillGlyph skill={tag} size={22} />
-    </Badge>
-  );
-}
-
 function formatDate(date: Date | null) {
   return date ? new Date(date).toLocaleDateString("it-IT") : "Pubblicazione";
 }
@@ -735,15 +680,4 @@ function uniqueYears(articles: PublicArticle[]) {
       ),
     ),
   ].sort((left, right) => Number(right) - Number(left));
-}
-
-function articleMetadata(article: PublicArticle) {
-  return [
-    formatDate(article.publishedAt),
-    formatReadingTime(article.readingTimeMinutes),
-    article.author.name,
-    article.organization?.name,
-  ]
-    .filter(Boolean)
-    .join(" · ");
 }

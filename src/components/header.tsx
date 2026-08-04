@@ -27,7 +27,7 @@ export default function Header({ className, ...props }: HTMLAttributes<HTMLEleme
       <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)] lg:px-8">
         <Link to="/" className="flex items-center gap-3" aria-label="Torna alla home">
           <img src="/favicon/favicon.svg" alt="" className="h-9 w-9" />
-          <p className="leading-tight display-font text-lg font-semibold">Vincenzo Prisco</p>
+          <p className="display-font text-2xl leading-tight font-semibold">Vincenzo Prisco</p>
         </Link>
 
         <NavigationMenu aria-label="Navigazione principale" className="ml-auto hidden md:flex">

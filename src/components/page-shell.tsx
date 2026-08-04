@@ -7,8 +7,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type PageShellProps = PropsWithChildren<{
-  title: string;
+  title: ReactNode;
   description?: string;
+  titleClassName?: string;
   actions?: ReactNode;
   hero?: boolean;
   heroImage?: { url: string; altText?: string | null } | null;
@@ -17,6 +18,7 @@ type PageShellProps = PropsWithChildren<{
 export function PageShell({
   title,
   description,
+  titleClassName,
   actions,
   hero = true,
   heroImage,
@@ -47,7 +49,12 @@ export function PageShell({
             />
             <div className="site-grid pointer-events-none absolute inset-0 -z-10 opacity-35" />
             <div className="mx-auto w-full max-w-6xl">
-              <PageHeading title={title} description={description} actions={actions} />
+              <PageHeading
+                title={title}
+                description={description}
+                actions={actions}
+                titleClassName={titleClassName}
+              />
             </div>
           </section>
         )}
@@ -62,10 +69,16 @@ function PageHeading({
   title,
   description,
   actions,
+  titleClassName,
 }: Omit<PageShellProps, "children" | "hero" | "heroImage">) {
   return (
     <div className="flex max-w-4xl flex-col gap-6 drop-shadow-[0_2px_18px_rgba(2,6,23,0.85)]">
-      <h1 className="display-font text-5xl leading-[0.95] font-semibold tracking-[-0.045em] text-white sm:text-7xl lg:text-[5.5rem]">
+      <h1
+        className={cn(
+          "display-font text-5xl leading-[0.95] font-semibold tracking-[-0.045em] text-white sm:text-7xl lg:text-[5.5rem]",
+          titleClassName,
+        )}
+      >
         {title}
       </h1>
       {description && (

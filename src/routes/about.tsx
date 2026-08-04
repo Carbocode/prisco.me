@@ -1,11 +1,10 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ActionLink, PageShell, Section } from "@/components/page-shell";
+import { ShowcaseCard } from "@/components/showcase-card";
 import { TechIcon } from "@/components/tech-icon";
+import type { SkillVisual } from "@/components/tech-icon";
 import { pageHead } from "@/lib/page-head";
-import type { Skill } from "@/lib/projects";
-import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/about")({
   head: () =>
@@ -15,134 +14,166 @@ export const Route = createFileRoute("/about")({
       socialDescription: "Scopri come è costruito Prisco.me",
       path: "/about",
     }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),
   component: SiteInformationPage,
 });
 
-const technologyGroups = [
+const technologyGroups: Array<{
+  title: string;
+  description: string;
+  technologies: SkillVisual[];
+}> = [
   {
     title: "Interfaccia",
     description:
-      "Un frontend React tipizzato, responsive e costruito per rendere visibili contenuti e progetti.",
-    technologies: ["React", "TypeScript", "Tailwind CSS", "Vite"],
+      "Un'interfaccia React tipizzata, responsive e costruita con componenti accessibili.",
+    technologies: [
+      technology(
+        "React",
+        "simple-icons:react",
+        "R",
+        "border-cyan-300/30 bg-cyan-300/10 text-cyan-200",
+      ),
+      technology(
+        "TypeScript",
+        "simple-icons:typescript",
+        "TS",
+        "border-blue-300/30 bg-blue-300/10 text-blue-200",
+      ),
+      technology(
+        "Tailwind CSS",
+        "simple-icons:tailwindcss",
+        "TW",
+        "border-sky-300/30 bg-sky-300/10 text-sky-200",
+      ),
+      technology(
+        "shadcn/ui",
+        "simple-icons:shadcnui",
+        "UI",
+        "border-white/20 bg-white/10 text-white",
+      ),
+    ],
   },
   {
-    title: "Routing e dati",
+    title: "Applicazione e contenuti",
     description:
-      "Navigazione file-based, caricamento dati e gestione degli stati con l'ecosistema TanStack.",
-    technologies: ["TanStack Start", "React Query"],
+      "Routing, rendering server-side, gestione dei dati e un editor completo per i contenuti.",
+    technologies: [
+      technology(
+        "TanStack Start",
+        "simple-icons:tanstack",
+        "TS",
+        "border-red-300/30 bg-red-300/10 text-red-200",
+      ),
+      technology(
+        "TanStack Query",
+        "simple-icons:reactquery",
+        "TQ",
+        "border-rose-300/30 bg-rose-300/10 text-rose-200",
+      ),
+      technology("Plate", null, "P", "border-violet-300/30 bg-violet-300/10 text-violet-200"),
+      technology(
+        "Vite",
+        "simple-icons:vite",
+        "V",
+        "border-purple-300/30 bg-purple-300/10 text-purple-200",
+      ),
+    ],
   },
   {
-    title: "Infrastruttura",
+    title: "Backend e infrastruttura",
     description:
-      "Deploy edge e persistenza serverless per il form di contatto, con osservabilità integrata.",
-    technologies: ["Cloudflare", "D1", "Drizzle ORM", "PostHog"],
+      "Esecuzione edge, database SQL, media storage, autenticazione e accesso tipizzato ai dati.",
+    technologies: [
+      technology(
+        "Cloudflare Workers",
+        "simple-icons:cloudflareworkers",
+        "CF",
+        "border-orange-300/30 bg-orange-300/10 text-orange-200",
+      ),
+      technology(
+        "Cloudflare D1",
+        "simple-icons:cloudflare",
+        "D1",
+        "border-amber-300/30 bg-amber-300/10 text-amber-200",
+      ),
+      technology(
+        "Cloudflare R2",
+        "simple-icons:cloudflare",
+        "R2",
+        "border-orange-300/30 bg-orange-300/10 text-orange-200",
+      ),
+      technology(
+        "Drizzle ORM",
+        "simple-icons:drizzle",
+        "DZ",
+        "border-lime-300/30 bg-lime-300/10 text-lime-200",
+      ),
+      technology(
+        "Better Auth",
+        "simple-icons:betterauth",
+        "BA",
+        "border-white/20 bg-white/10 text-white",
+      ),
+    ],
   },
   {
-    title: "Contenuti e misurazione",
-    description: "Icone brand e colorate e strumenti per capire come migliorare l'esperienza.",
-    technologies: ["Fluent Color", "Simple Icons", "PostHog"],
+    title: "Qualità e misurazione",
+    description:
+      "Test, analisi statica e osservabilità per mantenere il sito affidabile e misurabile.",
+    technologies: [
+      technology(
+        "Vitest",
+        "simple-icons:vitest",
+        "VT",
+        "border-lime-300/30 bg-lime-300/10 text-lime-200",
+      ),
+      technology(
+        "Oxlint",
+        "simple-icons:oxc",
+        "OX",
+        "border-blue-300/30 bg-blue-300/10 text-blue-200",
+      ),
+      technology(
+        "PostHog",
+        "simple-icons:posthog",
+        "PH",
+        "border-yellow-300/30 bg-yellow-300/10 text-yellow-200",
+      ),
+      technology(
+        "Turnstile",
+        "simple-icons:cloudflare",
+        "TS",
+        "border-orange-300/30 bg-orange-300/10 text-orange-200",
+      ),
+    ],
   },
-] as const;
+];
+
+function technology(name: string, icon: string | null, mark: string, color: string): SkillVisual {
+  return { name, icon, mark, color };
+}
 
 function SiteInformationPage() {
-  const { data: portfolio } = useSuspenseQuery(getPortfolioQueryOptions());
-  const skillByName = new Map(portfolio.skills.map((skill) => [skill.name, skill]));
-
   return (
     <PageShell
-      title="Un portfolio personale, costruito come un prodotto."
+      title={
+        <>
+          Un portfolio costruito come un prodotto, come lo farei{" "}
+          <span className="text-sky-300">per te</span>
+        </>
+      }
+      titleClassName="tracking-[-0.025em]"
       description="Prisco.me è progettato, sviluppato e mantenuto da Vincenzo Prisco. Questa pagina raccoglie le scelte tecniche che lo fanno funzionare."
     >
       <Section>
-        <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
-          <div className="relative overflow-hidden rounded-3xl border border-sky-300/20 bg-gradient-to-br from-sky-300/[0.09] via-violet-300/[0.06] to-transparent p-7 sm:p-9">
-            <div className="site-grid absolute inset-0 opacity-45" aria-hidden="true" />
-            <div className="relative">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-                La direzione tecnica
-              </p>
-              <h2 className="display-font mt-4 max-w-2xl text-3xl font-semibold sm:text-4xl">
-                Velocità, chiarezza e spazio per crescere.
-              </h2>
-              <p className="mt-5 max-w-2xl leading-8 text-slate-300">
-                Il sito usa componenti riutilizzabili, contenuti tipizzati e una struttura a route
-                indipendenti. L'obiettivo è mantenere l'esperienza leggera per chi legge e semplice
-                da evolvere per chi la costruisce.
-              </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <Metric label="Frontend" value="React + TS" />
-                <Metric label="Runtime" value="Edge-ready" />
-                <Metric label="Contenuti" value="Dati tipizzati" />
-              </div>
-            </div>
-          </div>
-
-          <aside className="flex flex-col justify-between rounded-3xl border border-white/10 bg-white/[0.035] p-7">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-violet-300">
-                Codice sorgente
-              </p>
-              <h2 className="display-font mt-4 text-2xl font-semibold text-white">
-                Vuoi vedere come è fatto?
-              </h2>
-              <p className="mt-4 leading-7 text-slate-400">
-                Il progetto è pubblico: puoi leggere il codice, seguire l'evoluzione e prendere
-                ispirazione dalle scelte implementative.
-              </p>
-            </div>
-            <a
-              className="mt-8 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.05] px-4 text-sm font-semibold text-white transition hover:border-sky-300/40 hover:bg-sky-300/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
-              href="https://github.com/Carbocode/prisco-website"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Apri la repository <span aria-hidden="true">↗</span>
-            </a>
-          </aside>
-        </div>
-      </Section>
-
-      <Section className="border-t border-white/10 pt-16 sm:pt-20">
-        <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
-            Stack tecnologico
-          </p>
-          <h2 className="display-font mt-4 text-3xl font-semibold sm:text-4xl">
-            Ogni strumento ha un motivo.
-          </h2>
-          <p className="mt-4 leading-7 text-slate-400">
-            Non una lista di buzzword: qui sotto trovi il ruolo che ogni gruppo di tecnologie svolge
-            nel sito.
-          </p>
-        </div>
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {technologyGroups.map((group) => (
-            <article
-              key={group.title}
-              className="card-sheen rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-sky-300/30 hover:bg-white/[0.05]"
-            >
-              <h3 className="display-font text-xl font-semibold text-white">{group.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-400">{group.description}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {group.technologies
-                  .map((technology) => skillByName.get(technology))
-                  .filter((skill): skill is Skill => Boolean(skill))
-                  .map((skill) => (
-                    <span
-                      key={skill.id}
-                      className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
-                    >
-                      <TechIcon skill={skill} compact />
-                    </span>
-                  ))}
-              </div>
-            </article>
+            <TechnologyGroupCard key={group.title} group={group} />
           ))}
         </div>
       </Section>
 
-      <Section className="border-t border-white/10 pt-16 sm:pt-20">
+      <Section className="pt-16 sm:pt-20">
         <div className="grid gap-6 lg:grid-cols-3">
           <DetailCard
             number="01"
@@ -162,7 +193,7 @@ function SiteInformationPage() {
         </div>
       </Section>
 
-      <section className="border-t border-white/10 bg-gradient-to-r from-sky-400/10 to-violet-400/10 px-6 py-20 text-center">
+      <section className="bg-gradient-to-r from-sky-400/10 to-violet-400/10 px-6 py-20 text-center">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-5">
           <h2 className="display-font text-3xl font-semibold sm:text-4xl">
             Hai trovato qualcosa che vuoi approfondire?
@@ -190,12 +221,24 @@ function SiteInformationPage() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function TechnologyGroupCard({ group }: { group: (typeof technologyGroups)[number] }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-950/35 p-4">
-      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{label}</p>
-      <p className="mt-2 text-sm font-semibold text-white">{value}</p>
-    </div>
+    <ShowcaseCard>
+      <h2 className="display-font text-2xl leading-tight font-semibold text-white">
+        {group.title}
+      </h2>
+      <p className="mt-3 text-sm leading-7 text-slate-300">{group.description}</p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {group.technologies.map((item) => (
+          <span
+            key={item.name}
+            className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
+          >
+            <TechIcon skill={item} compact />
+          </span>
+        ))}
+      </div>
+    </ShowcaseCard>
   );
 }
 

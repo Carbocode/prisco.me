@@ -1,5 +1,5 @@
+import bricolageGrotesqueFont from "@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
-import spaceGroteskFont from "@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
@@ -59,7 +59,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
       {
         rel: "preload",
-        href: spaceGroteskFont,
+        href: bricolageGrotesqueFont,
         as: "font",
         type: "font/woff2",
         crossOrigin: "anonymous",
