@@ -40,12 +40,6 @@ export function toEmbedUrl(value: unknown): string | null {
       return `https://www.instagram.com/p/${encodeURIComponent(match[1])}/embed/captioned/`;
   }
 
-  // X / Twitter posts
-  if (host === "twitter.com" || host === "x.com" || host === "mobile.twitter.com") {
-    const id = url.pathname.match(/^\/[^/]+\/status\/(\d+)/)?.[1];
-    if (id) return `https://platform.twitter.com/embed/Tweet.html?id=${encodeURIComponent(id)}`;
-  }
-
   // LinkedIn activity posts
   if (host === "linkedin.com") {
     const id = url.pathname.match(/activity-(\d+)/)?.[1] ?? url.pathname.match(/-(\d{10,})-/)?.[1];
@@ -87,6 +81,15 @@ export function toPublicHttpUrl(value: unknown): string | null {
   } catch {
     return null;
   }
+}
+
+export function toTwitterPostUrl(value: unknown): string | null {
+  const href = toPublicHttpUrl(value);
+  if (!href) return null;
+  const url = new URL(href);
+  const host = url.hostname.replace(/^www\./, "");
+  if (!["mobile.twitter.com", "twitter.com", "x.com"].includes(host)) return null;
+  return /^\/[^/]+\/status\/\d+/.test(url.pathname) ? url.href : null;
 }
 
 export function toPreviewImageUrl(value: unknown): string | null {

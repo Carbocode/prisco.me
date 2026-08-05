@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { toEmbedUrl, toPreviewImageUrl } from "./embed-url";
+import { toEmbedUrl, toPreviewImageUrl, toTwitterPostUrl } from "./embed-url";
 
 describe("embed URL resolution", () => {
   it.each([
@@ -9,10 +9,6 @@ describe("embed URL resolution", () => {
     [
       "https://www.instagram.com/reel/ABC_123/",
       "https://www.instagram.com/p/ABC_123/embed/captioned/",
-    ],
-    [
-      "https://x.com/openai/status/1234567890",
-      "https://platform.twitter.com/embed/Tweet.html?id=1234567890",
     ],
     [
       "https://www.linkedin.com/posts/example_activity-1234567890123456789-test",
@@ -34,5 +30,12 @@ describe("embed URL resolution", () => {
     expect(toPreviewImageUrl("/media/cms/2026/08/example.webp")).toBe(
       "/media/cms/2026/08/example.webp",
     );
+  });
+
+  it("recognizes X and Twitter post URLs for the official widget", () => {
+    expect(toTwitterPostUrl("https://x.com/openai/status/1234567890")).toBe(
+      "https://x.com/openai/status/1234567890",
+    );
+    expect(toTwitterPostUrl("https://example.com/openai/status/1234567890")).toBeNull();
   });
 });

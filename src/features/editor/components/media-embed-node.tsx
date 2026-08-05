@@ -6,16 +6,20 @@ import type { TElement } from "platejs";
 import { PlateElement, type PlateElementProps } from "platejs/react";
 
 import { EmbedPreview } from "@/features/editor/embed-preview";
-import { openGraphPreview, toEmbedUrl } from "@/features/editor/embed-url";
+import { openGraphPreview, toEmbedUrl, toTwitterPostUrl } from "@/features/editor/embed-url";
+import { TwitterEmbed } from "@/features/editor/twitter-embed";
 
 export function MediaEmbedElement(props: PlateElementProps) {
   const element = props.element as TElement & { url?: string };
   const embedUrl = toEmbedUrl(element.url);
+  const twitterUrl = toTwitterPostUrl(element.url);
 
   return (
     <PlateElement {...props} className="cms-editor__embed">
       <div contentEditable={false}>
-        {embedUrl ? (
+        {twitterUrl ? (
+          <TwitterEmbed url={twitterUrl} />
+        ) : embedUrl ? (
           <div className="cms-embed">
             <iframe
               src={embedUrl}

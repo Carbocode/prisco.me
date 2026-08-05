@@ -6,7 +6,8 @@ import "katex/dist/katex.min.css";
 import type { CSSProperties, ReactNode } from "react";
 
 import { EmbedPreview } from "../../editor/embed-preview";
-import { openGraphPreview, toEmbedUrl } from "../../editor/embed-url";
+import { openGraphPreview, toEmbedUrl, toTwitterPostUrl } from "../../editor/embed-url";
+import { TwitterEmbed } from "../../editor/twitter-embed";
 import { toPlateValue, type CmsDocument } from "../domain/cms-document";
 
 function katexHtml(tex: unknown, displayMode: boolean): string {
@@ -375,6 +376,8 @@ function children(
         </span>
       );
     case "mediaEmbed": {
+      const twitterUrl = toTwitterPostUrl(node.url);
+      if (twitterUrl) return <TwitterEmbed key={key} url={twitterUrl} />;
       const embedUrl = toEmbedUrl(node.url);
       if (!embedUrl) {
         return (

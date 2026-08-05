@@ -32,7 +32,7 @@ import { IndentPlugin } from "@platejs/indent/react";
 import { ColumnItemPlugin, ColumnPlugin } from "@platejs/layout/react";
 import { insertLink, LinkRules, unwrapLink, upsertLink } from "@platejs/link";
 import { LinkPlugin } from "@platejs/link/react";
-import { someList, toggleList } from "@platejs/list";
+import { isOrderedList, someList, toggleList } from "@platejs/list";
 import { ListPlugin } from "@platejs/list/react";
 import { EquationPlugin, InlineEquationPlugin } from "@platejs/math/react";
 import { MentionInputPlugin, MentionPlugin } from "@platejs/mention/react";
@@ -157,6 +157,7 @@ import {
 } from "@/features/editor/components/toolbar";
 import { EditorActionsProvider, type MediaKind } from "@/features/editor/editor-actions-context";
 import { toPublicHttpUrl } from "@/features/editor/embed-url";
+import { cn } from "@/lib/utils";
 
 type MediaItem = {
   id: string;
@@ -198,13 +199,13 @@ function ParagraphElement(props: PlateElementProps) {
     );
   }
   if (element.listStyleType) {
+    const ordered = isOrderedList(element);
     return (
       <PlateElement
         {...props}
         as="div"
-        className="cms-plate-list-item"
+        className={cn("cms-plate-list-item", ordered && "cms-plate-list-item--ordered")}
         data-list-type={element.listStyleType}
-        data-list-ordered={element.listStyleType === KEYS.ol}
         style={{
           marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem`,
           textAlign: textAlignment(element.textAlign),
@@ -233,9 +234,9 @@ function HorizontalRuleElement(props: PlateElementProps) {
   return (
     <PlateElement {...props} as="div" className="cms-editor__separator">
       <div contentEditable={false}>
-        <Separator />
+        <Separator className="h-px w-full" />
       </div>
-      <span className="sr-only">{props.children}</span>
+      {props.children}
     </PlateElement>
   );
 }
