@@ -445,6 +445,15 @@ code {
   border: 0;
 }
 
+.cms-twitter-embed {
+  min-height: 8rem;
+  margin-block: 1rem;
+}
+
+.cms-twitter-embed > * {
+  margin-inline: auto;
+}
+
 .cms-columns {
   display: flex;
   gap: 1rem;

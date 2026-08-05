@@ -180,7 +180,7 @@
 
 .cms-editor__separator {
   margin-block: 2rem;
-  padding-block: 0.5rem;
+  padding-block: 1.5rem;
 }
 
 .cms-editor__content p.is-editor-empty:first-child::before {
@@ -274,10 +274,15 @@
 
 .cms-plate-list-item,
 .cms-task-list-item {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 0.65rem;
   margin-block: 0.25rem;
+}
+
+.cms-plate-list-item::before {
+  left: 1.65rem;
 }
 
 .cms-plate-list-item > span:last-child,
@@ -300,11 +305,11 @@
   align-items: center;
 }
 
-.cms-plate-list-item[data-list-ordered="true"] {
+.cms-plate-list-item--ordered {
   counter-increment: cms-plate-list;
 }
 
-.cms-plate-list-item[data-list-ordered="true"] > .cms-plate-list-marker::before {
+.cms-plate-list-item--ordered > .cms-plate-list-marker::before {
   content: counter(cms-plate-list) ".";
 }
 
