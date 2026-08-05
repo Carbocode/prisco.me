@@ -76,6 +76,19 @@ export function toEmbedUrl(value: unknown): string | null {
       return `https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(url.href)}&show_text=true&width=500`;
   }
 
+  // Reddit posts and comments expose a self-contained embed when embed=true.
+  if (["old.reddit.com", "reddit.com", "redd.it"].includes(host)) {
+    const isRedditContent =
+      host === "redd.it" || /\/r\/[^/]+\/comments\/[\w]+(?:\/|$)/.test(url.pathname);
+    if (isRedditContent) {
+      url.hostname = "embed.reddit.com";
+      url.searchParams.set("ref", "share");
+      url.searchParams.set("ref_source", "embed");
+      url.searchParams.set("embed", "true");
+      return url.href;
+    }
+  }
+
   // Already an embed URL
   if (host === "youtube.com" || host === "player.vimeo.com" || host === "youtube-nocookie.com") {
     return value;
@@ -107,7 +120,15 @@ export function isSocialPostEmbed(value: unknown): boolean {
   const href = toPublicHttpUrl(value);
   if (!href) return false;
   const host = new URL(href).hostname.replace(/^www\./, "");
-  return ["facebook.com", "fb.watch", "linkedin.com", "m.facebook.com"].includes(host);
+  return [
+    "facebook.com",
+    "fb.watch",
+    "linkedin.com",
+    "m.facebook.com",
+    "old.reddit.com",
+    "reddit.com",
+    "redd.it",
+  ].includes(host);
 }
 
 export function toPreviewImageUrl(value: unknown): string | null {
