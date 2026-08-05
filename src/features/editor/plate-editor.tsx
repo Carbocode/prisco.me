@@ -182,7 +182,7 @@ function ParagraphElement(props: PlateElementProps) {
       <PlateElement
         {...props}
         as="div"
-        className="cms-plate-list-item"
+        className="cms-plate-list-item cms-plate-list-item--todo"
         style={{ marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem` }}
       >
         <span contentEditable={false} className="cms-plate-checkbox">
@@ -200,26 +200,28 @@ function ParagraphElement(props: PlateElementProps) {
   }
   if (element.listStyleType) {
     const ordered = isOrderedList(element);
-    const previous =
-      path && path.length === 1 && path[0] > 0 ? editor.children[path[0] - 1] : undefined;
-    const startsOrderedList =
-      ordered && (!previous || !isOrderedList(previous) || previous.indent !== element.indent);
+    let listNumber = 1;
+    if (ordered && path?.length === 1) {
+      for (let index = path[0] - 1; index >= 0; index -= 1) {
+        const previous = editor.children[index];
+        if (!isOrderedList(previous) || previous.indent !== element.indent) break;
+        listNumber += 1;
+      }
+    }
     return (
       <PlateElement
         {...props}
         as="div"
-        className={cn(
-          "cms-plate-list-item",
-          ordered && "cms-plate-list-item--ordered",
-          startsOrderedList && "cms-plate-list-item--ordered-start",
-        )}
+        className={cn("cms-plate-list-item", ordered && "cms-plate-list-item--ordered")}
         data-list-type={element.listStyleType}
         style={{
           marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem`,
           textAlign: textAlignment(element.textAlign),
         }}
       >
-        <span contentEditable={false} className="cms-plate-list-marker" />
+        <span contentEditable={false} className="cms-plate-list-marker">
+          {ordered ? `${listNumber}.` : "•"}
+        </span>
         <span>{props.children}</span>
       </PlateElement>
     );

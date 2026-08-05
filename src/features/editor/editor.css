@@ -282,6 +282,10 @@
 }
 
 .cms-plate-list-item::before {
+  left: 2.15rem;
+}
+
+.cms-plate-list-item--todo::before {
   left: 1.65rem;
 }
 
@@ -292,11 +296,9 @@
   margin: 0;
 }
 
-.cms-plate-list-marker::before {
-  display: inline-block;
-  width: 1rem;
-  content: "•";
-  text-align: center;
+.cms-plate-list-marker {
+  min-width: 1.5rem;
+  text-align: right;
 }
 
 .cms-plate-checkbox {
@@ -305,26 +307,10 @@
   align-items: center;
 }
 
-.cms-plate-list-item--ordered {
-  counter-increment: cms-plate-list;
-}
-
-.cms-plate-list-item--ordered-start {
-  counter-reset: cms-plate-list;
-}
-
-.cms-plate-list-item--ordered > .cms-plate-list-marker::before {
-  content: counter(cms-plate-list) ".";
-}
-
 .cms-plate-list-item:has([data-checked="true"]),
 .cms-task-list-item[data-checked="true"] {
   color: var(--muted-foreground);
   text-decoration: line-through;
-}
-
-.cms-editor__content {
-  counter-reset: cms-plate-list;
 }
 
 .cms-editor__content figure img,

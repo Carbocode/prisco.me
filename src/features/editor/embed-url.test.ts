@@ -51,4 +51,13 @@ describe("embed URL resolution", () => {
       "https://www.linkedin.com/embed/feed/update/urn:li:share:1234567890",
     );
   });
+
+  it("uses Reddit's native embed mode for posts and comments", () => {
+    const embed = toEmbedUrl(
+      "https://www.reddit.com/r/reactjs/comments/abc123/example/comment/def456/",
+    );
+    expect(embed).toContain("embed.reddit.com/r/reactjs/comments/abc123/example/comment/def456/");
+    expect(embed).toContain("embed=true");
+    expect(embed).toContain("ref_source=embed");
+  });
 });
