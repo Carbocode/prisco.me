@@ -21,6 +21,23 @@ const insertList = (editor: PlateEditor, type: string) => {
   });
 };
 
+const insertHorizontalRule = (editor: PlateEditor) => {
+  const block = editor.api.block();
+  if (!block) return;
+
+  const [currentNode, path] = block;
+  const rule = { type: KEYS.hr, children: [{ text: "" }] };
+  const paragraph = editor.api.create.block({ type: KEYS.p });
+
+  if (editor.api.isEmpty(currentNode)) {
+    editor.tf.removeNodes({ at: path });
+    editor.tf.insertNodes([rule, paragraph], { at: path, select: true });
+    return;
+  }
+
+  editor.tf.insertNodes([rule, paragraph], { at: PathApi.next(path), select: true });
+};
+
 const createBlockquote = (editor: PlateEditor) => ({
   children: [editor.api.create.block({ type: KEYS.p })],
   type: KEYS.blockquote,
@@ -40,11 +57,7 @@ const insertBlockMap: Record<string, (editor: PlateEditor, type: string) => void
   [KEYS.codeBlock]: (editor) => insertCodeBlock(editor, { select: true }),
   [KEYS.codeDrawing]: (editor) => insertCodeDrawing(editor, {}, { select: true }),
   [KEYS.equation]: (editor) => insertEquation(editor, { select: true }),
-  [KEYS.hr]: (editor) =>
-    editor.tf.insertNodes(
-      { type: KEYS.hr, children: [{ text: "" }] },
-      { at: PathApi.next(editor.api.block()![1]), select: true },
-    ),
+  [KEYS.hr]: insertHorizontalRule,
   [KEYS.table]: (editor) => editor.getTransforms(TablePlugin).insert.table({}, { select: true }),
   [KEYS.toc]: (editor) => insertToc(editor, { select: true }),
   [KEYS.toggle]: (editor) =>
@@ -81,6 +94,11 @@ export function insertBlock(editor: PlateEditor, type: string, options: InsertBl
       editor.tf.insertNodes(createBlockquote(editor), { at: insertPath });
       if (!isSameBlockType && isCurrentBlockEmpty) editor.tf.removeNodes({ at: path });
       selectBlockquoteStart(editor, isCurrentBlockEmpty && !isSameBlockType ? path : insertPath);
+      return;
+    }
+
+    if (type === KEYS.hr) {
+      insertHorizontalRule(editor);
       return;
     }
 

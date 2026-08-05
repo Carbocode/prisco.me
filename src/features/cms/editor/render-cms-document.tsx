@@ -169,27 +169,27 @@ function children(
     }
     case "h1":
       return (
-        <h1 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
-          {nested}
-        </h1>
-      );
-    case "h2":
-      return (
         <h2 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
           {nested}
         </h2>
       );
-    case "h3":
+    case "h2":
       return (
         <h3 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
           {nested}
         </h3>
       );
-    case "h4":
+    case "h3":
       return (
         <h4 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
           {nested}
         </h4>
+      );
+    case "h4":
+      return (
+        <h5 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
+          {nested}
+        </h5>
       );
     case "code_block":
       return (
@@ -457,7 +457,7 @@ export function renderCmsDocument(document: CmsDocument, media = new Map<string,
   const headings = value
     .filter((node) => ["h1", "h2", "h3", "h4"].includes(node.type ?? ""))
     .map((node) => ({
-      depth: Number(node.type?.slice(1)) || 2,
+      depth: (Number(node.type?.slice(1)) || 1) + 1,
       id: String(node.id),
       title: nodeText(node),
     }));

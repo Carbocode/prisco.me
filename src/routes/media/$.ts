@@ -2,7 +2,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
 
-const mediaKeyPattern = /^cms\/\d{4}\/\d{2}\/[0-9a-f-]{36}\.(?:webp|webm)$/;
+const mediaKeyPattern = /^cms\/\d{4}\/\d{2}\/[0-9a-f-]{36}\.(?:avif|gif|jpe?g|png|webm|webp)$/;
 
 export const Route = createFileRoute("/media/$")({
   server: {

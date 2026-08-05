@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { env } from "cloudflare:workers";
 import { z } from "zod";
 
 import { toEmbedUrl, type OpenGraphPreview } from "@/features/editor/embed-url";
@@ -7,6 +8,7 @@ import { requireCmsPermission } from "./cms-auth";
 
 const MAX_HTML_BYTES = 1_000_000;
 const MAX_REDIRECTS = 3;
+const MAX_PREVIEW_IMAGE_BYTES = 8 * 1024 * 1024;
 
 export const getEmbedPreviewFn = createServerFn({ method: "POST" })
   .validator(z.object({ url: z.url().max(2_048) }))
@@ -23,6 +25,9 @@ export const getEmbedPreviewFn = createServerFn({ method: "POST" })
 
     const html = (await response.text()).slice(0, MAX_HTML_BYTES);
     const metadata = parseOpenGraph(html, finalUrl);
+    if (metadata.image) {
+      metadata.image = (await persistPreviewImage(metadata.image)) ?? metadata.image;
+    }
     return { url: data.url, metadata };
   });
 
@@ -68,6 +73,52 @@ function safeRemoteUrl(value: string) {
   url.username = "";
   url.password = "";
   return url.href;
+}
+
+async function persistPreviewImage(source: string): Promise<string | undefined> {
+  try {
+    const { response } = await fetchImage(source);
+    const contentType = response.headers.get("content-type")?.split(";")[0].toLowerCase();
+    const extensions: Record<string, string> = {
+      "image/avif": "avif",
+      "image/gif": "gif",
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+    };
+    const extension = contentType ? extensions[contentType] : undefined;
+    if (!response.ok || !contentType || !extension) return undefined;
+
+    const declaredLength = Number(response.headers.get("content-length") ?? 0);
+    if (declaredLength > MAX_PREVIEW_IMAGE_BYTES) return undefined;
+    const body = await response.arrayBuffer();
+    if (body.byteLength > MAX_PREVIEW_IMAGE_BYTES) return undefined;
+
+    const now = new Date();
+    const key = `cms/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, "0")}/${crypto.randomUUID()}.${extension}`;
+    await env.CMS_MEDIA.put(key, body, {
+      httpMetadata: { cacheControl: "public, max-age=31536000, immutable", contentType },
+    });
+    return `/media/${key}`;
+  } catch {
+    return undefined;
+  }
+}
+
+async function fetchImage(input: string) {
+  let current = safeRemoteUrl(input);
+  for (let redirects = 0; redirects <= MAX_REDIRECTS; redirects += 1) {
+    const response = await fetch(current, {
+      redirect: "manual",
+      headers: { Accept: "image/avif,image/webp,image/png,image/jpeg,image/gif" },
+      signal: AbortSignal.timeout(7_000),
+    });
+    if (response.status < 300 || response.status >= 400) return { response, finalUrl: current };
+    const location = response.headers.get("location");
+    if (!location || redirects === MAX_REDIRECTS) throw new Error("Troppi reindirizzamenti");
+    current = safeRemoteUrl(new URL(location, current).href);
+  }
+  throw new Error("Impossibile leggere l'immagine");
 }
 
 export function parseOpenGraph(html: string, pageUrl: string): OpenGraphPreview {

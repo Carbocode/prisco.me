@@ -68,7 +68,8 @@
 .cms-editor__content h1,
 .cms-editor__content h2,
 .cms-editor__content h3,
-.cms-editor__content h4 {
+.cms-editor__content h4,
+.cms-editor__content h5 {
   color: var(--foreground);
   font-family: var(--font-heading);
   font-weight: 600;
@@ -76,22 +77,22 @@
   text-wrap: balance;
 }
 
-.cms-editor__content h1 {
+.cms-editor__content h2 {
   margin-block: 1.9em 0.7em;
   font-size: 2.125rem;
 }
 
-.cms-editor__content h2 {
+.cms-editor__content h3 {
   margin-block: 1.8em 0.65em;
   font-size: 1.75rem;
 }
 
-.cms-editor__content h3 {
+.cms-editor__content h4 {
   margin-block: 1.5em 0.55em;
   font-size: 1.35rem;
 }
 
-.cms-editor__content h4 {
+.cms-editor__content h5 {
   margin-block: 1.35em 0.5em;
   font-size: 1.1rem;
 }
@@ -177,10 +178,9 @@
   pointer-events: none;
 }
 
-.cms-editor__content hr {
+.cms-editor__separator {
   margin-block: 2rem;
-  border: 0;
-  border-top: 1px solid var(--border);
+  padding-block: 0.5rem;
 }
 
 .cms-editor__content p.is-editor-empty:first-child::before {
@@ -294,11 +294,17 @@
   text-align: center;
 }
 
-.cms-plate-list-item[data-list-type="decimal"] {
+.cms-plate-checkbox {
+  display: flex;
+  height: 1.8em;
+  align-items: center;
+}
+
+.cms-plate-list-item[data-list-ordered="true"] {
   counter-increment: cms-plate-list;
 }
 
-.cms-plate-list-item[data-list-type="decimal"] > .cms-plate-list-marker::before {
+.cms-plate-list-item[data-list-ordered="true"] > .cms-plate-list-marker::before {
   content: counter(cms-plate-list) ".";
 }
 
