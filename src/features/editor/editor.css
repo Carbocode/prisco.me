@@ -309,6 +309,10 @@
   counter-increment: cms-plate-list;
 }
 
+.cms-plate-list-item--ordered-start {
+  counter-reset: cms-plate-list;
+}
+
 .cms-plate-list-item--ordered > .cms-plate-list-marker::before {
   content: counter(cms-plate-list) ".";
 }

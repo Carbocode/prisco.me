@@ -28,7 +28,7 @@ export const getEmbedPreviewFn = createServerFn({ method: "POST" })
     if (metadata.image) {
       metadata.image = (await persistPreviewImage(metadata.image)) ?? metadata.image;
     }
-    return { url: data.url, metadata };
+    return { url: finalUrl, metadata };
   });
 
 async function fetchPage(input: string) {

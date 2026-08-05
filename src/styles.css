@@ -445,6 +445,13 @@ code {
   border: 0;
 }
 
+.cms-embed--social {
+  height: min(42rem, 80vh);
+  max-width: 31.5rem;
+  margin-inline: auto;
+  aspect-ratio: auto;
+}
+
 .cms-twitter-embed {
   min-height: 8rem;
   margin-block: 1rem;

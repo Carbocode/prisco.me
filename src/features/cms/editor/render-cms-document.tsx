@@ -1,12 +1,18 @@
-/* oxlint-disable react/iframe-missing-sandbox -- trusted YouTube/Vimeo embeds validated by toEmbedUrl need scripts + same-origin to play. */
 import { renderToString } from "katex";
 
 // oxlint-disable-next-line import/no-unassigned-import -- KaTeX stylesheet for server-rendered equations.
 import "katex/dist/katex.min.css";
 import type { CSSProperties, ReactNode } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { EmbedPreview } from "../../editor/embed-preview";
-import { openGraphPreview, toEmbedUrl, toTwitterPostUrl } from "../../editor/embed-url";
+import {
+  isSocialPostEmbed,
+  openGraphPreview,
+  toEmbedUrl,
+  toTwitterPostUrl,
+} from "../../editor/embed-url";
 import { TwitterEmbed } from "../../editor/twitter-embed";
 import { toPlateValue, type CmsDocument } from "../domain/cms-document";
 
@@ -389,12 +395,15 @@ function children(
         );
       }
       return (
-        <div key={key} className="cms-embed">
+        <div
+          key={key}
+          className={cn("cms-embed", isSocialPostEmbed(node.url) && "cms-embed--social")}
+        >
+          {/* oxlint-disable-next-line react/iframe-missing-sandbox -- URLs are restricted to trusted providers; social widgets do not work in a sandbox. */}
           <iframe
             src={embedUrl}
             title="Contenuto incorporato"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
             allowFullScreen
           />
         </div>

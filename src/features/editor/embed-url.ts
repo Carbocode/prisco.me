@@ -42,15 +42,18 @@ export function toEmbedUrl(value: unknown): string | null {
 
   // LinkedIn activity posts
   if (host === "linkedin.com") {
-    const id = url.pathname.match(/activity-(\d+)/)?.[1] ?? url.pathname.match(/-(\d{10,})-/)?.[1];
-    if (id)
-      return `https://www.linkedin.com/embed/feed/update/urn:li:activity:${encodeURIComponent(id)}`;
+    const urn = url.pathname.match(/urn:li:(activity|share|ugcPost):(\d+)/);
+    if (urn) return `https://www.linkedin.com/embed/feed/update/urn:li:${urn[1]}:${urn[2]}`;
+    const activityId = url.pathname.match(/activity-(\d+)/)?.[1];
+    if (activityId)
+      return `https://www.linkedin.com/embed/feed/update/urn:li:activity:${activityId}`;
   }
 
   // TikTok videos
   if (host === "tiktok.com" || host === "m.tiktok.com") {
     const id = url.pathname.match(/\/video\/(\d+)/)?.[1];
-    if (id) return `https://www.tiktok.com/player/v1/${encodeURIComponent(id)}`;
+    if (id)
+      return `https://www.tiktok.com/player/v1/${encodeURIComponent(id)}?description=1&music_info=1`;
   }
 
   // Spotify content
@@ -60,9 +63,17 @@ export function toEmbedUrl(value: unknown): string | null {
       return `https://open.spotify.com/embed/${encodeURIComponent(match[1])}/${encodeURIComponent(match[2])}`;
   }
 
-  // Facebook posts and videos use the official social plugin iframe.
+  // Facebook posts and videos use the official social plugin iframe. Profiles
+  // are deliberately excluded because the post plugin cannot render them.
   if (host === "facebook.com" || host === "m.facebook.com" || host === "fb.watch") {
-    return `https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(url.href)}&show_text=true&width=500`;
+    const isPost =
+      host === "fb.watch" ||
+      /\/(?:posts|reel|videos)\//.test(url.pathname) ||
+      ["/permalink.php", "/photo.php", "/story.php", "/watch/"].some((path) =>
+        url.pathname.startsWith(path),
+      );
+    if (isPost)
+      return `https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(url.href)}&show_text=true&width=500`;
   }
 
   // Already an embed URL
@@ -90,6 +101,13 @@ export function toTwitterPostUrl(value: unknown): string | null {
   const host = url.hostname.replace(/^www\./, "");
   if (!["mobile.twitter.com", "twitter.com", "x.com"].includes(host)) return null;
   return /^\/[^/]+\/status\/\d+/.test(url.pathname) ? url.href : null;
+}
+
+export function isSocialPostEmbed(value: unknown): boolean {
+  const href = toPublicHttpUrl(value);
+  if (!href) return false;
+  const host = new URL(href).hostname.replace(/^www\./, "");
+  return ["facebook.com", "fb.watch", "linkedin.com", "m.facebook.com"].includes(host);
 }
 
 export function toPreviewImageUrl(value: unknown): string | null {

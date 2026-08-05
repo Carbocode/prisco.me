@@ -1,13 +1,17 @@
 "use client";
 
-/* oxlint-disable react/iframe-missing-sandbox -- trusted YouTube/Vimeo embeds validated by toEmbedUrl need scripts + same-origin to play. */
-
 import type { TElement } from "platejs";
 import { PlateElement, type PlateElementProps } from "platejs/react";
 
 import { EmbedPreview } from "@/features/editor/embed-preview";
-import { openGraphPreview, toEmbedUrl, toTwitterPostUrl } from "@/features/editor/embed-url";
+import {
+  isSocialPostEmbed,
+  openGraphPreview,
+  toEmbedUrl,
+  toTwitterPostUrl,
+} from "@/features/editor/embed-url";
 import { TwitterEmbed } from "@/features/editor/twitter-embed";
+import { cn } from "@/lib/utils";
 
 export function MediaEmbedElement(props: PlateElementProps) {
   const element = props.element as TElement & { url?: string };
@@ -20,12 +24,12 @@ export function MediaEmbedElement(props: PlateElementProps) {
         {twitterUrl ? (
           <TwitterEmbed url={twitterUrl} />
         ) : embedUrl ? (
-          <div className="cms-embed">
+          <div className={cn("cms-embed", isSocialPostEmbed(element.url) && "cms-embed--social")}>
+            {/* oxlint-disable-next-line react/iframe-missing-sandbox -- URLs are restricted to trusted providers; social widgets do not work in a sandbox. */}
             <iframe
               src={embedUrl}
               title="Contenuto incorporato"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
               allowFullScreen
             />
           </div>
