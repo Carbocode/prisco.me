@@ -503,7 +503,8 @@ code {
 
 .cms-content h2,
 .cms-content h3,
-.cms-content h4 {
+.cms-content h4,
+.cms-content h5 {
   scroll-margin-top: 6rem;
   color: var(--color-white);
   font-family: var(--font-heading);
@@ -526,6 +527,11 @@ code {
 .cms-content h4 {
   margin-block: 1.75em 0.55em;
   font-size: 1.2rem;
+}
+
+.cms-content h5 {
+  margin-block: 1.5em 0.5em;
+  font-size: 1.05rem;
 }
 
 .cms-content ul,

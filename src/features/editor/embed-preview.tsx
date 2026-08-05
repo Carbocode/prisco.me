@@ -7,26 +7,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { toPublicHttpUrl, type OpenGraphPreview } from "./embed-url";
+import { toPreviewImageUrl, toPublicHttpUrl, type OpenGraphPreview } from "./embed-url";
 
 export function EmbedPreview({ url, metadata }: { url?: string; metadata?: OpenGraphPreview }) {
   const href = toPublicHttpUrl(url);
   if (!href) return null;
 
   const host = new URL(href).hostname.replace(/^www\./, "");
-  const image = toPublicHttpUrl(metadata?.image);
+  const image = toPreviewImageUrl(metadata?.image);
 
   return (
     <a href={href} target="_blank" rel="noreferrer" className="block no-underline">
       <Card size="sm">
         {image ? (
-          <img
-            src={image}
-            alt=""
-            className="max-h-80 w-full object-cover"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-          />
+          <img src={image} alt="" className="max-h-80 w-full object-cover" loading="eager" />
         ) : null}
         <CardHeader>
           <CardTitle>{metadata?.title || host}</CardTitle>

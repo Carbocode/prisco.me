@@ -184,7 +184,7 @@ function ParagraphElement(props: PlateElementProps) {
         className="cms-plate-list-item"
         style={{ marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem` }}
       >
-        <span contentEditable={false}>
+        <span contentEditable={false} className="cms-plate-checkbox">
           <Checkbox
             checked={element.checked === true}
             aria-label="Completa attività"
@@ -204,6 +204,7 @@ function ParagraphElement(props: PlateElementProps) {
         as="div"
         className="cms-plate-list-item"
         data-list-type={element.listStyleType}
+        data-list-ordered={element.listStyleType === KEYS.ol}
         style={{
           marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem`,
           textAlign: textAlignment(element.textAlign),
@@ -217,7 +218,7 @@ function ParagraphElement(props: PlateElementProps) {
   return <PlateElement {...props} as="p" style={{ textAlign: textAlignment(element.textAlign) }} />;
 }
 
-function HeadingElement({ as, ...props }: PlateElementProps & { as: "h1" | "h2" | "h3" | "h4" }) {
+function HeadingElement({ as, ...props }: PlateElementProps & { as: "h2" | "h3" | "h4" | "h5" }) {
   const element = props.element as TElement & { textAlign?: string };
   return (
     <PlateElement {...props} as={as} style={{ textAlign: textAlignment(element.textAlign) }} />
@@ -230,11 +231,11 @@ function BlockquoteElement(props: PlateElementProps) {
 
 function HorizontalRuleElement(props: PlateElementProps) {
   return (
-    <PlateElement {...props} as="div">
-      <span contentEditable={false}>
+    <PlateElement {...props} as="div" className="cms-editor__separator">
+      <div contentEditable={false}>
         <Separator />
-      </span>
-      {props.children}
+      </div>
+      <span className="sr-only">{props.children}</span>
     </PlateElement>
   );
 }
@@ -393,10 +394,10 @@ const lowlight = createLowlight(all);
 
 const editorPlugins = [
   ParagraphPlugin.withComponent(ParagraphElement),
-  H1Plugin.withComponent((props) => <HeadingElement {...props} as="h1" />),
-  H2Plugin.withComponent((props) => <HeadingElement {...props} as="h2" />),
-  H3Plugin.withComponent((props) => <HeadingElement {...props} as="h3" />),
-  H4Plugin.withComponent((props) => <HeadingElement {...props} as="h4" />),
+  H1Plugin.withComponent((props) => <HeadingElement {...props} as="h2" />),
+  H2Plugin.withComponent((props) => <HeadingElement {...props} as="h3" />),
+  H3Plugin.withComponent((props) => <HeadingElement {...props} as="h4" />),
+  H4Plugin.withComponent((props) => <HeadingElement {...props} as="h5" />),
   BlockquotePlugin.withComponent(BlockquoteElement),
   HorizontalRulePlugin.withComponent(HorizontalRuleElement),
   BoldPlugin,
@@ -685,8 +686,9 @@ function EmbedDialog({
           <DialogHeader>
             <DialogTitle>Inserisci un embed</DialogTitle>
             <DialogDescription>
-              YouTube e Vimeo saranno mostrati come video; gli altri link useranno titolo,
-              descrizione e immagine Open Graph.
+              Video e post compatibili (YouTube, Vimeo, Instagram, X, LinkedIn, TikTok, Spotify e
+              Facebook) saranno incorporati direttamente; gli altri link useranno la preview Open
+              Graph.
             </DialogDescription>
           </DialogHeader>
           <FieldGroup>
