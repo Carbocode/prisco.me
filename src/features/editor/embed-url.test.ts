@@ -16,7 +16,7 @@ describe("embed URL resolution", () => {
     ],
     [
       "https://www.tiktok.com/@example/video/1234567890123456789",
-      "https://www.tiktok.com/player/v1/1234567890123456789",
+      "https://www.tiktok.com/player/v1/1234567890123456789?description=1&music_info=1",
     ],
     [
       "https://open.spotify.com/track/abc123?si=test",
@@ -37,5 +37,18 @@ describe("embed URL resolution", () => {
       "https://x.com/openai/status/1234567890",
     );
     expect(toTwitterPostUrl("https://example.com/openai/status/1234567890")).toBeNull();
+  });
+
+  it("embeds Facebook posts but not personal profiles", () => {
+    expect(toEmbedUrl("https://www.facebook.com/example/posts/1234567890")).toContain(
+      "facebook.com/plugins/post.php",
+    );
+    expect(toEmbedUrl("https://www.facebook.com/example")).toBeNull();
+  });
+
+  it("preserves explicit LinkedIn post URNs", () => {
+    expect(toEmbedUrl("https://www.linkedin.com/feed/update/urn:li:share:1234567890/")).toBe(
+      "https://www.linkedin.com/embed/feed/update/urn:li:share:1234567890",
+    );
   });
 });

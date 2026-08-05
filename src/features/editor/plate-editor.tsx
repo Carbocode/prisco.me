@@ -200,11 +200,19 @@ function ParagraphElement(props: PlateElementProps) {
   }
   if (element.listStyleType) {
     const ordered = isOrderedList(element);
+    const previous =
+      path && path.length === 1 && path[0] > 0 ? editor.children[path[0] - 1] : undefined;
+    const startsOrderedList =
+      ordered && (!previous || !isOrderedList(previous) || previous.indent !== element.indent);
     return (
       <PlateElement
         {...props}
         as="div"
-        className={cn("cms-plate-list-item", ordered && "cms-plate-list-item--ordered")}
+        className={cn(
+          "cms-plate-list-item",
+          ordered && "cms-plate-list-item--ordered",
+          startsOrderedList && "cms-plate-list-item--ordered-start",
+        )}
         data-list-type={element.listStyleType}
         style={{
           marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem`,
@@ -579,7 +587,7 @@ export function CmsEditor({
       const preview = await getEmbedPreviewFn({ data: { url } });
       editor.tf.insertNodes({
         type: "mediaEmbed",
-        url,
+        url: preview.url,
         metadata: preview.metadata,
         children: [{ text: "" }],
       });
