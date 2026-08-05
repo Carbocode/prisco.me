@@ -11,8 +11,10 @@ import {
   isSocialPostEmbed,
   openGraphPreview,
   toEmbedUrl,
+  toRedditEmbedUrl,
   toTwitterPostUrl,
 } from "../../editor/embed-url";
+import { RedditEmbed } from "../../editor/reddit-embed";
 import { TwitterEmbed } from "../../editor/twitter-embed";
 import { toPlateValue, type CmsDocument } from "../domain/cms-document";
 
@@ -382,6 +384,8 @@ function children(
         </span>
       );
     case "mediaEmbed": {
+      const redditUrl = toRedditEmbedUrl(node.url);
+      if (redditUrl) return <RedditEmbed key={key} url={redditUrl} />;
       const twitterUrl = toTwitterPostUrl(node.url);
       if (twitterUrl) return <TwitterEmbed key={key} url={twitterUrl} />;
       const embedUrl = toEmbedUrl(node.url);

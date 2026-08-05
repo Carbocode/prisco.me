@@ -461,6 +461,20 @@ code {
   margin-inline: auto;
 }
 
+.cms-reddit-embed {
+  width: 100%;
+  max-width: 40rem;
+  margin-block: 1rem;
+  margin-inline: auto;
+}
+
+.cms-reddit-embed iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 0.5rem;
+}
+
 .cms-columns {
   display: flex;
   gap: 1rem;
