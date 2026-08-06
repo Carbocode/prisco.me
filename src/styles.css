@@ -653,6 +653,10 @@ code {
   object-fit: contain;
 }
 
+.cms-content figure.cms-code-drawing img {
+  border: 0;
+}
+
 .cms-content figure figcaption {
   margin-top: 0.75rem;
   color: var(--color-slate-500);
