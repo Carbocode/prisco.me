@@ -1,4 +1,4 @@
-import { useRef, type ImgHTMLAttributes } from "react";
+import { useCallback, useLayoutEffect, useRef, useState, type ImgHTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -18,31 +18,50 @@ export function HoverAnimatedImage({
   onLoad,
   ...props
 }: HoverAnimatedImageProps) {
+  const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [snapshotReady, setSnapshotReady] = useState(false);
+
+  const captureSnapshot = useCallback((image: HTMLImageElement) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !image.complete || !image.naturalWidth || !image.naturalHeight) return;
+
+    const scale = Math.min(1, 1280 / Math.max(image.naturalWidth, image.naturalHeight));
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    setSnapshotReady(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    setSnapshotReady(false);
+    if (imageRef.current?.complete) captureSnapshot(imageRef.current);
+  }, [captureSnapshot, props.src]);
 
   return (
     <span className={cn("group/animated-webp relative block overflow-hidden", containerClassName)}>
       <img
         {...props}
+        ref={imageRef}
         alt={alt}
-        className={cn(className, "opacity-0 group-hover/animated-webp:opacity-100")}
+        className={cn(
+          className,
+          snapshotReady && "opacity-0 group-hover/animated-webp:opacity-100",
+        )}
         onLoad={(event) => {
           onLoad?.(event);
-          const image = event.currentTarget;
-          const canvas = canvasRef.current;
-          if (!canvas || !image.naturalWidth || !image.naturalHeight) return;
-
-          const scale = Math.min(1, 1280 / Math.max(image.naturalWidth, image.naturalHeight));
-          canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
-          canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
-          canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+          captureSnapshot(event.currentTarget);
         }}
       />
       <canvas
         ref={canvasRef}
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute inset-0 size-full opacity-100 group-hover/animated-webp:opacity-0",
+          "pointer-events-none absolute inset-0 size-full opacity-0",
+          snapshotReady && "opacity-100 group-hover/animated-webp:opacity-0",
           className,
         )}
       />
