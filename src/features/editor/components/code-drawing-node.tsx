@@ -17,6 +17,7 @@ import { PlateElement, useEditorRef, useElement, useReadOnly } from "platejs/rea
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Select,
   SelectContent,
@@ -124,31 +125,33 @@ export function CodeDrawingElement(props: PlateElementProps<TCodeDrawingElement>
   return (
     <PlateElement {...props}>
       <div className="group relative" contentEditable={false}>
-        {!readOnly && (
-          <div className="absolute top-1 right-1 z-10 flex select-none items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-            {image && (
-              <Button
-                className="size-8"
-                onClick={handleDownload}
-                size="icon"
-                title="Esporta"
-                variant="ghost"
-              >
-                <DownloadIcon data-icon="inline-start" />
-              </Button>
-            )}
-            <Button
-              className="size-8"
-              onClick={removeNode}
-              size="icon"
-              title="Elimina"
-              variant="ghost"
-            >
-              <Trash2 data-icon="inline-start" />
-            </Button>
-          </div>
-        )}
         <CodeDrawingPreview
+          actions={
+            readOnly ? null : (
+              <ButtonGroup aria-label="Azioni del diagramma">
+                {image && (
+                  <Button
+                    aria-label="Esporta diagramma"
+                    onClick={handleDownload}
+                    size="icon"
+                    title="Esporta"
+                    variant="ghost"
+                  >
+                    <DownloadIcon />
+                  </Button>
+                )}
+                <Button
+                  aria-label="Elimina diagramma"
+                  onClick={removeNode}
+                  size="icon"
+                  title="Elimina"
+                  variant="ghost"
+                >
+                  <Trash2 />
+                </Button>
+              </ButtonGroup>
+            )
+          }
           code={code}
           drawingMode={drawingMode}
           drawingType={drawingType}
@@ -167,6 +170,7 @@ export function CodeDrawingElement(props: PlateElementProps<TCodeDrawingElement>
 }
 
 function CodeDrawingPreview({
+  actions,
   code,
   drawingType,
   drawingMode,
@@ -178,6 +182,7 @@ function CodeDrawingPreview({
   readOnly = false,
   isMobile = false,
 }: {
+  actions?: React.ReactNode;
   code: string;
   drawingType: CodeDrawingType;
   drawingMode: ViewMode;
@@ -207,7 +212,12 @@ function CodeDrawingPreview({
       className="group my-4 flex w-full flex-col items-stretch border bg-muted/50"
       style={{ minHeight: `${DEFAULT_MIN_HEIGHT}px` }}
     >
-      {toolbar && <div className="flex justify-end border-b p-2">{toolbar}</div>}
+      {toolbar && (
+        <div className="flex items-center justify-between gap-2 border-b p-2">
+          {toolbar}
+          {actions}
+        </div>
+      )}
 
       <div className={`flex ${isMobile ? "flex-col-reverse" : "flex-col md:flex-row"} flex-1`}>
         {showCode && (
