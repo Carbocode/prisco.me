@@ -94,7 +94,7 @@ function ArticleTags({ article }: { article: PublicArticle }) {
 
 function ArticleCover({ article, variant }: { article: PublicArticle; variant: "card" | "list" }) {
   const frameClass = cn(
-    "relative isolate w-full min-w-0 max-w-full overflow-hidden bg-slate-900",
+    "relative isolate w-full min-w-0 max-w-full overflow-hidden bg-black",
     variant === "card"
       ? "aspect-video border-b border-white/10"
       : "aspect-video rounded-lg ring-1 ring-white/10 sm:aspect-[4/3]",
