@@ -142,6 +142,24 @@ describe("CMS domain", () => {
     expect(html).not.toContain("javascript");
     expect(html).not.toContain("male");
   });
+  it("rispetta la modalità immagine dei diagrammi nella preview", () => {
+    const html = renderToStaticMarkup(
+      <>
+        {renderCmsDocument({
+          type: "doc",
+          content: [
+            {
+              type: "code_drawing",
+              data: { drawingType: "Mermaid", drawingMode: "Image", code: "flowchart LR\nA-->B" },
+              children: [{ text: "" }],
+            },
+          ],
+        })}
+      </>,
+    );
+    expect(html).toContain('class="cms-code-drawing"');
+    expect(html).not.toContain("flowchart LR");
+  });
   it("renderizza formati avanzati, task list e tabelle", () => {
     const html = renderToStaticMarkup(
       <>

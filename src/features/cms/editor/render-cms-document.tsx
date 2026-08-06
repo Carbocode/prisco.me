@@ -17,6 +17,7 @@ import {
 import { RedditEmbed } from "../../editor/reddit-embed";
 import { TwitterEmbed } from "../../editor/twitter-embed";
 import { toPlateValue, type CmsDocument } from "../domain/cms-document";
+import { CmsCodeDrawing } from "./code-drawing";
 
 function katexHtml(tex: unknown, displayMode: boolean): string {
   if (typeof tex !== "string" || tex.length === 0) return "";
@@ -417,14 +418,19 @@ function children(
       const data = node.data && typeof node.data === "object" ? node.data : undefined;
       const drawingCode = stringAttr(data && Reflect.get(data, "code")) ?? "";
       if (!drawingCode) return null;
+      const drawingMode = stringAttr(data && Reflect.get(data, "drawingMode")) ?? "Both";
+      if (drawingMode === "Code")
+        return (
+          <pre key={key}>
+            <code>{drawingCode}</code>
+          </pre>
+        );
       return (
-        <pre
+        <CmsCodeDrawing
           key={key}
-          className="cms-code-drawing"
-          data-drawing-type={stringAttr(data && Reflect.get(data, "drawingType"))}
-        >
-          <code>{drawingCode}</code>
-        </pre>
+          code={drawingCode}
+          drawingType={stringAttr(data && Reflect.get(data, "drawingType")) ?? "Mermaid"}
+        />
       );
     }
     case "mediaImage": {

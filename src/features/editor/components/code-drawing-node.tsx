@@ -7,7 +7,6 @@ import {
   DOWNLOAD_FILENAME,
   downloadImage,
   RENDER_DEBOUNCE_DELAY,
-  renderCodeDrawing,
   VIEW_MODE,
   VIEW_MODE_ARRAY,
 } from "@platejs/code-drawing";
@@ -21,11 +20,14 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+import { renderDarkCodeDrawing } from "../code-drawing-renderer";
 
 function createDebouncedCodeDrawingRenderer(
   setImage: React.Dispatch<React.SetStateAction<string>>,
@@ -49,7 +51,7 @@ function createDebouncedCodeDrawingRenderer(
     setError(null);
 
     try {
-      const imageData = await renderCodeDrawing(drawingType, code);
+      const imageData = await renderDarkCodeDrawing(drawingType, code);
       if (lastRequestId === requestId) {
         setImage(imageData);
         setError(null);
@@ -131,7 +133,7 @@ export function CodeDrawingElement(props: PlateElementProps<TCodeDrawingElement>
                 title="Esporta"
                 variant="ghost"
               >
-                <DownloadIcon className="size-4" />
+                <DownloadIcon data-icon="inline-start" />
               </Button>
             )}
             <Button
@@ -141,7 +143,7 @@ export function CodeDrawingElement(props: PlateElementProps<TCodeDrawingElement>
               title="Elimina"
               variant="ghost"
             >
-              <Trash2 className="size-4" />
+              <Trash2 data-icon="inline-start" />
             </Button>
           </div>
         )}
@@ -193,7 +195,6 @@ function CodeDrawingPreview({
   const toolbar = readOnly ? null : (
     <CodeDrawingToolbar
       drawingType={drawingType}
-      isMobile={isMobile}
       onDrawingModeChange={onDrawingModeChange}
       onDrawingTypeChange={onDrawingTypeChange}
       viewMode={viewMode}
@@ -235,32 +236,28 @@ function CodeDrawingPreview({
 function CodeDrawingToolbar({
   drawingType,
   viewMode,
-  isMobile = false,
   onDrawingTypeChange,
   onDrawingModeChange,
 }: {
   drawingType: CodeDrawingType;
   viewMode: ViewMode;
-  isMobile?: boolean;
   onDrawingTypeChange: (type: CodeDrawingType) => void;
   onDrawingModeChange: (mode: ViewMode) => void;
 }) {
-  const positionClass = isMobile
-    ? "flex items-center gap-2"
-    : "absolute right-2 z-10 flex items-center gap-2";
-
   return (
-    <div className={positionClass} role="toolbar">
+    <div className="flex items-center gap-2" role="toolbar">
       <Select onValueChange={(v) => v && onDrawingTypeChange(v)} value={drawingType}>
         <SelectTrigger className="h-8 w-[120px] border-0 bg-muted/50 text-xs shadow-none">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="z-100">
-          {CODE_DRAWING_TYPE_ARRAY.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
-              {item.label}
-            </SelectItem>
-          ))}
+        <SelectContent>
+          <SelectGroup>
+            {CODE_DRAWING_TYPE_ARRAY.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
 
@@ -268,12 +265,14 @@ function CodeDrawingToolbar({
         <SelectTrigger className="h-8 w-[90px] border-0 bg-muted/50 text-xs shadow-none">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="z-100">
-          {VIEW_MODE_ARRAY.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
-              {item.label}
-            </SelectItem>
-          ))}
+        <SelectContent>
+          <SelectGroup>
+            {VIEW_MODE_ARRAY.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>
