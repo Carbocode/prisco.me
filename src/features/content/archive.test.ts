@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { CATEGORY_ARCHIVE_SORT, CATEGORY_SCHEMA_TYPE } from "@/lib/content-category";
+import {
+  CATEGORY_ARCHIVE_SORT,
+  CATEGORY_ARTICLE_LAYOUT,
+  CATEGORY_SCHEMA_TYPE,
+} from "@/lib/content-category";
 
 import { resolveArchive, resolveDateArchive, type PublicCategory } from "./archive";
 import type { PublicArticle } from "./content-components";
@@ -12,6 +16,7 @@ const categories: PublicCategory[] = [
     description: "Portfolio",
     schemaType: CATEGORY_SCHEMA_TYPE.CREATIVE_WORK,
     archiveSort: CATEGORY_ARCHIVE_SORT.MANUAL,
+    articleLayout: CATEGORY_ARTICLE_LAYOUT.CARD,
     archiveEyebrow: "Portfolio",
     hero: null,
   },
@@ -21,6 +26,7 @@ const categories: PublicCategory[] = [
     description: null,
     schemaType: CATEGORY_SCHEMA_TYPE.ARTICLE,
     archiveSort: CATEGORY_ARCHIVE_SORT.PUBLISHED_DESC,
+    articleLayout: CATEGORY_ARTICLE_LAYOUT.HORIZONTAL,
     archiveEyebrow: "Categoria",
     hero: null,
   },
@@ -77,6 +83,11 @@ describe("content archive resolver", () => {
     expect(resolveArchive("vincenzo-prisco", articles, categories)?.kind).toBe("author");
     expect(resolveArchive("egaf", articles, categories)?.kind).toBe("organization");
     expect(resolveArchive("react", articles, categories)?.kind).toBe("tag");
+  });
+
+  it("usa la visualizzazione configurata per le categorie e card per gli altri archivi", () => {
+    expect(resolveArchive("engineering", articles, categories)?.articleLayout).toBe("horizontal");
+    expect(resolveArchive("2026", articles, categories)?.articleLayout).toBe("card");
   });
 
   it("rifiuta gli archivi root inesistenti", () => {

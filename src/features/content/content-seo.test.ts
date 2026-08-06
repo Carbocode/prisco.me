@@ -14,6 +14,7 @@ describe("content GEO metadata", () => {
       title: "Engineering",
       description: "Articoli di software engineering.",
       eyebrow: "Categoria",
+      articleLayout: "card",
       articles: [article()],
     };
 
