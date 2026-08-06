@@ -86,9 +86,9 @@ export function ContentBreadcrumb({
   className?: string;
 }) {
   return (
-    <Breadcrumb className={className}>
-      <BreadcrumbList className="flex-nowrap">
-        <BreadcrumbItem>
+    <Breadcrumb className={cn("min-w-0 overflow-hidden", className)}>
+      <BreadcrumbList className="min-w-0 flex-nowrap overflow-hidden">
+        <BreadcrumbItem className="shrink-0">
           <BreadcrumbLink
             className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
             render={<Link to="/" aria-label="Torna alla home" />}
@@ -96,20 +96,29 @@ export function ContentBreadcrumb({
             <House />
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {items.map((item, index) => (
-          <Fragment key={item.url}>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem className="min-w-0">
-              {index === items.length - 1 ? (
-                <BreadcrumbPage className="truncate">{item.name}</BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink render={<a href={item.url} aria-label={item.name} />}>
-                  {item.name}
-                </BreadcrumbLink>
-              )}
-            </BreadcrumbItem>
-          </Fragment>
-        ))}
+        {items.map((item, index) => {
+          const isCurrentPage = index === items.length - 1;
+
+          return (
+            <Fragment key={item.url}>
+              <BreadcrumbSeparator className={cn(!isCurrentPage && "hidden sm:list-item")} />
+              <BreadcrumbItem
+                className={cn(
+                  "min-w-0",
+                  isCurrentPage ? "flex-1" : "hidden shrink-0 sm:inline-flex",
+                )}
+              >
+                {isCurrentPage ? (
+                  <BreadcrumbPage className="block min-w-0 truncate">{item.name}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink render={<a href={item.url} aria-label={item.name} />}>
+                    {item.name}
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </Fragment>
+          );
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   );
@@ -445,7 +454,7 @@ function ArchiveHero({
               {description}
             </p>
           </div>
-          <div className="relative aspect-[4/3] min-h-[22rem] min-w-0 max-w-full overflow-hidden bg-slate-900 sm:aspect-video sm:min-h-0">
+          <div className="relative aspect-[4/3] min-h-[22rem] min-w-0 max-w-full overflow-hidden bg-black sm:aspect-video sm:min-h-0">
             {hero ? (
               <HoverAnimatedImage
                 src={hero.url}
@@ -485,8 +494,8 @@ export function ArticlePageContent({
     <PageShell hero={false} title={article.title}>
       <section className="relative isolate overflow-hidden bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28">
         <div className="relative mx-auto w-full max-w-[96rem]">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
-            <div className="flex flex-col items-start justify-center gap-5 py-6 lg:py-12">
+          <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
+            <div className="flex min-w-0 flex-col items-start justify-center gap-5 py-6 lg:py-12">
               <div className="flex flex-wrap gap-2">
                 {article.categories.map((category) => (
                   <Badge
@@ -498,7 +507,7 @@ export function ArticlePageContent({
                   </Badge>
                 ))}
               </div>
-              <h1 className="display-font text-4xl leading-[1.02] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+              <h1 className="display-font max-w-full break-words text-4xl leading-[1.02] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
                 {article.title}
               </h1>
               {article.excerpt ? (
@@ -512,7 +521,7 @@ export function ArticlePageContent({
                   {article.projectPeriod ? <p>{article.projectPeriod}</p> : null}
                 </div>
               ) : null}
-              <div className="flex items-center gap-3 text-sm text-slate-400">
+              <div className="flex max-w-full flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-400">
                 <span>
                   By{" "}
                   <Link
@@ -591,7 +600,7 @@ export function ArticlePageContent({
 
 function ArticleCover({ article, variant }: { article: PublicArticle; variant: "card" | "hero" }) {
   const frameClass = cn(
-    "relative isolate w-full min-w-0 max-w-full overflow-hidden bg-slate-900",
+    "relative isolate w-full min-w-0 max-w-full overflow-hidden bg-black",
     variant === "card"
       ? "aspect-video border-b border-white/10"
       : "aspect-[4/3] min-h-[22rem] sm:aspect-video sm:min-h-0",

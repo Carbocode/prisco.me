@@ -514,6 +514,9 @@ code {
 }
 
 .cms-content {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   color: var(--color-slate-300);
   font-size: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
   line-height: 1.85;
@@ -609,6 +612,8 @@ code {
 }
 
 .cms-content code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
   border: 1px solid color-mix(in srgb, var(--color-sky-300) 15%, transparent);
   border-radius: 0.4rem;
   background: color-mix(in srgb, var(--color-sky-300) 8%, transparent);
@@ -618,6 +623,7 @@ code {
 }
 
 .cms-content pre {
+  max-width: 100%;
   margin-block: 2rem;
   overflow-x: auto;
   border: 1px solid color-mix(in srgb, var(--color-slate-400) 22%, transparent);
@@ -640,6 +646,7 @@ code {
 }
 
 .cms-content figure {
+  max-width: 100%;
   margin-block: 2.5rem;
 }
 
