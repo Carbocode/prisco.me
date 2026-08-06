@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import {
   categoryArchiveSorts,
+  categoryArticleLayouts,
   categorySchemaTypes,
   defaultCategoryConfig,
 } from "@/lib/content-category";
@@ -72,6 +73,7 @@ export const createCategorySchema = z.object({
   description: nullableText(320),
   schemaType: z.enum(categorySchemaTypes).default(defaultCategoryConfig.schemaType),
   archiveSort: z.enum(categoryArchiveSorts).default(defaultCategoryConfig.archiveSort),
+  articleLayout: z.enum(categoryArticleLayouts).default(defaultCategoryConfig.articleLayout),
   archiveEyebrow: z.string().trim().min(2).max(80).default(defaultCategoryConfig.archiveEyebrow),
   heroMediaId: z.string().uuid().nullable().optional(),
 });

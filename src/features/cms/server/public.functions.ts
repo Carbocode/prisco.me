@@ -32,6 +32,7 @@ export const listPublicCategoriesFn = createServerFn({ method: "GET" }).handler(
       description: cmsCategories.description,
       schemaType: cmsCategories.schemaType,
       archiveSort: cmsCategories.archiveSort,
+      articleLayout: cmsCategories.articleLayout,
       archiveEyebrow: cmsCategories.archiveEyebrow,
       heroStorageKey: cmsMedia.storageKey,
       heroAltText: cmsMedia.altText,

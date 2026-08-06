@@ -1,6 +1,7 @@
 import {
   CATEGORY_ARCHIVE_SORT,
   type CategoryArchiveSort,
+  type CategoryArticleLayout,
   type CategorySchemaType,
 } from "@/lib/content-category";
 
@@ -12,6 +13,7 @@ export type PublicCategory = {
   description: string | null;
   schemaType: CategorySchemaType;
   archiveSort: CategoryArchiveSort;
+  articleLayout: CategoryArticleLayout;
   archiveEyebrow: string;
   hero: { url: string; altText: string | null } | null;
 };
@@ -24,6 +26,7 @@ export type ContentArchive = {
   eyebrow: string;
   hero?: { url: string; altText: string | null } | null;
   articles: PublicArticle[];
+  articleLayout: CategoryArticleLayout;
 };
 
 export function resolveArchive(
@@ -48,6 +51,7 @@ export function resolveArchive(
       description: `Contenuti pubblicati da ${author.author.name}.`,
       eyebrow: "Autore",
       articles: byAuthor,
+      articleLayout: "card",
     };
   }
 
@@ -61,6 +65,7 @@ export function resolveArchive(
       description: `Contenuti collegati a ${organization.name}.`,
       eyebrow: "Organizzazione",
       articles: byOrganization,
+      articleLayout: "card",
     };
   }
 
@@ -73,6 +78,7 @@ export function resolveArchive(
       description: `Contenuti associati al tag ${tag.name}.`,
       eyebrow: "Tag",
       articles: articles.filter((article) => article.tags.some((item) => item.slug === slug)),
+      articleLayout: "card",
     };
   }
 
@@ -116,6 +122,7 @@ export function resolveDateArchive(
     description: `Contenuti pubblicati ${day ? "il" : "nel"} ${period}.`,
     eyebrow: "Archivio",
     articles: matching,
+    articleLayout: "card",
   };
 }
 
@@ -164,5 +171,6 @@ function categoryArchive(
     eyebrow: category.archiveEyebrow,
     hero: category.hero,
     articles: matching,
+    articleLayout: category.articleLayout,
   };
 }

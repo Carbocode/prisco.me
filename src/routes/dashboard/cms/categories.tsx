@@ -51,12 +51,16 @@ import { listMediaFn } from "@/features/cms/server/media.functions";
 import {
   categoryArchiveSortLabel,
   categoryArchiveSorts,
+  categoryArticleLayoutLabel,
+  categoryArticleLayouts,
   categorySchemaTypeLabel,
   categorySchemaTypes,
   defaultCategoryConfig,
   isCategoryArchiveSort,
+  isCategoryArticleLayout,
   isCategorySchemaType,
   type CategoryArchiveSort,
+  type CategoryArticleLayout,
   type CategorySchemaType,
 } from "@/lib/content-category";
 
@@ -67,6 +71,7 @@ type CategoryItem = {
   description: string | null;
   schemaType: CategorySchemaType;
   archiveSort: CategoryArchiveSort;
+  articleLayout: CategoryArticleLayout;
   heroMediaId: string | null;
 };
 type CategoryMedia = {
@@ -96,6 +101,9 @@ function CategoriesContent() {
   const [archiveSort, setArchiveSort] = useState<CategoryArchiveSort>(
     defaultCategoryConfig.archiveSort,
   );
+  const [articleLayout, setArticleLayout] = useState<CategoryArticleLayout>(
+    defaultCategoryConfig.articleLayout,
+  );
   const [heroMediaId, setHeroMediaId] = useState("");
   const [pending, setPending] = useState(false);
   const imageMedia = useMemo(
@@ -118,6 +126,13 @@ function CategoriesContent() {
         size: 220,
         minSize: 180,
         cell: ({ row }) => categoryArchiveSortLabel[row.original.archiveSort],
+      },
+      {
+        accessorKey: "articleLayout",
+        header: "Visualizzazione",
+        size: 170,
+        minSize: 150,
+        cell: ({ row }) => categoryArticleLayoutLabel[row.original.articleLayout],
       },
       {
         accessorKey: "heroMediaId",
@@ -152,6 +167,7 @@ function CategoriesContent() {
           description: description || null,
           schemaType,
           archiveSort,
+          articleLayout,
           heroMediaId: heroMediaId || null,
         },
       });
@@ -160,6 +176,7 @@ function CategoriesContent() {
       setDescription("");
       setSchemaType(defaultCategoryConfig.schemaType);
       setArchiveSort(defaultCategoryConfig.archiveSort);
+      setArticleLayout(defaultCategoryConfig.articleLayout);
       setHeroMediaId("");
       toast.success("Categoria creata");
       await router.invalidate();
@@ -267,6 +284,29 @@ function CategoriesContent() {
                 </Select>
               </Field>
               <Field>
+                <FieldLabel htmlFor="category-article-layout">Visualizzazione articoli</FieldLabel>
+                <Select
+                  value={articleLayout}
+                  onValueChange={(value) => {
+                    if (isCategoryArticleLayout(value)) setArticleLayout(value);
+                  }}
+                >
+                  <SelectTrigger id="category-article-layout" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {categoryArticleLayouts.map((value) => (
+                        <SelectItem key={value} value={value}>
+                          {categoryArticleLayoutLabel[value]}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FieldDescription>Card è la visualizzazione predefinita.</FieldDescription>
+              </Field>
+              <Field>
                 <FieldLabel>Immagine hero</FieldLabel>
                 <MediaPicker
                   items={imageMedia}
@@ -339,6 +379,7 @@ function CategoryRow({
   const [description, setDescription] = useState(category.description ?? "");
   const [schemaType, setSchemaType] = useState(category.schemaType);
   const [archiveSort, setArchiveSort] = useState(category.archiveSort);
+  const [articleLayout, setArticleLayout] = useState(category.articleLayout);
   const [heroMediaId, setHeroMediaId] = useState(category.heroMediaId ?? "");
 
   async function save() {
@@ -352,6 +393,7 @@ function CategoryRow({
           description: description || null,
           schemaType,
           archiveSort,
+          articleLayout,
           heroMediaId: heroMediaId || null,
         },
       });
@@ -439,6 +481,31 @@ function CategoryRow({
           </Select>
         ) : (
           categoryArchiveSortLabel[category.archiveSort]
+        )}
+      </TableCell>
+      <TableCell>
+        {editing ? (
+          <Select
+            value={articleLayout}
+            onValueChange={(value) => {
+              if (isCategoryArticleLayout(value)) setArticleLayout(value);
+            }}
+          >
+            <SelectTrigger aria-label="Visualizzazione articoli categoria" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {categoryArticleLayouts.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {categoryArticleLayoutLabel[value]}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        ) : (
+          categoryArticleLayoutLabel[category.articleLayout]
         )}
       </TableCell>
       <TableCell>

@@ -11,9 +11,11 @@ import {
 
 import {
   CATEGORY_ARCHIVE_SORT,
+  CATEGORY_ARTICLE_LAYOUT,
   CATEGORY_SCHEMA_TYPE,
   defaultCategoryConfig,
   type CategoryArchiveSort,
+  type CategoryArticleLayout,
   type CategorySchemaType,
 } from "@/lib/content-category";
 
@@ -151,6 +153,10 @@ export const cmsCategories = sqliteTable(
       .$type<CategoryArchiveSort>()
       .notNull()
       .default(CATEGORY_ARCHIVE_SORT.PUBLISHED_DESC),
+    articleLayout: text("article_layout")
+      .$type<CategoryArticleLayout>()
+      .notNull()
+      .default(CATEGORY_ARTICLE_LAYOUT.CARD),
     archiveEyebrow: text("archive_eyebrow").notNull().default(defaultCategoryConfig.archiveEyebrow),
     heroMediaId: text("hero_media_id").references(() => cmsMedia.id),
     createdAt: createdAt(),

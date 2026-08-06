@@ -41,7 +41,7 @@ import { Separator } from "@/components/ui/separator";
 import { parseCmsDocument } from "@/features/cms/domain/cms-document";
 import { renderCmsDocument } from "@/features/cms/editor/render-cms-document";
 import { ArticleCard } from "@/features/content/article-card";
-import type { CategorySchemaType } from "@/lib/content-category";
+import type { CategoryArticleLayout, CategorySchemaType } from "@/lib/content-category";
 import { cn } from "@/lib/utils";
 
 export type PublicArticle = {
@@ -122,6 +122,7 @@ export function ContentArchivePage({
   hero,
   articles,
   archiveSlug,
+  articleLayout,
   query,
   tag,
   organization,
@@ -142,6 +143,7 @@ export function ContentArchivePage({
   hero?: { url: string; altText: string | null } | null;
   articles: PublicArticle[];
   archiveSlug: string;
+  articleLayout: CategoryArticleLayout;
   query: string;
   tag: string;
   organization: string;
@@ -345,13 +347,20 @@ export function ContentArchivePage({
 
         {filtered.length ? (
           <>
-            <div className="mt-8 divide-y divide-white/10">
+            <div
+              className={cn(
+                "mt-8",
+                articleLayout === "horizontal"
+                  ? "divide-y divide-white/10"
+                  : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
+              )}
+            >
               {visibleArticles.map((article) => (
                 <ArticleCard
                   key={article.id}
                   article={article}
                   archiveSlug={archiveSlug}
-                  variant="list"
+                  variant={articleLayout === "horizontal" ? "list" : "card"}
                 />
               ))}
             </div>
