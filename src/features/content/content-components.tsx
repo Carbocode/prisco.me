@@ -1,5 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ChevronLeft, ChevronRight, House, SlidersHorizontal } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUp,
+  ChevronLeft,
+  ChevronRight,
+  House,
+  SlidersHorizontal,
+} from "lucide-react";
 import { Fragment } from "react";
 
 import { HoverAnimatedImage } from "@/components/hover-animated-image";
@@ -492,7 +499,10 @@ export function ArticlePageContent({
 
   return (
     <PageShell hero={false} title={article.title}>
-      <section className="relative isolate overflow-hidden bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28">
+      <section
+        id="article-top"
+        className="relative isolate overflow-hidden bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28"
+      >
         <div className="relative mx-auto w-full max-w-[96rem]">
           <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
             <div className="flex min-w-0 flex-col items-start justify-center gap-5 py-6 lg:py-12">
@@ -549,7 +559,7 @@ export function ArticlePageContent({
 
       <Section className="grid gap-8 lg:grid-cols-[minmax(0,46rem)_minmax(13rem,1fr)] lg:items-start lg:gap-x-20 lg:gap-y-10">
         <ContentBreadcrumb items={crumbs} />
-        <article className="cms-content min-w-0 lg:col-start-1">
+        <article className="cms-content order-2 min-w-0 lg:order-none lg:col-start-1">
           {renderCmsDocument(
             parseCmsDocument(article.content),
             new Map(article.media.map((item) => [item.id, item])),
@@ -557,7 +567,7 @@ export function ArticlePageContent({
         </article>
 
         <aside
-          className="flex flex-col gap-6 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+          className="order-1 flex flex-col gap-6 lg:sticky lg:top-24 lg:order-none lg:col-start-2 lg:row-span-2 lg:row-start-1"
           aria-label="Dettagli articolo"
         >
           {archive ? (
@@ -594,6 +604,18 @@ export function ArticlePageContent({
           </div>
         </aside>
       </Section>
+
+      <a
+        className={cn(
+          buttonVariants({ variant: "secondary", size: "icon-lg" }),
+          "fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 min-h-11 min-w-11 shadow-lg sm:right-6 sm:bottom-6",
+        )}
+        href="#article-top"
+        aria-label="Torna all’inizio dell’articolo"
+        title="Torna su"
+      >
+        <ArrowUp />
+      </a>
     </PageShell>
   );
 }
