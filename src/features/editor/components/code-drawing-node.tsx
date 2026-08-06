@@ -28,6 +28,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 
 import { renderDarkCodeDrawing } from "../code-drawing-renderer";
+import { CodeDrawingViewport } from "./code-drawing-viewport";
 
 function createDebouncedCodeDrawingRenderer(
   setImage: React.Dispatch<React.SetStateAction<string>>,
@@ -203,32 +204,34 @@ function CodeDrawingPreview({
 
   return (
     <div
-      className={`flex ${isMobile ? "flex-col-reverse" : "flex-col"} group my-4 w-full items-stretch border bg-muted/50 md:flex-row`}
+      className="group my-4 flex w-full flex-col items-stretch border bg-muted/50"
       style={{ minHeight: `${DEFAULT_MIN_HEIGHT}px` }}
     >
-      {showCode && (
-        <CodeDrawingTextarea
-          code={code}
-          isMobile={isMobile}
-          onCodeChange={(e) => onCodeChange(e.target.value)}
-          readOnly={readOnly}
-          showBorder={showBorder}
-          toolbar={viewMode === VIEW_MODE.Code ? toolbar : null}
-          viewMode={viewMode}
-        />
-      )}
+      {toolbar && <div className="flex justify-end border-b p-2">{toolbar}</div>}
 
-      {viewMode !== VIEW_MODE.Code && (
-        <CodeDrawingPreviewArea
-          code={code}
-          image={image}
-          isMobile={isMobile}
-          loading={loading}
-          showBorder={showBorder}
-          toolbar={toolbar}
-          viewMode={viewMode}
-        />
-      )}
+      <div className={`flex ${isMobile ? "flex-col-reverse" : "flex-col md:flex-row"} flex-1`}>
+        {showCode && (
+          <CodeDrawingTextarea
+            code={code}
+            isMobile={isMobile}
+            onCodeChange={(e) => onCodeChange(e.target.value)}
+            readOnly={readOnly}
+            showBorder={showBorder}
+            viewMode={viewMode}
+          />
+        )}
+
+        {viewMode !== VIEW_MODE.Code && (
+          <CodeDrawingPreviewArea
+            code={code}
+            image={image}
+            isMobile={isMobile}
+            loading={loading}
+            showBorder={showBorder}
+            viewMode={viewMode}
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -286,7 +289,6 @@ function CodeDrawingTextarea({
   isMobile = false,
   showBorder = false,
   onCodeChange,
-  toolbar,
 }: {
   code: string;
   viewMode: ViewMode;
@@ -294,7 +296,6 @@ function CodeDrawingTextarea({
   isMobile?: boolean;
   showBorder?: boolean;
   onCodeChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  toolbar?: React.ReactNode;
 }) {
   const isCodeOnlyMode = viewMode === VIEW_MODE.Code;
   const [internalCode, setInternalCode] = React.useState(code);
@@ -313,14 +314,6 @@ function CodeDrawingTextarea({
         isCodeOnlyMode && !isMobile ? "relative" : ""
       } ${showBorder && !isMobile ? "border-r" : ""}`}
     >
-      {toolbar && isCodeOnlyMode && (
-        <div
-          className={isMobile ? "mt-2 mb-2 flex justify-end px-2" : "absolute right-2 z-10 mt-2"}
-        >
-          {toolbar}
-        </div>
-      )}
-
       <div className="relative flex-1 rounded-md">
         <pre
           className="m-0 overflow-x-auto p-3 font-mono text-sm leading-[normal] tab-2 print:break-inside-avoid"
@@ -353,7 +346,6 @@ function CodeDrawingPreviewArea({
   viewMode,
   isMobile = false,
   showBorder = false,
-  toolbar,
 }: {
   image: string;
   loading: boolean;
@@ -361,7 +353,6 @@ function CodeDrawingPreviewArea({
   viewMode: ViewMode;
   isMobile?: boolean;
   showBorder?: boolean;
-  toolbar?: React.ReactNode;
 }) {
   const showImage = viewMode === VIEW_MODE.Both || viewMode === VIEW_MODE.Image;
 
@@ -371,20 +362,10 @@ function CodeDrawingPreviewArea({
         showBorder && isMobile ? "border-b" : ""
       }`}
     >
-      {toolbar && (
-        <div
-          className={isMobile ? "mt-2 mb-2 flex justify-end px-2" : "absolute right-2 z-10 mt-2"}
-        >
-          {toolbar}
-        </div>
-      )}
-
       {showImage ? (
-        <div className="flex flex-1 items-center justify-center rounded-md bg-muted/30 p-4">
+        <div className="flex flex-1 items-center justify-center rounded-md bg-muted/30">
           {loading && <div className="text-muted-foreground">Caricamento…</div>}
-          {!loading && image && (
-            <img alt="Diagramma" className="max-h-full max-w-full object-contain" src={image} />
-          )}
+          {!loading && image && <CodeDrawingViewport className="p-4 md:p-4" image={image} />}
           {!loading && !image && (
             <div className="text-muted-foreground">
               {code.trim() ? "Rendering…" : "L'anteprima apparirà qui"}
