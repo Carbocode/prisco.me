@@ -4,6 +4,7 @@ import { CODE_DRAWING_TYPE_ARRAY } from "@platejs/code-drawing";
 import { useEffect, useState } from "react";
 
 import { renderDarkCodeDrawing } from "../../editor/code-drawing-renderer";
+import { CodeDrawingViewport } from "../../editor/components/code-drawing-viewport";
 
 export function CmsCodeDrawing({ code, drawingType }: { code: string; drawingType: string }) {
   const [image, setImage] = useState("");
@@ -36,7 +37,7 @@ export function CmsCodeDrawing({ code, drawingType }: { code: string; drawingTyp
 
   return (
     <figure className="cms-code-drawing" aria-busy={!image && !failed}>
-      {image ? <img src={image} alt="Diagramma" /> : null}
+      {image ? <CodeDrawingViewport image={image} /> : null}
       {!image && !failed ? <span>Rendering del diagramma…</span> : null}
       {failed ? <span>Impossibile renderizzare il diagramma.</span> : null}
     </figure>
