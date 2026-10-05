@@ -54,6 +54,7 @@ import {
 import { ListPlugin } from "@platejs/list/react";
 import { MathRules } from "@platejs/math";
 import { EquationPlugin, InlineEquationPlugin } from "@platejs/math/react";
+import { MediaEmbedPlugin } from "@platejs/media/react";
 import { MentionInputPlugin, MentionPlugin } from "@platejs/mention/react";
 import { ResizableProvider, useResizableValue } from "@platejs/resizable";
 import { BlockSelectionPlugin } from "@platejs/selection/react";
@@ -419,11 +420,6 @@ const MediaImagePlugin = createPlatePlugin({
   node: { isElement: true, isVoid: true },
 }).withComponent(MediaImageElement);
 
-const MediaEmbedPlugin = createPlatePlugin({
-  key: "mediaEmbed",
-  node: { isElement: true, isVoid: true },
-}).withComponent(MediaEmbedElement);
-
 const lowlight = createLowlight(all);
 
 const editorPlugins = [
@@ -518,7 +514,7 @@ const editorPlugins = [
   TableCellHeaderPlugin.withComponent(TableHeaderElement),
   TocPlugin.configure({ options: { topOffset: 96 } }).withComponent(TocElement),
   MediaImagePlugin,
-  MediaEmbedPlugin,
+  MediaEmbedPlugin.withComponent(MediaEmbedElement),
   TogglePlugin.withComponent(ToggleElement),
   DndPlugin.configure({
     options: { enableScroller: true },

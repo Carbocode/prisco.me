@@ -1,5 +1,6 @@
 "use client";
 
+import { BlockquotePlugin } from "@platejs/basic-nodes/react";
 import { insertCallout } from "@platejs/callout";
 import { insertCodeBlock, toggleCodeBlock } from "@platejs/code-block";
 import { insertCodeDrawing } from "@platejs/code-drawing";
@@ -120,6 +121,14 @@ export function insertInlineElement(editor: PlateEditor, type: string) {
 }
 
 export function setBlockType(editor: PlateEditor, type: string) {
+  if (type === KEYS.blockquote) {
+    editor.getTransforms(BlockquotePlugin).blockquote.toggle();
+    editor.tf.focus();
+    return;
+  }
+  if (editor.api.above({ match: (node) => node.type === KEYS.blockquote })) {
+    editor.getTransforms(BlockquotePlugin).blockquote.toggle();
+  }
   if (listTypes.has(type)) {
     toggleList(editor, { listStyleType: type });
     editor.tf.focus();
