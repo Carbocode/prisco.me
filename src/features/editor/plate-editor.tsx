@@ -1,9 +1,19 @@
 import emojiMartData from "@emoji-mart/data";
 import {
+  BlockquoteRules,
+  CodeRules,
+  HeadingRules,
+  HighlightRules,
+  HorizontalRuleRules,
+  ItalicRules,
+  StrikethroughRules,
+  SubscriptRules,
+  SuperscriptRules,
+  UnderlineRules,
+} from "@platejs/basic-nodes";
+import {
   BlockquotePlugin,
-  BoldPlugin,
   CodePlugin,
-  H1Plugin,
   H2Plugin,
   H3Plugin,
   H4Plugin,
@@ -23,6 +33,7 @@ import {
   TextAlignPlugin,
 } from "@platejs/basic-styles/react";
 import { CalloutPlugin } from "@platejs/callout/react";
+import { CodeBlockRules } from "@platejs/code-block";
 import { CodeBlockPlugin, CodeLinePlugin, CodeSyntaxPlugin } from "@platejs/code-block/react";
 import { CodeDrawingPlugin } from "@platejs/code-drawing/react";
 import { DatePlugin } from "@platejs/date/react";
@@ -32,8 +43,16 @@ import { IndentPlugin } from "@platejs/indent/react";
 import { ColumnItemPlugin, ColumnPlugin } from "@platejs/layout/react";
 import { insertLink, LinkRules, unwrapLink, upsertLink } from "@platejs/link";
 import { LinkPlugin } from "@platejs/link/react";
-import { isOrderedList, someList, toggleList } from "@platejs/list";
+import {
+  BulletedListRules,
+  isOrderedList,
+  OrderedListRules,
+  someList,
+  TaskListRules,
+  toggleList,
+} from "@platejs/list";
 import { ListPlugin } from "@platejs/list/react";
+import { MathRules } from "@platejs/math";
 import { EquationPlugin, InlineEquationPlugin } from "@platejs/math/react";
 import { MentionInputPlugin, MentionPlugin } from "@platejs/mention/react";
 import { ResizableProvider, useResizableValue } from "@platejs/resizable";
@@ -115,7 +134,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { MediaBrowser } from "@/features/cms/components/media-picker";
 import { fromPlateValue, toPlateValue, type CmsDocument } from "@/features/cms/domain/cms-document";
 import { getEmbedPreviewFn } from "@/features/cms/server/embed.functions";
-import { autoformatPlugin } from "@/features/editor/autoformat-plugin";
+import {
+  autoformatBoldPlugin,
+  autoformatH1Plugin,
+  autoformatPlugin,
+} from "@/features/editor/autoformat-plugin";
 import { BlockDraggable } from "@/features/editor/components/block-draggable";
 import { CalloutElement } from "@/features/editor/components/callout-node";
 import {
@@ -405,20 +428,30 @@ const lowlight = createLowlight(all);
 
 const editorPlugins = [
   ParagraphPlugin.withComponent(ParagraphElement),
-  H1Plugin.withComponent((props) => <HeadingElement {...props} as="h2" />),
-  H2Plugin.withComponent((props) => <HeadingElement {...props} as="h3" />),
-  H3Plugin.withComponent((props) => <HeadingElement {...props} as="h4" />),
-  H4Plugin.withComponent((props) => <HeadingElement {...props} as="h5" />),
-  BlockquotePlugin.withComponent(BlockquoteElement),
-  HorizontalRulePlugin.withComponent(HorizontalRuleElement),
-  BoldPlugin,
-  ItalicPlugin,
-  StrikethroughPlugin,
-  UnderlinePlugin,
-  CodePlugin,
-  HighlightPlugin,
-  SuperscriptPlugin,
-  SubscriptPlugin,
+  autoformatH1Plugin.withComponent((props) => <HeadingElement {...props} as="h2" />),
+  H2Plugin.configure({ inputRules: [HeadingRules.markdown()] }).withComponent((props) => (
+    <HeadingElement {...props} as="h3" />
+  )),
+  H3Plugin.configure({ inputRules: [HeadingRules.markdown()] }).withComponent((props) => (
+    <HeadingElement {...props} as="h4" />
+  )),
+  H4Plugin.configure({ inputRules: [HeadingRules.markdown()] }).withComponent((props) => (
+    <HeadingElement {...props} as="h5" />
+  )),
+  BlockquotePlugin.configure({ inputRules: [BlockquoteRules.markdown()] }).withComponent(
+    BlockquoteElement,
+  ),
+  HorizontalRulePlugin.configure({ inputRules: [HorizontalRuleRules.markdown()] }).withComponent(
+    HorizontalRuleElement,
+  ),
+  autoformatBoldPlugin,
+  ItalicPlugin.configure({ inputRules: [ItalicRules.markdown()] }),
+  StrikethroughPlugin.configure({ inputRules: [StrikethroughRules.markdown()] }),
+  UnderlinePlugin.configure({ inputRules: [UnderlineRules.markdown()] }),
+  CodePlugin.configure({ inputRules: [CodeRules.markdown()] }),
+  HighlightPlugin.configure({ inputRules: [HighlightRules.markdown()] }),
+  SuperscriptPlugin.configure({ inputRules: [SuperscriptRules.markdown()] }),
+  SubscriptPlugin.configure({ inputRules: [SubscriptRules.markdown()] }),
   KbdPlugin,
   FontColorPlugin,
   FontBackgroundColorPlugin,
@@ -435,8 +468,17 @@ const editorPlugins = [
   IndentPlugin,
   // Disable the plugin's built-in marker rendering — ParagraphElement draws the
   // markers/checkbox itself (kept in sync with the public renderer).
-  ListPlugin.configure({ render: { belowNodes: () => undefined } }),
+  ListPlugin.configure({
+    inputRules: [
+      BulletedListRules.markdown({ variant: "-" }),
+      OrderedListRules.markdown({ variant: "." }),
+      TaskListRules.markdown({ checked: false }),
+      TaskListRules.markdown({ checked: true }),
+    ],
+    render: { belowNodes: () => undefined },
+  }),
   CodeBlockPlugin.configure({
+    inputRules: [CodeBlockRules.markdown({ on: "match" })],
     node: { component: CodeBlockElement },
     options: { lowlight },
   }),
@@ -445,8 +487,12 @@ const editorPlugins = [
   CalloutPlugin.withComponent(CalloutElement),
   CodeDrawingPlugin.withComponent(CodeDrawingElement),
   DatePlugin.withComponent(DateElement),
-  EquationPlugin.withComponent(EquationElement),
-  InlineEquationPlugin.withComponent(InlineEquationElement),
+  EquationPlugin.configure({
+    inputRules: [MathRules.markdown({ on: "break", variant: "$$" })],
+  }).withComponent(EquationElement),
+  InlineEquationPlugin.configure({
+    inputRules: [MathRules.markdown({ variant: "$" })],
+  }).withComponent(InlineEquationElement),
   ColumnPlugin.withComponent(ColumnGroupElement),
   ColumnItemPlugin.withComponent(ColumnElement),
   MentionPlugin.configure({ options: { triggerPreviousCharPattern: /^$|^[\s"']$/ } }).withComponent(
@@ -455,7 +501,12 @@ const editorPlugins = [
   MentionInputPlugin.withComponent(MentionInputElement),
   BlockSelectionPlugin,
   LinkPlugin.configure({
-    inputRules: [LinkRules.markdown(), LinkRules.autolink({ variant: "paste" })],
+    inputRules: [
+      LinkRules.markdown(),
+      LinkRules.autolink({ variant: "paste" }),
+      LinkRules.autolink({ variant: "space" }),
+      LinkRules.autolink({ variant: "break" }),
+    ],
     render: {
       node: LinkElement,
       afterEditable: () => <LinkFloatingToolbar />,
