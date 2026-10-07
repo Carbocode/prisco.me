@@ -66,7 +66,7 @@ function AuthenticationPage() {
   async function enableTwoFactor(event: React.FormEvent<HTMLFormElement>) {
     const values = formValues(event);
     const result = await authClient.twoFactor.enable({ password: formString(values, "password") });
-    if (result.error || !result.data) {
+    if (result.error || !result.data || result.data.method !== "totp") {
       toast.error(result.error?.message ?? "Impossibile attivare la 2FA.");
       return;
     }

@@ -84,8 +84,7 @@ function ProfilePage() {
 
   async function unlinkAccount(item: AccountItem) {
     const result = await authClient.unlinkAccount({
-      providerId: item.providerId,
-      accountId: item.accountId,
+      accountId: item.id,
     });
     if (result.error) toast.error(result.error.message ?? "Scollegamento non riuscito.");
     else toast.success("Account scollegato.");
