@@ -5,6 +5,7 @@
     "suspicious": "warn"
   },
   "plugins": ["react", "typescript", "import", "jsx-a11y"],
+  "jsPlugins": ["@shadcn/lint"],
   "settings": {
     "react": {
       "version": "19"
