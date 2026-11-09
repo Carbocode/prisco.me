@@ -20,7 +20,8 @@ export function HoverAnimatedImage({
 }: HoverAnimatedImageProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [snapshotReady, setSnapshotReady] = useState(false);
+  const [snapshotSource, setSnapshotSource] = useState<string>();
+  const snapshotReady = snapshotSource === props.src;
 
   const captureSnapshot = useCallback((image: HTMLImageElement) => {
     const canvas = canvasRef.current;
@@ -33,16 +34,22 @@ export function HoverAnimatedImage({
     if (!context) return;
 
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
-    setSnapshotReady(true);
+    setSnapshotSource(image.getAttribute("src") ?? undefined);
   }, []);
 
   useLayoutEffect(() => {
-    setSnapshotReady(false);
-    if (imageRef.current?.complete) captureSnapshot(imageRef.current);
+    const image = imageRef.current;
+    if (image && image.getAttribute("src") === props.src && image.complete) {
+      // oxlint-disable-next-line react/set-state-in-effect -- Synchronize the external canvas before paint for cached images.
+      captureSnapshot(image);
+    }
   }, [captureSnapshot, props.src]);
 
   return (
-    <span className={cn("group/animated-webp relative block overflow-hidden", containerClassName)}>
+    <span
+      data-slot="animated-image"
+      className={cn("group/animated-webp relative block overflow-hidden", containerClassName)}
+    >
       <img
         {...props}
         ref={imageRef}

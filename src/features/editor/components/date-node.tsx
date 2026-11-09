@@ -41,7 +41,7 @@ export function DateElement(props: PlateElementProps<TDateElement>) {
       ) : (
         <Popover>
           <PopoverTrigger render={trigger} />
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent className="w-auto">
             <Calendar
               mode="single"
               onSelect={(date) => {

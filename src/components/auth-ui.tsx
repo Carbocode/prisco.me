@@ -10,17 +10,17 @@ export function AuthPage({
   children,
 }: PropsWithChildren<{ title: string; description: string }>) {
   return (
-    <div className="min-h-dvh bg-slate-950 px-6 py-12 text-slate-100">
+    <div className="min-h-dvh bg-canvas px-6 py-12 text-ink-inverse">
       <div className="mx-auto w-full max-w-5xl">
-        <Link to="/" className="text-sm text-sky-300 hover:text-sky-200">
+        <Link to="/" className="text-sm text-link hover:text-link-hover">
           ← Torna alla home
         </Link>
         <div className="mt-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
+          <p className="text-xs font-semibold uppercase tracking-overline-wide text-link">
             Prisco.me account
           </p>
           <h1 className="display-font mt-3 text-4xl font-semibold sm:text-5xl">{title}</h1>
-          <p className="mt-4 max-w-2xl text-slate-400">{description}</p>
+          <p className="mt-4 max-w-2xl text-ink-subtle">{description}</p>
         </div>
         <div className="mt-10">{children}</div>
       </div>
@@ -60,6 +60,6 @@ export function RequireAuth({
     (admin && role !== "admin") ||
     (cms && !["admin", "editor", "author"].includes(role ?? ""))
   )
-    return <p className="text-slate-400">Verifica della sessione…</p>;
+    return <p className="text-ink-subtle">Verifica della sessione…</p>;
   return children;
 }

@@ -1,11 +1,10 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Eye, FilePlus2, FileText, Pencil, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 
-import { DashboardDataTable } from "@/components/dashboard-data-table";
+import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -67,7 +66,7 @@ function ArticlesContent() {
   const hasFilters = Boolean(search.query || search.status || search.categoryId);
   const updateSearch = (changes: Partial<typeof search>) =>
     void navigate({ search: { ...search, ...changes } });
-  const columns = useMemo<ColumnDef<(typeof articles.items)[number]>[]>(
+  const columns = useMemo<DashboardColumnDef<(typeof articles.items)[number]>[]>(
     () => [
       {
         accessorKey: "title",
@@ -166,7 +165,7 @@ function ArticlesContent() {
       <Card size="sm">
         <CardContent>
           <form
-            className="grid items-end gap-2 lg:grid-cols-[minmax(16rem,1fr)_12rem_14rem_auto]"
+            className="grid items-end gap-2 lg:grid-cols-(--layout-grid-cols-cms-toolbar)"
             onSubmit={(event) => {
               event.preventDefault();
               updateSearch({ query: query || undefined, page: 1 });

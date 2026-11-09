@@ -20,7 +20,7 @@ export function ToggleElement(props: PlateElementProps) {
   return (
     <PlateElement {...props} className="pl-6">
       <Button
-        className="absolute top-0 -left-0.5 size-6 cursor-pointer select-none items-center justify-center rounded-md p-px text-muted-foreground transition-colors hover:bg-accent [&_svg]:size-4"
+        className="absolute top-0 -left-0.5 size-6 cursor-pointer select-none items-center justify-center [&_svg]:size-4"
         contentEditable={false}
         size="icon"
         variant="ghost"

@@ -1,11 +1,10 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Building2, Pencil, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { DashboardDataTable } from "@/components/dashboard-data-table";
+import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -61,7 +60,7 @@ function OrganizationsPage() {
   const [slug, setSlug] = useState("");
   const [type, setType] = useState<"company" | "education">("company");
   const [pending, setPending] = useState(false);
-  const columns = useMemo<ColumnDef<Organization>[]>(
+  const columns = useMemo<DashboardColumnDef<Organization>[]>(
     () => [
       { accessorKey: "name", header: "Nome", size: 300, minSize: 200 },
       { accessorKey: "type", header: "Tipo", size: 160, minSize: 130 },
@@ -123,7 +122,7 @@ function OrganizationsPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={(event) => void create(event)}>
-            <FieldGroup className="grid items-end gap-2 lg:grid-cols-[1fr_1fr_12rem_auto]">
+            <FieldGroup className="grid items-end lg:grid-cols-(--layout-grid-cols-cms-filters)">
               <Field>
                 <FieldLabel htmlFor="organization-name">Nome</FieldLabel>
                 <Input

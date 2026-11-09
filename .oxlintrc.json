@@ -5,13 +5,25 @@
     "suspicious": "warn"
   },
   "plugins": ["react", "typescript", "import", "jsx-a11y"],
+  "jsPlugins": ["@shadcn/lint"],
   "settings": {
     "react": {
       "version": "19"
     }
   },
   "rules": {
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "shadcn/no-restyle": [
+      "error",
+      {
+        "allow": ["layout", "ignore-click-*"]
+      }
+    ],
+    "shadcn/no-raw-colors": "error",
+    "shadcn/no-arbitrary-values": "error",
+    "shadcn/no-inline-styles": "error",
+    "shadcn/require-static-classes": "error",
+    "shadcn/no-unknown-classes": "error"
   },
   "ignorePatterns": [
     "src/routeTree.gen.ts",

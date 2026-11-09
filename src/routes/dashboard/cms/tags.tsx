@@ -1,11 +1,10 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Hash, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { DashboardDataTable } from "@/components/dashboard-data-table";
+import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import { SkillGlyph } from "@/components/tech-icon";
 import {
   AlertDialog,
@@ -75,7 +74,7 @@ function TagsPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [icon, setIcon] = useState("");
-  const [color, setColor] = useState("text-slate-200 bg-white/10 border-white/15");
+  const [color, setColor] = useState("text-ink-soft bg-white/10 border-white/15");
   const [categoryId, setCategoryId] = useState(categories[0]?.id ?? "");
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -94,7 +93,7 @@ function TagsPage() {
     [categoryFilter, normalizedQuery, tags],
   );
   const hasFilters = Boolean(normalizedQuery) || categoryFilter !== "all";
-  const columns = useMemo<ColumnDef<Tag>[]>(
+  const columns = useMemo<DashboardColumnDef<Tag>[]>(
     () => [
       { accessorKey: "name", header: "Tag", size: 200, minSize: 150 },
       { accessorKey: "slug", header: "Slug", size: 210, minSize: 150 },
@@ -131,7 +130,7 @@ function TagsPage() {
       setName("");
       setSlug("");
       setIcon("");
-      setColor("text-slate-200 bg-white/10 border-white/15");
+      setColor("text-ink-soft bg-white/10 border-white/15");
       toast.success("Tag creato");
       await router.invalidate();
     } catch (error) {
@@ -160,7 +159,7 @@ function TagsPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={(event) => void create(event)}>
-            <FieldGroup className="grid items-end gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_1.5fr_auto]">
+            <FieldGroup className="grid items-end md:grid-cols-2 xl:grid-cols-(--layout-grid-cols-cms-search)">
               <Field>
                 <FieldLabel htmlFor="tag-name">Nome</FieldLabel>
                 <Input
@@ -235,7 +234,7 @@ function TagsPage() {
                   onChange={(event) => setColor(event.target.value)}
                 />
                 <FieldDescription>
-                  <Badge className={color}>
+                  <Badge>
                     <SkillGlyph
                       skill={{ name: name || "Anteprima", icon: icon || null, color }}
                       size={12}
@@ -264,7 +263,7 @@ function TagsPage() {
                   setCategoryFilter("all");
                 }}
               >
-                <FieldGroup className="grid items-end gap-2 md:grid-cols-[minmax(16rem,1fr)_16rem_auto]">
+                <FieldGroup className="grid items-end md:grid-cols-(--layout-grid-cols-media-toolbar)">
                   <Field>
                     <FieldLabel htmlFor="tag-search">Cerca</FieldLabel>
                     <InputGroup>
@@ -416,7 +415,7 @@ function TagRow({
       <TableRow>
         <TableCell colSpan={6}>
           <form onSubmit={(event) => void save(event)}>
-            <FieldGroup className="grid items-end gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1fr_1.5fr_auto]">
+            <FieldGroup className="grid items-end md:grid-cols-2 xl:grid-cols-(--layout-grid-cols-cms-search)">
               <Field>
                 <FieldLabel htmlFor={`tag-${tag.id}-name`}>Nome</FieldLabel>
                 <Input
@@ -486,7 +485,7 @@ function TagRow({
                   onChange={(event) => setColor(event.target.value)}
                 />
                 <FieldDescription>
-                  <Badge className={color}>
+                  <Badge>
                     <SkillGlyph skill={{ name, icon: icon || null, color }} size={12} />
                     {name || "Anteprima tag"}
                   </Badge>
@@ -529,7 +528,7 @@ function TagRow({
         </Badge>
       </TableCell>
       <TableCell>
-        <Badge className={tag.color}>
+        <Badge>
           <SkillGlyph skill={tag} size={12} />
           {tag.name}
         </Badge>

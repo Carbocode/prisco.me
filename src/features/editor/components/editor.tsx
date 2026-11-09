@@ -17,10 +17,10 @@ const editorContainerVariants = cva(
     variants: {
       variant: {
         default: "h-full",
-        demo: "h-[650px]",
+        demo: "h-162.5",
         select: cn(
           "group rounded-md border border-input ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
-          "has-data-readonly:w-fit has-data-readonly:cursor-default has-data-readonly:border-transparent has-data-readonly:focus-within:[box-shadow:none]",
+          "has-data-readonly:w-fit has-data-readonly:cursor-default has-data-readonly:border-transparent has-data-readonly:focus-within:shadow-none",
         ),
       },
     },
@@ -64,8 +64,8 @@ const editorVariants = cva(
         true: "ring-2 ring-ring ring-offset-2",
       },
       variant: {
-        default: "size-full px-16 pt-4 pb-72 text-base sm:px-[max(64px,calc(50%-350px))]",
-        demo: "size-full px-16 pt-4 pb-72 text-base sm:px-[max(64px,calc(50%-350px))]",
+        default: "size-full px-16 pt-4 pb-72 text-base sm:px-editor-page",
+        demo: "size-full px-16 pt-4 pb-72 text-base sm:px-editor-page",
         fullWidth: "size-full px-16 pt-4 pb-72 text-base sm:px-24",
         none: "",
         select: "px-3 py-2 text-base data-readonly:w-fit",

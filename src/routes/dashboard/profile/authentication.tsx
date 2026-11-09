@@ -49,6 +49,7 @@ function AuthenticationPage() {
   }, []);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
     void refreshPasskeys();
   }, [refreshPasskeys]);
 
@@ -66,7 +67,7 @@ function AuthenticationPage() {
   async function enableTwoFactor(event: React.FormEvent<HTMLFormElement>) {
     const values = formValues(event);
     const result = await authClient.twoFactor.enable({ password: formString(values, "password") });
-    if (result.error || !result.data) {
+    if (result.error || !result.data || result.data.method !== "totp") {
       toast.error(result.error?.message ?? "Impossibile attivare la 2FA.");
       return;
     }

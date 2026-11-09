@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { desc } from "drizzle-orm";
-import z from "zod";
+import { z } from "zod";
 
 import { getDb } from "@/db";
 import { contactRequests } from "@/db/schema";

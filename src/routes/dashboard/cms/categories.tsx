@@ -1,11 +1,10 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
 import { FolderTree, Pencil, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { DashboardDataTable } from "@/components/dashboard-data-table";
+import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -110,7 +109,7 @@ function CategoriesContent() {
     () => media.filter((item) => item.mimeType.startsWith("image/")),
     [media],
   );
-  const columns = useMemo<ColumnDef<(typeof categories)[number]>[]>(
+  const columns = useMemo<DashboardColumnDef<(typeof categories)[number]>[]>(
     () => [
       { accessorKey: "name", header: "Nome", size: 220, minSize: 160 },
       {
@@ -206,7 +205,7 @@ function CategoriesContent() {
         </CardHeader>
         <CardContent>
           <form onSubmit={(event) => void create(event)}>
-            <FieldGroup className="grid items-end gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            <FieldGroup className="grid items-end sm:grid-cols-2 xl:grid-cols-4">
               <Field>
                 <FieldLabel htmlFor="category-name">Nome</FieldLabel>
                 <Input

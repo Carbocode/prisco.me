@@ -25,10 +25,12 @@ export function CodeDrawingViewport({
   const [isDragging, setIsDragging] = React.useState(false);
   const dragRef = React.useRef<{ pointerId: number; x: number; y: number } | null>(null);
 
-  React.useEffect(() => {
+  const [previousImage, setPreviousImage] = React.useState(image);
+  if (image !== previousImage) {
+    setPreviousImage(image);
     setScale(1);
     setPosition({ x: 0, y: 0 });
-  }, [image]);
+  }
 
   const changeScale = React.useCallback((delta: number) => {
     setScale((current) => {
@@ -80,12 +82,17 @@ export function CodeDrawingViewport({
       <img
         alt={alt}
         className={cn(
-          "max-h-full max-w-full select-none object-contain",
-          !isDragging && "transition-transform duration-150",
+          cn(
+            "max-h-full max-w-full select-none object-contain",
+            !isDragging && "transition-transform duration-150",
+          ),
+          "dynamic-transform",
         )}
         draggable={false}
         src={image}
-        style={{ transform: `translate(${position.x}px, ${position.y}px) scale(${scale})` }}
+        style={{
+          "--dynamic-transform": `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+        }}
       />
 
       <ButtonGroup

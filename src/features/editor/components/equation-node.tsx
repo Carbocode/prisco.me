@@ -108,11 +108,10 @@ export function InlineEquationElement(props: PlateElementProps<TEquationElement>
           render={
             <div
               className={cn(
-                'after:absolute after:inset-0 after:-top-0.5 after:-left-1 after:z-1 after:h-[calc(100%)+4px] after:w-[calc(100%+8px)] after:rounded-sm after:content-[""]',
+                "after:absolute after:inset-0 after:-top-0.5 after:-left-1 after:z-1 after:h-(--layout-h-resize-hit) after:w-(--layout-w-resize-hit) after:rounded-sm after:content-none",
                 "h-6",
                 ((element.texExpression.length > 0 && open) || selected) && "after:bg-brand/15",
-                element.texExpression.length === 0 &&
-                  "text-muted-foreground after:bg-neutral-500/10",
+                element.texExpression.length === 0 && "text-muted-foreground after:bg-muted/10",
               )}
               contentEditable={false}
             >
@@ -125,7 +124,7 @@ export function InlineEquationElement(props: PlateElementProps<TEquationElement>
               />
               {element.texExpression.length === 0 && (
                 <span>
-                  <RadicalIcon className="mr-1 inline-block h-[19px] w-4 py-[1.5px] align-text-bottom" />
+                  <RadicalIcon className="mr-1 inline-block h-4.75 w-4 py-0.5 align-text-bottom" />
                   Nuova equazione
                 </span>
               )}
@@ -183,15 +182,18 @@ const EquationPopoverContent = ({
   };
 
   return (
-    <PopoverContent className="flex gap-2" contentEditable={false}>
+    <PopoverContent className="flex" contentEditable={false}>
       <EquationInput
         autoFocus
-        className={cn("max-h-[50vh] grow resize-none p-2 text-sm", className)}
+        className={cn(
+          "max-h-(--layout-max-h-viewport-half) grow resize-none p-2 text-sm",
+          className,
+        )}
         state={{ isInline, open, onClose }}
         {...props}
       />
 
-      <Button className="px-3" onClick={onClose} variant="secondary">
+      <Button onClick={onClose} variant="secondary">
         Fatto <CornerDownLeftIcon className="size-3.5" />
       </Button>
     </PopoverContent>

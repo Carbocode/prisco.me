@@ -57,6 +57,7 @@ function ProfilePage() {
   }, []);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
     void refreshAccounts();
   }, [refreshAccounts]);
 
@@ -84,8 +85,7 @@ function ProfilePage() {
 
   async function unlinkAccount(item: AccountItem) {
     const result = await authClient.unlinkAccount({
-      providerId: item.providerId,
-      accountId: item.accountId,
+      accountId: item.id,
     });
     if (result.error) toast.error(result.error.message ?? "Scollegamento non riuscito.");
     else toast.success("Account scollegato.");
@@ -188,7 +188,7 @@ function ProfilePage() {
                     <Link2 />
                   </ItemMedia>
                   <ItemContent>
-                    <ItemTitle className="capitalize">{item.providerId}</ItemTitle>
+                    <ItemTitle>{item.providerId}</ItemTitle>
                     <ItemDescription>{item.accountId}</ItemDescription>
                   </ItemContent>
                   {item.providerId !== "credential" ? (
@@ -222,7 +222,7 @@ function ProfilePage() {
               ))}
             </ItemGroup>
           ) : (
-            <Empty className="p-8">
+            <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
                   <UserRound />

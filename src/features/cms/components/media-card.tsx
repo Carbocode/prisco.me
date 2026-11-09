@@ -60,8 +60,8 @@ export function MediaCard({
     <Card size="sm">
       <MediaThumbnail item={item} />
       <CardHeader>
-        <CardTitle className="truncate">{displayName}</CardTitle>
-        <CardDescription className="truncate">{item.filename}</CardDescription>
+        <CardTitle>{displayName}</CardTitle>
+        <CardDescription>{item.filename}</CardDescription>
         <CardAction>
           <Badge variant="outline">
             <type.icon />
@@ -69,7 +69,7 @@ export function MediaCard({
           </Badge>
         </CardAction>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col">
         <p className="text-xs tabular-nums text-muted-foreground">
           {item.sizeBytes === undefined ? null : `${Math.round(item.sizeBytes / 1024)} KiB`}
           {item.sizeBytes !== undefined && item.width && item.height ? " · " : null}
@@ -80,7 +80,7 @@ export function MediaCard({
         ) : null}
         {details}
       </CardContent>
-      <CardFooter className="flex flex-wrap gap-2">
+      <CardFooter className="flex flex-wrap">
         <MediaPreview item={item} />
         {onSelect ? (
           <Button
@@ -115,7 +115,7 @@ function MediaPreview({ item }: { item: MediaCardItem }) {
         <Eye data-icon="inline-start" />
         Anteprima
       </DialogTrigger>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-4xl">
+      <DialogContent className="max-h-(--layout-max-h-dialog-viewport) overflow-y-auto sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>{displayName}</DialogTitle>
           <DialogDescription>
@@ -129,12 +129,16 @@ function MediaPreview({ item }: { item: MediaCardItem }) {
             alt={item.altText ?? displayName}
             width={item.width ?? 1280}
             height={item.height ?? 720}
-            containerClassName="max-h-[70dvh] w-full rounded-lg"
-            className="max-h-[70dvh] w-full object-contain"
+            containerClassName="max-h-(--layout-max-h-viewport-panel) w-full rounded-lg"
+            className="max-h-(--layout-max-h-viewport-panel) w-full object-contain"
           />
         ) : type.kind === "video" ? (
           // oxlint-disable-next-line jsx-a11y/media-has-caption -- preview CMS senza traccia VTT associata
-          <video src={item.url} controls className="max-h-[70dvh] w-full rounded-lg" />
+          <video
+            src={item.url}
+            controls
+            className="max-h-(--layout-max-h-viewport-panel) w-full rounded-lg"
+          />
         ) : type.kind === "audio" ? (
           // oxlint-disable-next-line jsx-a11y/media-has-caption -- anteprima audio CMS senza trascrizione associata
           <audio src={item.url} controls className="w-full" />

@@ -1,4 +1,4 @@
-import type { CSSProperties, HTMLAttributes } from "react";
+import type { HTMLAttributes } from "react";
 import { Fragment } from "react";
 
 import { SkillGlyph } from "@/components/tech-icon";
@@ -68,32 +68,33 @@ export default function DesertScene({ className, skills = [], ...props }: Desert
 
   return (
     <div className={classes} aria-hidden="true" {...props}>
-      <div className="relative aspect-[1280/841] w-full overflow-hidden">
+      <div className="relative aspect-desert w-full overflow-hidden">
         {MOUNTAIN_LAYERS.map((layer, index) => (
           <img
             key={layer.src}
             src={layer.src}
             alt=""
-            className="mountain-enter absolute left-0 h-auto w-full"
-            style={{ bottom: layer.bottom, animationDelay: `${150 + index * 130}ms` }}
+            className="mountain-enter absolute left-0 h-auto w-full bottom-(--dynamic-bottom) dynamic-animation-delay"
+            style={{
+              "--dynamic-bottom":
+                typeof layer.bottom === "number" ? layer.bottom + "px" : layer.bottom,
+              "--dynamic-animation-delay": `${150 + index * 130}ms`,
+            }}
           />
         ))}
 
-        <div
-          className="absolute inset-x-0 bottom-0 h-[64.8%] w-full"
-          style={{
-            background:
-              "linear-gradient(to bottom, #92abd0 0%, #4c5677 21.9%, #37425c 35.6%, #0a1622 68.5%, #0a1622 100%)",
-          }}
-        />
+        <div className="absolute inset-x-0 bottom-0 h-81/125 w-full bg-desert-horizon" />
 
         {DUNE_LAYERS.map((layer) => (
           <Fragment key={layer.src}>
             <img
               src={layer.src}
               alt=""
-              className="absolute -left-2 h-auto w-[calc(100%+1rem)] max-w-none"
-              style={{ bottom: layer.bottom }}
+              className="absolute -left-2 h-auto w-(--layout-w-dune-bleed) max-w-none bottom-(--dynamic-bottom)"
+              style={{
+                "--dynamic-bottom":
+                  typeof layer.bottom === "number" ? layer.bottom + "px" : layer.bottom,
+              }}
             />
             {TUMBLEWEEDS.map((tw, index) =>
               tw.afterDune === layer.src ? (
@@ -116,32 +117,21 @@ function RollingTumbleweed({
 }) {
   const { bottom, size, hop, travel, bounce, delay } = config;
   const travelStyle = {
-    bottom,
-    left: `calc(-1 * ${size})`,
-    width: size,
-    height: size,
-    animationDuration: `${travel}s`,
-    animationDelay: `${delay}s`,
+    "--tumbleweed-bottom": bottom,
+    "--tumbleweed-size": size,
+    "--tumbleweed-travel-duration": `${travel}s`,
+    "--tumbleweed-bounce-duration": `${bounce}s`,
+    "--tumbleweed-roll-duration": `${Math.max(0.9, travel / 14)}s`,
+    "--tumbleweed-delay": `${delay}s`,
     "--tumbleweed-distance": `calc(100vw + ${size} + ${size})`,
     "--tumbleweed-hop": hop,
-  } as CSSProperties;
+  };
 
   return (
     <div className="tumbleweed-travel" style={travelStyle}>
-      <div
-        className="tumbleweed-bounce size-full"
-        style={{
-          animationDuration: `${bounce}s`,
-          animationDelay: `${delay}s`,
-        }}
-      >
+      <div className="tumbleweed-bounce size-full">
         <div className="relative size-full">
-          <div
-            className="tumbleweed-roll absolute inset-0"
-            style={{
-              animationDuration: `${Math.max(0.9, travel / 14)}s`,
-            }}
-          >
+          <div className="tumbleweed-roll absolute inset-0">
             <img
               src="/home/illustrations/tumbleweed.svg"
               alt=""
@@ -151,8 +141,8 @@ function RollingTumbleweed({
             />
           </div>
           {skill && (
-            <div className="absolute inset-0 flex size-full items-center justify-center text-amber-50/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
-              <div className="size-[42%]">
+            <div className="absolute inset-0 flex size-full items-center justify-center text-warm-ink/90 drop-shadow-glyph">
+              <div className="size-42/100">
                 <SkillGlyph skill={skill} size="100%" />
               </div>
             </div>

@@ -9,110 +9,55 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Verify2faRouteImport } from './routes/verify-2fa'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
-import { Route as CookieRouteImport } from './routes/cookie'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CareerRouteImport } from './routes/career'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
-import { Route as ArchiveSlugRouteRouteImport } from './routes/$archiveSlug/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as ArchiveSlugRouteRouteImport } from './routes/$archiveSlug/route'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as CareerRouteImport } from './routes/career'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookieRouteImport } from './routes/cookie'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as Verify2faRouteImport } from './routes/verify-2fa'
 import { Route as ArchiveSlugIndexRouteImport } from './routes/$archiveSlug/index'
-import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
-import { Route as MediaSplatRouteImport } from './routes/media/$'
 import { Route as ArchiveSlugSplatRouteImport } from './routes/$archiveSlug/$'
-import { Route as DashboardProfileRouteRouteImport } from './routes/dashboard/profile/route'
-import { Route as DashboardCmsRouteRouteImport } from './routes/dashboard/cms/route'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardAdminRouteRouteImport } from './routes/dashboard/admin/route'
-import { Route as DashboardProfileIndexRouteImport } from './routes/dashboard/profile/index'
-import { Route as DashboardCmsIndexRouteImport } from './routes/dashboard/cms/index'
-import { Route as PreviewArticlesArticleIdRouteImport } from './routes/preview/articles.$articleId'
-import { Route as DashboardProfileDangerRouteImport } from './routes/dashboard/profile/danger'
-import { Route as DashboardProfileAuthorizationsRouteImport } from './routes/dashboard/profile/authorizations'
-import { Route as DashboardProfileAuthenticationRouteImport } from './routes/dashboard/profile/authentication'
-import { Route as DashboardCmsTagsRouteImport } from './routes/dashboard/cms/tags'
-import { Route as DashboardCmsOrganizationsRouteImport } from './routes/dashboard/cms/organizations'
-import { Route as DashboardCmsMediaRouteImport } from './routes/dashboard/cms/media'
-import { Route as DashboardCmsCategoriesRouteImport } from './routes/dashboard/cms/categories'
-import { Route as DashboardCmsArticlesRouteImport } from './routes/dashboard/cms/articles'
-import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard/admin/users'
-import { Route as DashboardAdminContactsRouteImport } from './routes/dashboard/admin/contacts'
+import { Route as DashboardCmsRouteRouteImport } from './routes/dashboard/cms/route'
+import { Route as DashboardProfileRouteRouteImport } from './routes/dashboard/profile/route'
+import { Route as MediaSplatRouteImport } from './routes/media/$'
+import { Route as OauthConsentRouteImport } from './routes/oauth/consent'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as DashboardCmsArticlesNewRouteImport } from './routes/dashboard/cms/articles_.new'
-import { Route as DashboardCmsArticlesArticleIdRouteImport } from './routes/dashboard/cms/articles_.$articleId'
-import { Route as DashboardAdminUsersNewRouteImport } from './routes/dashboard/admin/users_.new'
-import { Route as ApiContentV1TagsRouteImport } from './routes/api/content/v1/tags'
-import { Route as ApiContentV1CategoriesRouteImport } from './routes/api/content/v1/categories'
+import { Route as DashboardAdminContactsRouteImport } from './routes/dashboard/admin/contacts'
+import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard/admin/users'
+import { Route as DashboardCmsIndexRouteImport } from './routes/dashboard/cms/index'
+import { Route as DashboardCmsArticlesRouteImport } from './routes/dashboard/cms/articles'
+import { Route as DashboardCmsCategoriesRouteImport } from './routes/dashboard/cms/categories'
+import { Route as DashboardCmsMediaRouteImport } from './routes/dashboard/cms/media'
+import { Route as DashboardCmsOrganizationsRouteImport } from './routes/dashboard/cms/organizations'
+import { Route as DashboardCmsTagsRouteImport } from './routes/dashboard/cms/tags'
+import { Route as DashboardProfileIndexRouteImport } from './routes/dashboard/profile/index'
+import { Route as DashboardProfileAuthenticationRouteImport } from './routes/dashboard/profile/authentication'
+import { Route as DashboardProfileAuthorizationsRouteImport } from './routes/dashboard/profile/authorizations'
+import { Route as DashboardProfileDangerRouteImport } from './routes/dashboard/profile/danger'
+import { Route as PreviewArticlesArticleIdRouteImport } from './routes/preview/articles.$articleId'
 import { Route as ApiCmsMediaUploadRouteImport } from './routes/api/cms/media/upload'
+import { Route as ApiContentV1CategoriesRouteImport } from './routes/api/content/v1/categories'
+import { Route as ApiContentV1TagsRouteImport } from './routes/api/content/v1/tags'
+import { Route as DashboardAdminUsersNewRouteImport } from './routes/dashboard/admin/users_.new'
+import { Route as DashboardCmsArticlesArticleIdRouteImport } from './routes/dashboard/cms/articles_.$articleId'
+import { Route as DashboardCmsArticlesNewRouteImport } from './routes/dashboard/cms/articles_.new'
 import { Route as ApiContentV1ArticlesIndexRouteImport } from './routes/api/content/v1/articles/index'
-import { Route as DashboardCmsArticlesArticleIdPreviewRouteImport } from './routes/dashboard/cms/articles_.$articleId_.preview'
 import { Route as ApiContentV1ArticlesSlugRouteImport } from './routes/api/content/v1/articles/$slug'
+import { Route as DashboardCmsArticlesArticleIdPreviewRouteImport } from './routes/dashboard/cms/articles_.$articleId_.preview'
 
-const Verify2faRoute = Verify2faRouteImport.update({
-  id: '/verify-2fa',
-  path: '/verify-2fa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssDotxmlRoute = RssDotxmlRouteImport.update({
-  id: '/rss.xml',
-  path: '/rss.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
-  id: '/robots.txt',
-  path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
-  id: '/llms.txt',
-  path: '/llms.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookieRoute = CookieRouteImport.update({
-  id: '/cookie',
-  path: '/cookie',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CareerRoute = CareerRouteImport.update({
-  id: '/career',
-  path: '/career',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRouteRoute = DashboardRouteRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArchiveSlugRouteRoute = ArchiveSlugRouteRouteImport.update({
@@ -120,44 +65,79 @@ const ArchiveSlugRouteRoute = ArchiveSlugRouteRouteImport.update({
   path: '/$archiveSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRouteRoute,
+const CareerRoute = CareerRouteImport.update({
+  id: '/career',
+  path: '/career',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookieRoute = CookieRouteImport.update({
+  id: '/cookie',
+  path: '/cookie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Verify2faRoute = Verify2faRouteImport.update({
+  id: '/verify-2fa',
+  path: '/verify-2fa',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ArchiveSlugIndexRoute = ArchiveSlugIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ArchiveSlugRouteRoute,
 } as any)
-const OauthConsentRoute = OauthConsentRouteImport.update({
-  id: '/oauth/consent',
-  path: '/oauth/consent',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MediaSplatRoute = MediaSplatRouteImport.update({
-  id: '/media/$',
-  path: '/media/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ArchiveSlugSplatRoute = ArchiveSlugSplatRouteImport.update({
   id: '/$',
   path: '/$',
   getParentRoute: () => ArchiveSlugRouteRoute,
 } as any)
-const DashboardProfileRouteRoute = DashboardProfileRouteRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardCmsRouteRoute = DashboardCmsRouteRouteImport.update({
-  id: '/cms',
-  path: '/cms',
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardAdminRouteRoute = DashboardAdminRouteRouteImport.update({
@@ -165,42 +145,59 @@ const DashboardAdminRouteRoute = DashboardAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DashboardProfileIndexRoute = DashboardProfileIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardProfileRouteRoute,
+const DashboardCmsRouteRoute = DashboardCmsRouteRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardProfileRouteRoute = DashboardProfileRouteRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const MediaSplatRoute = MediaSplatRouteImport.update({
+  id: '/media/$',
+  path: '/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OauthConsentRoute = OauthConsentRouteImport.update({
+  id: '/oauth/consent',
+  path: '/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAdminContactsRoute = DashboardAdminContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => DashboardAdminRouteRoute,
+} as any)
+const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => DashboardAdminRouteRoute,
 } as any)
 const DashboardCmsIndexRoute = DashboardCmsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardCmsRouteRoute,
 } as any)
-const PreviewArticlesArticleIdRoute =
-  PreviewArticlesArticleIdRouteImport.update({
-    id: '/preview/articles/$articleId',
-    path: '/preview/articles/$articleId',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DashboardProfileDangerRoute = DashboardProfileDangerRouteImport.update({
-  id: '/danger',
-  path: '/danger',
-  getParentRoute: () => DashboardProfileRouteRoute,
+const DashboardCmsArticlesRoute = DashboardCmsArticlesRouteImport.update({
+  id: '/articles',
+  path: '/articles',
+  getParentRoute: () => DashboardCmsRouteRoute,
 } as any)
-const DashboardProfileAuthorizationsRoute =
-  DashboardProfileAuthorizationsRouteImport.update({
-    id: '/authorizations',
-    path: '/authorizations',
-    getParentRoute: () => DashboardProfileRouteRoute,
-  } as any)
-const DashboardProfileAuthenticationRoute =
-  DashboardProfileAuthenticationRouteImport.update({
-    id: '/authentication',
-    path: '/authentication',
-    getParentRoute: () => DashboardProfileRouteRoute,
-  } as any)
-const DashboardCmsTagsRoute = DashboardCmsTagsRouteImport.update({
-  id: '/tags',
-  path: '/tags',
+const DashboardCmsCategoriesRoute = DashboardCmsCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardCmsMediaRoute = DashboardCmsMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
   getParentRoute: () => DashboardCmsRouteRoute,
 } as any)
 const DashboardCmsOrganizationsRoute =
@@ -209,55 +206,42 @@ const DashboardCmsOrganizationsRoute =
     path: '/organizations',
     getParentRoute: () => DashboardCmsRouteRoute,
   } as any)
-const DashboardCmsMediaRoute = DashboardCmsMediaRouteImport.update({
-  id: '/media',
-  path: '/media',
+const DashboardCmsTagsRoute = DashboardCmsTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
   getParentRoute: () => DashboardCmsRouteRoute,
 } as any)
-const DashboardCmsCategoriesRoute = DashboardCmsCategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
-  getParentRoute: () => DashboardCmsRouteRoute,
+const DashboardProfileIndexRoute = DashboardProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardProfileRouteRoute,
 } as any)
-const DashboardCmsArticlesRoute = DashboardCmsArticlesRouteImport.update({
-  id: '/articles',
-  path: '/articles',
-  getParentRoute: () => DashboardCmsRouteRoute,
-} as any)
-const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => DashboardAdminRouteRoute,
-} as any)
-const DashboardAdminContactsRoute = DashboardAdminContactsRouteImport.update({
-  id: '/contacts',
-  path: '/contacts',
-  getParentRoute: () => DashboardAdminRouteRoute,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardCmsArticlesNewRoute = DashboardCmsArticlesNewRouteImport.update({
-  id: '/articles_/new',
-  path: '/articles/new',
-  getParentRoute: () => DashboardCmsRouteRoute,
-} as any)
-const DashboardCmsArticlesArticleIdRoute =
-  DashboardCmsArticlesArticleIdRouteImport.update({
-    id: '/articles_/$articleId',
-    path: '/articles/$articleId',
-    getParentRoute: () => DashboardCmsRouteRoute,
+const DashboardProfileAuthenticationRoute =
+  DashboardProfileAuthenticationRouteImport.update({
+    id: '/authentication',
+    path: '/authentication',
+    getParentRoute: () => DashboardProfileRouteRoute,
   } as any)
-const DashboardAdminUsersNewRoute = DashboardAdminUsersNewRouteImport.update({
-  id: '/users_/new',
-  path: '/users/new',
-  getParentRoute: () => DashboardAdminRouteRoute,
+const DashboardProfileAuthorizationsRoute =
+  DashboardProfileAuthorizationsRouteImport.update({
+    id: '/authorizations',
+    path: '/authorizations',
+    getParentRoute: () => DashboardProfileRouteRoute,
+  } as any)
+const DashboardProfileDangerRoute = DashboardProfileDangerRouteImport.update({
+  id: '/danger',
+  path: '/danger',
+  getParentRoute: () => DashboardProfileRouteRoute,
 } as any)
-const ApiContentV1TagsRoute = ApiContentV1TagsRouteImport.update({
-  id: '/api/content/v1/tags',
-  path: '/api/content/v1/tags',
+const PreviewArticlesArticleIdRoute =
+  PreviewArticlesArticleIdRouteImport.update({
+    id: '/preview/articles/$articleId',
+    path: '/preview/articles/$articleId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiCmsMediaUploadRoute = ApiCmsMediaUploadRouteImport.update({
+  id: '/api/cms/media/upload',
+  path: '/api/cms/media/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiContentV1CategoriesRoute = ApiContentV1CategoriesRouteImport.update({
@@ -265,10 +249,26 @@ const ApiContentV1CategoriesRoute = ApiContentV1CategoriesRouteImport.update({
   path: '/api/content/v1/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiCmsMediaUploadRoute = ApiCmsMediaUploadRouteImport.update({
-  id: '/api/cms/media/upload',
-  path: '/api/cms/media/upload',
+const ApiContentV1TagsRoute = ApiContentV1TagsRouteImport.update({
+  id: '/api/content/v1/tags',
+  path: '/api/content/v1/tags',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAdminUsersNewRoute = DashboardAdminUsersNewRouteImport.update({
+  id: '/users_/new',
+  path: '/users/new',
+  getParentRoute: () => DashboardAdminRouteRoute,
+} as any)
+const DashboardCmsArticlesArticleIdRoute =
+  DashboardCmsArticlesArticleIdRouteImport.update({
+    id: '/articles_/$articleId',
+    path: '/articles/$articleId',
+    getParentRoute: () => DashboardCmsRouteRoute,
+  } as any)
+const DashboardCmsArticlesNewRoute = DashboardCmsArticlesNewRouteImport.update({
+  id: '/articles_/new',
+  path: '/articles/new',
+  getParentRoute: () => DashboardCmsRouteRoute,
 } as any)
 const ApiContentV1ArticlesIndexRoute =
   ApiContentV1ArticlesIndexRouteImport.update({
@@ -276,17 +276,17 @@ const ApiContentV1ArticlesIndexRoute =
     path: '/api/content/v1/articles/',
     getParentRoute: () => rootRouteImport,
   } as any)
-const DashboardCmsArticlesArticleIdPreviewRoute =
-  DashboardCmsArticlesArticleIdPreviewRouteImport.update({
-    id: '/articles_/$articleId_/preview',
-    path: '/articles/$articleId/preview',
-    getParentRoute: () => DashboardCmsRouteRoute,
-  } as any)
 const ApiContentV1ArticlesSlugRoute =
   ApiContentV1ArticlesSlugRouteImport.update({
     id: '/api/content/v1/articles/$slug',
     path: '/api/content/v1/articles/$slug',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardCmsArticlesArticleIdPreviewRoute =
+  DashboardCmsArticlesArticleIdPreviewRouteImport.update({
+    id: '/articles_/$articleId_/preview',
+    path: '/articles/$articleId/preview',
+    getParentRoute: () => DashboardCmsRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -595,88 +595,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/verify-2fa': {
-      id: '/verify-2fa'
-      path: '/verify-2fa'
-      fullPath: '/verify-2fa'
-      preLoaderRoute: typeof Verify2faRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss.xml': {
-      id: '/rss.xml'
-      path: '/rss.xml'
-      fullPath: '/rss.xml'
-      preLoaderRoute: typeof RssDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/robots.txt': {
-      id: '/robots.txt'
-      path: '/robots.txt'
-      fullPath: '/robots.txt'
-      preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/llms.txt': {
-      id: '/llms.txt'
-      path: '/llms.txt'
-      fullPath: '/llms.txt'
-      preLoaderRoute: typeof LlmsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookie': {
-      id: '/cookie'
-      path: '/cookie'
-      fullPath: '/cookie'
-      preLoaderRoute: typeof CookieRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/career': {
-      id: '/career'
-      path: '/career'
-      fullPath: '/career'
-      preLoaderRoute: typeof CareerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$archiveSlug': {
@@ -686,19 +609,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArchiveSlugRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
+    '/career': {
+      id: '/career'
+      path: '/career'
+      fullPath: '/career'
+      preLoaderRoute: typeof CareerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookie': {
+      id: '/cookie'
+      path: '/cookie'
+      fullPath: '/cookie'
+      preLoaderRoute: typeof CookieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-2fa': {
+      id: '/verify-2fa'
+      path: '/verify-2fa'
+      fullPath: '/verify-2fa'
+      preLoaderRoute: typeof Verify2faRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/$archiveSlug/': {
       id: '/$archiveSlug/'
@@ -707,20 +700,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArchiveSlugIndexRouteImport
       parentRoute: typeof ArchiveSlugRouteRoute
     }
-    '/oauth/consent': {
-      id: '/oauth/consent'
-      path: '/oauth/consent'
-      fullPath: '/oauth/consent'
-      preLoaderRoute: typeof OauthConsentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/media/$': {
-      id: '/media/$'
-      path: '/media/$'
-      fullPath: '/media/$'
-      preLoaderRoute: typeof MediaSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/$archiveSlug/$': {
       id: '/$archiveSlug/$'
       path: '/$'
@@ -728,18 +707,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArchiveSlugSplatRouteImport
       parentRoute: typeof ArchiveSlugRouteRoute
     }
-    '/dashboard/profile': {
-      id: '/dashboard/profile'
-      path: '/profile'
-      fullPath: '/dashboard/profile'
-      preLoaderRoute: typeof DashboardProfileRouteRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/cms': {
-      id: '/dashboard/cms'
-      path: '/cms'
-      fullPath: '/dashboard/cms'
-      preLoaderRoute: typeof DashboardCmsRouteRouteImport
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/admin': {
@@ -749,74 +721,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAdminRouteRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/profile/': {
-      id: '/dashboard/profile/'
-      path: '/'
-      fullPath: '/dashboard/profile/'
-      preLoaderRoute: typeof DashboardProfileIndexRouteImport
-      parentRoute: typeof DashboardProfileRouteRoute
+    '/dashboard/cms': {
+      id: '/dashboard/cms'
+      path: '/cms'
+      fullPath: '/dashboard/cms'
+      preLoaderRoute: typeof DashboardCmsRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/profile': {
+      id: '/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof DashboardProfileRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/media/$': {
+      id: '/media/$'
+      path: '/media/$'
+      fullPath: '/media/$'
+      preLoaderRoute: typeof MediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oauth/consent': {
+      id: '/oauth/consent'
+      path: '/oauth/consent'
+      fullPath: '/oauth/consent'
+      preLoaderRoute: typeof OauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/admin/contacts': {
+      id: '/dashboard/admin/contacts'
+      path: '/contacts'
+      fullPath: '/dashboard/admin/contacts'
+      preLoaderRoute: typeof DashboardAdminContactsRouteImport
+      parentRoute: typeof DashboardAdminRouteRoute
+    }
+    '/dashboard/admin/users': {
+      id: '/dashboard/admin/users'
+      path: '/users'
+      fullPath: '/dashboard/admin/users'
+      preLoaderRoute: typeof DashboardAdminUsersRouteImport
+      parentRoute: typeof DashboardAdminRouteRoute
     }
     '/dashboard/cms/': {
       id: '/dashboard/cms/'
       path: '/'
       fullPath: '/dashboard/cms/'
       preLoaderRoute: typeof DashboardCmsIndexRouteImport
-      parentRoute: typeof DashboardCmsRouteRoute
-    }
-    '/preview/articles/$articleId': {
-      id: '/preview/articles/$articleId'
-      path: '/preview/articles/$articleId'
-      fullPath: '/preview/articles/$articleId'
-      preLoaderRoute: typeof PreviewArticlesArticleIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/profile/danger': {
-      id: '/dashboard/profile/danger'
-      path: '/danger'
-      fullPath: '/dashboard/profile/danger'
-      preLoaderRoute: typeof DashboardProfileDangerRouteImport
-      parentRoute: typeof DashboardProfileRouteRoute
-    }
-    '/dashboard/profile/authorizations': {
-      id: '/dashboard/profile/authorizations'
-      path: '/authorizations'
-      fullPath: '/dashboard/profile/authorizations'
-      preLoaderRoute: typeof DashboardProfileAuthorizationsRouteImport
-      parentRoute: typeof DashboardProfileRouteRoute
-    }
-    '/dashboard/profile/authentication': {
-      id: '/dashboard/profile/authentication'
-      path: '/authentication'
-      fullPath: '/dashboard/profile/authentication'
-      preLoaderRoute: typeof DashboardProfileAuthenticationRouteImport
-      parentRoute: typeof DashboardProfileRouteRoute
-    }
-    '/dashboard/cms/tags': {
-      id: '/dashboard/cms/tags'
-      path: '/tags'
-      fullPath: '/dashboard/cms/tags'
-      preLoaderRoute: typeof DashboardCmsTagsRouteImport
-      parentRoute: typeof DashboardCmsRouteRoute
-    }
-    '/dashboard/cms/organizations': {
-      id: '/dashboard/cms/organizations'
-      path: '/organizations'
-      fullPath: '/dashboard/cms/organizations'
-      preLoaderRoute: typeof DashboardCmsOrganizationsRouteImport
-      parentRoute: typeof DashboardCmsRouteRoute
-    }
-    '/dashboard/cms/media': {
-      id: '/dashboard/cms/media'
-      path: '/media'
-      fullPath: '/dashboard/cms/media'
-      preLoaderRoute: typeof DashboardCmsMediaRouteImport
-      parentRoute: typeof DashboardCmsRouteRoute
-    }
-    '/dashboard/cms/categories': {
-      id: '/dashboard/cms/categories'
-      path: '/categories'
-      fullPath: '/dashboard/cms/categories'
-      preLoaderRoute: typeof DashboardCmsCategoriesRouteImport
       parentRoute: typeof DashboardCmsRouteRoute
     }
     '/dashboard/cms/articles': {
@@ -826,60 +784,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCmsArticlesRouteImport
       parentRoute: typeof DashboardCmsRouteRoute
     }
-    '/dashboard/admin/users': {
-      id: '/dashboard/admin/users'
-      path: '/users'
-      fullPath: '/dashboard/admin/users'
-      preLoaderRoute: typeof DashboardAdminUsersRouteImport
-      parentRoute: typeof DashboardAdminRouteRoute
-    }
-    '/dashboard/admin/contacts': {
-      id: '/dashboard/admin/contacts'
-      path: '/contacts'
-      fullPath: '/dashboard/admin/contacts'
-      preLoaderRoute: typeof DashboardAdminContactsRouteImport
-      parentRoute: typeof DashboardAdminRouteRoute
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/cms/articles_/new': {
-      id: '/dashboard/cms/articles_/new'
-      path: '/articles/new'
-      fullPath: '/dashboard/cms/articles/new'
-      preLoaderRoute: typeof DashboardCmsArticlesNewRouteImport
+    '/dashboard/cms/categories': {
+      id: '/dashboard/cms/categories'
+      path: '/categories'
+      fullPath: '/dashboard/cms/categories'
+      preLoaderRoute: typeof DashboardCmsCategoriesRouteImport
       parentRoute: typeof DashboardCmsRouteRoute
     }
-    '/dashboard/cms/articles_/$articleId': {
-      id: '/dashboard/cms/articles_/$articleId'
-      path: '/articles/$articleId'
-      fullPath: '/dashboard/cms/articles/$articleId'
-      preLoaderRoute: typeof DashboardCmsArticlesArticleIdRouteImport
+    '/dashboard/cms/media': {
+      id: '/dashboard/cms/media'
+      path: '/media'
+      fullPath: '/dashboard/cms/media'
+      preLoaderRoute: typeof DashboardCmsMediaRouteImport
       parentRoute: typeof DashboardCmsRouteRoute
     }
-    '/dashboard/admin/users_/new': {
-      id: '/dashboard/admin/users_/new'
-      path: '/users/new'
-      fullPath: '/dashboard/admin/users/new'
-      preLoaderRoute: typeof DashboardAdminUsersNewRouteImport
-      parentRoute: typeof DashboardAdminRouteRoute
+    '/dashboard/cms/organizations': {
+      id: '/dashboard/cms/organizations'
+      path: '/organizations'
+      fullPath: '/dashboard/cms/organizations'
+      preLoaderRoute: typeof DashboardCmsOrganizationsRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
     }
-    '/api/content/v1/tags': {
-      id: '/api/content/v1/tags'
-      path: '/api/content/v1/tags'
-      fullPath: '/api/content/v1/tags'
-      preLoaderRoute: typeof ApiContentV1TagsRouteImport
-      parentRoute: typeof rootRouteImport
+    '/dashboard/cms/tags': {
+      id: '/dashboard/cms/tags'
+      path: '/tags'
+      fullPath: '/dashboard/cms/tags'
+      preLoaderRoute: typeof DashboardCmsTagsRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
     }
-    '/api/content/v1/categories': {
-      id: '/api/content/v1/categories'
-      path: '/api/content/v1/categories'
-      fullPath: '/api/content/v1/categories'
-      preLoaderRoute: typeof ApiContentV1CategoriesRouteImport
+    '/dashboard/profile/': {
+      id: '/dashboard/profile/'
+      path: '/'
+      fullPath: '/dashboard/profile/'
+      preLoaderRoute: typeof DashboardProfileIndexRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/authentication': {
+      id: '/dashboard/profile/authentication'
+      path: '/authentication'
+      fullPath: '/dashboard/profile/authentication'
+      preLoaderRoute: typeof DashboardProfileAuthenticationRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/authorizations': {
+      id: '/dashboard/profile/authorizations'
+      path: '/authorizations'
+      fullPath: '/dashboard/profile/authorizations'
+      preLoaderRoute: typeof DashboardProfileAuthorizationsRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/dashboard/profile/danger': {
+      id: '/dashboard/profile/danger'
+      path: '/danger'
+      fullPath: '/dashboard/profile/danger'
+      preLoaderRoute: typeof DashboardProfileDangerRouteImport
+      parentRoute: typeof DashboardProfileRouteRoute
+    }
+    '/preview/articles/$articleId': {
+      id: '/preview/articles/$articleId'
+      path: '/preview/articles/$articleId'
+      fullPath: '/preview/articles/$articleId'
+      preLoaderRoute: typeof PreviewArticlesArticleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/cms/media/upload': {
@@ -889,11 +854,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCmsMediaUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/content/v1/categories': {
+      id: '/api/content/v1/categories'
+      path: '/api/content/v1/categories'
+      fullPath: '/api/content/v1/categories'
+      preLoaderRoute: typeof ApiContentV1CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/content/v1/tags': {
+      id: '/api/content/v1/tags'
+      path: '/api/content/v1/tags'
+      fullPath: '/api/content/v1/tags'
+      preLoaderRoute: typeof ApiContentV1TagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/admin/users_/new': {
+      id: '/dashboard/admin/users_/new'
+      path: '/users/new'
+      fullPath: '/dashboard/admin/users/new'
+      preLoaderRoute: typeof DashboardAdminUsersNewRouteImport
+      parentRoute: typeof DashboardAdminRouteRoute
+    }
+    '/dashboard/cms/articles_/$articleId': {
+      id: '/dashboard/cms/articles_/$articleId'
+      path: '/articles/$articleId'
+      fullPath: '/dashboard/cms/articles/$articleId'
+      preLoaderRoute: typeof DashboardCmsArticlesArticleIdRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/articles_/new': {
+      id: '/dashboard/cms/articles_/new'
+      path: '/articles/new'
+      fullPath: '/dashboard/cms/articles/new'
+      preLoaderRoute: typeof DashboardCmsArticlesNewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
     '/api/content/v1/articles/': {
       id: '/api/content/v1/articles/'
       path: '/api/content/v1/articles'
       fullPath: '/api/content/v1/articles/'
       preLoaderRoute: typeof ApiContentV1ArticlesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/content/v1/articles/$slug': {
+      id: '/api/content/v1/articles/$slug'
+      path: '/api/content/v1/articles/$slug'
+      fullPath: '/api/content/v1/articles/$slug'
+      preLoaderRoute: typeof ApiContentV1ArticlesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/cms/articles_/$articleId_/preview': {
@@ -902,13 +909,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/cms/articles/$articleId/preview'
       preLoaderRoute: typeof DashboardCmsArticlesArticleIdPreviewRouteImport
       parentRoute: typeof DashboardCmsRouteRoute
-    }
-    '/api/content/v1/articles/$slug': {
-      id: '/api/content/v1/articles/$slug'
-      path: '/api/content/v1/articles/$slug'
-      fullPath: '/api/content/v1/articles/$slug'
-      preLoaderRoute: typeof ApiContentV1ArticlesSlugRouteImport
-      parentRoute: typeof rootRouteImport
     }
   }
 }

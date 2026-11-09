@@ -116,7 +116,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-dvh flex-col bg-slate-950 text-center text-white">
+    <div className="flex min-h-dvh flex-col bg-canvas text-center text-white">
       <main className="flex flex-1 items-center justify-center px-6">
         <div className="flex max-w-lg flex-col gap-4">
           <h1 className="display-font text-3xl font-semibold">Pagina non trovata</h1>
@@ -140,7 +140,7 @@ function RootDocument() {
       <head>
         <HeadContent />
       </head>
-      <body className="min-h-dvh w-full bg-slate-950">
+      <body className="min-h-dvh w-full bg-canvas">
         <CookieConsentProvider>
           <Outlet />
           <Scripts />

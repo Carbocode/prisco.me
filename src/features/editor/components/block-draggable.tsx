@@ -118,7 +118,7 @@ function AddBlockButton() {
             <DropdownMenuTrigger
               render={
                 <Button
-                  className="size-6 shrink-0 p-0 text-muted-foreground"
+                  className="size-6 shrink-0"
                   variant="ghost"
                   data-plate-prevent-deselect
                   aria-label="Inserisci un blocco"
@@ -131,7 +131,10 @@ function AddBlockButton() {
         />
         <TooltipContent>Inserisci un blocco</TooltipContent>
       </Tooltip>
-      <DropdownMenuContent align="start" className="max-h-[70vh] w-56 overflow-y-auto">
+      <DropdownMenuContent
+        align="start"
+        className="max-h-(--layout-max-h-viewport-content) w-56 overflow-y-auto"
+      >
         {INSERT_GROUPS.map((group, index) => (
           <React.Fragment key={group.group}>
             {index > 0 && <DropdownMenuSeparator />}
@@ -184,7 +187,7 @@ function BlockMenu({ handleRef }: { handleRef: React.Ref<HTMLButtonElement> }) {
         render={
           <Button
             ref={handleRef}
-            className="size-6 shrink-0 cursor-grab p-0 text-muted-foreground active:cursor-grabbing"
+            className="size-6 shrink-0 cursor-grab active:cursor-grabbing"
             variant="ghost"
             data-plate-prevent-deselect
             aria-label="Trascina il blocco (tasto destro per il menu)"
@@ -193,10 +196,10 @@ function BlockMenu({ handleRef }: { handleRef: React.Ref<HTMLButtonElement> }) {
           </Button>
         }
       />
-      <ContextMenuContent className="min-w-[180px]">
+      <ContextMenuContent className="min-w-45">
         <ContextMenuSub>
           <ContextMenuSubTrigger>Trasforma in</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="max-h-[70vh] overflow-y-auto">
+          <ContextMenuSubContent className="max-h-(--layout-max-h-viewport-content) overflow-y-auto">
             {TURN_INTO_GROUPS.map((group, index) => (
               <React.Fragment key={group.group}>
                 {index > 0 && <ContextMenuSeparator />}

@@ -174,14 +174,13 @@ export function ArticleForm({
   const [publishedAt, setPublishedAt] = useState(
     article?.publishedAt ? localDateTime(article.publishedAt) : "",
   );
+  const [renderTime, setRenderTime] = useState(() => Date.now());
   const [version, setVersion] = useState(article?.version ?? 0);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [pending, setPending] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [conflict, setConflict] = useState(false);
-  useEffect(() => {
-    if (!slugTouched) setSlug(slugify(title));
-  }, [slugTouched, title]);
+  const effectiveSlug = slugTouched ? slug : slugify(title);
   useEffect(() => {
     const guard = (event: BeforeUnloadEvent) => {
       if (dirty) event.preventDefault();
@@ -228,7 +227,7 @@ export function ArticleForm({
     if (pending) return;
     const validationError = validateArticleInput({
       title,
-      slug,
+      slug: effectiveSlug,
       categoryIds,
       projectSortOrder,
     });
@@ -243,7 +242,7 @@ export function ArticleForm({
     try {
       const base = {
         title,
-        slug,
+        slug: effectiveSlug,
         excerpt: excerpt || null,
         content,
         seoTitle: seoTitle || null,
@@ -334,7 +333,7 @@ export function ArticleForm({
     : "Nuova bozza";
   return (
     <form
-      className="flex flex-col xl:h-[calc(100svh-3.5rem)] xl:overflow-hidden"
+      className="flex flex-col xl:h-(--layout-h-hero-viewport) xl:overflow-hidden"
       noValidate
       onSubmit={(event) => {
         event.preventDefault();
@@ -385,7 +384,7 @@ export function ArticleForm({
                 <Send data-icon="inline-start" />
                 {dirty
                   ? "Salva prima di pubblicare"
-                  : publishedAt && new Date(publishedAt) > new Date()
+                  : publishedAt && new Date(publishedAt).getTime() > renderTime
                     ? "Programma pubblicazione"
                     : "Pubblica ora"}
               </Button>
@@ -426,7 +425,7 @@ export function ArticleForm({
           </fieldset>
         </div>
         <span className="text-sm text-muted-foreground">
-          /{publicArchiveSlug}/{slug || "slug-articolo"}
+          /{publicArchiveSlug}/{effectiveSlug || "slug-articolo"}
         </span>
       </header>
       {conflict ? (
@@ -496,7 +495,7 @@ export function ArticleForm({
                       <FieldLabel htmlFor="article-slug">Slug</FieldLabel>
                       <Input
                         id="article-slug"
-                        value={slug}
+                        value={effectiveSlug}
                         pattern={slugInputPattern}
                         title="Usa lettere, numeri e trattini; lo slug non puo contenere solo numeri"
                         onChange={(event) => {
@@ -507,7 +506,7 @@ export function ArticleForm({
                       />
                     </Field>
                     {article &&
-                    slug !== article.slug &&
+                    effectiveSlug !== article.slug &&
                     ["published", "scheduled"].includes(article.status) ? (
                       <Alert>
                         <AlertTitle>Redirect automatico</AlertTitle>
@@ -599,7 +598,10 @@ export function ArticleForm({
                         id="published-at"
                         type="datetime-local"
                         value={publishedAt}
-                        onChange={(event) => setPublishedAt(event.target.value)}
+                        onChange={(event) => {
+                          setPublishedAt(event.target.value);
+                          setRenderTime(Date.now());
+                        }}
                       />
                     </Field>
                   </FieldGroup>
@@ -640,7 +642,7 @@ export function ArticleForm({
                             <Item key={tag.id} variant="outline" size="xs">
                               <ItemContent>
                                 <ItemTitle>
-                                  <Badge className={tag.color}>
+                                  <Badge>
                                     <SkillGlyph skill={tag} size={14} />
                                     {tag.name}
                                   </Badge>

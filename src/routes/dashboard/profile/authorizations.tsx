@@ -72,10 +72,10 @@ function AuthorizationsPage() {
     if (clientResult.data) {
       setClients(
         clientResult.data.map((item) => ({
-          clientId: typeof item.clientId === "string" ? item.clientId : "",
-          name: typeof item.name === "string" ? item.name : null,
-          redirectUris: Array.isArray(item.redirectUris)
-            ? item.redirectUris.filter((value): value is string => typeof value === "string")
+          clientId: typeof item.client_id === "string" ? item.client_id : "",
+          name: typeof item.client_name === "string" ? item.client_name : null,
+          redirectUris: Array.isArray(item.redirect_uris)
+            ? item.redirect_uris.filter((value): value is string => typeof value === "string")
             : [],
         })),
       );
@@ -95,6 +95,7 @@ function AuthorizationsPage() {
   }, []);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
     void refreshApplications();
   }, [refreshApplications]);
 
@@ -107,7 +108,7 @@ function AuthorizationsPage() {
         .map((value) => value.trim())
         .filter(Boolean),
       token_endpoint_auth_method: values.get("public") ? "none" : "client_secret_basic",
-      type: "web",
+      application_type: "web",
     });
     if (result.data) {
       setNewClientSecret({

@@ -106,7 +106,7 @@ export function TurnIntoToolbarButton(props: React.ComponentProps<typeof Dropdow
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger
         render={
-          <ToolbarButton className="min-w-[125px]" pressed={open} tooltip="Trasforma in" isDropdown>
+          <ToolbarButton className="min-w-31.25" pressed={open} tooltip="Trasforma in" isDropdown>
             {selectedItem.label}
           </ToolbarButton>
         }
@@ -121,7 +121,7 @@ export function TurnIntoToolbarButton(props: React.ComponentProps<typeof Dropdow
           label="Turn into"
         >
           {turnIntoItems.map(({ icon, label, value: itemValue }) => (
-            <DropdownMenuRadioItem key={itemValue} className="min-w-[180px]" value={itemValue}>
+            <DropdownMenuRadioItem key={itemValue} className="min-w-45" value={itemValue}>
               {icon}
               {label}
             </DropdownMenuRadioItem>
