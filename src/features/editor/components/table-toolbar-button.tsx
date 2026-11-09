@@ -55,14 +55,14 @@ export function TableToolbarButton() {
           </ToolbarButton>
         }
       />
-      <DropdownMenuContent align="start" className="w-auto! min-w-[220px] p-2">
+      <DropdownMenuContent align="start" className="w-auto! min-w-55">
         <DropdownMenuGroup>
           <DropdownMenuLabel>
             {size.rows > 0 ? `Inserisci tabella ${size.rows} × ${size.cols}` : "Inserisci tabella"}
           </DropdownMenuLabel>
           <div
-            className="grid w-fit gap-1 p-1"
-            style={{ gridTemplateColumns: `repeat(${MAX}, 20px)` }}
+            className="grid w-fit gap-1 p-1 grid-cols-(--dynamic-grid-template-columns)"
+            style={{ "--dynamic-grid-template-columns": `repeat(${MAX}, 20px)` }}
             onMouseLeave={() => setSize({ rows: 0, cols: 0 })}
           >
             {rows.map((r) =>
@@ -72,7 +72,7 @@ export function TableToolbarButton() {
                   type="button"
                   aria-label={`${r} × ${c}`}
                   className={cn(
-                    "size-4 rounded-[3px] border border-border",
+                    "size-4 rounded-xs border border-border",
                     r <= size.rows && c <= size.cols ? "border-brand bg-brand/40" : "bg-muted/50",
                   )}
                   onMouseEnter={() => setSize({ rows: r, cols: c })}

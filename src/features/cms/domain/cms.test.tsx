@@ -247,9 +247,9 @@ describe("CMS domain", () => {
         })}
       </>,
     );
-    expect(html).toContain('style="text-align:center"');
-    expect(plateHtml).toContain('<h2 id="titolo-principale-0" style="line-height:2">');
-    expect(plateHtml).toContain('style="color:#ff0000"');
+    expect(html).toContain('style="--cms-text-align:center"');
+    expect(plateHtml).toContain('<h2 id="titolo-principale-0" style="--cms-line-height:2">');
+    expect(plateHtml).toContain('style="--dynamic-color:#ff0000"');
     expect(plateHtml).toContain("<kbd>Titolo principale</kbd>");
     expect(html).toContain("<u>sottolineato</u>");
     expect(html).toContain("<mark>evidenziato</mark>");

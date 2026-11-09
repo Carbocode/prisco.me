@@ -1,10 +1,9 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowRight, FilePlus2, FileText } from "lucide-react";
 import { useMemo } from "react";
 
-import { DashboardDataTable } from "@/components/dashboard-data-table";
+import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -38,7 +37,7 @@ function CmsDashboardContent() {
   const recent = [...articles]
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
     .slice(0, 8);
-  const columns = useMemo<ColumnDef<(typeof recent)[number]>[]>(
+  const columns = useMemo<DashboardColumnDef<(typeof recent)[number]>[]>(
     () => [
       {
         accessorKey: "title",
@@ -118,7 +117,7 @@ function CmsDashboardContent() {
               getRowId={(article) => article.id}
             />
           ) : (
-            <Empty className="p-8">
+            <Empty>
               <EmptyHeader>
                 <EmptyMedia variant="icon">
                   <FileText />
@@ -141,11 +140,9 @@ function StatCard({ title, value, hint }: { title: string; value: number; hint: 
     <Card size="sm">
       <CardHeader>
         <CardDescription>{title}</CardDescription>
-        <CardAction className="font-heading text-2xl font-semibold tabular-nums">
-          {value}
-        </CardAction>
+        <CardAction>{value}</CardAction>
       </CardHeader>
-      <CardContent className="text-xs text-muted-foreground">{hint}</CardContent>
+      <CardContent>{hint}</CardContent>
     </Card>
   );
 }

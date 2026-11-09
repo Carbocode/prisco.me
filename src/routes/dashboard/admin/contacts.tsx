@@ -1,10 +1,9 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { createFileRoute } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Building2, Eye, Inbox, Mail, Phone } from "lucide-react";
 import { useState } from "react";
 
-import { DashboardDataTable } from "@/components/dashboard-data-table";
+import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +46,7 @@ function ContactRequestsPage() {
   const requests = Route.useLoaderData();
   const [selectedRequest, setSelectedRequest] = useState<ContactRequest | null>(null);
 
-  const columns: ColumnDef<ContactRequest>[] = [
+  const columns: DashboardColumnDef<ContactRequest>[] = [
     {
       accessorKey: "name",
       header: "Contatto",
@@ -162,7 +161,7 @@ function ContactRequestDialog({
 }) {
   return (
     <Dialog open={Boolean(request)} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-xl">
+      <DialogContent className="max-h-(--layout-max-h-dialog-viewport) overflow-y-auto sm:max-w-xl">
         {request ? (
           <>
             <DialogHeader>

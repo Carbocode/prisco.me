@@ -365,10 +365,7 @@ function DashboardBreadcrumb({ pathname, pageTitle }: { pathname: string; pageTi
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap">
         <BreadcrumbItem>
-          <BreadcrumbLink
-            className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
-            render={<Link to="/" aria-label="Torna alla home" />}
-          >
+          <BreadcrumbLink render={<Link to="/" aria-label="Torna alla home" />}>
             <House />
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -386,7 +383,7 @@ function DashboardBreadcrumb({ pathname, pageTitle }: { pathname: string; pageTi
           </>
         ) : null}
         <BreadcrumbItem className="min-w-0">
-          <BreadcrumbPage className="truncate">{pageTitle}</BreadcrumbPage>
+          <BreadcrumbPage>{pageTitle}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

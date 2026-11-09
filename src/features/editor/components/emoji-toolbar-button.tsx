@@ -78,10 +78,7 @@ export function EmojiPopover({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger render={control} />
-      <PopoverContent
-        align="start"
-        className="w-auto border-0 bg-transparent p-0 shadow-none ring-0"
-      >
+      <PopoverContent align="start" className="w-auto">
         {children}
       </PopoverContent>
     </Popover>
@@ -176,10 +173,10 @@ const EmojiButton = React.memo(function EmojiButton({
         className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100"
       />
       <span
-        className="relative"
+        className="relative dynamic-font-family"
         data-emoji-set="native"
         style={{
-          fontFamily:
+          "--dynamic-font-family":
             '"Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols',
         }}
       >
@@ -256,14 +253,20 @@ function EmojiPickerContent({
               data-id={categoryId}
               key={categoryId}
               ref={section.root}
-              style={{ width: getRowWidth }}
+              style={{
+                "--dynamic-width":
+                  typeof getRowWidth === "number" ? getRowWidth + "px" : getRowWidth,
+              }}
+              className="w-(--dynamic-width)"
             >
               <div className="sticky -top-px z-1 bg-popover/90 p-1 py-2 font-semibold text-sm backdrop-blur-xs">
                 {i18n.categories[categoryId]}
               </div>
               <div
-                className="relative flex flex-wrap"
-                style={{ height: section.getRows().length * buttonSize.value }}
+                className="relative flex flex-wrap h-(--dynamic-height)"
+                style={{
+                  "--dynamic-height": section.getRows().length * buttonSize.value + "px",
+                }}
               >
                 {isCategoryVisible(categoryId) &&
                   section
@@ -294,7 +297,13 @@ function EmojiPickerContent({
 
   const SearchList = React.useCallback(
     () => (
-      <div data-id="search" style={{ width: getRowWidth }}>
+      <div
+        data-id="search"
+        style={{
+          "--dynamic-width": typeof getRowWidth === "number" ? getRowWidth + "px" : getRowWidth,
+        }}
+        className="w-(--dynamic-width)"
+      >
         <div className="sticky -top-px z-1 bg-popover/90 p-1 py-2 font-semibold text-card-foreground text-sm backdrop-blur-xs">
           {i18n.searchResult}
         </div>
@@ -317,16 +326,26 @@ function EmojiPickerContent({
   return (
     <div
       className={cn(
-        "h-full min-h-[50%] overflow-y-auto overflow-x-hidden px-2",
+        "h-full min-h-50/100 overflow-y-auto overflow-x-hidden px-2",
         "[&::-webkit-scrollbar]:w-4",
         "[&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-button]:size-0",
         "[&::-webkit-scrollbar-thumb]:min-h-11 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted [&::-webkit-scrollbar-thumb]:hover:bg-muted-foreground/25",
         "[&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-popover [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:bg-clip-padding",
       )}
       data-id="scroll"
-      ref={refs.current.contentRoot}
+      ref={(node) => {
+        const ref = refs.current.contentRoot;
+        if (ref) ref.current = node;
+      }}
     >
-      <div className="h-full" ref={refs.current.content}>
+      <div
+        className="h-full"
+        ref={(node) => {
+          const ref = refs.current.content;
+          // oxlint-disable-next-line react/immutability -- Plate owns this mutable DOM ref.
+          if (ref) ref.current = node;
+        }}
+      >
         {isSearching ? SearchList() : EmojiList()}
       </div>
     </div>
@@ -373,7 +392,7 @@ function EmojiPickerSearchAndClear({
       {searchValue && (
         <Button
           aria-label="Cancella"
-          className="absolute top-1/2 right-0.5 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-popover-foreground hover:bg-transparent"
+          className="absolute top-1/2 right-0.5 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center"
           onClick={clearSearch}
           size="icon"
           title={i18n.clear}
@@ -464,11 +483,7 @@ function EmojiPickerNavigation({
                   render={
                     <Button
                       aria-label={i18n.categories[id]}
-                      className={cn(
-                        "h-fit rounded-full fill-current p-1.5 text-muted-foreground hover:bg-muted hover:text-muted-foreground",
-                        id === focusedCategory &&
-                          "pointer-events-none bg-accent fill-current text-accent-foreground",
-                      )}
+                      className={cn("h-fit", id === focusedCategory && "pointer-events-none   ")}
                       onClick={() => {
                         onClick(id);
                       }}

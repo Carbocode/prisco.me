@@ -95,6 +95,7 @@ function AuthorizationsPage() {
   }, []);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
     void refreshApplications();
   }, [refreshApplications]);
 

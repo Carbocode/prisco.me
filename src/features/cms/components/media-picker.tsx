@@ -1,5 +1,5 @@
 import { ArrowDownUp, ChevronLeft, ChevronRight, ImageIcon, Search } from "lucide-react";
-import { useEffect, useId, useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
 import { HoverAnimatedImage } from "@/components/hover-animated-image";
 import { Button } from "@/components/ui/button";
@@ -99,7 +99,7 @@ export function MediaPicker({
           <Button
             type="button"
             variant="outline"
-            className={cn("w-full min-w-0 justify-start", !compact && "h-auto py-2")}
+            className={cn("w-full min-w-0 justify-start", !compact && "h-auto ")}
           />
         }
       >
@@ -117,7 +117,7 @@ export function MediaPicker({
         )}
         <span className="truncate">{selected ? mediaDisplayName(selected) : emptyLabel}</span>
       </DialogTrigger>
-      <DialogContent className="flex max-h-[min(90dvh,56rem)] w-[calc(100%-2rem)] max-w-6xl flex-col sm:max-w-6xl">
+      <DialogContent className="flex max-h-(--layout-max-h-diagram-dialog) w-(--layout-w-dialog-inset) max-w-6xl flex-col sm:max-w-6xl">
         <DialogHeader>
           <DialogTitle>{label}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -173,14 +173,9 @@ export function MediaBrowser({
   const safePage = Math.min(page, pages);
   const visible = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
-  useEffect(() => setPage(1), [query, sort]);
-  useEffect(() => {
-    if (page > pages) setPage(pages);
-  }, [page, pages]);
-
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <div className="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_14rem]">
+      <div className="grid items-end gap-3 sm:grid-cols-(--layout-grid-cols-author)">
         <Field>
           <FieldLabel htmlFor={searchId}>Cerca nella libreria</FieldLabel>
           <InputGroup>
@@ -192,7 +187,10 @@ export function MediaBrowser({
               type="search"
               value={query}
               placeholder="Nome visuale o filename"
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setPage(1);
+              }}
             />
           </InputGroup>
         </Field>
@@ -202,8 +200,11 @@ export function MediaBrowser({
             items={mediaSorts}
             value={sort}
             onValueChange={(nextValue) => {
-              if (mediaSorts.some((item) => item.value === nextValue))
-                setSort(nextValue as MediaSort); // oxlint-disable-line typescript/no-unsafe-type-assertion
+              const selectedSort = mediaSorts.find((item) => item.value === nextValue);
+              if (selectedSort) {
+                setSort(selectedSort.value);
+                setPage(1);
+              }
             }}
           >
             <SelectTrigger className="w-full">
@@ -222,7 +223,7 @@ export function MediaBrowser({
           </Select>
         </Field>
       </div>
-      <ScrollArea className="h-[min(55dvh,36rem)] min-h-48 rounded-lg border">
+      <ScrollArea className="h-(--layout-h-diagram-preview) min-h-48">
         {filtered.length ? (
           <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {visible.map((item) => {

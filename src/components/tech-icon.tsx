@@ -88,7 +88,7 @@ export function TechIcon({ skill, compact = false }: { skill: SkillVisual; compa
       >
         <BrandIcon visual={visual} size={compact ? 15 : 19} />
       </span>
-      <span className="text-slate-200">{visual.label}</span>
+      <span className="text-ink-soft">{visual.label}</span>
     </span>
   );
 }
@@ -119,7 +119,7 @@ export function SkillChip({ skill }: { skill: SkillVisual }) {
   const visual = resolveVisual(skill);
 
   return (
-    <Badge className={cn(visual.tint, "gap-1.5 px-2 py-0.5 text-[11px]")}>
+    <Badge>
       <BrandIcon visual={visual} size={12} />
       <span>{visual.label}</span>
     </Badge>

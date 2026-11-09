@@ -41,6 +41,7 @@ const resizeHandleVariants = cva("absolute z-40", {
 
 export function ResizeHandle({
   className,
+  direction,
   options,
   ...props
 }: React.ComponentProps<typeof ResizeHandlePrimitive> & VariantProps<typeof resizeHandleVariants>) {
@@ -51,7 +52,11 @@ export function ResizeHandle({
 
   return (
     <div
-      className={cn(resizeHandleVariants({ direction: options?.direction }), className)}
+      className={cn(
+        resizeHandleVariants({ direction: options?.direction }),
+        direction && direction !== "top" && mediaResizeHandleVariants({ direction }),
+        className,
+      )}
       data-resizing={state.isResizing}
       {...resizeHandle.props}
       {...props}

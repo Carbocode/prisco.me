@@ -1,5 +1,3 @@
-import type { CSSProperties } from "react";
-
 import Cloud from "@/components/cloud";
 
 type CloudLane = {
@@ -26,17 +24,21 @@ export default function CloudCarousel() {
       {cloudLanes.map((cloud) => (
         <div
           key={cloud.id}
-          className="cloud-carousel-item absolute"
-          style={
-            {
-              top: cloud.top,
-              "--cloud-duration": cloud.duration,
-              "--cloud-delay": cloud.delay,
-              "--cloud-width": cloud.width,
-            } as CSSProperties
-          }
+          className="cloud-carousel-item absolute dynamic-top"
+          style={{
+            "--dynamic-top": cloud.top,
+            "--cloud-duration": cloud.duration,
+            "--cloud-delay": cloud.delay,
+            "--cloud-width": cloud.width,
+          }}
         >
-          <Cloud variant={cloud.variant} className="max-w-none" style={{ width: cloud.width }} />
+          <Cloud
+            variant={cloud.variant}
+            className="max-w-none w-(--dynamic-width)"
+            style={{
+              "--dynamic-width": typeof cloud.width === "number" ? cloud.width + "px" : cloud.width,
+            }}
+          />
         </div>
       ))}
     </div>

@@ -36,15 +36,15 @@ function CookiePage() {
       description="Informativa completa sui cookie e sugli strumenti di tracciamento che possono essere utilizzati durante la navigazione."
     >
       <Section>
-        <div className="mx-auto max-w-4xl space-y-10 text-slate-300">
+        <div className="mx-auto max-w-4xl space-y-10 text-ink-body">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
+            <p className="text-xs font-semibold uppercase tracking-overline-wide text-link">
               Informativa cookie
             </p>
             <h1 className="display-font mt-4 text-3xl font-semibold text-white sm:text-4xl">
               Cookie e altri strumenti di tracciamento
             </h1>
-            <p className="mt-4 text-lg leading-8 text-slate-300">
+            <p className="mt-4 text-lg leading-8 text-ink-body">
               La presente informativa integra l&apos;informativa privacy e descrive le tecnologie
               utilizzate dal sito, le finalità perseguite e le modalità con cui l&apos;utente può
               esprimere, rifiutare o modificare il consenso.
@@ -84,14 +84,14 @@ function CookiePage() {
               per il sito personale <strong className="text-white">prisco.me</strong>. Per domande o
               richieste è possibile utilizzare la pagina{" "}
               <Link
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 to="/contact"
               >
                 Contatti
               </Link>{" "}
               o il profilo{" "}
               <a
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 href="https://www.linkedin.com/in/vincenzoprisco/"
                 target="_blank"
                 rel="noreferrer"
@@ -276,7 +276,7 @@ function CookiePage() {
               portabilità e revoca del consenso nei casi previsti dagli articoli 15-22 GDPR. Le
               richieste possono essere inviate tramite la pagina{" "}
               <Link
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 to="/contact"
               >
                 Contatti
@@ -287,7 +287,7 @@ function CookiePage() {
               L&apos;interessato può proporre reclamo al Garante per la protezione dei dati
               personali. Le linee guida ufficiali sono disponibili sul sito del{" "}
               <a
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 href="https://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/9677876"
                 target="_blank"
                 rel="noreferrer"
@@ -328,7 +328,7 @@ function LegalSection({ title, children }: { title: string; children: React.Reac
   return (
     <section className="space-y-4">
       <h2 className="display-font text-2xl font-semibold text-white">{title}</h2>
-      <div className="space-y-4 text-[0.98rem] leading-8">{children}</div>
+      <div className="space-y-4 text-base leading-8">{children}</div>
     </section>
   );
 }

@@ -1,4 +1,4 @@
-import type { CSSProperties, HTMLAttributes, PropsWithChildren } from "react";
+import type { HTMLAttributes, PropsWithChildren } from "react";
 
 type SkyProps = PropsWithChildren<HTMLAttributes<HTMLDivElement>>;
 
@@ -22,7 +22,7 @@ export default function Sky({ className, children, ...props }: SkyProps) {
 
   return (
     <div className={classes} {...props}>
-      <div className="absolute inset-y-0 left-1/2 w-full min-w-[48rem] -translate-x-1/2 md:inset-0 md:min-w-0 md:translate-x-0">
+      <div className="absolute inset-y-0 left-1/2 w-full min-w-192 -translate-x-1/2 md:inset-0 md:min-w-0 md:translate-x-0">
         <img
           src="/home/small-stars.svg"
           alt=""
@@ -36,16 +36,14 @@ export default function Sky({ className, children, ...props }: SkyProps) {
           {shootingStars.map((star) => (
             <span
               key={`${star.top}-${star.right}`}
-              className="shooting-star-runner"
-              style={
-                {
-                  top: star.top,
-                  right: star.right,
-                  "--shooting-star-distance": star.distance,
-                  "--shooting-star-duration": star.duration,
-                  "--shooting-star-delay": star.delay,
-                } as CSSProperties
-              }
+              className="shooting-star-runner dynamic-top dynamic-right"
+              style={{
+                "--dynamic-top": star.top,
+                "--dynamic-right": star.right,
+                "--shooting-star-distance": star.distance,
+                "--shooting-star-duration": star.duration,
+                "--shooting-star-delay": star.delay,
+              }}
             />
           ))}
         </div>

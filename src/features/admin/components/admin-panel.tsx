@@ -1,6 +1,5 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
 import {
   Ban,
   KeyRound,
@@ -17,7 +16,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { formString, formValues } from "@/components/auth-ui";
-import { DashboardDataTable } from "@/components/dashboard-data-table";
+import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -99,6 +98,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
   }, [search]);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
     void loadUsers();
   }, [loadUsers]);
 
@@ -169,7 +169,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
     await loadUsers();
   }
 
-  const columns: ColumnDef<AdminUser>[] = [
+  const columns: DashboardColumnDef<AdminUser>[] = [
     {
       accessorKey: "name",
       header: "Utente",
@@ -324,7 +324,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
           </CardHeader>
           <CardContent>
             <form onSubmit={(event) => void createUser(event)}>
-              <FieldGroup className="grid gap-3 md:grid-cols-2">
+              <FieldGroup className="grid md:grid-cols-2">
                 <Field>
                   <FieldLabel htmlFor="admin-name">Nome</FieldLabel>
                   <Input id="admin-name" name="name" autoComplete="name" required />
@@ -399,6 +399,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
             className="flex max-w-lg items-end gap-2"
             onSubmit={(event) => {
               event.preventDefault();
+              // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
               void loadUsers();
             }}
           >

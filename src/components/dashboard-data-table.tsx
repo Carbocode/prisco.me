@@ -1,12 +1,18 @@
 import {
   flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
+  columnPinningFeature,
+  columnResizingFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  createPaginatedRowModel,
+  rowPaginationFeature,
+  tableFeatures,
   type ColumnDef,
   type PaginationState,
   type Row,
+  type RowData,
   type Updater,
-  useReactTable,
+  useTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
@@ -39,18 +45,31 @@ type ControlledPagination = {
   onChange: (pagination: PaginationState) => void;
 };
 
-type DashboardDataTableProps<TData> = {
-  columns: ColumnDef<TData>[];
+type DashboardDataTableProps<TData extends RowData> = {
+  columns: DashboardColumnDef<TData>[];
   data: TData[];
   getRowId?: (row: TData) => string;
   initialPageSize?: number;
   pagination?: ControlledPagination;
-  renderRow?: (row: Row<TData>) => React.ReactNode;
+  renderRow?: (row: Row<typeof dashboardTableFeatures, TData>) => React.ReactNode;
 };
 
-const pageSizeOptions = [10, 20, 50];
+export type DashboardColumnDef<TData extends RowData> = ColumnDef<
+  typeof dashboardTableFeatures,
+  TData
+>;
 
-export function DashboardDataTable<TData>({
+const pageSizeOptions = [10, 20, 50];
+const dashboardTableFeatures = tableFeatures({
+  columnVisibilityFeature,
+  columnPinningFeature,
+  columnSizingFeature,
+  columnResizingFeature,
+  rowPaginationFeature,
+  paginatedRowModel: createPaginatedRowModel(),
+});
+
+export function DashboardDataTable<TData extends RowData>({
   columns,
   data,
   getRowId,
@@ -71,13 +90,18 @@ export function DashboardDataTable<TData>({
   };
 
   const updatePagination = (updater: Updater<PaginationState>) => {
-    const next = typeof updater === "function" ? updater(currentPagination) : updater;
+    const current = {
+      pageIndex: currentPagination.pageIndex,
+      pageSize: currentPagination.pageSize,
+    };
+    const next = typeof updater === "function" ? updater(current) : updater;
     currentPagination.onChange(next);
   };
 
   const firstColumnId = columnId(columns[0], 0);
   const lastColumnId = columnId(columns.at(-1), columns.length - 1);
-  const table = useReactTable({
+  const table = useTable({
+    features: dashboardTableFeatures,
     data,
     columns,
     defaultColumn: {
@@ -86,16 +110,14 @@ export function DashboardDataTable<TData>({
       maxSize: 600,
     },
     columnResizeMode: "onChange",
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: controlledPagination ? undefined : getPaginationRowModel(),
     getRowId,
     manualPagination: Boolean(controlledPagination),
     onPaginationChange: updatePagination,
     pageCount: currentPagination.pageCount,
     state: {
       columnPinning: {
-        left: firstColumnId ? [firstColumnId] : [],
-        right: lastColumnId && lastColumnId !== firstColumnId ? [lastColumnId] : [],
+        start: firstColumnId ? [firstColumnId] : [],
+        end: lastColumnId && lastColumnId !== firstColumnId ? [lastColumnId] : [],
       },
       pagination: {
         pageIndex: currentPagination.pageIndex,
@@ -116,8 +138,10 @@ export function DashboardDataTable<TData>({
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <Table
-        className="min-w-full table-fixed [&_tbody_tr:hover>td:first-child:not(:only-child)]:bg-muted [&_tbody_tr:hover>td:last-child:not(:only-child)]:bg-muted [&_tbody_tr>td:first-child:not(:only-child)]:sticky [&_tbody_tr>td:first-child:not(:only-child)]:left-0 [&_tbody_tr>td:first-child:not(:only-child)]:bg-background [&_tbody_tr>td:first-child:not(:only-child)]:z-10 [&_tbody_tr>td:last-child:not(:only-child)]:sticky [&_tbody_tr>td:last-child:not(:only-child)]:right-0 [&_tbody_tr>td:last-child:not(:only-child)]:bg-background [&_tbody_tr>td:last-child:not(:only-child)]:z-10"
-        style={{ width: table.getTotalSize() }}
+        className="min-w-full table-fixed [&_tbody_tr>td:first-child:not(:only-child)]:sticky [&_tbody_tr>td:first-child:not(:only-child)]:left-0 [&_tbody_tr>td:first-child:not(:only-child)]:z-10 [&_tbody_tr>td:last-child:not(:only-child)]:sticky [&_tbody_tr>td:last-child:not(:only-child)]:right-0 [&_tbody_tr>td:last-child:not(:only-child)]:z-10 w-(--dynamic-width)"
+        style={{
+          "--dynamic-width": table.getTotalSize() + "px",
+        }}
       >
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -128,11 +152,16 @@ export function DashboardDataTable<TData>({
                   <TableHead
                     key={header.id}
                     className={cn(
-                      "relative z-20 bg-background",
-                      pinned === "left" && "sticky left-0",
-                      pinned === "right" && "sticky right-0",
+                      cn(
+                        "relative z-20",
+                        pinned === "start" && "sticky left-0",
+                        pinned === "end" && "sticky right-0",
+                      ),
+                      "w-(--dynamic-width)",
                     )}
-                    style={{ width: header.getSize() }}
+                    style={{
+                      "--dynamic-width": header.getSize() + "px",
+                    }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -175,11 +204,16 @@ export function DashboardDataTable<TData>({
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        "overflow-hidden text-ellipsis",
-                        pinned === "left" && "sticky left-0 bg-background",
-                        pinned === "right" && "sticky right-0 bg-background",
+                        cn(
+                          "overflow-hidden",
+                          pinned === "start" && "sticky left-0 ",
+                          pinned === "end" && "sticky right-0 ",
+                        ),
+                        "w-(--dynamic-width)",
                       )}
-                      style={{ width: cell.column.getSize() }}
+                      style={{
+                        "--dynamic-width": cell.column.getSize() + "px",
+                      }}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -252,7 +286,10 @@ export function DashboardDataTable<TData>({
   );
 }
 
-function columnId<TData>(column: ColumnDef<TData> | undefined, index: number) {
+function columnId<TData extends RowData>(
+  column: DashboardColumnDef<TData> | undefined,
+  index: number,
+) {
   if (!column) return undefined;
   if ("id" in column && column.id) return column.id;
   if ("accessorKey" in column && typeof column.accessorKey === "string") return column.accessorKey;

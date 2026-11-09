@@ -290,7 +290,7 @@ export default function ContactRequestForm() {
           </FieldSet>
         </CardContent>
       </form>
-      <CardFooter className="flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+      <CardFooter className="flex-col items-stretch sm:flex-row sm:flex-wrap sm:items-center">
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
             <Button

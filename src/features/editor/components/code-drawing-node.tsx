@@ -209,8 +209,8 @@ function CodeDrawingPreview({
 
   return (
     <div
-      className="group my-4 flex w-full flex-col items-stretch border bg-muted/50"
-      style={{ minHeight: `${DEFAULT_MIN_HEIGHT}px` }}
+      className="group my-4 flex w-full flex-col items-stretch border bg-muted/50 dynamic-min-height"
+      style={{ "--dynamic-min-height": `${DEFAULT_MIN_HEIGHT}px` }}
     >
       {toolbar && (
         <div className="flex items-center justify-between gap-2 border-b p-2">
@@ -260,7 +260,7 @@ function CodeDrawingToolbar({
   return (
     <div className="flex items-center gap-2" role="toolbar">
       <Select onValueChange={(v) => v && onDrawingTypeChange(v)} value={drawingType}>
-        <SelectTrigger className="h-8 w-[120px] border-0 bg-muted/50 text-xs shadow-none">
+        <SelectTrigger className="h-8 w-30">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -275,7 +275,7 @@ function CodeDrawingToolbar({
       </Select>
 
       <Select onValueChange={(v) => v && onDrawingModeChange(v)} value={viewMode}>
-        <SelectTrigger className="h-8 w-[90px] border-0 bg-muted/50 text-xs shadow-none">
+        <SelectTrigger className="h-8 w-22.5">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -326,12 +326,12 @@ function CodeDrawingTextarea({
     >
       <div className="relative flex-1 rounded-md">
         <pre
-          className="m-0 overflow-x-auto p-3 font-mono text-sm leading-[normal] tab-2 print:break-inside-avoid"
-          style={{ minHeight: `${DEFAULT_MIN_HEIGHT}px`, height: "100%" }}
+          className="m-0 overflow-x-auto p-3 font-mono text-sm leading-normal tab-2 print:break-inside-avoid dynamic-min-height h-(--dynamic-height)"
+          style={{ "--dynamic-min-height": `${DEFAULT_MIN_HEIGHT}px`, "--dynamic-height": "100%" }}
         >
           <code className="block h-full w-full">
             <textarea
-              className="m-0 h-full w-full resize-none overflow-auto border-0 bg-transparent p-0 font-mono text-sm outline-none"
+              className="m-0 h-full w-full resize-none overflow-auto border-0 bg-transparent p-0 font-mono text-sm outline-none dynamic-min-height"
               onChange={(e) => {
                 setInternalCode(e.target.value);
                 onCodeChange(e);
@@ -339,7 +339,7 @@ function CodeDrawingTextarea({
               placeholder="Scrivi qui il codice del diagramma…"
               readOnly={readOnly}
               spellCheck={false}
-              style={{ minHeight: `${DEFAULT_MIN_HEIGHT}px` }}
+              style={{ "--dynamic-min-height": `${DEFAULT_MIN_HEIGHT}px` }}
               value={internalCode}
             />
           </code>
