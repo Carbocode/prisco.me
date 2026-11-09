@@ -96,10 +96,7 @@ export function ContentBreadcrumb({
     <Breadcrumb className={cn("min-w-0 overflow-hidden", className)}>
       <BreadcrumbList className="min-w-0 flex-nowrap overflow-hidden">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink
-            className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
-            render={<Link to="/" aria-label="Torna alla home" />}
-          >
+          <BreadcrumbLink render={<Link to="/" aria-label="Torna alla home" />}>
             <House />
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -116,7 +113,7 @@ export function ContentBreadcrumb({
                 )}
               >
                 {isCurrentPage ? (
-                  <BreadcrumbPage className="block min-w-0 truncate">{item.name}</BreadcrumbPage>
+                  <BreadcrumbPage className="block min-w-0">{item.name}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink render={<a href={item.url} aria-label={item.name} />}>
                     {item.name}
@@ -212,7 +209,7 @@ export function ContentArchivePage({
   const visibleArticles = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   const renderFilterFields = (idSuffix: "mobile" | "desktop", includeReset: boolean) => (
-    <FieldGroup className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <FieldGroup className="grid items-end sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       <Field>
         <FieldLabel htmlFor={`content-search-${idSuffix}`}>Cerca</FieldLabel>
         <Input
@@ -312,7 +309,7 @@ export function ContentArchivePage({
     <PageShell title={title} description={description} hero={false}>
       <ArchiveHero eyebrow={eyebrow} title={title} description={description} hero={hero} />
       <ContentBreadcrumb
-        className="mx-auto w-full max-w-6xl px-6 py-6 sm:py-8"
+        className="mx-auto w-full max-w-6xl"
         items={[{ name: title, url: `/${archiveSlug}` }]}
       />
       <Section className="pt-4 sm:pt-6">
@@ -449,19 +446,17 @@ function ArchiveHero({
   return (
     <>
       <section className="bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28">
-        <div className="mx-auto grid w-full min-w-0 max-w-[96rem] gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
+        <div className="mx-auto grid w-full min-w-0 max-w-384 gap-8 lg:grid-cols-(--layout-grid-cols-feature-reverse) lg:items-center lg:gap-12 xl:gap-16">
           <div className="flex flex-col items-start justify-center gap-5 py-6 lg:py-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-300">
-              {eyebrow}
-            </p>
-            <h1 className="display-font text-4xl leading-[1.02] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+            <p className="text-xs font-semibold uppercase tracking-caption text-link">{eyebrow}</p>
+            <h1 className="display-font text-4xl leading-compact font-semibold tracking-hero text-balance sm:text-5xl lg:text-6xl">
               {title}
             </h1>
-            <p className="max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+            <p className="max-w-xl text-base leading-7 text-ink-body sm:text-lg sm:leading-8">
               {description}
             </p>
           </div>
-          <div className="relative aspect-[4/3] min-h-[22rem] min-w-0 max-w-full overflow-hidden bg-black sm:aspect-video sm:min-h-0">
+          <div className="relative aspect-4/3 min-h-88 min-w-0 max-w-full overflow-hidden bg-black sm:aspect-video sm:min-h-0">
             {hero ? (
               <HoverAnimatedImage
                 src={hero.url}
@@ -473,10 +468,7 @@ function ArchiveHero({
               />
             ) : (
               <>
-                <div
-                  className="absolute inset-0 bg-[radial-gradient(circle_at_72%_25%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_18%_80%,rgba(167,139,250,0.18),transparent_32%),linear-gradient(135deg,#020617_0%,#0f172a_55%,#111827_100%)]"
-                  aria-hidden="true"
-                />
+                <div className="absolute inset-0 bg-about-aura" aria-hidden="true" />
                 <div className="site-grid absolute inset-0 opacity-55" aria-hidden="true" />
               </>
             )}
@@ -503,8 +495,8 @@ export function ArticlePageContent({
         id="article-top"
         className="relative isolate overflow-hidden bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28"
       >
-        <div className="relative mx-auto w-full max-w-[96rem]">
-          <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-12 xl:gap-16">
+        <div className="relative mx-auto w-full max-w-384">
+          <div className="grid min-w-0 gap-8 lg:grid-cols-(--layout-grid-cols-feature-reverse) lg:items-center lg:gap-12 xl:gap-16">
             <div className="flex min-w-0 flex-col items-start justify-center gap-5 py-6 lg:py-12">
               <div className="flex flex-wrap gap-2">
                 {article.categories.map((category) => (
@@ -517,25 +509,25 @@ export function ArticlePageContent({
                   </Badge>
                 ))}
               </div>
-              <h1 className="display-font max-w-full break-words text-4xl leading-[1.02] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+              <h1 className="display-font max-w-full break-words text-4xl leading-compact font-semibold tracking-hero text-balance sm:text-5xl lg:text-6xl">
                 {article.title}
               </h1>
               {article.excerpt ? (
-                <p className="max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+                <p className="max-w-xl text-base leading-7 text-ink-body sm:text-lg sm:leading-8">
                   {article.excerpt}
                 </p>
               ) : null}
               {article.projectRole || article.projectPeriod ? (
-                <div className="flex flex-col gap-1 text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                <div className="flex flex-col gap-1 text-xs font-medium uppercase tracking-section text-ink-muted">
                   {article.projectRole ? <p>{article.projectRole}</p> : null}
                   {article.projectPeriod ? <p>{article.projectPeriod}</p> : null}
                 </div>
               ) : null}
-              <div className="flex max-w-full flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-400">
+              <div className="flex max-w-full flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ink-subtle">
                 <span>
                   By{" "}
                   <Link
-                    className="font-medium text-slate-200 underline-offset-4 hover:underline"
+                    className="font-medium text-ink-soft underline-offset-4 hover:underline"
                     to="/$archiveSlug"
                     params={{ archiveSlug: article.author.slug }}
                   >
@@ -557,7 +549,7 @@ export function ArticlePageContent({
 
       <Separator className="mx-auto max-w-6xl" />
 
-      <Section className="grid gap-8 lg:grid-cols-[minmax(0,46rem)_minmax(13rem,1fr)] lg:items-start lg:gap-x-20 lg:gap-y-10">
+      <Section className="grid gap-8 lg:grid-cols-(--layout-grid-cols-article) lg:items-start lg:gap-x-20 lg:gap-y-10">
         <ContentBreadcrumb items={crumbs} />
         <article className="cms-content order-2 min-w-0 lg:order-none lg:col-start-1">
           {renderCmsDocument(
@@ -582,7 +574,7 @@ export function ArticlePageContent({
           ) : null}
           <Separator />
           <div className="flex flex-col gap-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-caption text-ink-muted">
               Argomenti
             </p>
             {article.tags.length ? (
@@ -590,7 +582,6 @@ export function ArticlePageContent({
                 {article.tags.map((item) => (
                   <Badge
                     key={item.slug}
-                    className={item.color}
                     render={<Link to="/$archiveSlug" params={{ archiveSlug: item.slug }} />}
                   >
                     <SkillGlyph skill={item} size={12} />
@@ -599,7 +590,7 @@ export function ArticlePageContent({
                 ))}
               </div>
             ) : (
-              <p className="text-sm leading-6 text-slate-400">Nessun tag associato.</p>
+              <p className="text-sm leading-6 text-ink-subtle">Nessun tag associato.</p>
             )}
           </div>
         </aside>
@@ -608,7 +599,7 @@ export function ArticlePageContent({
       <a
         className={cn(
           buttonVariants({ variant: "secondary", size: "icon-lg" }),
-          "fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 min-h-11 min-w-11 shadow-lg sm:right-6 sm:bottom-6",
+          "fixed right-4 bottom-(--layout-bottom-safe) z-40 min-h-11 min-w-11 shadow-lg sm:right-6 sm:bottom-6",
         )}
         href="#article-top"
         aria-label="Torna all’inizio dell’articolo"
@@ -625,7 +616,7 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
     "relative isolate w-full min-w-0 max-w-full overflow-hidden bg-black",
     variant === "card"
       ? "aspect-video border-b border-white/10"
-      : "aspect-[4/3] min-h-[22rem] sm:aspect-video sm:min-h-0",
+      : "aspect-4/3 min-h-88 sm:aspect-video sm:min-h-0",
   );
 
   if (article.cover) {
@@ -659,21 +650,18 @@ function ArticleCover({ article, variant }: { article: PublicArticle; variant: "
 
   return (
     <div className={frameClass} aria-hidden="true">
-      <div
-        className="absolute inset-0 bg-[radial-gradient(circle_at_72%_25%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_18%_80%,rgba(167,139,250,0.18),transparent_32%),linear-gradient(135deg,#020617_0%,#0f172a_55%,#111827_100%)]"
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-about-aura" aria-hidden="true" />
       <div className="site-grid absolute inset-0 opacity-55" aria-hidden="true" />
       <div
-        className="absolute -right-[8%] -top-[35%] aspect-square w-[68%] rounded-full border border-sky-300/20"
+        className="absolute -right-8/100 -top-35/100 aspect-square w-68/100 rounded-full border border-link/20"
         aria-hidden="true"
       />
       <div
-        className="absolute -right-[2%] -top-[21%] aspect-square w-[48%] rounded-full border border-dashed border-violet-300/25"
+        className="absolute -right-2/100 -top-21/100 aspect-square w-48/100 rounded-full border border-dashed border-secondary-glow/25"
         aria-hidden="true"
       />
       <div
-        className="absolute bottom-[18%] left-[10%] h-px w-[80%] -rotate-6 bg-gradient-to-r from-transparent via-sky-300/40 to-transparent"
+        className="absolute bottom-18/100 left-10/100 h-px w-80/100 -rotate-6 bg-gradient-to-r from-transparent via-link/40 to-transparent"
         aria-hidden="true"
       />
     </div>

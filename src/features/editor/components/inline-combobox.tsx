@@ -12,6 +12,7 @@ import {
   Portal,
   useComboboxContext,
   useComboboxStore,
+  useStoreState,
 } from "@ariakit/react";
 import { filterWords } from "@platejs/combobox";
 import {
@@ -162,21 +163,21 @@ const InlineCombobox = ({
       showTrigger,
       trigger,
     }),
-    [trigger, showTrigger, filter, inputRef, inputProps, removeInput, setHasEmpty],
+    [trigger, showTrigger, filter, inputProps, removeInput, setHasEmpty],
   );
 
   const store = useComboboxStore({
     setValue: (newValue) => React.startTransition(() => setValue(newValue)),
   });
 
-  const items = store.useState("items");
+  const items = useStoreState(store, "items");
 
   /**
    * If there is no active ID and the list of items changes, select the first
    * item.
    */
   React.useEffect(() => {
-    if (!store.getState().activeId) {
+    if (items.length > 0 && !store.getState().activeId) {
       store.setActiveId(store.first());
     }
   }, [items, store]);
@@ -205,7 +206,7 @@ const InlineComboboxInput = ({
   const { inputProps, inputRef: contextRef, showTrigger, trigger } = useInlineComboboxContext();
 
   const store = useRequiredComboboxStore();
-  const value = store.useState("value");
+  const value = useStoreState(store, "value");
 
   const ref = useComposedRef(propRef, contextRef);
 
@@ -217,7 +218,7 @@ const InlineComboboxInput = ({
     <>
       {showTrigger && trigger}
 
-      <span className="relative min-h-[1lh]">
+      <span className="relative min-h-lh">
         <span aria-hidden="true" className="invisible overflow-hidden text-nowrap">
           {value || "​"}
         </span>
@@ -263,7 +264,7 @@ const InlineComboboxContent: typeof ComboboxPopover = ({ className, ...props }) 
     <Portal>
       <ComboboxPopover
         className={cn(
-          "z-500 max-h-[288px] w-[300px] overflow-y-auto rounded-md bg-popover shadow-md",
+          "z-500 max-h-72 w-75 overflow-y-auto rounded-md bg-popover shadow-md",
           className,
         )}
         onKeyDownCapture={handleKeyDown}
@@ -274,7 +275,7 @@ const InlineComboboxContent: typeof ComboboxPopover = ({ className, ...props }) 
 };
 
 const comboboxItemVariants = cva(
-  "relative mx-1 flex h-[28px] select-none items-center rounded-sm px-2 text-foreground text-sm outline-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "relative mx-1 flex h-7 select-none items-center rounded-sm px-2 text-foreground text-sm outline-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     defaultVariants: {
       interactive: true,
@@ -309,7 +310,7 @@ const InlineComboboxItem = ({
 
   const store = useRequiredComboboxStore();
 
-  const searchValue = store.useState("value");
+  const searchValue = useStoreState(store, "value");
   const search = filter ? searchValue : "";
 
   const visible = React.useMemo(
@@ -334,7 +335,7 @@ const InlineComboboxItem = ({
 const InlineComboboxEmpty = ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => {
   const { setHasEmpty } = useInlineComboboxContext();
   const store = useRequiredComboboxStore();
-  const items = store.useState("items");
+  const items = useStoreState(store, "items");
 
   React.useEffect(() => {
     setHasEmpty(true);

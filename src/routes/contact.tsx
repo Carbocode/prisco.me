@@ -110,9 +110,9 @@ function ContactTimeline() {
 
   return (
     <div>
-      <div className="mb-8 grid grid-cols-[4rem_minmax(0,1fr)] gap-4 sm:mb-10 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[7rem_minmax(0,1fr)] lg:gap-8">
+      <div className="mb-8 grid grid-cols-(--layout-grid-cols-timeline) gap-4 sm:mb-10 sm:grid-cols-(--layout-grid-cols-timeline-wide) sm:gap-6 lg:grid-cols-(--layout-grid-cols-timeline-desktop) lg:gap-8">
         <span aria-hidden="true" />
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-overline text-ink-muted">
           Come comincia
         </p>
       </div>
@@ -123,8 +123,8 @@ function ContactTimeline() {
         />
         <motion.div
           aria-hidden="true"
-          className="absolute top-9 bottom-9 left-8 w-px origin-top bg-sky-300 shadow-[0_0_12px_rgba(125,211,252,0.55)] sm:left-12 lg:left-14"
-          style={{ scaleY: shouldReduceMotion ? 1 : lineProgress }}
+          className="contact-progress absolute top-9 bottom-9 left-8 w-px origin-top bg-link shadow-glow sm:left-12 lg:left-14"
+          style={{ "--line-progress": shouldReduceMotion ? 1 : lineProgress }}
         />
         <ol ref={timelineRef} className="relative flex flex-col gap-6 sm:gap-8">
           {conversationSteps.map((step, index) => (
@@ -159,11 +159,11 @@ function TimelineStep({
   return (
     <li
       ref={stepRef}
-      className="relative grid grid-cols-[4rem_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[7rem_minmax(0,1fr)] lg:gap-8"
+      className="relative grid grid-cols-(--layout-grid-cols-timeline) items-center gap-4 sm:grid-cols-(--layout-grid-cols-timeline-wide) sm:gap-6 lg:grid-cols-(--layout-grid-cols-timeline-desktop) lg:gap-8"
     >
       <div className="relative z-10 flex items-center justify-center">
         <motion.div
-          className="flex size-14 items-center justify-center rounded-full bg-[#071326] ring-1 ring-white/20 sm:size-18"
+          className="flex size-14 items-center justify-center rounded-full bg-subsoil-panel ring-1 ring-white/20 sm:size-18"
           initial={false}
           animate={{
             opacity: isActive ? 1 : 0.62,
@@ -189,7 +189,7 @@ function TimelineStep({
       >
         <Card size="default">
           <CardHeader>
-            <p className="display-font text-xs font-semibold uppercase tracking-[0.18em] text-sky-300">
+            <p className="display-font text-xs font-semibold uppercase tracking-eyebrow-wide text-link">
               0{index + 1} / {step.actor}
             </p>
             <CardTitle>{step.title}</CardTitle>
@@ -204,16 +204,16 @@ function TimelineStep({
 function ContactPage() {
   return (
     <PageShell hero={false} title="Contatti">
-      <div className="relative isolate overflow-hidden bg-[#06101f]">
+      <div className="relative isolate overflow-hidden bg-subsoil">
         <ContactSky />
 
         <section className="relative z-10 px-6 pt-20 pb-12 sm:pt-28 sm:pb-16 lg:pt-32">
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-20 lg:gap-28">
             <div className="flex max-w-4xl flex-col items-start gap-7">
-              <h1 className="display-font max-w-4xl text-5xl leading-[0.94] font-semibold tracking-[-0.055em] text-white sm:text-7xl lg:text-[5.75rem]">
-                Parliamo di quello che vuoi <span className="text-sky-300">costruire.</span>
+              <h1 className="display-font max-w-4xl text-5xl leading-hero font-semibold tracking-display-tight text-white sm:text-7xl lg:text-display">
+                Parliamo di quello che vuoi <span className="text-link">costruire.</span>
               </h1>
-              <p className="max-w-xl text-base leading-8 text-slate-300 sm:text-lg">
+              <p className="max-w-xl text-base leading-8 text-ink-body sm:text-lg">
                 Prodotto, collaborazione tecnica, opportunità o idea ancora senza un nome. Non serve
                 avere già tutte le risposte: basta un punto da cui iniziare.
               </p>
@@ -260,29 +260,39 @@ function ContactPage() {
 function ContactSky() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_16%,rgba(76,29,149,0.2),transparent_27%),radial-gradient(circle_at_84%_42%,rgba(30,64,175,0.18),transparent_25%),radial-gradient(circle_at_28%_82%,rgba(14,116,144,0.12),transparent_28%),linear-gradient(180deg,#06101f_0%,#080b1d_50%,#050713_100%)]" />
+      <div className="absolute inset-0 bg-contact-galaxy" />
       <div
-        className="absolute inset-0 opacity-70"
+        className="absolute inset-0 opacity-70 dynamic-background-image dynamic-background-position dynamic-background-repeat dynamic-background-size"
         style={{
-          backgroundImage: "url(/home/small-stars.svg)",
-          backgroundPosition: "center top",
-          backgroundRepeat: "repeat",
-          backgroundSize: "1154px 427px",
+          "--dynamic-background-image": "url(/home/small-stars.svg)",
+          "--dynamic-background-position": "center top",
+          "--dynamic-background-repeat": "repeat",
+          "--dynamic-background-size": "1154px 427px",
         }}
       />
-      <div className="absolute -left-32 top-[18%] size-96 rounded-full bg-violet-500/[0.07] blur-3xl" />
-      <div className="absolute -right-40 top-[58%] size-[32rem] rounded-full bg-sky-500/[0.06] blur-3xl" />
+      <div className="absolute -left-32 top-18/100 size-96 rounded-full bg-secondary-aura/7 blur-3xl" />
+      <div className="absolute -right-40 top-58/100 size-128 rounded-full bg-glow-strong/6 blur-3xl" />
       {contactStars.map((star, index) => (
         <Star
           key={`${star.top}-${index}`}
           alt=""
           size={star.size}
-          className="absolute drop-shadow-[0_0_12px_rgba(255,255,255,0.65)]"
+          className="absolute drop-shadow-star dynamic-top dynamic-left dynamic-right dynamic-opacity"
           style={{
-            top: `${star.top}%`,
-            left: star.left == null ? undefined : `${star.left}%`,
-            right: star.right == null ? undefined : `${star.right}%`,
-            opacity: star.opacity,
+            "--dynamic-top": `${star.top}%`,
+            "--dynamic-left":
+              typeof (star.left == null ? undefined : `${star.left}%`) === "number"
+                ? (star.left == null ? undefined : `${star.left}%`) + "px"
+                : star.left == null
+                  ? undefined
+                  : `${star.left}%`,
+            "--dynamic-right":
+              typeof (star.right == null ? undefined : `${star.right}%`) === "number"
+                ? (star.right == null ? undefined : `${star.right}%`) + "px"
+                : star.right == null
+                  ? undefined
+                  : `${star.right}%`,
+            "--dynamic-opacity": star.opacity,
           }}
         />
       ))}

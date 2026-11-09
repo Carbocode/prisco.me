@@ -51,4 +51,13 @@ if (worktreeRoot !== primaryRoot) {
 const install = spawnSync("bun", ["install"], { cwd: worktreeRoot, stdio: "inherit" });
 
 if (install.error) throw install.error;
-process.exit(install.status ?? 1);
+if (install.status !== 0) process.exit(install.status ?? 1);
+
+// The copied database may predate migrations included in this worktree.
+const migrate = spawnSync("bun", ["run", "db:migrate"], {
+  cwd: worktreeRoot,
+  stdio: "inherit",
+});
+
+if (migrate.error) throw migrate.error;
+process.exit(migrate.status ?? 1);

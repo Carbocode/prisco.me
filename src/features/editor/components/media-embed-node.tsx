@@ -22,7 +22,7 @@ export function MediaEmbedElement(props: PlateElementProps) {
   const twitterUrl = toTwitterPostUrl(element.url);
 
   return (
-    <PlateElement {...props} className="cms-editor__embed">
+    <PlateElement {...props}>
       <div contentEditable={false}>
         {redditUrl ? (
           <RedditEmbed url={redditUrl} />

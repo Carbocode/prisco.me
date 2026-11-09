@@ -7,33 +7,33 @@ import { renderDarkCodeDrawing } from "../../editor/code-drawing-renderer";
 import { CodeDrawingViewport } from "../../editor/components/code-drawing-viewport";
 
 export function CmsCodeDrawing({ code, drawingType }: { code: string; drawingType: string }) {
-  const [image, setImage] = useState("");
-  const [failed, setFailed] = useState(false);
+  const [result, setResult] = useState<{
+    code: string;
+    drawingType: string;
+    image?: string;
+    failed?: boolean;
+  }>();
+  const validDrawingType = CODE_DRAWING_TYPE_ARRAY.find(
+    (item) => item.value === drawingType,
+  )?.value;
+  const current = result?.code === code && result.drawingType === drawingType ? result : undefined;
+  const image = current?.image;
+  const failed = !validDrawingType || current?.failed;
 
   useEffect(() => {
+    if (!validDrawingType) return undefined;
     let active = true;
-    setImage("");
-    setFailed(false);
-
-    const validDrawingType = CODE_DRAWING_TYPE_ARRAY.find(
-      (item) => item.value === drawingType,
-    )?.value;
-    if (!validDrawingType) {
-      setFailed(true);
-    } else {
-      void renderDarkCodeDrawing(validDrawingType, code)
-        .then((result) => {
-          if (active) setImage(result);
-        })
-        .catch(() => {
-          if (active) setFailed(true);
-        });
-    }
-
+    void renderDarkCodeDrawing(validDrawingType, code)
+      .then((renderedImage) => {
+        if (active) setResult({ code, drawingType, image: renderedImage });
+      })
+      .catch(() => {
+        if (active) setResult({ code, drawingType, failed: true });
+      });
     return () => {
       active = false;
     };
-  }, [code, drawingType]);
+  }, [code, drawingType, validDrawingType]);
 
   return (
     <figure className="cms-code-drawing" aria-busy={!image && !failed}>

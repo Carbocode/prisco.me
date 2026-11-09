@@ -2,7 +2,7 @@ import { renderToString } from "katex";
 
 // oxlint-disable-next-line import/no-unassigned-import -- KaTeX stylesheet for server-rendered equations.
 import "katex/dist/katex.min.css";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -62,20 +62,15 @@ function safeHref(value: unknown) {
   }
 }
 
-function alignmentStyle(value: unknown): CSSProperties | undefined {
-  if (value === "left") return { textAlign: "left" };
-  if (value === "center") return { textAlign: "center" };
-  if (value === "right") return { textAlign: "right" };
-  if (value === "justify") return { textAlign: "justify" };
-  return undefined;
+function textAlignment(value: unknown) {
+  return value === "left" || value === "center" || value === "right" || value === "justify"
+    ? value
+    : undefined;
 }
 
-function blockStyle(node: Node): CSSProperties | undefined {
-  const style = alignmentStyle(node.textAlign) ?? {};
-  if ([1, 1.2, 1.5, 2, 3].includes(Number(node.lineHeight))) {
-    style.lineHeight = Number(node.lineHeight);
-  }
-  return Object.keys(style).length ? style : undefined;
+function blockLineHeight(node: Node) {
+  const value = Number(node.lineHeight);
+  return [1, 1.2, 1.5, 2, 3].includes(value) ? value : undefined;
 }
 
 type TocHeading = { depth: number; id: string; title: string };
@@ -102,9 +97,10 @@ function children(
         <span
           key={`${key}-color`}
           style={{
-            color: safeColor(node.color),
-            backgroundColor: safeColor(node.backgroundColor),
+            "--dynamic-color": safeColor(node.color),
+            "--dynamic-background-color": safeColor(node.backgroundColor),
           }}
+          className="dynamic-color dynamic-background-color"
         >
           {value}
         </span>
@@ -149,7 +145,16 @@ function children(
       );
     }
     case "p": {
-      const content = <p style={blockStyle(node)}>{nested}</p>;
+      const content = (
+        <p
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
+          {nested}
+        </p>
+      );
       if (node.listStyleType === "todo") {
         const checked = node.checked === true;
         return (
@@ -172,32 +177,66 @@ function children(
           </ul>
         );
       return (
-        <p key={key} style={blockStyle(node)}>
+        <p
+          key={key}
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
           {nested}
         </p>
       );
     }
     case "h1":
       return (
-        <h2 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
+        <h2
+          key={key}
+          id={stringAttr(node.id)}
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
           {nested}
         </h2>
       );
     case "h2":
       return (
-        <h3 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
+        <h3
+          key={key}
+          id={stringAttr(node.id)}
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
           {nested}
         </h3>
       );
     case "h3":
       return (
-        <h4 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
+        <h4
+          key={key}
+          id={stringAttr(node.id)}
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
           {nested}
         </h4>
       );
     case "h4":
       return (
-        <h5 key={key} id={stringAttr(node.id)} style={blockStyle(node)}>
+        <h5
+          key={key}
+          id={stringAttr(node.id)}
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
           {nested}
         </h5>
       );
@@ -231,7 +270,15 @@ function children(
       );
     case "toggle":
       return (
-        <details key={key} open className="cms-toggle" style={blockStyle(node)}>
+        <details
+          key={key}
+          open
+          className="cms-toggle"
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
           <summary className="cms-toggle__title">{nested}</summary>
         </details>
       );
@@ -247,26 +294,26 @@ function children(
       return <td key={key}>{nested}</td>;
     case "paragraph":
       return (
-        <p key={key} style={alignmentStyle(node.attrs?.textAlign)}>
+        <p key={key} style={{ "--cms-text-align": textAlignment(node.attrs?.textAlign) }}>
           {nested}
         </p>
       );
     case "heading": {
-      const style = alignmentStyle(node.attrs?.textAlign);
+      const align = textAlignment(node.attrs?.textAlign);
       if (node.attrs?.level === 4)
         return (
-          <h4 key={key} style={style}>
+          <h4 key={key} style={{ "--cms-text-align": align }}>
             {nested}
           </h4>
         );
       if (node.attrs?.level === 3)
         return (
-          <h3 key={key} style={style}>
+          <h3 key={key} style={{ "--cms-text-align": align }}>
             {nested}
           </h3>
         );
       return (
-        <h2 key={key} style={style}>
+        <h2 key={key} style={{ "--cms-text-align": align }}>
           {nested}
         </h2>
       );
@@ -329,7 +376,14 @@ function children(
       return <td key={key}>{nested}</td>;
     case "callout":
       return (
-        <div key={key} className="cms-callout" style={blockStyle(node)}>
+        <div
+          key={key}
+          className="cms-callout"
+          style={{
+            "--cms-text-align": textAlignment(node.textAlign),
+            "--cms-line-height": blockLineHeight(node),
+          }}
+        >
           <span className="cms-callout__icon" aria-hidden="true">
             {stringAttr(node.icon) ?? "💡"}
           </span>
@@ -346,8 +400,8 @@ function children(
       return (
         <div
           key={key}
-          className="cms-column"
-          style={typeof node.width === "string" ? { width: node.width } : undefined}
+          className="cms-column w-(--cms-column-width)"
+          style={{ "--cms-column-width": typeof node.width === "string" ? node.width : undefined }}
         >
           {nested}
         </div>
@@ -439,7 +493,11 @@ function children(
       const mediaType = stringAttr(node.mediaType) ?? stringAttr(node.attrs?.mediaType) ?? "image";
       const width = mediaWidth(node.width ?? node.attrs?.width);
       return (
-        <figure key={key} style={width ? { marginInline: "auto", width } : undefined}>
+        <figure
+          key={key}
+          className={cn(width && "mx-auto w-(--cms-media-width)")}
+          style={{ "--cms-media-width": width }}
+        >
           {mediaType === "image" ? (
             <img
               src={item.url}

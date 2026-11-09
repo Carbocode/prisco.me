@@ -1,4 +1,6 @@
-import { lazy, Suspense, useEffect, useState, type PropsWithChildren } from "react";
+import { lazy, Suspense, useSyncExternalStore, type PropsWithChildren } from "react";
+
+import { useHydrated } from "@/hooks/use-hydrated";
 
 const COOKIE_CONSENT_STORAGE_KEY = "prisco-cookie-consent";
 const COOKIE_CONSENT_EVENT = "prisco-cookie-consent-change";
@@ -16,31 +18,26 @@ const CookieBanner = lazy(() =>
   })),
 );
 
+function readConsent(): CookieConsent | null {
+  const stored = window.localStorage.getItem(COOKIE_CONSENT_STORAGE_KEY);
+  return stored === "accepted" || stored === "rejected" ? stored : null;
+}
+function subscribeConsent(onChange: () => void) {
+  window.addEventListener(COOKIE_CONSENT_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(COOKIE_CONSENT_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+const serverConsent = () => null;
+
 export function CookieConsentProvider({ children }: PropsWithChildren) {
-  const [consent, setConsent] = useState<CookieConsent | null>(null);
-  const [showBanner, setShowBanner] = useState(false);
-
-  useEffect(() => {
-    const storedConsent = window.localStorage.getItem(COOKIE_CONSENT_STORAGE_KEY);
-    if (storedConsent === "accepted" || storedConsent === "rejected") {
-      setConsent(storedConsent);
-    } else {
-      window.setTimeout(() => setShowBanner(true), 0);
-    }
-
-    const resetConsent = () => {
-      setConsent(null);
-      setShowBanner(true);
-    };
-    window.addEventListener(COOKIE_CONSENT_EVENT, resetConsent);
-
-    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, resetConsent);
-  }, []);
-
+  const consent = useSyncExternalStore(subscribeConsent, readConsent, serverConsent);
+  const hydrated = useHydrated();
   const chooseConsent = (nextConsent: CookieConsent) => {
     window.localStorage.setItem(COOKIE_CONSENT_STORAGE_KEY, nextConsent);
-    setConsent(nextConsent);
-    setShowBanner(false);
+    window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
   };
 
   return (
@@ -49,7 +46,7 @@ export function CookieConsentProvider({ children }: PropsWithChildren) {
       <Suspense fallback={null}>
         <AnalyticsProvider analyticsConsent={consent === "accepted"} />
       </Suspense>
-      {consent === null && showBanner && (
+      {consent === null && hydrated && (
         <Suspense fallback={null}>
           <CookieBanner onChoose={chooseConsent} />
         </Suspense>

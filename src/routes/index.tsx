@@ -37,7 +37,7 @@ const skillCards: { title: string; skill: SkillVisual; items: string[] }[] = [
     title: "Architettura software",
     skill: {
       name: "Software Architecture",
-      color: "text-sky-200 bg-sky-300/15 border-sky-300/25",
+      color: "text-link-hover bg-link/15 border-link/25",
       mark: "SA",
       fluentIcon: "layer-diagonal-person-24",
     },
@@ -78,13 +78,13 @@ function HomePage() {
   const { projects, articles } = Route.useLoaderData();
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-[1728px] overflow-x-clip bg-slate-950 text-slate-100">
-      <Sky className="relative h-[820px] w-full max-h-[90dvh] min-h-[700px] overflow-hidden">
+    <div className="mx-auto min-h-dvh w-full max-w-432 overflow-x-clip bg-canvas text-ink-inverse">
+      <Sky className="relative h-205 w-full max-h-(--layout-max-h-viewport-dialog) min-h-175 overflow-hidden">
         <Header className="hero-header-enter" />
 
         <section className="absolute inset-0 z-10 flex items-center justify-center px-6 pt-14">
           <div className="hero-content-enter hero-content-contrast flex max-w-4xl flex-col items-center gap-5 text-center text-white">
-            <h1 className="hero-content-enter-item display-font text-4xl leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+            <h1 className="hero-content-enter-item display-font text-4xl leading-heading tracking-display sm:text-6xl lg:text-7xl">
               Ciao, sono Vincenzo.
               <br />
               Creo esperienze digitali.
@@ -103,81 +103,81 @@ function HomePage() {
         </section>
 
         <div
-          className="pointer-events-none absolute inset-y-0 left-1/2 z-0 w-full min-w-[48rem] -translate-x-1/2 md:inset-0 md:min-w-0 md:translate-x-0"
+          className="pointer-events-none absolute inset-y-0 left-1/2 z-0 w-full min-w-192 -translate-x-1/2 md:inset-0 md:min-w-0 md:translate-x-0"
           aria-hidden="true"
         >
-          <Moon className="absolute left-[12%] top-[10%] z-10 w-45" />
-          <Jupiter className="absolute right-[14%] top-[12%] z-10 w-42" />
+          <Moon className="absolute left-12/100 top-10/100 z-10 w-45" />
+          <Jupiter className="absolute right-14/100 top-12/100 z-10 w-42" />
           <CloudCarousel />
           <Star
             size="sm"
-            className="star-enter absolute left-[8%] top-[12%] z-0"
-            style={{ animationDelay: "120ms" }}
+            className="star-enter absolute left-8/100 top-12/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "120ms" }}
           />
           <Star
             size="md"
-            className="star-enter absolute left-[18%] top-[8%] z-0"
-            style={{ animationDelay: "180ms" }}
+            className="star-enter absolute left-18/100 top-8/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "180ms" }}
           />
           <Star
             size="md"
-            className="star-enter absolute left-[30%] top-[14%] z-0"
-            style={{ animationDelay: "240ms" }}
+            className="star-enter absolute left-30/100 top-14/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "240ms" }}
           />
           <Star
             size="sm"
-            className="star-enter absolute left-[40%] top-[6%] z-0"
-            style={{ animationDelay: "300ms" }}
+            className="star-enter absolute left-40/100 top-6/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "300ms" }}
           />
           <Star
             size="md"
-            className="star-enter absolute left-[52%] top-[12%] z-0"
-            style={{ animationDelay: "360ms" }}
+            className="star-enter absolute left-52/100 top-12/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "360ms" }}
           />
           <Star
             size="lg"
-            className="star-enter absolute left-[60%] top-[8%] z-0"
-            style={{ animationDelay: "420ms" }}
+            className="star-enter absolute left-60/100 top-8/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "420ms" }}
           />
           <Star
             size="sm"
-            className="star-enter absolute right-[22%] top-[22%] z-0"
-            style={{ animationDelay: "480ms" }}
+            className="star-enter absolute right-22/100 top-22/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "480ms" }}
           />
           <Star
             size="md"
-            className="star-enter absolute right-[30%] top-[36%] z-0"
-            style={{ animationDelay: "540ms" }}
+            className="star-enter absolute right-30/100 top-36/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "540ms" }}
           />
           <Star
             size="md"
-            className="star-enter absolute left-[36%] top-[30%] z-0"
-            style={{ animationDelay: "600ms" }}
+            className="star-enter absolute left-36/100 top-30/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "600ms" }}
           />
           <Star
             size="sm"
-            className="star-enter absolute left-[12%] top-[32%] z-0"
-            style={{ animationDelay: "660ms" }}
+            className="star-enter absolute left-12/100 top-32/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "660ms" }}
           />
           <Star
             size="md"
-            className="star-enter absolute right-[12%] top-[34%] z-0"
-            style={{ animationDelay: "720ms" }}
+            className="star-enter absolute right-12/100 top-34/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "720ms" }}
           />
           <Star
             size="lg"
-            className="star-enter absolute left-[50%] top-[44%] z-0"
-            style={{ animationDelay: "780ms" }}
+            className="star-enter absolute left-50/100 top-44/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "780ms" }}
           />
           <Star
             size="sm"
-            className="star-enter absolute right-[8%] top-[48%] z-0"
-            style={{ animationDelay: "840ms" }}
+            className="star-enter absolute right-8/100 top-48/100 z-0 dynamic-animation-delay"
+            style={{ "--dynamic-animation-delay": "840ms" }}
           />
         </div>
       </Sky>
 
-      <DesertScene className="relative -mt-[min(23.125vw,400px)]" skills={portfolio.skills} />
+      <DesertScene className="relative desert-overlap" skills={portfolio.skills} />
 
       <Hydrate when={visible({ rootMargin: "100px" })}>
         <div className="earth-cross-section relative -mt-px">
@@ -197,18 +197,18 @@ function HomePage() {
             </Section>
 
             <Section className="pt-0 sm:pt-0">
-              <div className="grid gap-8 rounded-2xl border border-sky-300/30 bg-linear-to-br from-sky-300/15 via-white/5 to-transparent p-8 backdrop-blur-md sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+              <div className="grid gap-8 rounded-2xl border border-link/30 bg-linear-to-br from-link/15 via-white/5 to-transparent p-8 backdrop-blur-md sm:p-10 lg:grid-cols-(--layout-grid-cols-feature) lg:items-end">
                 <div>
                   <h2 className="display-font text-3xl font-semibold sm:text-4xl">
                     Esperienze, responsabilità e crescita professionale.
                   </h2>
-                  <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+                  <p className="mt-4 max-w-2xl leading-7 text-ink-body">
                     Un percorso costruito tra sviluppo, architettura software e prodotti digitali,
                     raccontato attraverso i ruoli, le tecnologie e i progetti che lo hanno segnato.
                   </p>
                 </div>
                 <div className="flex flex-col items-start gap-5 lg:items-end lg:text-right">
-                  <p className="max-w-sm text-sm leading-7 text-slate-300">
+                  <p className="max-w-sm text-sm leading-7 text-ink-body">
                     Dalle prime esperienze alle sfide piu recenti, con il contesto dietro ogni
                     passaggio.
                   </p>
@@ -246,21 +246,21 @@ function HomePage() {
             <section className="relative isolate overflow-hidden px-6 pt-16 pb-20 text-center sm:pt-20 sm:pb-24">
               {/* the molten core: a glow rising from the very bottom of the earth */}
               <div
-                className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_128%,#ffd27a_0%,#ff8a2b_16%,#f0531a_32%,#b8300d_50%,#5c1305_68%,transparent_82%)]"
+                className="pointer-events-none absolute inset-0 bg-subsoil-fire"
                 aria-hidden="true"
               />
               <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(255,190,110,0.55),transparent_75%)] blur-2xl"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-subsoil-glow blur-2xl"
                 aria-hidden="true"
               />
               <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5">
-                <span className="rounded-full border border-orange-200/40 bg-orange-950/30 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-orange-100 backdrop-blur-sm">
+                <span className="rounded-full border border-ember-highlight/40 bg-ember-surface/30 px-3 py-1 text-xs font-semibold uppercase tracking-caption-wide text-ember-ink-soft backdrop-blur-sm">
                   Il nucleo
                 </span>
-                <h2 className="display-font text-3xl font-semibold text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)] sm:text-4xl">
+                <h2 className="display-font text-3xl font-semibold text-white drop-shadow-illustration sm:text-4xl">
                   Hai un'idea da trasformare in prodotto?
                 </h2>
-                <p className="leading-7 text-orange-50/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+                <p className="leading-7 text-ember-ink/90 drop-shadow-badge">
                   Raccontami cosa stai costruendo e vediamo insieme da dove partire.
                 </p>
                 <ActionLink href="/contact">Scrivimi</ActionLink>
@@ -287,10 +287,10 @@ function SkillCard({
     <ShowcaseCard>
       <TechIcon skill={skill} />
       <h2 className="display-font mt-5 text-2xl leading-tight font-semibold">{title}</h2>
-      <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-300">
+      <ul className="mt-5 space-y-3 text-sm leading-6 text-ink-body">
         {items.map((item) => (
           <li key={item} className="flex items-baseline gap-2">
-            <span className="text-lg leading-none text-sky-300" aria-hidden="true">
+            <span className="text-lg leading-none text-link" aria-hidden="true">
               ✦
             </span>
             <span>{item}</span>
@@ -305,10 +305,10 @@ function SectionIntro({ title, href }: { title: string; href: string }) {
   return (
     <a
       href={href}
-      className="group flex w-full items-center justify-between gap-6 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950"
+      className="group flex w-full items-center justify-between gap-6 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-link focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
       aria-label={`${title}: vai alla sezione`}
     >
-      <h2 className="display-font text-3xl font-semibold transition-colors group-hover:text-sky-300 sm:text-4xl">
+      <h2 className="display-font text-3xl font-semibold transition-colors group-hover:text-link sm:text-4xl">
         {title}
       </h2>
       <ArrowRight

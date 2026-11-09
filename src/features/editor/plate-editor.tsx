@@ -128,7 +128,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { mediaResizeHandleVariants, Resizable, ResizeHandle } from "@/components/ui/resize-handle";
+import { Resizable, ResizeHandle } from "@/components/ui/resize-handle";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { MediaBrowser } from "@/features/cms/components/media-picker";
@@ -205,8 +205,8 @@ function ParagraphElement(props: PlateElementProps) {
       <PlateElement
         {...props}
         as="div"
-        className="cms-plate-list-item cms-plate-list-item--todo"
-        style={{ marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem` }}
+        className="cms-plate-list-item cms-plate-list-item--todo dynamic-margin-left"
+        style={{ "--dynamic-margin-left": `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem` }}
       >
         <span contentEditable={false} className="cms-plate-checkbox">
           <Checkbox
@@ -235,11 +235,14 @@ function ParagraphElement(props: PlateElementProps) {
       <PlateElement
         {...props}
         as="div"
-        className={cn("cms-plate-list-item", ordered && "cms-plate-list-item--ordered")}
+        className={cn(
+          cn("cms-plate-list-item", ordered && ""),
+          "dynamic-margin-left dynamic-text-align",
+        )}
         data-list-type={element.listStyleType}
         style={{
-          marginLeft: `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem`,
-          textAlign: textAlignment(element.textAlign),
+          "--dynamic-margin-left": `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem`,
+          "--dynamic-text-align": textAlignment(element.textAlign),
         }}
       >
         <span contentEditable={false} className="cms-plate-list-marker">
@@ -249,13 +252,25 @@ function ParagraphElement(props: PlateElementProps) {
       </PlateElement>
     );
   }
-  return <PlateElement {...props} as="p" style={{ textAlign: textAlignment(element.textAlign) }} />;
+  return (
+    <PlateElement
+      {...props}
+      as="p"
+      style={{ "--dynamic-text-align": textAlignment(element.textAlign) }}
+      className="dynamic-text-align"
+    />
+  );
 }
 
 function HeadingElement({ as, ...props }: PlateElementProps & { as: "h2" | "h3" | "h4" | "h5" }) {
   const element = props.element as TElement & { textAlign?: string };
   return (
-    <PlateElement {...props} as={as} style={{ textAlign: textAlignment(element.textAlign) }} />
+    <PlateElement
+      {...props}
+      as={as}
+      style={{ "--dynamic-text-align": textAlignment(element.textAlign) }}
+      className="dynamic-text-align"
+    />
   );
 }
 
@@ -321,10 +336,7 @@ const MediaImageElement = withHOC(
               className="group"
               options={{ align: "center", maxWidth: imageMaxWidth, minWidth: 120 }}
             >
-              <ResizeHandle
-                className={mediaResizeHandleVariants({ direction: "left" })}
-                options={{ direction: "left" }}
-              />
+              <ResizeHandle direction="left" options={{ direction: "left" }} />
               <HoverAnimatedImage
                 src={item.url}
                 alt={element.alt || item.altText || ""}
@@ -337,10 +349,7 @@ const MediaImageElement = withHOC(
                   }
                 }}
               />
-              <ResizeHandle
-                className={mediaResizeHandleVariants({ direction: "right" })}
-                options={{ direction: "right" }}
-              />
+              <ResizeHandle direction="right" options={{ direction: "right" }} />
             </Resizable>
           ) : null}
           {item && mediaType === "video" ? (
@@ -358,7 +367,14 @@ const MediaImageElement = withHOC(
               {item.filename}
             </a>
           ) : null}
-          {element.caption ? <figcaption style={{ width }}>{element.caption}</figcaption> : null}
+          {element.caption ? (
+            <figcaption
+              style={{ "--dynamic-width": typeof width === "number" ? width + "px" : width }}
+              className="w-(--dynamic-width)"
+            >
+              {element.caption}
+            </figcaption>
+          ) : null}
         </div>
         {props.children}
       </PlateElement>
@@ -1087,7 +1103,7 @@ function ImageDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[min(90dvh,56rem)] w-[calc(100%-2rem)] max-w-6xl flex-col sm:max-w-6xl">
+      <DialogContent className="flex max-h-(--layout-max-h-diagram-dialog) w-(--layout-w-dialog-inset) max-w-6xl flex-col sm:max-w-6xl">
         <form className="flex min-h-0 flex-1 flex-col gap-4" onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>Inserisci {mediaTypeLabel(mediaType)}</DialogTitle>

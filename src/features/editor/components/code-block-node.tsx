@@ -82,7 +82,7 @@ export function CodeBlockElement({ showLanguageLabel = true, ...props }: CodeBlo
 
   return (
     <PlateElement
-      className="py-1 **:[.hljs-addition]:bg-[#f0fff4] **:[.hljs-addition]:text-[#22863a] dark:**:[.hljs-addition]:bg-[#3c5743] dark:**:[.hljs-addition]:text-[#ceead5] **:[.hljs-attr,.hljs-attribute,.hljs-literal,.hljs-meta,.hljs-number,.hljs-operator,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-variable]:text-[#005cc5] dark:**:[.hljs-attr,.hljs-attribute,.hljs-literal,.hljs-meta,.hljs-number,.hljs-operator,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-variable]:text-[#6596cf] **:[.hljs-built_in,.hljs-symbol]:text-[#e36209] dark:**:[.hljs-built_in,.hljs-symbol]:text-[#c3854e] **:[.hljs-bullet]:text-[#735c0f] **:[.hljs-comment,.hljs-code,.hljs-formula]:text-[#6a737d] dark:**:[.hljs-comment,.hljs-code,.hljs-formula]:text-[#6a737d] **:[.hljs-deletion]:bg-[#ffeef0] **:[.hljs-deletion]:text-[#b31d28] dark:**:[.hljs-deletion]:bg-[#473235] dark:**:[.hljs-deletion]:text-[#e7c7cb] **:[.hljs-emphasis]:italic **:[.hljs-keyword,.hljs-doctag,.hljs-template-tag,.hljs-template-variable,.hljs-type,.hljs-variable.language]:text-[#d73a49] dark:**:[.hljs-keyword,.hljs-doctag,.hljs-template-tag,.hljs-template-variable,.hljs-type,.hljs-variable.language]:text-[#ee6960] **:[.hljs-name,.hljs-quote,.hljs-selector-tag,.hljs-selector-pseudo]:text-[#22863a] dark:**:[.hljs-name,.hljs-quote,.hljs-selector-tag,.hljs-selector-pseudo]:text-[#36a84f] **:[.hljs-regexp,.hljs-string,.hljs-meta_.hljs-string]:text-[#032f62] dark:**:[.hljs-regexp,.hljs-string,.hljs-meta_.hljs-string]:text-[#3593ff] **:[.hljs-section]:font-bold **:[.hljs-section]:text-[#005cc5] dark:**:[.hljs-section]:text-[#61a5f2] **:[.hljs-strong]:font-bold **:[.hljs-title]:text-[#6f42c1] dark:**:[.hljs-title]:text-[#a77bfa]"
+      className="py-1 **:[.hljs-addition]:bg-syntax-addition-bg **:[.hljs-addition]:text-syntax-addition dark:**:[.hljs-addition]:bg-syntax-addition-dark-bg dark:**:[.hljs-addition]:text-syntax-addition-dark **:[.hljs-attr,.hljs-attribute,.hljs-literal,.hljs-meta,.hljs-number,.hljs-operator,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-variable]:text-syntax-literal dark:**:[.hljs-attr,.hljs-attribute,.hljs-literal,.hljs-meta,.hljs-number,.hljs-operator,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-variable]:text-syntax-literal-dark **:[.hljs-built_in,.hljs-symbol]:text-syntax-symbol dark:**:[.hljs-built_in,.hljs-symbol]:text-syntax-symbol-dark **:[.hljs-bullet]:text-syntax-bullet **:[.hljs-comment,.hljs-code,.hljs-formula]:text-syntax-comment dark:**:[.hljs-comment,.hljs-code,.hljs-formula]:text-syntax-comment **:[.hljs-deletion]:bg-syntax-deletion-bg **:[.hljs-deletion]:text-syntax-deletion dark:**:[.hljs-deletion]:bg-syntax-deletion-dark-bg dark:**:[.hljs-deletion]:text-syntax-deletion-dark **:[.hljs-emphasis]:italic **:[.hljs-keyword,.hljs-doctag,.hljs-template-tag,.hljs-template-variable,.hljs-type,.hljs-variable.language]:text-syntax-keyword dark:**:[.hljs-keyword,.hljs-doctag,.hljs-template-tag,.hljs-template-variable,.hljs-type,.hljs-variable.language]:text-syntax-keyword-dark **:[.hljs-name,.hljs-quote,.hljs-selector-tag,.hljs-selector-pseudo]:text-syntax-addition dark:**:[.hljs-name,.hljs-quote,.hljs-selector-tag,.hljs-selector-pseudo]:text-syntax-name-dark **:[.hljs-regexp,.hljs-string,.hljs-meta_.hljs-string]:text-syntax-string dark:**:[.hljs-regexp,.hljs-string,.hljs-meta_.hljs-string]:text-syntax-string-dark **:[.hljs-section]:font-bold **:[.hljs-section]:text-syntax-literal dark:**:[.hljs-section]:text-syntax-section-dark **:[.hljs-strong]:font-bold **:[.hljs-title]:text-syntax-title dark:**:[.hljs-title]:text-syntax-title-dark"
       {...props}
     >
       <div className="overflow-hidden rounded-md bg-muted/50">
@@ -92,7 +92,7 @@ export function CodeBlockElement({ showLanguageLabel = true, ...props }: CodeBlo
         >
           {isLangSupported(element.lang) && (
             <Button
-              className="size-6 text-xs"
+              className="size-6"
               onClick={() => formatCodeBlock(editor, { element })}
               size="icon"
               title="Formatta il codice"
@@ -105,13 +105,13 @@ export function CodeBlockElement({ showLanguageLabel = true, ...props }: CodeBlo
           <CodeBlockCombobox showLanguageLabel={showLanguageLabel} />
 
           <CopyButton
-            className="size-6 gap-1 text-muted-foreground text-xs"
+            className="size-6"
             size="icon"
             value={() => NodeApi.string(element)}
             variant="ghost"
           />
         </div>
-        <pre className="overflow-x-auto px-4 py-3 font-mono text-sm leading-[normal] tab-2 print:break-inside-avoid">
+        <pre className="overflow-x-auto px-4 py-3 font-mono text-sm leading-normal tab-2 print:break-inside-avoid">
           <code>{props.children}</code>
         </pre>
       </div>
@@ -153,7 +153,7 @@ function CodeBlockCombobox({ showLanguageLabel }: { showLanguageLabel: boolean }
         render={
           <Button
             aria-expanded={open}
-            className="h-6 select-none justify-between gap-1 px-2 text-muted-foreground text-xs"
+            className="h-6 select-none justify-between"
             size="sm"
             variant="ghost"
           >
@@ -161,7 +161,7 @@ function CodeBlockCombobox({ showLanguageLabel }: { showLanguageLabel: boolean }
           </Button>
         }
       />
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-50">
         <Command shouldFilter={false}>
           <CommandInput
             className="h-9"
@@ -171,7 +171,7 @@ function CodeBlockCombobox({ showLanguageLabel }: { showLanguageLabel: boolean }
           />
           <CommandEmpty>Nessun linguaggio trovato.</CommandEmpty>
 
-          <CommandList className="h-[344px] overflow-y-auto">
+          <CommandList className="h-86 overflow-y-auto">
             <CommandGroup>
               {items.map((language) => (
                 <CommandItem
@@ -215,16 +215,16 @@ function CopyButton({
 }: { value: (() => string) | string } & Omit<React.ComponentProps<typeof Button>, "value">) {
   const [hasCopied, setHasCopied] = React.useState(false);
 
-  React.useEffect(() => {
-    const id = setTimeout(() => setHasCopied(false), 2000);
-    return () => clearTimeout(id);
-  }, [hasCopied]);
+  const resetTimer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  React.useEffect(() => () => clearTimeout(resetTimer.current), []);
 
   return (
     <Button
       onClick={() => {
         void navigator.clipboard.writeText(typeof value === "function" ? value() : value);
         setHasCopied(true);
+        clearTimeout(resetTimer.current);
+        resetTimer.current = setTimeout(() => setHasCopied(false), 2000);
       }}
       {...props}
     >

@@ -22,22 +22,22 @@ function PrivacyPage() {
       description="Informativa sul trattamento dei dati personali effettuato tramite il sito personale prisco.me."
     >
       <Section>
-        <div className="mx-auto max-w-4xl space-y-10 text-slate-300">
+        <div className="mx-auto max-w-4xl space-y-10 text-ink-body">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300">
+            <p className="text-xs font-semibold uppercase tracking-overline-wide text-link">
               Informativa ai sensi del GDPR
             </p>
             <h1 className="display-font mt-4 text-3xl font-semibold text-white sm:text-4xl">
               Informativa sul trattamento dei dati personali
             </h1>
-            <p className="mt-4 text-lg leading-8 text-slate-300">
+            <p className="mt-4 text-lg leading-8 text-ink-body">
               La presente informativa descrive, con linguaggio chiaro ma giuridicamente completo,
               come vengono trattati i dati personali degli utenti che consultano il sito o inviano
               una richiesta tramite il modulo di contatto.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-sky-300/20 bg-sky-300/[0.06] p-6 text-sm leading-7">
+          <div className="rounded-2xl border border-link/20 bg-link/6 p-6 text-sm leading-7">
             <p className="font-semibold text-white">Sintesi operativa</p>
             <ul className="mt-4 list-disc space-y-2 pl-5">
               <li>Il sito è un portfolio personale e non vende dati personali.</li>
@@ -53,7 +53,7 @@ function PrivacyPage() {
               <li>
                 Le richieste degli interessati possono essere esercitate tramite la pagina{" "}
                 <Link
-                  className="text-sky-200 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                  className="text-link-hover underline decoration-link/40 underline-offset-4 hover:text-white"
                   to="/contact"
                 >
                   Contatti
@@ -73,14 +73,14 @@ function PrivacyPage() {
               Per comunicazioni sul trattamento dei dati, per esercitare i diritti previsti dalla
               normativa o per chiedere chiarimenti, l&apos;interessato può utilizzare il{" "}
               <Link
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 to="/contact"
               >
                 modulo di contatto
               </Link>{" "}
               oppure il profilo{" "}
               <a
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 href="https://www.linkedin.com/in/vincenzoprisco/"
                 target="_blank"
                 rel="noreferrer"
@@ -89,7 +89,7 @@ function PrivacyPage() {
               </a>
               .
             </p>
-            <p className="rounded-xl border border-amber-300/20 bg-amber-300/[0.06] p-4 text-sm text-amber-100/80">
+            <p className="rounded-xl border border-warm-accent/20 bg-warm-accent/6 p-4 text-sm text-warm-ink-soft/80">
               Prima della pubblicazione definitiva, il titolare deve completare questa sezione con
               un indirizzo email dedicato, un recapito postale e, ove applicabile, i dati fiscali o
               professionali richiesti dalla propria attività.
@@ -204,7 +204,7 @@ function PrivacyPage() {
               l&apos;accesso alle pagine né l&apos;invio di una richiesta. Il consenso può essere
               revocato in qualsiasi momento tramite la pagina{" "}
               <Link
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 to="/cookie"
               >
                 Cookie
@@ -346,7 +346,7 @@ function PrivacyPage() {
               l&apos;identificazione dell&apos;interessato e possono essere inviate tramite la
               pagina{" "}
               <Link
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 to="/contact"
               >
                 Contatti
@@ -359,7 +359,7 @@ function PrivacyPage() {
               dei dati personali o a un&apos;altra autorità di controllo competente. Maggiori
               informazioni sono disponibili sul sito del{" "}
               <a
-                className="text-sky-300 underline decoration-sky-300/40 underline-offset-4 hover:text-white"
+                className="text-link underline decoration-link/40 underline-offset-4 hover:text-white"
                 href="https://www.garanteprivacy.it/"
                 target="_blank"
                 rel="noreferrer"
@@ -417,17 +417,17 @@ function LegalSection({ title, children }: { title: string; children: React.Reac
   return (
     <section className="space-y-4">
       <h2 className="display-font text-2xl font-semibold text-white">{title}</h2>
-      <div className="space-y-4 text-[0.98rem] leading-8">{children}</div>
+      <div className="space-y-4 text-base leading-8">{children}</div>
     </section>
   );
 }
 
 function PurposeCard({ title, body, basis }: { title: string; body: string; basis: string }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+    <article className="rounded-2xl border border-white/10 bg-white/3.5 p-5">
       <h3 className="display-font text-lg font-semibold text-white">{title}</h3>
-      <p className="mt-3 text-sm leading-7 text-slate-300">{body}</p>
-      <p className="mt-4 border-t border-white/10 pt-3 text-xs leading-6 text-sky-200/80">
+      <p className="mt-3 text-sm leading-7 text-ink-body">{body}</p>
+      <p className="mt-4 border-t border-white/10 pt-3 text-xs leading-6 text-link-hover/80">
         {basis}
       </p>
     </article>

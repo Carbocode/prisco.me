@@ -125,7 +125,7 @@ function MediaContent() {
       <Card size="sm">
         <CardContent>
           <form onSubmit={(event) => void upload(event)}>
-            <FieldGroup className="grid items-end gap-2 lg:grid-cols-2">
+            <FieldGroup className="grid items-end lg:grid-cols-2">
               <Field>
                 <FieldLabel htmlFor="media-file">
                   Media · conversione automatica WebP/WebM · animazioni WebP preservate · originale
@@ -310,7 +310,7 @@ function ManagedMediaCard({
         item={{ ...item, name, altText, caption }}
         details={
           <CollapsibleContent>
-            <FieldGroup className="gap-2">
+            <FieldGroup>
               <Field>
                 <FieldLabel htmlFor={`name-${item.id}`}>Nome del media</FieldLabel>
                 <Input

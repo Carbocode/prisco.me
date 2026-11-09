@@ -43,7 +43,7 @@ const technologyGroups: Array<{
         "Tailwind CSS",
         "simple-icons:tailwindcss",
         "TW",
-        "border-sky-300/30 bg-sky-300/10 text-sky-200",
+        "border-link/30 bg-link/10 text-link-hover",
       ),
       technology(
         "shadcn/ui",
@@ -70,7 +70,12 @@ const technologyGroups: Array<{
         "TQ",
         "border-rose-300/30 bg-rose-300/10 text-rose-200",
       ),
-      technology("Plate", null, "P", "border-violet-300/30 bg-violet-300/10 text-violet-200"),
+      technology(
+        "Plate",
+        null,
+        "P",
+        "border-secondary-glow/30 bg-secondary-glow/10 text-violet-200",
+      ),
       technology(
         "Vite",
         "simple-icons:vite",
@@ -88,19 +93,19 @@ const technologyGroups: Array<{
         "Cloudflare Workers",
         "simple-icons:cloudflareworkers",
         "CF",
-        "border-orange-300/30 bg-orange-300/10 text-orange-200",
+        "border-orange-300/30 bg-orange-300/10 text-ember-highlight",
       ),
       technology(
         "Cloudflare D1",
         "simple-icons:cloudflare",
         "D1",
-        "border-amber-300/30 bg-amber-300/10 text-amber-200",
+        "border-warm-accent/30 bg-warm-accent/10 text-warm-highlight",
       ),
       technology(
         "Cloudflare R2",
         "simple-icons:cloudflare",
         "R2",
-        "border-orange-300/30 bg-orange-300/10 text-orange-200",
+        "border-orange-300/30 bg-orange-300/10 text-ember-highlight",
       ),
       technology(
         "Drizzle ORM",
@@ -143,7 +148,7 @@ const technologyGroups: Array<{
         "Turnstile",
         "simple-icons:cloudflare",
         "TS",
-        "border-orange-300/30 bg-orange-300/10 text-orange-200",
+        "border-orange-300/30 bg-orange-300/10 text-ember-highlight",
       ),
     ],
   },
@@ -159,10 +164,10 @@ function SiteInformationPage() {
       title={
         <>
           Un portfolio costruito come un prodotto, come lo farei{" "}
-          <span className="text-sky-300">per te</span>
+          <span className="text-link">per te</span>
         </>
       }
-      titleClassName="tracking-[-0.025em]"
+      titleClassName="tracking-heading"
       description="Prisco.me è progettato, sviluppato e mantenuto da Vincenzo Prisco. Questa pagina raccoglie le scelte tecniche che lo fanno funzionare."
     >
       <Section>
@@ -193,18 +198,18 @@ function SiteInformationPage() {
         </div>
       </Section>
 
-      <section className="bg-gradient-to-r from-sky-400/10 to-violet-400/10 px-6 py-20 text-center">
+      <section className="bg-gradient-to-r from-glow/10 to-secondary-glow-strong/10 px-6 py-20 text-center">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-5">
           <h2 className="display-font text-3xl font-semibold sm:text-4xl">
             Hai trovato qualcosa che vuoi approfondire?
           </h2>
-          <p className="leading-7 text-slate-300">
+          <p className="leading-7 text-ink-body">
             Scrivimi oppure esplora direttamente il codice del progetto.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <ActionLink href="/contact">Parliamone</ActionLink>
             <a
-              className="inline-flex h-10 items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-link"
               href="https://github.com/Carbocode/prisco-website"
               target="_blank"
               rel="noreferrer"
@@ -227,12 +232,12 @@ function TechnologyGroupCard({ group }: { group: (typeof technologyGroups)[numbe
       <h2 className="display-font text-2xl leading-tight font-semibold text-white">
         {group.title}
       </h2>
-      <p className="mt-3 text-sm leading-7 text-slate-300">{group.description}</p>
+      <p className="mt-3 text-sm leading-7 text-ink-body">{group.description}</p>
       <div className="mt-6 flex flex-wrap gap-2">
         {group.technologies.map((item) => (
           <span
             key={item.name}
-            className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2"
+            className="rounded-xl border border-white/10 bg-canvas/40 px-3 py-2"
           >
             <TechIcon skill={item} compact />
           </span>
@@ -244,10 +249,10 @@ function TechnologyGroupCard({ group }: { group: (typeof technologyGroups)[numbe
 
 function DetailCard({ number, title, body }: { number: string; title: string; body: string }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-      <span className="text-xs font-semibold tracking-[0.25em] text-sky-300">{number}</span>
+    <article className="rounded-2xl border border-white/10 bg-white/3 p-6">
+      <span className="text-xs font-semibold tracking-caption-wide text-link">{number}</span>
       <h3 className="display-font mt-5 text-xl font-semibold text-white">{title}</h3>
-      <p className="mt-3 text-sm leading-7 text-slate-400">{body}</p>
+      <p className="mt-3 text-sm leading-7 text-ink-subtle">{body}</p>
     </article>
   );
 }

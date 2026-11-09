@@ -9,6 +9,7 @@ import { SkillChip } from "@/components/tech-icon";
 import { buttonVariants } from "@/components/ui/button";
 import { pageHead } from "@/lib/page-head";
 import type { Experience, Skill } from "@/lib/projects";
+import { cn } from "@/lib/utils";
 import { getPortfolioQueryOptions } from "@/server/portfolio";
 
 export const Route = createFileRoute("/career")({
@@ -27,7 +28,7 @@ function AboutPage() {
 
   return (
     <PageShell hero={false} title="Carriera">
-      <section className="relative isolate bg-[#06101f] px-4 pb-10 pt-24 sm:px-6 lg:px-10">
+      <section className="relative isolate bg-subsoil px-4 pb-10 pt-24 sm:px-6 lg:px-10">
         <CareerGalaxy />
         <div className="relative z-10">
           <GanttJourney experiences={data.experiences} />
@@ -66,18 +67,18 @@ const careerStars: CareerStarConfig[] = [
 function CareerGalaxy() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(76,29,149,0.22),transparent_26%),radial-gradient(circle_at_82%_48%,rgba(190,24,93,0.13),transparent_24%),radial-gradient(circle_at_34%_78%,rgba(30,64,175,0.18),transparent_28%),linear-gradient(180deg,#06101f_0%,#080b1d_46%,#070817_100%)]" />
+      <div className="absolute inset-0 bg-career-galaxy" />
       <div
-        className="absolute inset-0 opacity-60"
+        className="absolute inset-0 opacity-60 dynamic-background-image dynamic-background-position dynamic-background-repeat dynamic-background-size"
         style={{
-          backgroundImage: "url(/home/small-stars.svg)",
-          backgroundPosition: "center top",
-          backgroundRepeat: "repeat",
-          backgroundSize: "1154px 427px",
+          "--dynamic-background-image": "url(/home/small-stars.svg)",
+          "--dynamic-background-position": "center top",
+          "--dynamic-background-repeat": "repeat",
+          "--dynamic-background-size": "1154px 427px",
         }}
       />
-      <div className="absolute left-[8%] top-[30%] h-72 w-72 rounded-full bg-violet-500/[0.06] blur-3xl" />
-      <div className="absolute right-[4%] top-[62%] h-96 w-96 rounded-full bg-fuchsia-500/[0.05] blur-3xl" />
+      <div className="absolute left-8/100 top-30/100 h-72 w-72 rounded-full bg-secondary-aura/6 blur-3xl" />
+      <div className="absolute right-4/100 top-62/100 h-96 w-96 rounded-full bg-highlight-aura/5 blur-3xl" />
       <GalaxyRibbon top="9%" rotation={-4} opacity={0.75} />
       <GalaxyRibbon top="36%" rotation={3} opacity={0.6} />
       <GalaxyRibbon top="63%" rotation={-2} opacity={0.7} />
@@ -87,12 +88,22 @@ function CareerGalaxy() {
           key={`${star.top}-${index}`}
           alt=""
           size={star.size}
-          className="absolute drop-shadow-[0_0_12px_rgba(255,255,255,0.65)]"
+          className="absolute drop-shadow-star dynamic-top dynamic-left dynamic-right dynamic-opacity"
           style={{
-            top: `${star.top}%`,
-            left: star.left == null ? undefined : `${star.left}%`,
-            right: star.right == null ? undefined : `${star.right}%`,
-            opacity: star.opacity,
+            "--dynamic-top": `${star.top}%`,
+            "--dynamic-left":
+              typeof (star.left == null ? undefined : `${star.left}%`) === "number"
+                ? (star.left == null ? undefined : `${star.left}%`) + "px"
+                : star.left == null
+                  ? undefined
+                  : `${star.left}%`,
+            "--dynamic-right":
+              typeof (star.right == null ? undefined : `${star.right}%`) === "number"
+                ? (star.right == null ? undefined : `${star.right}%`) + "px"
+                : star.right == null
+                  ? undefined
+                  : `${star.right}%`,
+            "--dynamic-opacity": star.opacity,
           }}
         />
       ))}
@@ -114,31 +125,35 @@ function GalaxyRibbon({ top, rotation, opacity }: GalaxyRibbonProps) {
     <svg
       viewBox="0 0 1440 280"
       preserveAspectRatio="none"
-      className="absolute left-1/2 h-72 w-[145%]"
-      style={{ top, opacity, transform: `translateX(-50%) rotate(${rotation}deg)` }}
+      className="absolute left-1/2 h-72 w-145/100 dynamic-top dynamic-opacity dynamic-transform"
+      style={{
+        "--dynamic-top": typeof top === "number" ? top + "px" : top,
+        "--dynamic-opacity": opacity,
+        "--dynamic-transform": `translateX(-50%) rotate(${rotation}deg)`,
+      }}
     >
       <path
         d={mainWave}
         fill="none"
-        stroke="white"
+        stroke="var(--color-ink-inverse)"
         strokeLinecap="round"
         strokeWidth="76"
         opacity="0.045"
-        className="blur-[18px]"
+        className="blur-ribbon"
       />
       <path
         d={mainWave}
         fill="none"
-        stroke="white"
+        stroke="var(--color-ink-inverse)"
         strokeLinecap="round"
         strokeWidth="18"
         opacity="0.08"
-        className="blur-[6px]"
+        className="blur-ribbon-soft"
       />
       <path
         d={mainWave}
         fill="none"
-        stroke="white"
+        stroke="var(--color-ink-inverse)"
         strokeLinecap="round"
         strokeWidth="1.4"
         opacity="0.36"
@@ -146,7 +161,7 @@ function GalaxyRibbon({ top, rotation, opacity }: GalaxyRibbonProps) {
       <path
         d={companionWave}
         fill="none"
-        stroke="white"
+        stroke="var(--color-ink-inverse)"
         strokeLinecap="round"
         strokeWidth="1"
         opacity="0.2"
@@ -200,9 +215,9 @@ const ganttCategoryTone = {
     bar: "border-emerald-200/50 bg-gradient-to-b from-emerald-300/90 to-emerald-400/80 text-emerald-950",
   },
   work: {
-    dot: "bg-sky-300",
-    chip: "border-sky-300/30 text-sky-200",
-    bar: "border-sky-200/50 bg-gradient-to-b from-sky-300/90 to-sky-400/80 text-sky-950",
+    dot: "bg-link",
+    chip: "border-link/30 text-link-hover",
+    bar: "border-link-hover/50 bg-gradient-to-b from-link/90 to-glow/80 text-sky-950",
   },
 } as const;
 
@@ -328,7 +343,7 @@ function GanttJourney({ experiences }: { experiences: Experience[] }) {
 
   return (
     <>
-      <div className="mt-10 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-start lg:gap-12">
+      <div className="mt-10 lg:grid lg:grid-cols-(--layout-grid-cols-contact) lg:items-start lg:gap-12">
         {/* Mobile: plain stacked cards, no gantt */}
         <div className="space-y-12 lg:hidden">
           {segments.map((seg) => (
@@ -345,7 +360,7 @@ function GanttJourney({ experiences }: { experiences: Experience[] }) {
               onClick={() => scrollToSegment(currentIndex - 1)}
               disabled={currentIndex <= 0}
               aria-label="Periodo precedente"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-ink-soft transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
             >
               ↑
             </button>
@@ -354,11 +369,11 @@ function GanttJourney({ experiences }: { experiences: Experience[] }) {
               onClick={() => scrollToSegment(currentIndex + 1)}
               disabled={currentIndex >= segments.length - 1}
               aria-label="Periodo successivo"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-ink-soft transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
             >
               ↓
             </button>
-            <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-slate-500">
+            <span className="text-xs font-medium uppercase tracking-label-wide text-ink-muted">
               {currentIndex + 1}/{segments.length}
             </span>
           </div>
@@ -382,15 +397,15 @@ function CareerCta() {
   return (
     <aside className="relative py-2">
       <div className="relative">
-        <span className="inline-flex items-center gap-2 rounded-full border border-fuchsia-300/30 bg-violet-300/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-fuchsia-200">
-          <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-300" aria-hidden="true" />
+        <span className="inline-flex items-center gap-2 rounded-full border border-highlight/30 bg-secondary-glow/10 px-3 py-1 text-xs font-semibold uppercase tracking-eyebrow text-highlight-soft">
+          <span className="h-1.5 w-1.5 rounded-full bg-highlight" aria-hidden="true" />
           Il futuro è da scrivere
         </span>
-        <h2 className="mt-5 bg-gradient-to-r from-violet-300 to-fuchsia-400 bg-clip-text text-3xl font-semibold leading-tight text-transparent sm:text-4xl">
+        <h2 className="mt-5 bg-gradient-to-r from-secondary-glow to-highlight-strong bg-clip-text text-3xl font-semibold leading-tight text-transparent sm:text-4xl">
           Il prossimo capitolo
           <span className="block">potremmo scriverlo insieme.</span>
         </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-body sm:text-base">
           Hai una sfida che merita di diventare realtà? Raccontamela: il prossimo blocco di questa
           storia potremmo costruirlo insieme.
         </p>
@@ -399,7 +414,7 @@ function CareerCta() {
           className={buttonVariants({
             size: "lg",
             className:
-              "mt-7 rounded-full bg-gradient-to-r from-violet-300 to-fuchsia-400 px-6 font-semibold text-violet-950 shadow-lg shadow-fuchsia-950/30 hover:brightness-110",
+              "mt-7 rounded-full bg-gradient-to-r from-secondary-glow to-highlight-strong px-6 font-semibold text-secondary-ink shadow-lg shadow-fuchsia-950/30 hover:brightness-110",
           })}
         >
           Scriviamo il prossimo capitolo
@@ -420,18 +435,18 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
     <article>
       <div className="flex flex-wrap items-center gap-3">
         <span
-          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${tone.chip}`}
+          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-eyebrow ${tone.chip}`}
         >
           <span className={`h-1.5 w-1.5 rounded-full ${tone.dot}`} aria-hidden="true" />
           {seg.groupLabel}
         </span>
-        <span className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
+        <span className="text-xs font-medium uppercase tracking-eyebrow text-ink-muted">
           {experience.period}
         </span>
         {experience.current ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/40 bg-amber-300/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-200">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-warm-accent/40 bg-warm-accent/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-label text-warm-highlight">
             <span
-              className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400"
+              className="h-1.5 w-1.5 animate-pulse rounded-full bg-warm-accent-strong"
               aria-hidden="true"
             />
             Attuale
@@ -441,15 +456,15 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
       <h3 className="display-font mt-4 text-2xl font-semibold text-white sm:text-3xl">
         {seg.rowLabel}
       </h3>
-      <p className="mt-1 text-sm font-medium text-slate-400">{experience.title}</p>
-      <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">{experience.narrative}</p>
-      <p className="mt-4 text-xs font-medium uppercase tracking-[0.14em] text-slate-600">
+      <p className="mt-1 text-sm font-medium text-ink-subtle">{experience.title}</p>
+      <p className="mt-4 max-w-xl text-base leading-7 text-ink-body">{experience.narrative}</p>
+      <p className="mt-4 text-xs font-medium uppercase tracking-label-wide text-ink-dim">
         {ongoing ? "In corso" : `Durata · ${formatGanttDuration(seg.startIndex, seg.endIndex)}`}
       </p>
 
       {experience.skills.length > 0 ? (
         <div className="mt-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-section text-ink-muted">
             COMPETENZE APPRESE O APLIATE
           </p>
           <SkillsRow skills={experience.skills} />
@@ -458,7 +473,7 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
 
       {experience.projects.length > 0 ? (
         <div className="mt-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-section text-ink-muted">
             Progetti collegati
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -466,7 +481,7 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
               <a
                 key={project.slug}
                 href={`/progetti/${project.slug}`}
-                className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-200 transition hover:border-sky-300/35 hover:bg-sky-300/10 hover:text-sky-200"
+                className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-canvas/60 px-3 py-2 text-sm text-ink-soft transition hover:border-link/35 hover:bg-link/10 hover:text-link-hover"
               >
                 {project.title}
                 <span aria-hidden="true">→</span>
@@ -524,7 +539,11 @@ function VerticalGantt({
   return (
     <div>
       {/* Plot area — real monthly scale, month by month */}
-      <div ref={plotRef} className="relative flex" style={{ height: `${ganttPlotHeight}px` }}>
+      <div
+        ref={plotRef}
+        className="relative flex h-(--dynamic-height)"
+        style={{ "--dynamic-height": `${ganttPlotHeight}px` }}
+      >
         {/* Year + month axis */}
         <div className="relative w-14 shrink-0">
           {ganttMonths.map((month, index) => {
@@ -532,12 +551,13 @@ function VerticalGantt({
             return (
               <span
                 key={month.key}
-                className={`absolute right-1 -translate-y-1/2 tabular-nums ${
-                  isYear
-                    ? "text-sm font-bold text-slate-200"
-                    : "text-[9px] font-medium text-slate-600"
-                }`}
-                style={{ top: `${ganttY(index)}px` }}
+                className={cn(
+                  `absolute right-1 -translate-y-1/2 tabular-nums ${
+                    isYear ? "text-sm font-bold text-ink-soft" : "text-xs font-medium text-ink-dim"
+                  }`,
+                  "dynamic-top",
+                )}
+                style={{ "--dynamic-top": `${ganttY(index)}px` }}
               >
                 {isYear ? month.year : month.label}
               </span>
@@ -548,27 +568,30 @@ function VerticalGantt({
         {/* Columns + month/year gridlines */}
         <div
           ref={horizontalScrollRef}
-          className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           <div className="relative flex h-full w-max min-w-full gap-1">
             {ganttMonths.map((month, index) => (
               <span
                 key={month.key}
-                className={`pointer-events-none absolute inset-x-0 border-t ${
-                  index % 12 === 0 ? "border-white/15" : "border-white/5"
-                }`}
-                style={{ top: `${ganttY(index)}px` }}
+                className={cn(
+                  `pointer-events-none absolute inset-x-0 border-t ${
+                    index % 12 === 0 ? "border-white/15" : "border-white/5"
+                  }`,
+                  "dynamic-top",
+                )}
+                style={{ "--dynamic-top": `${ganttY(index)}px` }}
                 aria-hidden="true"
               />
             ))}
 
             {ganttTodayVisible ? (
               <span
-                className="pointer-events-none absolute inset-x-0 z-20 border-t border-dashed border-amber-300/70"
-                style={{ top: `${ganttY(ganttTodayIndex)}px` }}
+                className="pointer-events-none absolute inset-x-0 z-20 border-t border-dashed border-warm-accent/70 dynamic-top"
+                style={{ "--dynamic-top": `${ganttY(ganttTodayIndex)}px` }}
                 aria-hidden="true"
               >
-                <span className="absolute -top-2 left-full ml-2 rounded-full border border-amber-300/40 bg-amber-300/20 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.12em] text-amber-100">
+                <span className="absolute -top-2 left-full ml-2 rounded-full border border-warm-accent/40 bg-warm-accent/20 px-1.5 py-0.5 text-xs font-bold uppercase tracking-label text-warm-ink-soft">
                   Oggi
                 </span>
               </span>
@@ -581,7 +604,7 @@ function VerticalGantt({
                   <div
                     key={col.id}
                     data-gantt-column-index={columnIndex}
-                    className="relative w-[clamp(7rem,12vw,11rem)] shrink-0"
+                    className="relative w-(--layout-w-contact-star) shrink-0"
                   >
                     {col.bars.map((bar) => {
                       const startIndex = getGanttMonthIndex(bar.startDate);
@@ -592,7 +615,7 @@ function VerticalGantt({
                       const active = activeId === bar.id;
                       const barTone =
                         bar.id === careerCtaExperience.id
-                          ? "border-fuchsia-200/60 bg-gradient-to-b from-violet-300/95 to-fuchsia-400/85 text-violet-950"
+                          ? "border-highlight-soft/60 bg-gradient-to-b from-secondary-glow/95 to-highlight-strong/85 text-secondary-ink"
                           : tone.bar;
                       const focusBlock = () => {
                         const el = plotRef.current;
@@ -607,14 +630,17 @@ function VerticalGantt({
                       return (
                         <div
                           key={bar.id}
-                          className={`absolute inset-x-0.5 border text-current shadow-md transition-all duration-150 ${
-                            startIndex < 0 ? "rounded-b-lg" : "rounded-lg"
-                          } ${barTone} ${
-                            active
-                              ? "z-10 opacity-100 ring-2 ring-amber-300/70 brightness-110"
-                              : "opacity-35 hover:opacity-70"
-                          }`}
-                          style={{ top: `${top}px`, height: `${height}px` }}
+                          className={cn(
+                            `absolute inset-x-0.5 border text-current shadow-md transition-all duration-150 ${
+                              startIndex < 0 ? "rounded-b-lg" : "rounded-lg"
+                            } ${barTone} ${
+                              active
+                                ? "z-10 opacity-100 ring-2 ring-warm-accent/70 brightness-110"
+                                : "opacity-35 hover:opacity-70"
+                            }`,
+                            "dynamic-top h-(--dynamic-height)",
+                          )}
+                          style={{ "--dynamic-top": `${top}px`, "--dynamic-height": `${height}px` }}
                           title={`${bar.detail ?? bar.title} (${bar.period})`}
                         >
                           {/* Transparent overlay handles clicks without breaking the sticky label */}
@@ -622,18 +648,16 @@ function VerticalGantt({
                             type="button"
                             onClick={focusBlock}
                             aria-label={`${bar.title} — ${bar.period}`}
-                            className="absolute inset-0 z-10 cursor-pointer rounded-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70"
+                            className="absolute inset-0 z-10 cursor-pointer rounded-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm-accent/70"
                           />
                           <div className="sticky top-2 flex flex-col items-center gap-1 px-1 pb-1 pt-2 text-center">
                             {bar.current ? (
                               <span
-                                className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500"
+                                className="h-1.5 w-1.5 animate-pulse rounded-full bg-warm-accent-deep"
                                 aria-hidden="true"
                               />
                             ) : null}
-                            <span className="text-[11px] font-semibold leading-tight">
-                              {bar.title}
-                            </span>
+                            <span className="text-xs font-semibold leading-tight">{bar.title}</span>
                           </div>
                         </div>
                       );

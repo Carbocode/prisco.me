@@ -95,14 +95,12 @@ export async function createArticle(input: unknown) {
           createdAt: now,
           updatedAt: now,
         }),
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-      ...(data.categoryIds.map((categoryId) =>
+      ...data.categoryIds.map((categoryId) =>
         db().insert(cmsArticleCategories).values({ articleId: id, categoryId }),
-      ) as []),
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
-      ...(data.tagIds.map((tagId, sortOrder) =>
+      ),
+      ...data.tagIds.map((tagId, sortOrder) =>
         db().insert(cmsArticleTags).values({ articleId: id, tagId, sortOrder }),
-      ) as []),
+      ),
       db()
         .insert(cmsAuditLogs)
         .values(auditInsert(session.user.id, "article.created", "article", id)),

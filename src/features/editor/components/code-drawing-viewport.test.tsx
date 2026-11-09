@@ -8,12 +8,12 @@ describe("CodeDrawingViewport", () => {
     render(<CodeDrawingViewport image="data:image/svg+xml,test" />);
 
     const image = screen.getByRole("img", { name: "Diagramma" });
-    expect(image.style.transform).toContain("scale(1)");
+    expect(image.style.getPropertyValue("--dynamic-transform")).toContain("scale(1)");
 
     fireEvent.click(screen.getByRole("button", { name: "Aumenta zoom" }));
-    expect(image.style.transform).toContain("scale(1.25)");
+    expect(image.style.getPropertyValue("--dynamic-transform")).toContain("scale(1.25)");
 
     fireEvent.click(screen.getByRole("button", { name: "Riduci zoom" }));
-    expect(image.style.transform).toContain("scale(1)");
+    expect(image.style.getPropertyValue("--dynamic-transform")).toContain("scale(1)");
   });
 });

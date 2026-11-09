@@ -46,7 +46,7 @@ function ColumnFloatingToolbar({ children }: { children: React.ReactNode }) {
   return (
     <Popover open={open}>
       <PopoverTrigger render={<div>{children}</div>} />
-      <PopoverContent align="center" className="w-auto p-1" side="top" sideOffset={10}>
+      <PopoverContent align="center" className="w-auto" side="top" sideOffset={10}>
         <div className="box-content flex h-8 items-center gap-1">
           <Button className="size-8" onClick={() => onColumnChange(["50%", "50%"])} variant="ghost">
             2
@@ -81,10 +81,16 @@ export function ColumnElement(props: PlateElementProps<TColumnElement>) {
   return (
     <PlateElement
       className={cn(
-        "min-w-0 border border-transparent p-1.5",
-        !readOnly && "rounded-lg border-border border-dashed",
+        cn(
+          "min-w-0 border border-transparent p-1.5",
+          !readOnly && "rounded-lg border-border border-dashed",
+        ),
+        "w-(--dynamic-width)",
       )}
-      style={{ width: width ?? "100%" }}
+      style={{
+        "--dynamic-width":
+          typeof (width ?? "100%") === "number" ? (width ?? "100%") + "px" : (width ?? "100%"),
+      }}
       {...props}
     >
       {props.children}

@@ -6,7 +6,6 @@ import { CheckIcon, EraserIcon, PlusIcon } from "lucide-react";
 import { type PlateEditor, useEditorRef, useEditorSelector } from "platejs/react";
 import React from "react";
 
-import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -178,7 +177,7 @@ export function FontColorToolbarButton({
         }
       />
 
-      <DropdownMenuContent align="start" className="w-auto! min-w-[240px]">
+      <DropdownMenuContent align="start" className="w-auto! min-w-60">
         <ColorPicker
           clearColor={clearColor}
           color={selectedColor || color}
@@ -243,7 +242,7 @@ function PureColorPicker({
       </ToolbarMenuGroup>
       {color && (
         <ToolbarMenuGroup>
-          <DropdownMenuItem className="p-2" onClick={clearColor}>
+          <DropdownMenuItem onClick={clearColor}>
             <EraserIcon />
             <span>Clear</span>
           </DropdownMenuItem>
@@ -366,16 +365,7 @@ function ColorCustom({
           }}
           value={value}
         >
-          <DropdownMenuItem
-            className={cn(
-              buttonVariants({
-                size: "icon",
-                variant: "outline",
-              }),
-              "flex size-8 items-center justify-center rounded-full",
-            )}
-            closeOnClick={false}
-          >
+          <DropdownMenuItem closeOnClick={false}>
             <span className="sr-only">Custom</span>
             <PlusIcon />
           </DropdownMenuItem>
@@ -417,8 +407,7 @@ type TColor = {
 };
 
 function ColorDropdownMenuItem({
-  className,
-  isBrightColor,
+  isBrightColor: _isBrightColor,
   isSelected,
   name,
   updateColor,
@@ -433,30 +422,26 @@ function ColorDropdownMenuItem({
 } & React.ComponentProps<typeof DropdownMenuItem>) {
   const content = (
     <DropdownMenuItem
-      className={cn(
-        buttonVariants({
-          size: "icon",
-          variant: "outline",
-        }),
-        "my-1 flex size-6 items-center justify-center rounded-full border border-muted border-solid p-0 transition-all hover:scale-125",
-        !isBrightColor && "border-transparent text-white",
-        className,
-      )}
-      style={{ backgroundColor: value }}
       closeOnClick={false}
       onClick={() => {
         updateColor(value);
       }}
       {...props}
     >
-      {isSelected ? <CheckIcon className="size-3!" strokeWidth={3} /> : null}
+      <span
+        className="dynamic-background-color size-6 rounded-full border border-border"
+        style={{ "--dynamic-background-color": value }}
+        aria-hidden="true"
+      />
+      <span className="sr-only">{name ?? value}</span>
+      {isSelected ? <CheckIcon /> : null}
     </DropdownMenuItem>
   );
 
   return name ? (
     <Tooltip>
       <TooltipTrigger render={content} />
-      <TooltipContent className="mb-1 capitalize">{name}</TooltipContent>
+      <TooltipContent className="mb-1">{name}</TooltipContent>
     </Tooltip>
   ) : (
     content
@@ -475,10 +460,7 @@ export function ColorDropdownMenuItems({
   color?: string;
 } & React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("grid grid-cols-[repeat(10,1fr)] place-items-center gap-x-1", className)}
-      {...props}
-    >
+    <div className={cn("grid grid-cols-10 place-items-center gap-x-1", className)} {...props}>
       <TooltipProvider>
         {colors.map(({ isBrightColor, name, value }) => (
           <ColorDropdownMenuItem

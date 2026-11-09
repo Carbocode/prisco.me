@@ -13,7 +13,12 @@
   },
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "shadcn/no-restyle": ["error", { "allow": ["layout"] }],
+    "shadcn/no-restyle": [
+      "error",
+      {
+        "allow": ["layout", "ignore-click-*"]
+      }
+    ],
     "shadcn/no-raw-colors": "error",
     "shadcn/no-arbitrary-values": "error",
     "shadcn/no-inline-styles": "error",

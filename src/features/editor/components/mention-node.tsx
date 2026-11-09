@@ -7,6 +7,7 @@ import type { PlateElementProps } from "platejs/react";
 import { PlateElement, useFocused, useReadOnly, useSelected } from "platejs/react";
 import * as React from "react";
 
+import { useHydrated } from "@/hooks/use-hydrated";
 import { cn } from "@/lib/utils";
 
 import {
@@ -18,19 +19,11 @@ import {
   InlineComboboxItem,
 } from "./inline-combobox";
 
-function useMounted() {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-  return mounted;
-}
-
 export function MentionElement(props: PlateElementProps<TMentionElement> & { prefix?: string }) {
   const { element } = props;
   const selected = useSelected();
   const focused = useFocused();
-  const mounted = useMounted();
+  const mounted = useHydrated();
   const readOnly = useReadOnly();
 
   return (

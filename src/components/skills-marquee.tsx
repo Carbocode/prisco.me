@@ -1,5 +1,6 @@
 import { SkillChip } from "@/components/tech-icon";
 import type { Skill } from "@/lib/projects";
+import { cn } from "@/lib/utils";
 
 type SkillMarqueeRow = {
   row: number;
@@ -43,7 +44,7 @@ export function SkillsMarquee({ skills }: { skills: Skill[] }) {
 
   return (
     <div
-      className="relative mt-8 min-w-0 max-w-full lg:grid lg:grid-cols-[minmax(15rem,0.42fr)_minmax(0,1fr)]"
+      className="relative mt-8 min-w-0 max-w-full lg:grid lg:grid-cols-(--layout-grid-cols-profile)"
       aria-label="Competenze tecniche"
     >
       <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6 text-center lg:relative lg:inset-auto lg:justify-start lg:text-left">
@@ -64,15 +65,13 @@ function MarqueeRow({ row }: { row: SkillMarqueeRow }) {
   return (
     <div className="overflow-hidden">
       <div
-        className={[
-          "skills-marquee-track",
-          row.direction === "right" ? "skills-marquee-track-reverse" : "",
-        ]
-          .filter(Boolean)
-          .join(" ")}
-        style={{
-          animationDuration: (row.duration ?? 34) + "s",
-        }}
+        className={cn(
+          ["skills-marquee-track", row.direction === "right" ? "skills-marquee-track-reverse" : ""]
+            .filter(Boolean)
+            .join(" "),
+          "dynamic-animation-duration",
+        )}
+        style={{ "--dynamic-animation-duration": (row.duration ?? 34) + "s" }}
       >
         <SkillGroup items={row.items} />
         <SkillGroup items={row.items} ariaHidden />
