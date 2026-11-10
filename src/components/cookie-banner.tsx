@@ -8,7 +8,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 export function CookieBanner({ onChoose }: { onChoose: (consent: CookieConsent) => void }) {
   return (
     <Alert
-      className="fixed inset-x-3 bottom-(--layout-bottom-safe-compact) z-40 w-auto sm:right-4 sm:bottom-4 sm:left-auto sm:w-sm"
+      className="fixed inset-x-3 bottom-(--layout-bottom-safe-compact) z-60 w-auto sm:right-4 sm:bottom-(--layout-bottom-safe) sm:left-auto sm:w-sm"
       aria-label="Preferenze cookie"
     >
       <AlertDescription>Cookie facoltativi per migliorare il sito.</AlertDescription>
