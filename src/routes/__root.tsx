@@ -136,11 +136,11 @@ function App() {
 
 function RootDocument() {
   return (
-    <html lang="it" className="dark">
+    <html lang="it" className="dark bg-black">
       <head>
         <HeadContent />
       </head>
-      <body className="min-h-dvh w-full bg-canvas">
+      <body className="min-h-dvh w-full bg-black">
         <CookieConsentProvider>
           <Outlet />
           <Scripts />
