@@ -467,35 +467,38 @@ export function animateHome(container) {
         g.stars.forEach(([label, , , side, major], n) => {
           const [x, sy] = pos[n];
           const d = `--d:${delay + n * 70}ms`;
+          // Keep placement separate from animation. All animated shapes use a fixed
+          // local origin, independent of SVG bounding-box updates in each browser.
+          const position = el("g", { transform: `translate(${x} ${sy})` }, grp);
           const star = el(
             "g",
             {
               class: "sky-star",
               style: `${d};--tw:${(2.6 + (n % 5) * 0.7).toFixed(1)}s;--twd:${(-n * 0.9).toFixed(1)}s;--gl:${(5 + ((n * 7) % 6)).toFixed(1)}s;--gld:${(-n * 1.3).toFixed(1)}s`,
             },
-            grp,
+            position,
           );
           const size = major ? 9 : 6;
-          el("circle", { class: "sky-hit-star", cx: x, cy: sy, r: 22 }, star);
-          el("circle", { class: "sky-burst", cx: x, cy: sy, r: size * 1.6 }, star);
+          el("circle", { class: "sky-hit-star", cx: 0, cy: 0, r: 22 }, star);
+          el("circle", { class: "sky-burst", cx: 0, cy: 0, r: size * 1.6 }, star);
           const body = el("g", { class: "sky-body" }, star);
-          el("circle", { class: "sky-halo", cx: x, cy: sy, r: size * 2.1 }, body);
+          el("circle", { class: "sky-halo", cx: 0, cy: 0, r: size * 2.1 }, body);
           el(
             "path",
             {
               class: "sky-glint",
-              d: `M${x - size * 3.2} ${sy}H${x + size * 3.2}M${x} ${sy - size * 3.2}V${sy + size * 3.2}`,
+              d: `M${-size * 3.2} 0H${size * 3.2}M0 ${-size * 3.2}V${size * 3.2}`,
             },
             body,
           );
-          el("path", { class: "sky-spark", d: spark(x, sy, size) }, body);
-          el("circle", { class: "sky-core", cx: x, cy: sy, r: major ? 2 : 1.4 }, body);
+          el("path", { class: "sky-spark", d: spark(0, 0, size) }, body);
+          el("circle", { class: "sky-core", cx: 0, cy: 0, r: major ? 2 : 1.4 }, body);
           const off = size + 9;
           const [lx, ly, an] = {
-            n: [x, sy - off, "middle"],
-            s: [x, sy + off + 10, "middle"],
-            e: [x + off, sy + 5, "start"],
-            w: [x - off, sy + 5, "end"],
+            n: [0, -off, "middle"],
+            s: [0, off + 10, "middle"],
+            e: [off, 5, "start"],
+            w: [-off, 5, "end"],
           }[side];
           el("text", { class: "sky-label", x: lx, y: ly, "text-anchor": an }, star).textContent =
             label;

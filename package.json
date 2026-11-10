@@ -65,6 +65,7 @@
     "@platejs/table": "^53.0.9",
     "@platejs/toc": "^53.0.0",
     "@platejs/toggle": "^53.0.0",
+    "@shadcn/react": "^0.3.1",
     "@tailwindcss/vite": "^4.3.5",
     "@tanstack/match-sorter-utils": "^9.2.6",
     "@tanstack/react-devtools": "^0.10.14",

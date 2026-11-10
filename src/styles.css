@@ -1103,6 +1103,7 @@ code {
   --tracking-overline-wide: 0.3em;
   --text-hero: 5.5rem;
   --text-display: 5.75rem;
+  --font-editorial: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
 }
 
 /* Runtime geometry and authored CMS content use CSS custom properties. */
@@ -1222,8 +1223,34 @@ code {
 
 @utility contact-progress { transform: scaleY(var(--line-progress, 1)); }
 
+/* Contatti: discesa notte → nucleo incandescente, coerente con la landing. */
+@utility bg-contact-core { background-image: linear-gradient(180deg,#050c18 0%,#0b1a31 26%,#293c5a 44%,#3d211e 66%,#7a2a12 86%,#9a3a14 100%); }
+@utility bg-contact-core-halo { background-image: radial-gradient(60% 70% at 50% 100%,rgba(255,196,110,0.55),transparent 70%); }
+@utility mask-fade-down { mask-image: linear-gradient(180deg,#000 0%,transparent 55%); }
+@utility text-shadow-core { text-shadow: 0 4px 30px rgba(60,10,0,0.55); }
+@utility animate-core-breathe { animation: contact-core-breathe 6s ease-in-out infinite; @media (prefers-reduced-motion: reduce) { animation: none; } }
+@utility animate-ember-rise { animation: contact-ember-rise var(--dynamic-animation-duration, 7s) linear var(--dynamic-animation-delay, 0s) infinite; @media (prefers-reduced-motion: reduce) { animation: none; display: none; } }
+@utility shadow-ember { box-shadow: 0 0 10px 2px rgba(255,170,80,0.8); }
+
+@keyframes contact-core-breathe { 50% { opacity: 0.7; transform: scaleX(1.06); } }
+@keyframes contact-ember-rise {
+  0% { opacity: 0; transform: translate3d(0,0,0); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(2.5rem,-34rem,0) scale(0.4); }
+}
+
 /* Authored block formatting inherits when no per-block value is supplied. */
 [style*="--cms-text-align:"] { text-align: var(--cms-text-align); }
 [style*="--cms-line-height:"] { line-height: var(--cms-line-height); }
 
 :root { --layout-grid-cols-auth: minmax(12rem,18rem) 1fr; --layout-bottom-safe: max(1rem, env(safe-area-inset-bottom)); }
+
+/* Local semantic palette: retain the standard shadcn option states on the core background. */
+@utility contact-questionnaire-theme {
+  --input: oklch(0.75 0.015 255);
+  --muted: oklch(0.26 0.035 255);
+  --muted-foreground: oklch(0.92 0.01 255);
+  --primary: oklch(0.9 0.1 75);
+  --primary-foreground: oklch(0.18 0.02 255);
+  --ring: oklch(0.9 0.1 75);
+}
