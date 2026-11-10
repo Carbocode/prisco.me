@@ -323,6 +323,45 @@ function GanttJourney({ experiences }: { experiences: Experience[] }) {
     };
   }, [segments]);
 
+  useEffect(() => {
+    let frame = 0;
+    const followExperience = () => {
+      const prefix = "#experience-";
+      if (!window.location.hash.startsWith(prefix)) return;
+      let id: string;
+      try {
+        id = decodeURIComponent(window.location.hash.slice(prefix.length));
+      } catch {
+        return;
+      }
+      const segment = segments.find((item) => item.experience.id === id);
+      if (!segment) return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (window.matchMedia("(min-width: 1024px)").matches) {
+          const plot = plotRef.current;
+          if (!plot) return;
+          window.scrollTo({
+            top:
+              plot.getBoundingClientRect().top +
+              window.scrollY +
+              ganttY(Math.max(0, segment.startIndex)) -
+              window.innerHeight / 2,
+          });
+          setActiveId(id);
+        } else {
+          document.getElementById(`experience-${id}`)?.scrollIntoView({ block: "start" });
+        }
+      });
+    };
+    followExperience();
+    window.addEventListener("hashchange", followExperience);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("hashchange", followExperience);
+    };
+  }, [segments]);
+
   const activeSegment = segments.find((seg) => seg.experience.id === activeId) ?? segments[0];
   const currentIndex = Math.max(
     0,
@@ -347,7 +386,13 @@ function GanttJourney({ experiences }: { experiences: Experience[] }) {
         {/* Mobile: plain stacked cards, no gantt */}
         <div className="space-y-12 lg:hidden">
           {segments.map((seg) => (
-            <GanttPanel key={seg.experience.id} seg={seg} />
+            <div
+              id={`experience-${seg.experience.id}`}
+              key={seg.experience.id}
+              className="scroll-mt-24"
+            >
+              <GanttPanel seg={seg} />
+            </div>
           ))}
         </div>
 
