@@ -900,23 +900,25 @@
 .home-traversata .sky-core {
   fill: #fff;
 }
+/* Animated stars are drawn around (0, 0); a separate SVG group positions them.
+   A fixed origin avoids bounding-box feedback between nested SVG animations. */
 .home-traversata .sky-star {
-  transform-box: fill-box;
-  transform-origin: center;
+  transform-box: view-box;
+  transform-origin: 0 0;
   cursor: default;
 }
 .home-traversata .sky-hit-star {
   fill: transparent;
 }
 .home-traversata .sky-body {
-  transform-box: fill-box;
-  transform-origin: center;
+  transform-box: view-box;
+  transform-origin: 0 0;
   transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .home-traversata .sky-star .sky-spark {
   animation: home-sky-twinkle var(--tw) ease-in-out var(--twd) infinite;
-  transform-box: fill-box;
-  transform-origin: center;
+  transform-box: view-box;
+  transform-origin: 0 0;
 }
 .home-traversata .sky-glint {
   fill: none;
@@ -924,8 +926,8 @@
   stroke-width: 0.8;
   stroke-linecap: round;
   opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
+  transform-box: view-box;
+  transform-origin: 0 0;
   animation: home-sky-glint var(--gl) ease-in-out var(--gld) infinite;
 }
 .home-traversata .sky-burst {
@@ -933,8 +935,8 @@
   stroke: currentColor;
   stroke-width: 1.2;
   opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
+  transform-box: view-box;
+  transform-origin: 0 0;
 }
 .home-traversata .sky-dust.is-twinkling {
   animation: home-sky-dust var(--dt) ease-in-out var(--dd) infinite;

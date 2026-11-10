@@ -1,14 +1,9 @@
-import { Icon } from "@iconify/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useInView, useReducedMotion, useScroll, useSpring } from "framer-motion";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { useRef } from "react";
+import { ArrowUpRight, Clock, MessageCircleHeart, Sparkles } from "lucide-react";
 
-import ContactRequestForm from "@/components/contact-request-form";
+import ContactQuestionnaire from "@/components/contact-questionnaire";
 import { PageShell } from "@/components/page-shell";
 import Star from "@/components/star";
-import { buttonVariants } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { pageHead } from "@/lib/page-head";
 import { SITE, siteUrl } from "@/lib/site";
 
@@ -43,213 +38,95 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-const conversationSteps = [
-  {
-    actor: "Tu",
-    icon: "fluent-emoji:index-pointing-at-the-viewer",
-    iconRotation: 0,
-    title: "Porta il contesto.",
-    description: "Un obiettivo, un problema o anche solo un’intuizione ancora da mettere a fuoco.",
-  },
-  {
-    actor: "Io",
-    icon: "fluent-emoji:thumbs-up",
-    iconRotation: 3,
-    title: "Faccio le domande giuste.",
-    description:
-      "Leggo con attenzione e cerco il punto da cui può partire una conversazione utile.",
-  },
-  {
-    actor: "Insieme",
-    icon: "fluent-emoji:handshake",
-    iconRotation: 0,
-    title: "Troviamo il prossimo passo.",
-    description: "Una call, un confronto tecnico o semplicemente una direzione più chiara.",
-  },
+const promises = [
+  { icon: Clock, label: "Circa due minuti" },
+  { icon: MessageCircleHeart, label: "Ti rispondo io, personalmente" },
+  { icon: Sparkles, label: "Nessun impegno" },
 ] as const;
 
-type ContactStarConfig = {
-  top: number;
-  left?: number;
-  right?: number;
-  size: "sm" | "md" | "lg" | "xl";
-  opacity: number;
-};
+type ContactStarConfig = { top: number; left: number; size: "sm" | "md" | "lg"; opacity: number };
 
 const contactStars: ContactStarConfig[] = [
-  { top: 3, left: 4, size: "sm", opacity: 0.48 },
-  { top: 7, right: 6, size: "md", opacity: 0.58 },
-  { top: 14, left: 45, size: "lg", opacity: 0.3 },
-  { top: 21, right: 18, size: "sm", opacity: 0.5 },
-  { top: 29, left: 9, size: "md", opacity: 0.42 },
-  { top: 36, right: 3, size: "xl", opacity: 0.22 },
-  { top: 44, left: 34, size: "sm", opacity: 0.46 },
-  { top: 51, right: 26, size: "lg", opacity: 0.3 },
-  { top: 59, left: 3, size: "xl", opacity: 0.2 },
-  { top: 66, right: 8, size: "sm", opacity: 0.5 },
-  { top: 73, left: 23, size: "md", opacity: 0.38 },
-  { top: 80, right: 38, size: "sm", opacity: 0.46 },
-  { top: 87, left: 6, size: "lg", opacity: 0.28 },
-  { top: 94, right: 4, size: "md", opacity: 0.42 },
+  { top: 4, left: 6, size: "sm", opacity: 0.55 },
+  { top: 9, left: 28, size: "md", opacity: 0.45 },
+  { top: 5, left: 52, size: "sm", opacity: 0.5 },
+  { top: 13, left: 71, size: "lg", opacity: 0.32 },
+  { top: 7, left: 90, size: "md", opacity: 0.5 },
+  { top: 20, left: 12, size: "lg", opacity: 0.28 },
+  { top: 24, left: 84, size: "sm", opacity: 0.4 },
 ];
 
-type ConversationStep = (typeof conversationSteps)[number];
-
-function ContactTimeline() {
-  const timelineRef = useRef<HTMLOListElement>(null);
-  const shouldReduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ["start 72%", "end 48%"],
-  });
-  const lineProgress = useSpring(scrollYProgress, {
-    stiffness: 110,
-    damping: 28,
-    mass: 0.35,
-  });
-
-  return (
-    <div>
-      <div className="mb-8 grid grid-cols-(--layout-grid-cols-timeline) gap-4 sm:mb-10 sm:grid-cols-(--layout-grid-cols-timeline-wide) sm:gap-6 lg:grid-cols-(--layout-grid-cols-timeline-desktop) lg:gap-8">
-        <span aria-hidden="true" />
-        <p className="text-xs font-semibold uppercase tracking-overline text-ink-muted">
-          Come comincia
-        </p>
-      </div>
-      <div className="relative">
-        <div
-          aria-hidden="true"
-          className="absolute top-9 bottom-9 left-8 w-px bg-white/15 sm:left-12 lg:left-14"
-        />
-        <motion.div
-          aria-hidden="true"
-          className="contact-progress absolute top-9 bottom-9 left-8 w-px origin-top bg-link shadow-glow sm:left-12 lg:left-14"
-          style={{ "--line-progress": shouldReduceMotion ? 1 : lineProgress }}
-        />
-        <ol ref={timelineRef} className="relative flex flex-col gap-6 sm:gap-8">
-          {conversationSteps.map((step, index) => (
-            <TimelineStep
-              key={step.actor}
-              step={step}
-              index={index}
-              shouldReduceMotion={shouldReduceMotion}
-            />
-          ))}
-        </ol>
-      </div>
-    </div>
-  );
-}
-
-function TimelineStep({
-  step,
-  index,
-  shouldReduceMotion,
-}: {
-  step: ConversationStep;
-  index: number;
-  shouldReduceMotion: boolean | null;
-}) {
-  const stepRef = useRef<HTMLLIElement>(null);
-  const isInView = useInView(stepRef, {
-    amount: 0.6,
-  });
-  const isActive = shouldReduceMotion || isInView;
-
-  return (
-    <li
-      ref={stepRef}
-      className="relative grid grid-cols-(--layout-grid-cols-timeline) items-center gap-4 sm:grid-cols-(--layout-grid-cols-timeline-wide) sm:gap-6 lg:grid-cols-(--layout-grid-cols-timeline-desktop) lg:gap-8"
-    >
-      <div className="relative z-10 flex items-center justify-center">
-        <motion.div
-          className="flex size-14 items-center justify-center rounded-full bg-subsoil-panel ring-1 ring-white/20 sm:size-18"
-          initial={false}
-          animate={{
-            opacity: isActive ? 1 : 0.62,
-            scale: isActive ? 1 : 0.92,
-            boxShadow: isActive
-              ? "0 0 0 5px rgba(7,19,38,0.96), 0 0 22px rgba(125,211,252,0.4)"
-              : "0 0 0 4px rgba(7,19,38,0.9), 0 0 0 rgba(125,211,252,0)",
-          }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: "easeOut" }}
-        >
-          <Icon
-            icon={step.icon}
-            rotate={step.iconRotation}
-            className="size-9 sm:size-12"
-            aria-hidden="true"
-          />
-        </motion.div>
-      </div>
-      <motion.div
-        initial={false}
-        animate={{ opacity: isActive ? 1 : 0.72 }}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: "easeOut" }}
-      >
-        <Card size="default">
-          <CardHeader>
-            <p className="display-font text-xs font-semibold uppercase tracking-eyebrow-wide text-link">
-              0{index + 1} / {step.actor}
-            </p>
-            <CardTitle>{step.title}</CardTitle>
-            <CardDescription>{step.description}</CardDescription>
-          </CardHeader>
-        </Card>
-      </motion.div>
-    </li>
-  );
-}
+const embers = [
+  { left: 8, size: 4, duration: 7.2, delay: -1.4 },
+  { left: 19, size: 3, duration: 8.6, delay: -4.1 },
+  { left: 33, size: 5, duration: 6.4, delay: -2.6 },
+  { left: 47, size: 3, duration: 9.1, delay: -6.3 },
+  { left: 58, size: 4, duration: 7.8, delay: -0.8 },
+  { left: 71, size: 3, duration: 8.2, delay: -3.5 },
+  { left: 83, size: 5, duration: 6.9, delay: -5.2 },
+  { left: 94, size: 3, duration: 8.8, delay: -2.1 },
+];
 
 function ContactPage() {
   return (
     <PageShell hero={false} title="Contatti">
-      <div className="relative isolate overflow-hidden bg-subsoil">
-        <ContactSky />
+      <div className="relative isolate overflow-hidden bg-contact-core">
+        <ContactCore />
 
-        <section className="relative z-10 px-6 pt-20 pb-12 sm:pt-28 sm:pb-16 lg:pt-32">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-20 lg:gap-28">
-            <div className="flex max-w-4xl flex-col items-start gap-7">
-              <h1 className="display-font max-w-4xl text-5xl leading-hero font-semibold tracking-display-tight text-white sm:text-7xl lg:text-display">
-                Parliamo di quello che vuoi <span className="text-link">costruire.</span>
-              </h1>
-              <p className="max-w-xl text-base leading-8 text-ink-body sm:text-lg">
-                Prodotto, collaborazione tecnica, opportunità o idea ancora senza un nome. Non serve
-                avere già tutte le risposte: basta un punto da cui iniziare.
+        <section className="relative z-10 flex h-dvh flex-col overflow-hidden px-4 pb-4 pt-20 sm:px-6 sm:pb-6">
+          <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div className="flex shrink-0 flex-col items-start gap-2 lg:max-h-full lg:overflow-y-auto lg:gap-6">
+              <p className="display-font hidden text-xs font-semibold uppercase tracking-overline text-warm-highlight lg:block">
+                Fine del viaggio. Inizio della conversazione.
               </p>
-              <div className="flex flex-wrap gap-3">
-                <a
-                  className={buttonVariants({ size: "lg" })}
-                  href="#scrivimi"
-                  aria-label="Vai al modulo di contatto"
-                >
-                  Scrivimi
-                  <ArrowDown data-icon="inline-end" />
-                </a>
-                <a
-                  className={buttonVariants({ size: "lg", variant: "outline" })}
-                  href="https://www.linkedin.com/in/vincenzoprisco/"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Apri il profilo LinkedIn di Vincenzo Prisco"
-                >
-                  LinkedIn
-                  <ArrowUpRight data-icon="inline-end" />
-                </a>
+              <h1 className="display-font text-2xl leading-tight font-semibold tracking-display-tight text-white text-shadow-core sm:text-3xl lg:text-6xl">
+                Quel{" "}
+                <span className="font-editorial font-normal italic tracking-normal">«e se…»</span>{" "}
+                merita due parole.
+              </h1>
+              <p className="hidden max-w-lg text-lg leading-8 text-ember-ink text-shadow-core lg:block">
+                Un’idea appuntata al volo, un pezzo di codice che fa i capricci, una proposta
+                inattesa. Raccontami cosa ti frulla in testa: non serve arrivare con un piano
+                perfetto.
+              </p>
+              <ul className="hidden flex-wrap gap-2 lg:flex" aria-label="Cosa aspettarti">
+                {promises.map(({ icon: PromiseIcon, label }) => (
+                  <li
+                    key={label}
+                    className="flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-3.5 py-1.5 text-sm text-ember-ink backdrop-blur-sm"
+                  >
+                    <PromiseIcon className="size-4 text-warm-accent" aria-hidden="true" />
+                    {label}
+                  </li>
+                ))}
+              </ul>
+              <div className="hidden items-center gap-3 lg:flex">
+                <span className="h-10 w-px bg-warm-accent/60" aria-hidden="true" />
+                <p className="text-sm leading-6 text-ember-ink">
+                  <span className="font-editorial text-2xl italic text-warm-highlight">
+                    Vincenzo
+                  </span>
+                  <br />
+                  Dall’altra parte ci sono io.
+                </p>
               </div>
+              <a
+                className="hidden items-center gap-1.5 text-sm font-medium text-ember-ink-soft underline-offset-4 hover:text-white hover:underline lg:inline-flex"
+                href="https://www.linkedin.com/in/vincenzoprisco/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Preferisci LinkedIn? Scrivimi lì
+                <ArrowUpRight className="size-4" aria-hidden="true" />
+              </a>
             </div>
 
-            <ContactTimeline />
-          </div>
-        </section>
-
-        <section id="scrivimi" className="relative z-10 px-6 pt-12 pb-20 sm:pt-16 sm:pb-28">
-          <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
-            <h2 className="display-font text-center text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              Dimmi cosa hai in mente.
-            </h2>
-
-            <ContactRequestForm />
+            <div
+              id="scrivimi"
+              className="contact-questionnaire-theme mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col lg:h-full lg:max-h-176"
+            >
+              <ContactQuestionnaire />
+            </div>
           </div>
         </section>
       </div>
@@ -257,12 +134,11 @@ function ContactPage() {
   );
 }
 
-function ContactSky() {
+function ContactCore() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute inset-0 bg-contact-galaxy" />
       <div
-        className="absolute inset-0 opacity-70 dynamic-background-image dynamic-background-position dynamic-background-repeat dynamic-background-size"
+        className="absolute inset-0 opacity-70 mask-fade-down dynamic-background-image dynamic-background-position dynamic-background-repeat dynamic-background-size"
         style={{
           "--dynamic-background-image": "url(/home/small-stars.svg)",
           "--dynamic-background-position": "center top",
@@ -270,29 +146,30 @@ function ContactSky() {
           "--dynamic-background-size": "1154px 427px",
         }}
       />
-      <div className="absolute -left-32 top-18/100 size-96 rounded-full bg-secondary-aura/7 blur-3xl" />
-      <div className="absolute -right-40 top-58/100 size-128 rounded-full bg-glow-strong/6 blur-3xl" />
-      {contactStars.map((star, index) => (
+      {contactStars.map((star) => (
         <Star
-          key={`${star.top}-${index}`}
+          key={`${star.top}-${star.left}`}
           alt=""
           size={star.size}
-          className="absolute drop-shadow-star dynamic-top dynamic-left dynamic-right dynamic-opacity"
+          className="absolute drop-shadow-star dynamic-top dynamic-left dynamic-opacity"
           style={{
             "--dynamic-top": `${star.top}%`,
-            "--dynamic-left":
-              typeof (star.left == null ? undefined : `${star.left}%`) === "number"
-                ? (star.left == null ? undefined : `${star.left}%`) + "px"
-                : star.left == null
-                  ? undefined
-                  : `${star.left}%`,
-            "--dynamic-right":
-              typeof (star.right == null ? undefined : `${star.right}%`) === "number"
-                ? (star.right == null ? undefined : `${star.right}%`) + "px"
-                : star.right == null
-                  ? undefined
-                  : `${star.right}%`,
+            "--dynamic-left": `${star.left}%`,
             "--dynamic-opacity": star.opacity,
+          }}
+        />
+      ))}
+      <div className="absolute inset-x-0 bottom-0 h-4/5 bg-contact-core-halo animate-core-breathe" />
+      {embers.map((ember) => (
+        <span
+          key={ember.left}
+          className="absolute -bottom-2.5 rounded-full bg-warm-highlight opacity-0 shadow-ember animate-ember-rise dynamic-left dynamic-width dynamic-height"
+          style={{
+            "--dynamic-left": `${ember.left}%`,
+            "--dynamic-width": `${ember.size}px`,
+            "--dynamic-height": `${ember.size}px`,
+            "--dynamic-animation-duration": `${ember.duration}s`,
+            "--dynamic-animation-delay": `${ember.delay}s`,
           }}
         />
       ))}
