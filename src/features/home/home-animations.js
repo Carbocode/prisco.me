@@ -4,10 +4,14 @@ export function animateHome(container) {
   const page = container.closest("[data-home-page]");
   page.classList.add("has-home-motion");
   const scroller = container.closest("[data-home-scroll]");
+  let scrollOrigin = scroller.getBoundingClientRect().top;
   const localRect = (element) => {
     const rect = element.getBoundingClientRect();
-    const origin = scroller.getBoundingClientRect();
-    return { top: rect.top - origin.top, bottom: rect.bottom - origin.top, height: rect.height };
+    return {
+      top: rect.top - scrollOrigin,
+      bottom: rect.bottom - scrollOrigin,
+      height: rect.height,
+    };
   };
   const disposers = [];
   let disposed = false;
@@ -543,11 +547,10 @@ export function animateHome(container) {
     },
     { rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
   );
-  $$("[data-reveal], [data-stratum], [data-core]").forEach((el) => revealIO.observe(el));
+  $$("[data-reveal], [data-core]").forEach((el) => revealIO.observe(el));
 
   /* --- Navigazione attiva + altimetro -------------------------------- */
   const sections = $$("[data-section]");
-  const navLinks = $$("[data-nav]");
   const rail = page.querySelector(".gauge-rail");
   const gauge = page.querySelector("[data-gauge]");
   let gaugeTimer;
@@ -574,10 +577,6 @@ export function animateHome(container) {
   const setActive = (i) => {
     if (i === activeIndex) return;
     activeIndex = i;
-    navLinks.forEach((a, j) => {
-      if (j === i) a.setAttribute("aria-current", "true");
-      else a.removeAttribute("aria-current");
-    });
     ticks.forEach((t, j) => t.classList.toggle("is-active", j === i));
   };
 
@@ -592,15 +591,21 @@ export function animateHome(container) {
   }
   let headerAnchor = scroller.scrollTop;
   let headerVisible = true;
+  let bottomAnchor = null;
   let storyStarting = false;
   let storyStartTimer;
-  const updateHeader = (y) => {
+  const updateHeader = (y, maxScroll = scroller.scrollHeight - scroller.clientHeight) => {
     if (!header) return;
+    // Keep the frame open while its transition reduces the scroll viewport.
+    if (maxScroll > 0 && y >= maxScroll - 8) bottomAnchor = y;
+    else if (bottomAnchor !== null) {
+      bottomAnchor = y < bottomAnchor - 8 ? null : Math.max(bottomAnchor, y);
+    }
     const delta = y - headerAnchor;
     if (storyStarting) {
       headerVisible = false;
       headerAnchor = y;
-    } else if (y <= 8) {
+    } else if (y <= 8 || bottomAnchor !== null) {
       headerVisible = true;
       headerAnchor = y;
     } else if (Math.abs(delta) >= 8) {
@@ -667,20 +672,16 @@ export function animateHome(container) {
     });
   });
 
-  /* --- Strati: bagliore che segue il puntatore ----------------------- */
-  $$("[data-stratum]").forEach((el) => {
-    listen(el, "pointermove", (e) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--hx", (((e.clientX - r.left) / r.width) * 100).toFixed(1) + "%");
-    });
-  });
-
   /* --- Traversata orizzontale ---------------------------------------- */
   const journey = $("[data-journey]");
   const stage = $("[data-journey-stage]");
   const track = $("[data-track]");
   const stops = $$(".stop", track);
-  const parLayers = $$("[data-par]", journey);
+  const parLayers = $$("[data-par]", journey).map((element) => ({
+    element,
+    speed: parseFloat(element.dataset.par),
+  }));
+  const stopYears = stops.map((stop) => stop.querySelector(".stop-year"));
   const tw = $("[data-tw]");
   const twBounce = $("[data-tw-bounce]");
   const twRoll = $("[data-tw-roll]");
@@ -692,16 +693,22 @@ export function animateHome(container) {
     slack = 0,
     horizontal = false,
     stopCenters = [];
+  let sceneWidth = 0,
+    tumbleweedSize = 60,
+    lastJourneyPosition = "";
 
   const setupJourney = () => {
+    sceneWidth = scroller.clientWidth;
+    tumbleweedSize = tw.offsetWidth || 60;
+    lastJourneyPosition = "";
     const wasHorizontal = horizontal;
     horizontal = horizontalMQ.matches;
     journey.classList.toggle("is-horizontal", horizontal);
     // Resizing the frame must never clear a live scene between animation frames.
     if (wasHorizontal && !horizontal) {
       track.style.transform = "";
-      parLayers.forEach((layer) => {
-        layer.style.transform = "";
+      parLayers.forEach(({ element }) => {
+        element.style.transform = "";
       });
       [tw, twBounce, twRoll].forEach((element) => {
         element.style.transform = "";
@@ -728,41 +735,39 @@ export function animateHome(container) {
     const distance = scroller.scrollTop - jTop;
     const p = trackDistance ? clamp(distance / trackDistance) : 0;
     const exit = exitDistance ? clamp((distance - trackDistance) / exitDistance) : 0;
+    const position = `${p}:${exit}`;
+    if (position === lastJourneyPosition) return;
+    lastJourneyPosition = position;
     const x = p * trackDistance;
     track.style.transform = "translate3d(" + (-x).toFixed(1) + "px,0,0)";
     // La scena è più larga del viewport: ogni piano scorre entro il margine disponibile.
-    parLayers.forEach((l) => {
-      l.style.transform =
-        "translate3d(" + ((0.5 - p) * 2 * slack * parseFloat(l.dataset.par)).toFixed(1) + "px,0,0)";
+    parLayers.forEach(({ element, speed }) => {
+      element.style.transform =
+        "translate3d(" + ((0.5 - p) * 2 * slack * speed).toFixed(1) + "px,0,0)";
     });
     // Il cespuglio rotola davvero: rotazione = distanza / circonferenza.
-    const size = tw.offsetWidth || 60;
-    const exitX = exit * (scroller.clientWidth * 0.5 + size);
+    const size = tumbleweedSize;
+    const exitX = exit * (sceneWidth * 0.5 + size);
     const travelled = x * 0.44 + exitX;
     twRoll.style.transform = "rotate(" + ((travelled / (Math.PI * size)) * 360).toFixed(1) + "deg)";
     const lift = Math.abs(Math.sin(travelled / 90));
     twBounce.style.transform = "translate3d(0," + (-lift * size * 0.45).toFixed(1) + "px,0)";
     tw.style.setProperty("--lift", lift.toFixed(3));
     tw.style.transform =
-      "translate3d(" +
-      (slack + scroller.clientWidth * (0.12 + p * 0.62) + exitX).toFixed(1) +
-      "px,0,0)";
+      "translate3d(" + (slack + sceneWidth * (0.12 + p * 0.62) + exitX).toFixed(1) + "px,0,0)";
 
     let best = -1,
       bestD = Infinity;
     stopCenters.forEach((c, i) => {
       const screenX = c - x;
-      const d = Math.abs(screenX - scroller.clientWidth * 0.5);
+      const d = Math.abs(screenX - sceneWidth * 0.5);
       if (d < bestD) {
         bestD = d;
         best = i;
       }
-      const year = stops[i].querySelector(".stop-year");
+      const year = stopYears[i];
       if (year)
-        year.style.setProperty(
-          "--yx",
-          ((screenX - scroller.clientWidth * 0.5) * -0.08).toFixed(1) + "px",
-        );
+        year.style.setProperty("--yx", ((screenX - sceneWidth * 0.5) * -0.08).toFixed(1) + "px");
     });
     if (p < 0.04) best = -1;
     if (best !== currentStop) {
@@ -788,51 +793,50 @@ export function animateHome(container) {
   const coreZone = $("[data-core-zone]");
   let ticking = false;
 
+  let litWords = -1;
   const onFrame = () => {
     ticking = false;
+    // Read geometry together before changing classes, transforms or CSS variables.
+    scrollOrigin = scroller.getBoundingClientRect().top;
     const y = scroller.scrollTop;
-    updateHeader(y);
     const vh = scroller.clientHeight;
     const max = Math.max(1, scroller.scrollHeight - vh);
-    const docP = clamp(y / max);
-    page.style.setProperty("--doc-p", docP.toFixed(4));
+    const reduced = reduceMQ.matches;
+    const hp = reduced ? 0 : clamp(y / (hero.offsetHeight || vh));
+    const mr = reduced ? null : localRect(manifesto);
+    const ur = reduced ? null : localRect(underground);
+    const fossilOffsets =
+      ur && ur.top < vh && ur.bottom > 0
+        ? fossils.map((element) => {
+            const r = localRect(element);
+            return [
+              element,
+              ((r.top + r.height / 2 - vh / 2) * -parseFloat(element.dataset.fy)).toFixed(1),
+            ];
+          })
+        : [];
+    const cr = reduced ? null : localRect(coreZone);
 
-    // Sezione attiva: l'ultima il cui inizio ha superato metà viewport.
+    updateHeader(y, max);
+    page.style.setProperty("--doc-p", clamp(y / max).toFixed(4));
     let idx = 0;
     sectionTops.forEach((t, i) => {
       if (y + vh * 0.45 >= t) idx = i;
     });
     setActive(idx);
 
-    if (reduceMQ.matches) {
-      words.forEach((w) => w.classList.add("lit"));
-      return;
+    const lit = reduced
+      ? words.length
+      : Math.round(clamp((vh * 0.85 - mr.top) / (mr.height + vh * 0.35)) * words.length);
+    if (lit !== litWords) {
+      words.forEach((word, i) => word.classList.toggle("lit", i < lit));
+      litWords = lit;
     }
+    if (reduced) return;
 
-    // Hero che si allontana
-    const hp = clamp(y / (hero.offsetHeight || vh));
     hero.style.setProperty("--hp", hp.toFixed(4));
-
-    // Manifesto illuminato parola per parola
-    const mr = localRect(manifesto);
-    const mp = clamp((vh * 0.85 - mr.top) / (mr.height + vh * 0.35));
-    const lit = Math.round(mp * words.length);
-    words.forEach((w, i) => w.classList.toggle("lit", i < lit));
-
     updateJourney();
-
-    // Reperti fossili con parallasse leggera
-    const uTop = localRect(underground).top;
-    if (uTop < vh && uTop > -underground.offsetHeight) {
-      fossils.forEach((f) => {
-        const r = localRect(f);
-        const off = (r.top + r.height / 2 - vh / 2) * -parseFloat(f.dataset.fy);
-        f.style.setProperty("--fy", off.toFixed(1) + "px");
-      });
-    }
-
-    // Il nucleo si scalda avvicinandosi
-    const cr = localRect(coreZone);
+    fossilOffsets.forEach(([element, offset]) => element.style.setProperty("--fy", offset + "px"));
     coreZone.style.setProperty("--heat", clamp((vh - cr.top) / (cr.height + vh * 0.2)).toFixed(3));
   };
 
@@ -845,6 +849,7 @@ export function animateHome(container) {
 
   let resizeTimer;
   const layout = () => {
+    scrollOrigin = scroller.getBoundingClientRect().top;
     const previous = { start: jTop, distance: jDist };
     const previousScroll = scroller.scrollTop;
     const wasHorizontal = horizontal;
@@ -889,7 +894,7 @@ export function animateHome(container) {
     layout();
     if (reduceMQ.matches) {
       hero.style.setProperty("--hp", 0);
-      $$("[data-reveal], [data-stratum], [data-core]").forEach((el) => el.classList.add("is-in"));
+      $$("[data-reveal], [data-core]").forEach((el) => el.classList.add("is-in"));
     }
   });
   listen(page, "transitionend", (event) => {
@@ -898,7 +903,7 @@ export function animateHome(container) {
   observeResize(layout).observe(scroller);
   listen(window, "load", layout);
   if (document.fonts && document.fonts.ready)
-    document.fonts.ready.then(() => {
+    void document.fonts.ready.then(() => {
       if (!disposed) layout();
     });
   layout();

@@ -138,35 +138,6 @@
 
 /* --- Tipografia condivisa ------------------------------------------------ */
 
-.home-traversata .kicker {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-family: var(--f-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-body);
-}
-.home-traversata .kicker .num {
-  display: inline-grid;
-  place-items: center;
-  min-width: 2.1rem;
-  height: 1.5rem;
-  padding: 0 0.4rem;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-}
-.home-traversata .kicker::after {
-  content: "";
-  flex: 0 1 5rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.45;
-}
-
 .home-traversata .h2 {
   font-family: var(--f-display);
   font-weight: 600;
@@ -240,127 +211,6 @@
 }
 .home-traversata .btn:hover .arrow.down {
   transform: translateY(3px);
-}
-
-/* ==========================================================================
-   Barra superiore
-   ========================================================================== */
-
-.home-traversata .bar {
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: 50;
-  color: #fff;
-}
-.home-traversata .header-inner {
-  position: relative;
-  max-width: 72rem;
-  margin-inline: auto;
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.25));
-}
-.home-traversata .brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-}
-.home-traversata .brand img {
-  width: 2.25rem;
-  height: 2.25rem;
-}
-.home-traversata .brand span {
-  font-family: var(--f-display);
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.25;
-}
-.home-traversata .nav {
-  margin-left: auto;
-}
-.home-traversata .menu {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  gap: 0;
-}
-.home-traversata .menu a {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  text-decoration: none;
-  transition: background-color 200ms;
-}
-.home-traversata .menu a:hover,
-.home-traversata .menu a:focus-visible {
-  background: rgba(255, 255, 255, 0.1);
-}
-.home-traversata .menu-toggle {
-  display: none;
-  width: 2.25rem;
-  height: 2.25rem;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 0.5rem;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-}
-@media (min-width: 1024px) {
-  .home-traversata .header-inner {
-    padding-inline: 2rem;
-  }
-}
-@media (max-width: 767px) {
-  .home-traversata .menu-toggle {
-    display: inline-flex;
-  }
-  .home-traversata .menu {
-    position: absolute;
-    top: 100%;
-    right: 1.5rem;
-    width: min(20rem, calc(100vw - 3rem));
-    padding: 1rem;
-    flex-direction: column;
-    align-items: stretch;
-    border-radius: 0.5rem;
-    background: var(--night-0);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    visibility: hidden;
-    opacity: 0;
-  }
-  .home-traversata .menu.is-open {
-    visibility: visible;
-    opacity: 1;
-  }
-  .home-traversata .menu a {
-    justify-content: center;
-    min-height: 2.5rem;
-  }
-  .home-traversata:not(.js) .menu {
-    position: static;
-    visibility: visible;
-    opacity: 1;
-    width: auto;
-  }
-  .home-traversata:not(.js) .menu-toggle {
-    display: none;
-  }
-  .home-traversata:not(.js) .header-inner {
-    flex-wrap: wrap;
-  }
-  .home-traversata:not(.js) .nav {
-    margin-left: 0;
-    width: 100%;
-  }
 }
 
 /* ==========================================================================
@@ -671,9 +521,6 @@
   transform: translate3d(0, calc(var(--hp) * -60px), 0);
   opacity: calc(1 - var(--hp) * 0.9);
 }
-.home-traversata .hero-copy .kicker {
-  color: var(--link-hover);
-}
 .home-traversata .hero-title {
   margin-top: 1.4rem;
   font-family: var(--f-display);
@@ -722,7 +569,6 @@
 }
 .home-traversata.js .hero-lede,
 .home-traversata.js .hero-actions,
-.home-traversata.js .hero-copy .kicker,
 .home-traversata.js .now {
   opacity: 0;
   animation: home-fade-up 900ms var(--ease-out) var(--delay, 700ms) both;
@@ -1401,9 +1247,6 @@
 .home-traversata .journey-intro {
   padding: clamp(6rem, 12vw, 9rem) 0 3rem;
 }
-.home-traversata .journey-intro .kicker {
-  color: #e4ebf5;
-}
 .home-traversata .journey-intro .h2 {
   margin-top: 1.5rem;
   max-width: 14ch;
@@ -1513,9 +1356,6 @@
 }
 .home-traversata .stop[data-kind="education"] .badge {
   color: var(--link-hover);
-}
-.home-traversata .badge-now {
-  color: #86efac !important;
 }
 .home-traversata .stop h3 {
   margin-top: 1rem;
@@ -1979,56 +1819,45 @@
 }
 .home-traversata .layer-head {
   display: grid;
+  justify-items: center;
   gap: 1.5rem;
-}
-@media (min-width: 900px) {
-  .home-traversata .layer-head {
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    align-items: end;
-    column-gap: 4rem;
-  }
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
 }
 .home-traversata .layer-head .lead {
   color: var(--warm-body);
 }
 .home-traversata .layer-more {
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  text-align: center;
 }
 
-/* Reperti: fossili dissotterrati accanto alla scheda del progetto */
+/* Content stays centered; fossils belong to the decorative background. */
 .home-traversata .finds {
   display: grid;
   gap: clamp(4rem, 8vw, 6.5rem);
-  margin-top: clamp(3.5rem, 7vw, 5.5rem);
+  max-width: 48rem;
+  margin: clamp(3.5rem, 7vw, 5.5rem) auto 0;
 }
 .home-traversata .find {
   position: relative;
-  display: grid;
-  align-items: center;
-}
-@media (min-width: 820px) {
-  .home-traversata .find {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  }
-  .home-traversata .find-body {
-    margin-left: -3.5rem;
-  }
-  .home-traversata .find.is-flipped {
-    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-  }
-  .home-traversata .find.is-flipped .find-pit {
-    order: 2;
-  }
-  .home-traversata .find.is-flipped .find-body {
-    margin-left: 0;
-    margin-right: -3.5rem;
-  }
+  isolation: isolate;
 }
 .home-traversata .find-pit {
-  position: relative;
-  width: min(100%, 27rem);
+  position: absolute;
+  z-index: 0;
+  left: clamp(-10rem, -10vw, -3rem);
+  top: 50%;
+  width: clamp(18rem, 38vw, 27rem);
   aspect-ratio: 320 / 300;
-  justify-self: center;
+  transform: translateY(-50%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.home-traversata .find:nth-child(even) .find-pit {
+  left: auto;
+  right: clamp(-10rem, -10vw, -3rem);
 }
 .home-traversata .pit {
   position: absolute;
@@ -2073,14 +1902,6 @@
   transition:
     border-color 400ms,
     transform 600ms var(--ease-out);
-}
-@media (max-width: 819px) {
-  .home-traversata .find-pit {
-    width: min(82%, 22rem);
-  }
-  .home-traversata .find-body {
-    margin-top: -0.75rem;
-  }
 }
 .home-traversata .find:hover .find-body,
 .home-traversata .find:focus-within .find-body,
@@ -2131,57 +1952,27 @@
   margin-top: 0.75rem;
   color: var(--warm-body);
 }
-.home-traversata .find-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1.4rem;
-  font-weight: 600;
-  font-size: 0.92rem;
-}
-.home-traversata .find-cta span {
-  display: inline-grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  border: 1px solid rgba(253, 242, 228, 0.3);
-  transition:
-    transform 500ms var(--ease-out),
-    background-color 300ms,
-    color 300ms;
-}
-.home-traversata .find:hover .find-cta span,
-.home-traversata .geode:hover .geode-body .find-cta span {
-  transform: rotate(-45deg);
-  background: var(--warm-ink);
-  color: #3b1a12;
-}
 
 /* Scritti: il geode si apre e mostra i cristalli */
 .home-traversata .geodes {
   display: grid;
   gap: 3rem;
-  margin-top: clamp(3.5rem, 7vw, 5rem);
+  max-width: 48rem;
+  margin: clamp(3.5rem, 7vw, 5.5rem) auto 0;
 }
 .home-traversata .geode {
   position: relative;
-  display: grid;
-  align-items: center;
-  gap: 1rem;
-}
-@media (min-width: 820px) {
-  .home-traversata .geode {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  }
-  .home-traversata .geode-body {
-    margin-left: -2.5rem;
-  }
+  isolation: isolate;
 }
 .home-traversata .geode-visual {
-  position: relative;
-  width: min(100%, 30rem);
-  justify-self: center;
+  position: absolute;
+  z-index: 0;
+  right: clamp(-10rem, -10vw, -3rem);
+  top: 50%;
+  width: clamp(20rem, 42vw, 30rem);
+  transform: translateY(-50%);
+  opacity: 0.45;
+  pointer-events: none;
 }
 .home-traversata .geode-art {
   width: 100%;
@@ -2354,120 +2145,6 @@
   }
 }
 
-.home-traversata .site-foot {
-  position: relative;
-  border-top: 1px solid #ffffff1a;
-  background: #000;
-  padding: 3rem 1.5rem;
-  color: #94a3b8;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-.home-traversata .original-footer-grid {
-  display: grid;
-  gap: 2.5rem;
-  max-width: 72rem;
-  margin-inline: auto;
-}
-.home-traversata .original-footer-intro {
-  max-width: 24rem;
-}
-.home-traversata .original-footer-brand {
-  color: #fff;
-  font-family: var(--f-display);
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: 600;
-}
-.home-traversata .original-footer-description {
-  margin-top: 0.75rem;
-  line-height: 1.5rem;
-}
-.home-traversata .original-footer-label {
-  color: #64748b;
-  font-size: 0.75rem;
-  line-height: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-}
-.home-traversata .original-footer-nav {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-.home-traversata .site-foot .original-footer-link,
-.home-traversata .original-footer-admin {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  min-height: 2rem;
-  padding: 0 0.625rem;
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
-  color: #e4e4e7;
-  font-size: 0.875rem;
-  font-weight: 500;
-  white-space: nowrap;
-  text-decoration: none;
-  text-underline-offset: 4px;
-}
-.home-traversata .site-foot .original-footer-link:hover {
-  text-decoration: underline;
-}
-.home-traversata .original-footer-row {
-  display: flex;
-  flex-direction: column;
-  max-width: 72rem;
-  margin: 2.5rem auto 0;
-  padding-top: 1.25rem;
-  border-top: 1px solid #ffffff1a;
-}
-.home-traversata .original-footer-access {
-  gap: 1rem;
-}
-.home-traversata .original-footer-access nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-}
-.home-traversata .site-foot .original-footer-admin {
-  gap: 0.375rem;
-  padding-left: 0.5rem;
-  border-color: #ffffff26;
-  background: #27272a4d;
-}
-.home-traversata .site-foot .original-footer-admin:hover {
-  background: #27272a80;
-}
-.home-traversata .original-footer-copyright {
-  gap: 0.5rem;
-  color: #64748b;
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
-@media (min-width: 640px) {
-  .home-traversata .original-footer-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-@media (min-width: 768px) {
-  .home-traversata .original-footer-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1024px) {
-  .home-traversata .original-footer-grid {
-    grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr;
-  }
-}
-
 /* --- Rivelazioni generiche --- */
 .home-traversata.js [data-reveal] {
   opacity: 0;
@@ -2500,8 +2177,7 @@
     display: none;
   }
   .home-traversata .depth,
-  .home-traversata .hero-copy,
-  .home-traversata .fossil {
+  .home-traversata .hero-copy {
     transform: none !important;
     opacity: 1 !important;
   }
@@ -2509,9 +2185,7 @@
     opacity: 1;
     filter: none;
   }
-  .home-traversata.js [data-reveal],
-  .home-traversata.js .stratum,
-  .home-traversata.js .core-sample {
+  .home-traversata.js [data-reveal] {
     opacity: 1;
     transform: none;
     clip-path: none;
