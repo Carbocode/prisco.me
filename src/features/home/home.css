@@ -1,0 +1,2792 @@
+/* ==========================================================================
+   Home “Traversata”: stili isolati per il viaggio dal cielo al nucleo.
+   ========================================================================== */
+
+.home-traversata {
+  color-scheme: dark;
+
+  --night-0: #050c18;
+  --night-1: #0b1a31;
+  --night-2: #162743;
+  --night-3: #293c5a;
+  --night-4: #485b79;
+  --night-5: #5c6e86;
+  --haze: #92abd0;
+
+  --sand-0: #dca796;
+  --sand-1: #d09d73;
+  --sand-2: #b27159;
+  --sand-3: #8f5755;
+
+  --soil: #201710;
+  --rock: #33210f;
+  --mantle: #6e2a12;
+  --ember: #c9481a;
+  --fire: #ffd27a;
+
+  --link: #7dd3fc;
+  --link-hover: #bae6fd;
+  --ink: #f1f5f9;
+  --ink-body: #cbd5e1;
+  --ink-muted: #94a3b8;
+  --warm-ink: #fdf2e4;
+  --warm-body: #e9d6c3;
+  --warm-muted: #c9ab92;
+
+  --f-display:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", "Avenir Next",
+    "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --f-text:
+    "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --f-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.7, 0, 0.2, 1);
+  --wrap: min(100% - 2.5rem, 78rem);
+  --bar-h: 4rem;
+}
+
+.home-traversata *,
+.home-traversata *::before,
+.home-traversata *::after {
+  box-sizing: border-box;
+}
+
+.home-traversata {
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-traversata {
+    scroll-behavior: smooth;
+  }
+}
+
+.home-traversata {
+  margin: 0;
+  background: var(--night-0);
+  color: var(--ink);
+  font-family: var(--f-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+.home-traversata img {
+  display: block;
+  max-width: 100%;
+}
+.home-traversata h1,
+.home-traversata h2,
+.home-traversata h3,
+.home-traversata h4,
+.home-traversata p,
+.home-traversata ol,
+.home-traversata ul,
+.home-traversata dl,
+.home-traversata dd,
+.home-traversata figure {
+  margin: 0;
+}
+.home-traversata ol,
+.home-traversata ul {
+  padding: 0;
+  list-style: none;
+}
+
+.home-traversata :focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.home-traversata .visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.home-traversata .skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--night-0);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 200ms var(--ease-out);
+}
+.home-traversata .skip:focus {
+  transform: none;
+}
+
+.home-traversata .wrap {
+  width: var(--wrap);
+  margin-inline: auto;
+}
+
+/* --- Tipografia condivisa ------------------------------------------------ */
+
+.home-traversata .kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-body);
+}
+.home-traversata .kicker .num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.1rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+}
+.home-traversata .kicker::after {
+  content: "";
+  flex: 0 1 5rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+.home-traversata .h2 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 1.1rem + 3.8vw, 4.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.home-traversata .serif {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+.home-traversata .lead {
+  max-width: 38rem;
+  font-size: clamp(1rem, 0.94rem + 0.3vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ink-body);
+  text-wrap: pretty;
+}
+
+/* --- Bottoni ---------------------------------------------------------------- */
+
+.home-traversata .btn {
+  --mx: 0px;
+  --my: 0px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transform: translate3d(var(--mx), var(--my), 0);
+  transition:
+    transform 380ms var(--ease-out),
+    background-color 200ms,
+    color 200ms,
+    border-color 200ms,
+    box-shadow 300ms;
+}
+.home-traversata .btn-primary {
+  background: var(--ink);
+  color: var(--night-0);
+  box-shadow: 0 10px 30px -12px rgba(186, 230, 253, 0.6);
+}
+.home-traversata .btn-primary:hover {
+  background: #fff;
+  box-shadow: 0 16px 40px -14px rgba(186, 230, 253, 0.85);
+}
+.home-traversata .btn-ghost {
+  border: 1px solid rgba(241, 245, 249, 0.35);
+  color: var(--ink);
+  background: rgba(5, 12, 24, 0.25);
+  backdrop-filter: blur(6px);
+}
+.home-traversata .btn-ghost:hover {
+  border-color: var(--ink);
+  background: rgba(5, 12, 24, 0.5);
+}
+.home-traversata .btn .arrow {
+  display: inline-block;
+  transition: transform 300ms var(--ease-out);
+}
+.home-traversata .btn:hover .arrow {
+  transform: translateX(4px);
+}
+.home-traversata .btn:hover .arrow.down {
+  transform: translateY(3px);
+}
+
+/* ==========================================================================
+   Barra superiore
+   ========================================================================== */
+
+.home-traversata .bar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 50;
+  color: #fff;
+}
+.home-traversata .header-inner {
+  position: relative;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.25));
+}
+.home-traversata .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+.home-traversata .brand img {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+.home-traversata .brand span {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.home-traversata .nav {
+  margin-left: auto;
+}
+.home-traversata .menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 0;
+}
+.home-traversata .menu a {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-decoration: none;
+  transition: background-color 200ms;
+}
+.home-traversata .menu a:hover,
+.home-traversata .menu a:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+}
+.home-traversata .menu-toggle {
+  display: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+@media (min-width: 1024px) {
+  .home-traversata .header-inner {
+    padding-inline: 2rem;
+  }
+}
+@media (max-width: 767px) {
+  .home-traversata .menu-toggle {
+    display: inline-flex;
+  }
+  .home-traversata .menu {
+    position: absolute;
+    top: 100%;
+    right: 1.5rem;
+    width: min(20rem, calc(100vw - 3rem));
+    padding: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 0.5rem;
+    background: var(--night-0);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    visibility: hidden;
+    opacity: 0;
+  }
+  .home-traversata .menu.is-open {
+    visibility: visible;
+    opacity: 1;
+  }
+  .home-traversata .menu a {
+    justify-content: center;
+    min-height: 2.5rem;
+  }
+  .home-traversata:not(.js) .menu {
+    position: static;
+    visibility: visible;
+    opacity: 1;
+    width: auto;
+  }
+  .home-traversata:not(.js) .menu-toggle {
+    display: none;
+  }
+  .home-traversata:not(.js) .header-inner {
+    flex-wrap: wrap;
+  }
+  .home-traversata:not(.js) .nav {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   Altimetro laterale: indice di profondità
+   ========================================================================== */
+
+.home-page .gauge {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 40;
+  display: none;
+  width: 24px;
+  padding: 18px 10px;
+  isolation: isolate;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-110%, -50%) scaleX(0.8);
+  transition:
+    left 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    top 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 400ms ease-in,
+    opacity 220ms ease-in,
+    visibility 0s 400ms;
+  transform-origin: left center;
+  pointer-events: none;
+}
+.home-page .gauge.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, -50%) scaleX(1);
+  transition:
+    left 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    top 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 650ms cubic-bezier(0.22, 1.35, 0.36, 1),
+    opacity 180ms ease-out,
+    visibility 0s;
+}
+/* The curved shoulders join the screen edge like a tab pushing up beneath it. */
+.home-page .gauge::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18px auto -18px 0;
+  width: 28px;
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%20240%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200C0%2020%2029%2016%2029%2045V195C29%20224%200%20220%200%20240Z%22%20fill%3D%22black%22%2F%3E%3Cpath%20d%3D%22M0%201C0%2020%2029%2016%2029%2045V195C29%20224%200%20220%200%20239%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%22.7%22%20vector-effect%3D%22non-scaling-stroke%22%2F%3E%3C%2Fsvg%3E")
+    center / 100% 100% no-repeat;
+  filter: drop-shadow(3px 0 3px #0005);
+}
+.home-page.has-home-motion .gauge {
+  display: block;
+}
+.home-page .gauge-rail {
+  position: relative;
+  width: 3px;
+  height: clamp(120px, 22vh, 200px);
+  border-radius: 999px;
+  background: #ffffff99;
+}
+.home-page .gauge-tick {
+  position: absolute;
+  left: 0;
+  width: 6px;
+  height: 2px;
+  border-radius: 999px;
+  background: #ffffff80;
+  transform: translateY(-50%);
+  transition:
+    width 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 250ms;
+}
+.home-page .gauge-tick.is-active {
+  width: 8px;
+  background: #fff;
+}
+.home-page .gauge-cursor {
+  position: absolute;
+  z-index: 1;
+  left: -3px;
+  top: calc(var(--doc-p, 0) * 100%);
+  width: 9px;
+  height: 3px;
+  border-radius: 999px;
+  background: #fff;
+  transform: translateY(-50%);
+}
+.home-page.is-framed .gauge {
+  left: 12px;
+  top: calc(50% + var(--home-header-height, 68px) / 2);
+}
+/* ==========================================================================
+   01 · Cielo (hero)
+   ========================================================================== */
+
+.home-traversata .hero {
+  --px: 0;
+  --py: 0;
+  --hp: 0;
+  position: relative;
+  min-height: var(--home-viewport-height, 100svh);
+  display: grid;
+  align-items: end;
+  padding: calc(var(--bar-h) + 4rem) 0 clamp(5rem, 12vh, 8rem);
+  background: linear-gradient(180deg, var(--night-0) 0%, #081428 55%, var(--night-1) 100%);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.home-traversata .sky-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.home-traversata .sky-art > * {
+  position: absolute;
+}
+
+.home-traversata .depth {
+  transform: translate3d(
+    calc(var(--px) * var(--d, 0) * 34px),
+    calc(var(--py) * var(--d, 0) * 22px + var(--hp) * var(--d, 0) * 220px),
+    0
+  );
+}
+
+.home-traversata .sky-stars {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.home-traversata .star {
+  left: var(--x);
+  top: var(--y);
+  width: var(--s);
+  height: auto;
+}
+.home-traversata .star img {
+  width: 100%;
+  height: auto;
+  animation: home-twinkle var(--tw, 5s) ease-in-out var(--twd, 0s) infinite;
+}
+.home-traversata.js .star img {
+  opacity: 0;
+  animation:
+    home-star-in 720ms var(--ease-out) var(--in, 0ms) both,
+    home-twinkle var(--tw, 5s) ease-in-out calc(var(--in, 0ms) + 720ms) infinite;
+}
+
+@keyframes home-star-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-20deg);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1.06) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes home-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.86) rotate(8deg);
+  }
+}
+
+.home-traversata .moon {
+  right: clamp(-6rem, -4vw, -1rem);
+  top: calc(var(--bar-h) + 3vh);
+  width: clamp(14rem, 40vw, 33rem);
+}
+.home-traversata .moon img {
+  width: 100%;
+  filter: drop-shadow(0 0 60px rgba(186, 214, 255, 0.18));
+}
+.home-traversata .jupiter {
+  left: clamp(1rem, 7vw, 7rem);
+  top: calc(var(--bar-h) + 7vh);
+  width: clamp(5rem, 12vw, 10rem);
+}
+.home-traversata .jupiter img {
+  width: 100%;
+  rotate: 0deg;
+}
+.home-traversata.js .moon img,
+.home-traversata.js .jupiter img {
+  animation: home-planet-in 1400ms var(--ease-out) 150ms both;
+}
+.home-traversata.js .jupiter img {
+  animation: home-planet-in 1400ms var(--ease-out) 300ms both;
+}
+@keyframes home-planet-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Stelle cadenti: stessa meccanica del sito, traiettoria più lunga. */
+.home-traversata .shooting {
+  inset: 0;
+  overflow: hidden;
+}
+.home-traversata .shooting span {
+  position: absolute;
+  top: var(--t);
+  right: var(--r);
+  width: var(--dist);
+  height: 2px;
+  transform: rotate(135deg) scaleX(0);
+  transform-origin: left center;
+  animation: home-shoot calc(var(--dur) + 9s) linear var(--del) infinite;
+}
+.home-traversata .shooting span::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, #fff);
+}
+.home-traversata .shooting span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 4px #fff,
+    0 0 8px rgba(255, 255, 255, 0.8);
+  transform: translateY(-50%);
+}
+@keyframes home-shoot {
+  0%,
+  2% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(0);
+  }
+  4% {
+    opacity: 1;
+  }
+  12% {
+    opacity: 1;
+    transform: rotate(135deg) scaleX(1);
+  }
+  20%,
+  100% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(1);
+  }
+}
+
+.home-traversata .clouds {
+  inset: auto 0 0 0;
+  height: 46%;
+  overflow: hidden;
+}
+.home-traversata .cloud {
+  position: absolute;
+  left: 0;
+  top: var(--top);
+  width: var(--w);
+  opacity: var(--o, 0.85);
+  transform: translate3d(-110%, 0, 0);
+  animation: home-drift var(--dur) linear var(--del) infinite;
+}
+.home-traversata .cloud img {
+  width: 100%;
+}
+@keyframes home-drift {
+  to {
+    transform: translate3d(calc(100vw + 10%), 0, 0);
+  }
+}
+
+.home-traversata .hero-inner {
+  position: relative;
+  width: var(--wrap);
+  margin-inline: auto;
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+}
+@media (min-width: 1000px) {
+  .home-traversata .hero-inner {
+    grid-template-columns: minmax(0, 1fr) 21rem;
+  }
+}
+.home-traversata .hero-copy {
+  transform: translate3d(0, calc(var(--hp) * -60px), 0);
+  opacity: calc(1 - var(--hp) * 0.9);
+}
+.home-traversata .hero-copy .kicker {
+  color: var(--link-hover);
+}
+.home-traversata .hero-title {
+  margin-top: 1.4rem;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(3rem, 0.9rem + 8vw, 9.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  text-shadow: 0 6px 40px rgba(2, 6, 23, 0.6);
+}
+.home-traversata .hero-title .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.25em;
+  margin-bottom: -0.25em;
+}
+.home-traversata .hero-title .line > span {
+  display: inline-block;
+}
+.home-traversata .hero-title .serif {
+  font-size: 0.84em;
+  letter-spacing: -0.035em;
+  color: #e5eefc;
+}
+.home-traversata.js .hero-title .line > span {
+  transform: translateY(105%);
+  animation: home-rise 1000ms var(--ease-out) calc(220ms + var(--i, 0) * 110ms) both;
+}
+@keyframes home-rise {
+  to {
+    transform: none;
+  }
+}
+
+.home-traversata .hero-lede {
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+  max-width: 34rem;
+  font-size: clamp(1.02rem, 0.95rem + 0.35vw, 1.2rem);
+  line-height: 1.65;
+  color: #dbe5f3;
+}
+.home-traversata .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+.home-traversata.js .hero-lede,
+.home-traversata.js .hero-actions,
+.home-traversata.js .hero-copy .kicker,
+.home-traversata.js .now {
+  opacity: 0;
+  animation: home-fade-up 900ms var(--ease-out) var(--delay, 700ms) both;
+}
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.home-traversata .now {
+  position: relative;
+  padding: 1.25rem 1.35rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(186, 230, 253, 0.18);
+  background: linear-gradient(160deg, rgba(22, 39, 67, 0.75), rgba(5, 12, 24, 0.55));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 0.88rem;
+}
+.home-traversata .now-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.home-traversata .pulse {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #86efac;
+  box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.6);
+  animation: home-pulse 2.4s ease-out infinite;
+}
+@keyframes home-pulse {
+  70% {
+    box-shadow: 0 0 0 9px rgba(134, 239, 172, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(134, 239, 172, 0);
+  }
+}
+.home-traversata .now dl {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+.home-traversata .now dt {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+.home-traversata .now dd {
+  color: var(--ink);
+  line-height: 1.4;
+}
+.home-traversata .now dd small {
+  display: block;
+  color: var(--ink-body);
+  font-size: 0.8rem;
+}
+
+.home-traversata .scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.25rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  transform: translateX(-50%);
+  font-family: var(--f-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-body);
+  text-decoration: none;
+}
+.home-traversata .scroll-cue::after {
+  content: "";
+  width: 1px;
+  height: 2.5rem;
+  background: linear-gradient(180deg, var(--ink), transparent);
+  transform-origin: top;
+  animation: home-cue 2.2s var(--ease-io) infinite;
+}
+@keyframes home-cue {
+  0% {
+    transform: scaleY(0);
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+@media (max-height: 640px) {
+  .home-traversata .scroll-cue {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   02 · Orizzonte (manifesto, mestieri, costellazioni)
+   ========================================================================== */
+
+.home-traversata .horizon-sky {
+  position: relative;
+  padding: clamp(6rem, 14vw, 11rem) 0 clamp(5rem, 10vw, 8rem);
+  background: linear-gradient(180deg, var(--night-1) 0%, var(--night-2) 45%, var(--night-3) 100%);
+  overflow: hidden;
+}
+.home-traversata .horizon-sky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/home/small-stars.svg") center top / 140% auto no-repeat;
+  opacity: 0.35;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+  pointer-events: none;
+}
+.home-traversata .horizon-sky > .wrap {
+  position: relative;
+}
+
+.home-traversata .manifesto {
+  margin-top: 2.25rem;
+  max-width: 62rem;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(1.75rem, 0.9rem + 3.1vw, 3.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.home-traversata .manifesto em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--link-hover);
+}
+.home-traversata.js .manifesto .w {
+  opacity: 0.22;
+  transition:
+    opacity 500ms ease,
+    filter 500ms ease;
+  filter: blur(0.6px);
+}
+.home-traversata.js .manifesto .w.lit {
+  opacity: 1;
+  filter: none;
+}
+
+.home-traversata .crafts {
+  display: grid;
+  gap: 1px;
+  margin-top: clamp(4rem, 8vw, 6.5rem);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: rgba(186, 230, 253, 0.14);
+}
+@media (min-width: 820px) {
+  .home-traversata .crafts {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.home-traversata .craft {
+  position: relative;
+  padding: clamp(1.5rem, 3vw, 2.4rem);
+  background: linear-gradient(180deg, rgba(11, 26, 49, 0.94), rgba(22, 39, 67, 0.94));
+  overflow: hidden;
+  transition: background-color 400ms;
+}
+.home-traversata .craft::before {
+  content: "";
+  position: absolute;
+  inset: auto -30% -60% -30%;
+  height: 80%;
+  background: radial-gradient(closest-side, rgba(125, 211, 252, 0.22), transparent);
+  opacity: 0;
+  transform: translateY(20%);
+  transition:
+    opacity 500ms,
+    transform 700ms var(--ease-out);
+}
+.home-traversata .craft:hover::before {
+  opacity: 1;
+  transform: none;
+}
+.home-traversata .craft-num {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 3.4rem;
+  line-height: 1;
+  color: rgba(186, 230, 253, 0.55);
+}
+.home-traversata .craft svg {
+  position: absolute;
+  top: clamp(1.5rem, 3vw, 2.4rem);
+  right: clamp(1.5rem, 3vw, 2.4rem);
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--link);
+  transition: transform 600ms var(--ease-out);
+}
+.home-traversata .craft:hover svg {
+  transform: rotate(-10deg) scale(1.08);
+}
+.home-traversata .craft h3 {
+  position: relative;
+  margin-top: 2.5rem;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 1.1rem + 0.8vw, 1.85rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.home-traversata .craft ul {
+  position: relative;
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.45rem;
+  color: var(--ink-body);
+  font-size: 0.95rem;
+}
+.home-traversata .craft li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  transition:
+    transform 400ms var(--ease-out),
+    color 300ms;
+  transition-delay: calc(var(--i, 0) * 45ms);
+}
+.home-traversata .craft li::before {
+  content: "✦";
+  color: var(--link);
+  font-size: 0.85rem;
+}
+.home-traversata .craft:hover li {
+  transform: translateX(6px);
+  color: var(--ink);
+}
+
+/* Costellazioni: un'unica carta celeste generata da dati, senza card. */
+.home-traversata .sky-map {
+  display: grid;
+  gap: 2rem;
+  margin-top: clamp(5rem, 10vw, 8rem);
+}
+.home-traversata .sky-map-head {
+  text-align: center;
+}
+.home-traversata .sky-map-head h3 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1.9rem, 3.5vw, 3.1rem);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+.home-traversata .sky-map-head h3 span {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: #c4d8ee;
+}
+.home-traversata .sky-chart {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+}
+.home-traversata .sky-chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.home-traversata .sky-grid {
+  fill: none;
+  stroke: #c9dcf5;
+  stroke-width: 0.7;
+  opacity: 0.09;
+}
+.home-traversata .sky-grid.is-ecliptic {
+  stroke-dasharray: 2 7;
+  opacity: 0.22;
+}
+.home-traversata .sky-dust {
+  fill: #d5e7ff;
+}
+.home-traversata .sky-group {
+  color: var(--c);
+  transition: opacity 500ms var(--ease-out);
+}
+.home-traversata .sky-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  opacity: 0.45;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition:
+    opacity 400ms,
+    stroke-width 400ms;
+}
+.home-traversata .sky-halo {
+  fill: currentColor;
+  opacity: 0.08;
+}
+.home-traversata .sky-spark {
+  fill: currentColor;
+}
+.home-traversata .sky-core {
+  fill: #fff;
+}
+.home-traversata .sky-star {
+  transform-box: fill-box;
+  transform-origin: center;
+  cursor: default;
+}
+.home-traversata .sky-hit-star {
+  fill: transparent;
+}
+.home-traversata .sky-body {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.home-traversata .sky-star .sky-spark {
+  animation: home-sky-twinkle var(--tw) ease-in-out var(--twd) infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.home-traversata .sky-glint {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: home-sky-glint var(--gl) ease-in-out var(--gld) infinite;
+}
+.home-traversata .sky-burst {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.home-traversata .sky-dust.is-twinkling {
+  animation: home-sky-dust var(--dt) ease-in-out var(--dd) infinite;
+}
+/* Passaggio sulla singola stella: si gonfia, ruota il bagliore e lancia un'onda. */
+.home-traversata .sky-star:hover .sky-body {
+  transform: scale(1.55) rotate(45deg);
+}
+.home-traversata .sky-star:hover .sky-halo {
+  opacity: 0.22;
+}
+.home-traversata .sky-star:hover .sky-burst {
+  animation: home-sky-burst 900ms var(--ease-out) both;
+}
+.home-traversata .sky-star:hover .sky-label {
+  fill: #fff;
+  font-weight: 600;
+}
+/* Illustrazione della costellazione. */
+.home-traversata .sky-art {
+  pointer-events: none;
+  transition: filter 600ms;
+}
+.home-traversata .sky-art-line {
+  fill: currentColor;
+  fill-opacity: 0;
+  stroke: currentColor;
+  stroke-opacity: 0;
+  stroke-width: var(--sw);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition:
+    stroke-dashoffset 900ms var(--ease-out),
+    stroke-opacity 400ms 300ms,
+    fill-opacity 500ms;
+}
+.home-traversata .sky-art-line.is-stroke {
+  fill: none;
+}
+.home-traversata .sky-group.is-active .sky-art {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c) 45%, transparent));
+}
+.home-traversata .sky-group.is-active .sky-art-line {
+  stroke-dashoffset: 0;
+  stroke-opacity: 0.5;
+  fill-opacity: 0.045;
+  transition:
+    stroke-dashoffset 1500ms var(--ease-out) var(--a),
+    stroke-opacity 300ms var(--a),
+    fill-opacity 900ms calc(var(--a) + 500ms);
+}
+.home-traversata .sky-group.is-active .sky-art-line.is-stroke {
+  stroke-opacity: 0.35;
+}
+.home-traversata .sky-group.is-active .sky-halo {
+  opacity: 0.14;
+}
+.home-traversata .sky-label {
+  pointer-events: none;
+  fill: #dde7f3;
+  font: 400 14px var(--f-text);
+  paint-order: stroke;
+  stroke: #0d1a2e;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+  transition: fill 400ms;
+}
+.home-traversata .sky-name {
+  fill: currentColor;
+  font: italic 400 25px var(--f-serif);
+}
+.home-traversata .sky-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+.home-traversata .sky-group.is-active .sky-line {
+  opacity: 0.85;
+  stroke-width: 1.5;
+}
+.home-traversata .sky-group.is-active .sky-label {
+  fill: #fff;
+}
+
+/* Ingresso: stelle che si accendono, poi le linee che le uniscono. */
+.home-traversata.js .sky-chart:not(.is-lit) .sky-star {
+  opacity: 0;
+  transform: scale(0.2);
+}
+.home-traversata.js .sky-chart:not(.is-lit) .sky-line {
+  stroke-dashoffset: 1;
+}
+.home-traversata.js .sky-chart:not(.is-lit) .sky-name {
+  opacity: 0;
+}
+.home-traversata .sky-chart.is-lit .sky-star {
+  transition:
+    opacity 500ms var(--ease-out) var(--d),
+    transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--d);
+}
+.home-traversata .sky-chart.is-lit .sky-line {
+  transition:
+    stroke-dashoffset 1100ms var(--ease-out) var(--d),
+    opacity 400ms,
+    stroke-width 400ms;
+}
+.home-traversata .sky-chart.is-lit .sky-name {
+  transition:
+    opacity 700ms var(--ease-out) var(--d),
+    fill 400ms;
+}
+.home-traversata .sky-chart.is-instant * {
+  transition: none !important;
+}
+@keyframes home-sky-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+  45% {
+    opacity: 0.5;
+    transform: scale(0.72) rotate(14deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+@keyframes home-sky-glint {
+  0%,
+  86%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3) rotate(0deg);
+  }
+  92% {
+    opacity: 0.75;
+    transform: scale(1) rotate(10deg);
+  }
+}
+@keyframes home-sky-dust {
+  50% {
+    opacity: 0.9;
+  }
+}
+@keyframes home-sky-burst {
+  from {
+    opacity: 0.7;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-traversata .sky-star .sky-spark,
+  .home-traversata .sky-glint,
+  .home-traversata .sky-dust.is-twinkling,
+  .home-traversata .sky-star:hover .sky-burst {
+    animation: none;
+  }
+  .home-traversata .sky-art-line {
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   03 · Percorso (traversata del deserto)
+   ========================================================================== */
+
+.home-traversata .journey {
+  position: relative;
+  background: linear-gradient(180deg, var(--night-3) 0%, var(--night-4) 50%, var(--night-5) 100%);
+}
+.home-traversata .journey-stage {
+  position: relative;
+}
+.home-traversata .journey:not(.is-horizontal) .journey-stage {
+  display: flex;
+  flex-direction: column;
+}
+.home-traversata .journey:not(.is-horizontal) .desert-frame {
+  order: 2;
+}
+
+.home-traversata .desert-frame {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+.home-traversata .desert {
+  position: relative;
+  left: 50%;
+  width: max(100%, 40rem);
+  aspect-ratio: 1280 / 841;
+  transform: translateX(-50%);
+}
+.home-traversata .desert img {
+  position: absolute;
+  left: 0;
+  height: auto;
+}
+.home-traversata .desert .mtn {
+  width: 100%;
+  bottom: var(--b);
+}
+.home-traversata .desert .dune {
+  left: -0.5rem;
+  width: calc(100% + 1rem);
+  max-width: none;
+  bottom: var(--b);
+}
+.home-traversata .desert-horizon {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 64.8%;
+  background: linear-gradient(
+    180deg,
+    var(--haze) 0%,
+    #4c5677 21.9%,
+    #37425c 35.6%,
+    #0a1622 68.5%,
+    #0a1622 100%
+  );
+}
+.home-traversata .tw {
+  position: absolute;
+  bottom: var(--tb, 29.2%);
+  left: 0;
+  width: var(--ts, clamp(44px, 6vw, 84px));
+  height: var(--ts, clamp(44px, 6vw, 84px));
+}
+.home-traversata .tw-bounce {
+  width: 100%;
+  height: 100%;
+}
+.home-traversata .tw-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 0 rgba(60, 28, 14, 0.35));
+}
+/* Ombra a terra: si stringe e schiarisce quando il cespuglio è in aria. */
+.home-traversata .tw-shadow {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -6%;
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(70, 30, 20, 0.45), transparent);
+  transform: scaleX(calc(1 - var(--lift, 0) * 0.45));
+  opacity: calc(1 - var(--lift, 0) * 0.6);
+}
+/* Modalità verticale: rotola da sola come nel sito attuale. */
+.home-traversata .journey:not(.is-horizontal) .tw {
+  animation: home-tw-travel 22s linear infinite;
+}
+.home-traversata .journey:not(.is-horizontal) .tw-bounce {
+  animation: home-tw-bounce 1.7s ease-in-out infinite;
+}
+.home-traversata .journey:not(.is-horizontal) .tw-art {
+  animation: home-tw-roll 1.5s linear infinite;
+}
+.home-traversata .journey:not(.is-horizontal) .tw-shadow {
+  animation: home-tw-shadow 1.7s ease-in-out infinite;
+}
+@keyframes home-tw-travel {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(calc(100vw + 120%));
+  }
+}
+@keyframes home-tw-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(-38%);
+  }
+}
+@keyframes home-tw-roll {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes home-tw-shadow {
+  0%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+  45% {
+    transform: scaleX(0.6);
+    opacity: 0.45;
+  }
+}
+
+.home-traversata .journey-intro {
+  padding: clamp(6rem, 12vw, 9rem) 0 3rem;
+}
+.home-traversata .journey-intro .kicker {
+  color: #e4ebf5;
+}
+.home-traversata .journey-intro .h2 {
+  margin-top: 1.5rem;
+  max-width: 14ch;
+}
+.home-traversata .journey-intro .lead {
+  margin-top: 1.5rem;
+  color: #e2e8f0;
+}
+.home-traversata .journey-hint {
+  display: none;
+  margin-top: 2rem;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e2e8f0;
+}
+
+.home-traversata .track {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  width: var(--wrap);
+  margin-inline: auto;
+  padding-bottom: 3rem;
+}
+.home-traversata .stop {
+  position: relative;
+  padding-left: 3rem;
+}
+.home-traversata .stop::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: -1.25rem;
+  left: 1.05rem;
+  width: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(253, 242, 228, 0.6) 0 6px,
+    transparent 6px 12px
+  );
+}
+.home-traversata .stop:last-child::before {
+  bottom: auto;
+  height: 1.6rem;
+}
+.home-traversata .stop-pin {
+  position: absolute;
+  left: 0.55rem;
+  top: 1.6rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--sand-0);
+  box-shadow: 0 0 0 4px rgba(220, 167, 150, 0.25);
+}
+.home-traversata .stop[data-kind="education"] .stop-pin {
+  background: var(--link-hover);
+  box-shadow: 0 0 0 4px rgba(186, 230, 253, 0.25);
+}
+.home-traversata .stop-card {
+  position: relative;
+  padding: 1.4rem 1.4rem 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(253, 242, 228, 0.16);
+  background: linear-gradient(165deg, rgba(10, 22, 34, 0.82), rgba(10, 22, 34, 0.68));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+  transition:
+    transform 600ms var(--ease-out),
+    border-color 400ms,
+    box-shadow 600ms;
+}
+.home-traversata .stop-year {
+  display: block;
+  margin: -0.35rem 0 0.35rem;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 3.2rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(253, 242, 228, 0.35);
+  pointer-events: none;
+}
+.home-traversata .stop-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.home-traversata .badge {
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+}
+.home-traversata .stop[data-kind="work"] .badge {
+  color: var(--sand-0);
+}
+.home-traversata .stop[data-kind="education"] .badge {
+  color: var(--link-hover);
+}
+.home-traversata .badge-now {
+  color: #86efac !important;
+}
+.home-traversata .stop h3 {
+  margin-top: 1rem;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--warm-ink);
+}
+.home-traversata .stop-role {
+  margin-top: 0.25rem;
+  color: var(--warm-body);
+  font-size: 0.92rem;
+}
+.home-traversata .stop blockquote {
+  margin: 1rem 0 0;
+  padding-left: 0.9rem;
+  border-left: 2px solid rgba(220, 167, 150, 0.5);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--warm-ink);
+}
+.home-traversata .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 1.1rem;
+}
+.home-traversata .tags li,
+.home-traversata .tags > span {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  background: rgba(253, 242, 228, 0.08);
+  border: 1px solid rgba(253, 242, 228, 0.12);
+  color: var(--warm-body);
+}
+
+.home-traversata .stop-end .stop-card {
+  background: rgba(253, 242, 228, 0.92);
+  color: var(--soil);
+  border-color: transparent;
+}
+.home-traversata .stop-end h3 {
+  color: var(--soil);
+}
+.home-traversata .stop-end p {
+  margin-top: 0.6rem;
+  color: #4a3424;
+}
+.home-traversata .stop-end .stop-pin {
+  background: var(--ink);
+}
+.home-traversata .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition:
+    text-decoration-color 200ms,
+    gap 300ms var(--ease-out);
+}
+.home-traversata .text-link:hover {
+  gap: 0.75rem;
+}
+
+.home-traversata .journey-hud {
+  display: none;
+}
+
+/* --- Scena orizzontale condivisa tra desktop e mobile --- */
+.home-traversata .journey.is-horizontal {
+  background: var(--night-3);
+}
+.home-traversata .journey.is-horizontal .journey-stage {
+  position: sticky;
+  top: 0;
+  height: var(--home-viewport-height, 100vh);
+  height: var(--home-viewport-height, 100svh);
+  overflow: hidden;
+  overflow: clip;
+  background: linear-gradient(180deg, var(--night-3) 0%, var(--night-4) 35%, var(--night-5) 70%);
+}
+.home-traversata .journey.is-horizontal .desert-frame {
+  position: absolute;
+  inset: 0;
+}
+.home-traversata .journey.is-horizontal .desert {
+  position: absolute;
+  left: 50%;
+  bottom: calc(max(124vw, 160svh) * -0.0788);
+  width: max(124vw, 160svh);
+}
+.home-traversata .journey.is-horizontal .tw {
+  --ts: clamp(58px, 6.2vw, 104px);
+}
+.home-traversata .journey.is-horizontal .tw-bounce {
+  width: 100%;
+  height: 100%;
+}
+
+.home-traversata .journey.is-horizontal .track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: max-content;
+  margin: 0;
+  padding: 0 12vw 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(3rem, 6vw, 6rem);
+  will-change: transform;
+}
+.home-traversata .journey.is-horizontal .stop::before {
+  display: none;
+}
+.home-traversata .journey.is-horizontal .journey-intro {
+  flex: none;
+  width: min(44rem, 52vw);
+  padding: calc(var(--bar-h) + 10vh) 0 0 max(6vw, 4.5rem);
+}
+.home-traversata .journey.is-horizontal .journey-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.home-traversata .journey.is-horizontal .journey-hint::after {
+  content: "";
+  width: 4rem;
+  height: 1px;
+  background: currentColor;
+  animation: home-hint 2s var(--ease-io) infinite;
+  transform-origin: left;
+}
+@keyframes home-hint {
+  0% {
+    transform: scaleX(0.2);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0.2);
+  }
+}
+.home-traversata .journey.is-horizontal .stop {
+  flex: none;
+  width: clamp(18rem, 27vw, 24rem);
+  padding: 0;
+  margin-top: var(--lift, 24vh);
+}
+.home-traversata .journey.is-horizontal .stop:nth-of-type(even) {
+  --lift: 20vh;
+  --stem: 26vh;
+}
+.home-traversata .journey.is-horizontal .stop:nth-of-type(odd) {
+  --lift: 30vh;
+  --stem: 16vh;
+}
+.home-traversata .journey.is-horizontal .stop-pin {
+  left: 50%;
+  top: auto;
+  bottom: calc(-1 * var(--stem, 30vh));
+  transform: translateX(-50%);
+}
+.home-traversata .journey.is-horizontal .stop::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  height: calc(var(--stem, 30vh) - 0.5rem);
+  width: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(253, 242, 228, 0.7) 0 5px,
+    transparent 5px 10px
+  );
+}
+@media (max-height: 800px) {
+  .home-traversata .journey.is-horizontal .stop:nth-of-type(even) {
+    --lift: 16vh;
+    --stem: 20vh;
+  }
+  .home-traversata .journey.is-horizontal .stop:nth-of-type(odd) {
+    --lift: 23vh;
+    --stem: 13vh;
+  }
+  .home-traversata .journey.is-horizontal .stop blockquote {
+    font-size: 0.95rem;
+  }
+}
+.home-traversata .journey.is-horizontal .stop-card {
+  transform: scale(0.94);
+  opacity: 0.78;
+  transition:
+    transform 700ms var(--ease-out),
+    opacity 500ms,
+    border-color 400ms;
+}
+.home-traversata .journey.is-horizontal .stop.is-current .stop-card {
+  transform: none;
+  opacity: 1;
+  border-color: rgba(253, 242, 228, 0.4);
+}
+.home-traversata .journey.is-horizontal .stop-year {
+  position: absolute;
+  left: 0.2rem;
+  bottom: calc(100% - 0.12em);
+  margin: 0;
+  font-size: clamp(4rem, 2.5rem + 3vw, 6.5rem);
+  transform: translate3d(var(--yx, 0px), 0, 0);
+}
+
+.home-traversata .journey.is-horizontal .journey-hud {
+  position: absolute;
+  right: clamp(1.5rem, 4vw, 3rem);
+  bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: rgba(10, 22, 34, 0.72);
+  border: 1px solid rgba(253, 242, 228, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-body);
+}
+.home-traversata .hud-bar {
+  position: relative;
+  width: 8rem;
+  height: 2px;
+  background: rgba(253, 242, 228, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.home-traversata .hud-bar span {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  transform: scaleX(var(--jp, 0));
+  background: var(--sand-0);
+}
+
+/* The same dune scene on small screens, with one readable stop at a time. */
+@media (max-width: 1023px) {
+  .home-traversata .journey.is-horizontal .track {
+    gap: 2rem;
+    padding-right: 10vw;
+  }
+  .home-traversata .journey.is-horizontal .journey-intro {
+    width: min(88vw, 26rem);
+    padding: clamp(24px, 7svh, 56px) 20px 0;
+  }
+  .home-traversata .journey.is-horizontal .journey-intro .h2 {
+    font-size: clamp(1.8rem, 7vw, 2.7rem);
+  }
+  .home-traversata .journey.is-horizontal .journey-intro .lead {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .home-traversata .journey.is-horizontal .stop {
+    width: min(82vw, 22rem);
+    margin-top: clamp(64px, 14svh, 110px);
+    --stem: 16svh;
+  }
+  .home-traversata .journey.is-horizontal .stop-card {
+    padding: 1.1rem;
+  }
+  .home-traversata .journey.is-horizontal .stop h3 {
+    margin-top: 0.6rem;
+    font-size: 1.25rem;
+  }
+  .home-traversata .journey.is-horizontal .stop p:not(.stop-meta) {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .home-traversata .journey.is-horizontal .stop-year {
+    font-size: 3.25rem;
+  }
+  .home-traversata .journey.is-horizontal .journey-hud {
+    left: 50%;
+    right: auto;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    gap: 0.75rem;
+    padding: 0.5rem 0.8rem;
+    white-space: nowrap;
+    font-size: 0.6rem;
+  }
+  .home-traversata .journey.is-horizontal .hud-bar {
+    width: 3rem;
+  }
+  .home-traversata .journey.is-horizontal .tw {
+    --ts: 64px;
+  }
+}
+/* Keep the cards reachable in short landscape viewports as well. */
+@media (max-height: 500px) and (prefers-reduced-motion: no-preference) {
+  .home-traversata .journey.is-horizontal .stop {
+    margin-top: 48px;
+  }
+  .home-traversata .journey.is-horizontal .stop-card {
+    max-height: calc(var(--home-viewport-height, 100svh) - 100px);
+    overflow-y: auto;
+  }
+  .home-traversata .journey.is-horizontal .journey-intro {
+    padding-top: 20px;
+  }
+}
+
+/* ==========================================================================
+   Sottosuolo: viaggio al centro della Terra (Crosta · Mantello · Nucleo)
+   ========================================================================== */
+
+.home-traversata .underground {
+  position: relative;
+  margin-top: -1px;
+  color: var(--warm-ink);
+  background: #6f4541;
+  overflow-x: clip;
+}
+
+/* Strati di carta: ogni banda ha un bordo ondulato e proietta ombra verso l'alto. */
+.home-traversata .layer {
+  position: relative;
+  isolation: isolate;
+}
+.home-traversata .layer-crust {
+  background: #6f4541;
+  padding: clamp(8rem, 13vw, 11rem) 0 clamp(6rem, 10vw, 8rem);
+}
+.home-traversata .layer-mantle {
+  background: #3d211e;
+  padding: clamp(7rem, 12vw, 10rem) 0 clamp(7rem, 11vw, 9rem);
+}
+.home-traversata .layer-core {
+  background: #7a2a12;
+  padding: clamp(7rem, 12vw, 9rem) 0 0;
+  min-height: clamp(40rem, 100vh, 56rem);
+  text-align: center;
+}
+.home-traversata .bands {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+.home-traversata .band {
+  position: absolute;
+  inset: var(--top) 0 0;
+  background: var(--c);
+  filter: drop-shadow(0 -6px 7px rgba(22, 8, 5, 0.38));
+}
+.home-traversata .band-edge {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% - 1px);
+  width: 100%;
+  height: clamp(46px, 6vw, 90px);
+  fill: var(--c);
+}
+.home-traversata .band-lines {
+  position: absolute;
+  left: 0;
+  top: clamp(-40px, -3vw, -20px);
+  width: 100%;
+  height: clamp(120px, 14vw, 200px);
+  fill: none;
+  stroke: rgba(255, 224, 196, 0.075);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* L'indicatore delle tappe del deserto resta sopra il primo strato. */
+.home-traversata .journey-hud {
+  z-index: 6;
+}
+
+/* Decorazioni illustrate */
+.home-traversata .decor {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.home-traversata .decor > svg {
+  position: absolute;
+  height: auto;
+}
+.home-traversata .u-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.home-traversata .roots-a {
+  left: 4%;
+  top: clamp(-74px, -5vw, -40px);
+  width: clamp(8rem, 13vw, 12rem);
+}
+.home-traversata .roots-b {
+  right: 8%;
+  top: clamp(-66px, -4.5vw, -36px);
+  width: clamp(7rem, 11vw, 10rem);
+}
+.home-traversata .roots-c {
+  left: 54%;
+  top: clamp(-60px, -4vw, -32px);
+  width: 7.5rem;
+}
+.home-traversata .pebbles-a {
+  right: 3%;
+  top: 38%;
+  width: clamp(7rem, 10vw, 9rem);
+}
+.home-traversata .pebbles-b {
+  left: 2.5%;
+  top: 66%;
+  width: clamp(6rem, 8vw, 7.5rem);
+}
+.home-traversata .pebbles-c {
+  right: 6%;
+  top: 88%;
+  width: 7rem;
+}
+.home-traversata .bone {
+  right: 5%;
+  top: 80%;
+  width: clamp(6.5rem, 9vw, 8.5rem);
+  transform: rotate(-14deg);
+}
+.home-traversata .crystals-a {
+  left: 2.5%;
+  top: 3%;
+  width: clamp(6.5rem, 9vw, 8.5rem);
+}
+.home-traversata .crystals-b {
+  right: 3%;
+  top: 86%;
+  width: clamp(7rem, 10vw, 9.5rem);
+  transform: scaleX(-1);
+}
+@media (max-width: 760px) {
+  .home-traversata .roots-c,
+  .home-traversata .pebbles-b,
+  .home-traversata .crystals-b,
+  .home-traversata .bone {
+    display: none;
+  }
+}
+
+/* Magma che filtra dalle crepe del mantello profondo */
+.home-traversata .lava {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #ff9a3c;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px #ff6a1a);
+  opacity: 0.55;
+}
+.home-traversata .lava path {
+  animation: home-lava-flicker 3.6s ease-in-out var(--l) infinite;
+}
+.home-traversata .lava .lava-core {
+  stroke: #fff3d6;
+  stroke-width: 0.8;
+  filter: none;
+  opacity: 0.8;
+  animation: none;
+}
+@keyframes home-lava-flicker {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Testata degli strati */
+.home-traversata .layer .wrap {
+  position: relative;
+}
+.home-traversata .layer-head {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 900px) {
+  .home-traversata .layer-head {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    align-items: end;
+    column-gap: 4rem;
+  }
+  .home-traversata .layer-head .depth-tag {
+    grid-column: 1 / -1;
+  }
+}
+.home-traversata .layer-head .lead {
+  color: var(--warm-body);
+}
+.home-traversata .depth-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.home-traversata .depth-tag span {
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(253, 242, 228, 0.25);
+  background: rgba(30, 12, 8, 0.35);
+  color: var(--warm-ink);
+  letter-spacing: 0.08em;
+}
+.home-traversata .depth-tag::after {
+  content: "";
+  flex: 0 1 5rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+.home-traversata .layer-core .depth-tag {
+  justify-content: center;
+  color: #ffe2c2;
+}
+.home-traversata .layer-core .depth-tag::before {
+  content: "";
+  flex: 0 1 5rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+.home-traversata .layer-more {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+/* Reperti: fossili dissotterrati accanto alla scheda del progetto */
+.home-traversata .finds {
+  display: grid;
+  gap: clamp(4rem, 8vw, 6.5rem);
+  margin-top: clamp(3.5rem, 7vw, 5.5rem);
+}
+.home-traversata .find {
+  position: relative;
+  display: grid;
+  align-items: center;
+}
+@media (min-width: 820px) {
+  .home-traversata .find {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+  .home-traversata .find-body {
+    margin-left: -3.5rem;
+  }
+  .home-traversata .find.is-flipped {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  }
+  .home-traversata .find.is-flipped .find-pit {
+    order: 2;
+  }
+  .home-traversata .find.is-flipped .find-body {
+    margin-left: 0;
+    margin-right: -3.5rem;
+  }
+}
+.home-traversata .find-pit {
+  position: relative;
+  width: min(100%, 27rem);
+  aspect-ratio: 320 / 300;
+  justify-self: center;
+}
+.home-traversata .pit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.home-traversata .find-fossil {
+  position: absolute;
+  inset: 12% 15% 16%;
+  display: grid;
+  place-items: center;
+  transform: translate3d(0, var(--fy, 0px), 0);
+}
+.home-traversata .fossil-art {
+  width: 100%;
+  height: 100%;
+  transition:
+    transform 900ms var(--ease-out),
+    filter 900ms var(--ease-out);
+}
+.home-traversata .find:hover .fossil-art,
+.home-traversata .find:focus-within .fossil-art {
+  transform: rotate(-7deg) scale(1.06);
+}
+.home-traversata .find.is-flipped:hover .fossil-art,
+.home-traversata .find.is-flipped:focus-within .fossil-art {
+  transform: rotate(6deg) scale(1.06);
+}
+.home-traversata .find-tag {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px dashed rgba(253, 242, 228, 0.35);
+  background: rgba(24, 10, 7, 0.75);
+  font-family: var(--f-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm-body);
+}
+
+.home-traversata .find-body,
+.home-traversata .geode-body {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: 1.4rem;
+  border: 1px solid rgba(253, 242, 228, 0.14);
+  background: linear-gradient(160deg, rgba(48, 22, 17, 0.82), rgba(28, 12, 9, 0.72));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 30px 60px -30px rgba(10, 2, 0, 0.75);
+  transition:
+    border-color 400ms,
+    transform 600ms var(--ease-out);
+}
+@media (max-width: 819px) {
+  .home-traversata .find-pit {
+    width: min(82%, 22rem);
+  }
+  .home-traversata .find-body {
+    margin-top: -0.75rem;
+  }
+}
+.home-traversata .find:hover .find-body,
+.home-traversata .find:focus-within .find-body,
+.home-traversata .geode:hover .geode-body,
+.home-traversata .geode:focus-within .geode-body {
+  border-color: rgba(253, 242, 228, 0.32);
+  transform: translateY(-4px);
+}
+.home-traversata .find-meta {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.home-traversata .find-body h3,
+.home-traversata .geode-body h3 {
+  margin-top: 0.75rem;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.home-traversata .find-body h3 a,
+.home-traversata .geode-body h3 a {
+  text-decoration: none;
+}
+.home-traversata .find-body h3 a::after,
+.home-traversata .geode-body h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.home-traversata .find h3 a:focus-visible,
+.home-traversata .geode h3 a:focus-visible {
+  outline: none;
+}
+.home-traversata .find:focus-within .find-body,
+.home-traversata .geode:focus-within .geode-body {
+  outline: 2px solid var(--fire);
+  outline-offset: 4px;
+}
+.home-traversata .find-body > p:not(.find-meta),
+.home-traversata .geode-body > p:not(.find-meta) {
+  margin-top: 0.75rem;
+  color: var(--warm-body);
+}
+.home-traversata .find-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.home-traversata .find-cta span {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(253, 242, 228, 0.3);
+  transition:
+    transform 500ms var(--ease-out),
+    background-color 300ms,
+    color 300ms;
+}
+.home-traversata .find:hover .find-cta span,
+.home-traversata .geode:hover .geode-body .find-cta span {
+  transform: rotate(-45deg);
+  background: var(--warm-ink);
+  color: #3b1a12;
+}
+
+/* Scritti: il geode si apre e mostra i cristalli */
+.home-traversata .geodes {
+  display: grid;
+  gap: 3rem;
+  margin-top: clamp(3.5rem, 7vw, 5rem);
+}
+.home-traversata .geode {
+  position: relative;
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+}
+@media (min-width: 820px) {
+  .home-traversata .geode {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+  .home-traversata .geode-body {
+    margin-left: -2.5rem;
+  }
+}
+.home-traversata .geode-visual {
+  position: relative;
+  width: min(100%, 30rem);
+  justify-self: center;
+}
+.home-traversata .geode-art {
+  width: 100%;
+  height: auto;
+  transition: transform 900ms var(--ease-out);
+}
+.home-traversata .geode:hover .geode-art,
+.home-traversata .geode:focus-within .geode-art {
+  transform: rotate(-4deg) scale(1.04);
+}
+.home-traversata .geode-glint {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: home-glint 3.4s ease-in-out var(--g) infinite;
+}
+@keyframes home-glint {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+  82% {
+    opacity: 1;
+    transform: scale(1) rotate(45deg);
+  }
+}
+
+/* Scavo all'ingresso */
+.home-traversata.js .find .find-pit,
+.home-traversata.js .geode .geode-visual {
+  clip-path: circle(0% at 50% 55%);
+  transition: clip-path 1300ms var(--ease-io) 150ms;
+}
+.home-traversata.js .find.is-in .find-pit,
+.home-traversata.js .geode.is-in .geode-visual {
+  clip-path: circle(75% at 50% 55%);
+}
+.home-traversata.js .find .fossil-art,
+.home-traversata.js .geode .geode-crystals {
+  filter: blur(5px) brightness(0.35);
+}
+.home-traversata.js .find.is-in .fossil-art,
+.home-traversata.js .geode.is-in .geode-crystals {
+  filter: none;
+  transition:
+    filter 1400ms var(--ease-out) 700ms,
+    transform 900ms var(--ease-out);
+}
+
+/* Nucleo: anelli di carta incandescente che ruotano lentamente */
+.home-traversata .core-stage {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.home-traversata .core-art {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: max(100%, 56rem);
+  height: auto;
+  aspect-ratio: 1200 / 720;
+  transform: translate(-50%, calc((1 - var(--heat, 0)) * 16% + 12%));
+  transition: transform 300ms linear;
+}
+.home-traversata .core-ring {
+  transform-box: view-box;
+  transform-origin: 600px 720px;
+  animation: home-core-spin var(--spin) linear infinite;
+}
+.home-traversata .core-ring.is-rev {
+  animation-direction: reverse;
+}
+@keyframes home-core-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.home-traversata .core-halo {
+  position: absolute;
+  inset: auto 0 0;
+  height: 80%;
+  background: radial-gradient(60% 70% at 50% 100%, rgba(255, 196, 110, 0.55), transparent 70%);
+  opacity: calc(0.4 + var(--heat, 0) * 0.6);
+  animation: home-breathe 6s ease-in-out infinite;
+}
+@keyframes home-breathe {
+  50% {
+    opacity: 0.55;
+    transform: scaleX(1.06);
+  }
+}
+.home-traversata .embers span {
+  position: absolute;
+  bottom: -10px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: #ffe0a0;
+  box-shadow: 0 0 10px 2px rgba(255, 170, 80, 0.8);
+  opacity: 0;
+  animation: home-ember-rise var(--d) linear var(--dl) infinite;
+}
+@keyframes home-ember-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(2.5rem, -34rem, 0) scale(0.4);
+  }
+}
+.home-traversata .layer-core .h2 {
+  margin: 1.5rem auto 0;
+  max-width: 16ch;
+  color: #fff;
+  text-shadow: 0 4px 30px rgba(60, 10, 0, 0.55);
+}
+.home-traversata .layer-core .lead {
+  margin: 1.25rem auto 0;
+  color: #fff1e4;
+  text-shadow: 0 2px 12px rgba(60, 10, 0, 0.6);
+}
+.home-traversata .core-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+}
+.home-traversata .core-actions .btn-primary {
+  background: #fff7ed;
+  color: #3b0f04;
+  box-shadow: 0 14px 40px -12px rgba(255, 190, 110, 0.9);
+}
+.home-traversata .core-actions .btn-ghost {
+  border-color: rgba(255, 241, 228, 0.5);
+  background: rgba(36, 9, 3, 0.35);
+}
+
+/* Profondimetro */
+.home-traversata .depth-hud {
+  position: fixed;
+  right: clamp(1rem, 2vw, 1.75rem);
+  bottom: clamp(1rem, 2vw, 1.75rem);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: rgba(28, 10, 6, 0.72);
+  border: 1px solid rgba(253, 242, 228, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-body);
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 400ms,
+    transform 500ms var(--ease-out);
+}
+.home-traversata .depth-hud.is-on {
+  opacity: 1;
+  transform: none;
+}
+.home-traversata .depth-hud-value {
+  min-width: 7.5ch;
+  text-align: right;
+  color: var(--fire);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 640px) {
+  .home-traversata .depth-hud {
+    right: 50%;
+    transform: translate(50%, 12px);
+  }
+  .home-traversata .depth-hud.is-on {
+    transform: translate(50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-traversata .core-ring,
+  .home-traversata .embers span,
+  .home-traversata .lava path,
+  .home-traversata .geode-glint,
+  .home-traversata .core-halo {
+    animation: none;
+  }
+  .home-traversata .embers {
+    display: none;
+  }
+  .home-traversata.js .find .find-pit,
+  .home-traversata.js .geode .geode-visual {
+    clip-path: none;
+  }
+  .home-traversata.js .find .fossil-art,
+  .home-traversata.js .geode .geode-crystals {
+    filter: none;
+  }
+  .home-traversata .core-art {
+    transform: none;
+  }
+}
+
+.home-traversata .site-foot {
+  position: relative;
+  border-top: 1px solid #ffffff1a;
+  background: #000;
+  padding: 3rem 1.5rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.home-traversata .original-footer-grid {
+  display: grid;
+  gap: 2.5rem;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+.home-traversata .original-footer-intro {
+  max-width: 24rem;
+}
+.home-traversata .original-footer-brand {
+  color: #fff;
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+}
+.home-traversata .original-footer-description {
+  margin-top: 0.75rem;
+  line-height: 1.5rem;
+}
+.home-traversata .original-footer-label {
+  color: #64748b;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+}
+.home-traversata .original-footer-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.home-traversata .site-foot .original-footer-link,
+.home-traversata .original-footer-admin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: 2rem;
+  padding: 0 0.625rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  color: #e4e4e7;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.home-traversata .site-foot .original-footer-link:hover {
+  text-decoration: underline;
+}
+.home-traversata .original-footer-row {
+  display: flex;
+  flex-direction: column;
+  max-width: 72rem;
+  margin: 2.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid #ffffff1a;
+}
+.home-traversata .original-footer-access {
+  gap: 1rem;
+}
+.home-traversata .original-footer-access nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.home-traversata .site-foot .original-footer-admin {
+  gap: 0.375rem;
+  padding-left: 0.5rem;
+  border-color: #ffffff26;
+  background: #27272a4d;
+}
+.home-traversata .site-foot .original-footer-admin:hover {
+  background: #27272a80;
+}
+.home-traversata .original-footer-copyright {
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+@media (min-width: 640px) {
+  .home-traversata .original-footer-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+@media (min-width: 768px) {
+  .home-traversata .original-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .home-traversata .original-footer-grid {
+    grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr;
+  }
+}
+
+/* --- Rivelazioni generiche --- */
+.home-traversata.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 900ms var(--ease-out),
+    transform 1000ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.home-traversata.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==========================================================================
+   Riduzione del movimento: tutto statico, contenuto subito visibile.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .home-traversata *,
+  .home-traversata *::before,
+  .home-traversata *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+  .home-traversata .shooting,
+  .home-traversata .clouds .cloud {
+    display: none;
+  }
+  .home-traversata .depth,
+  .home-traversata .hero-copy,
+  .home-traversata .fossil {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .home-traversata.js .manifesto .w {
+    opacity: 1;
+    filter: none;
+  }
+  .home-traversata.js [data-reveal],
+  .home-traversata.js .stratum,
+  .home-traversata.js .core-sample {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+  .home-traversata .journey:not(.is-horizontal) .tw {
+    animation: none;
+    transform: translateX(62vw);
+  }
+  .home-traversata .scroll-cue::after {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* The story and footer share one screen; scrolling never leaks to the document. */
+.home-site {
+  --footer-peek: clamp(88px, 12dvh, 112px);
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+}
+.home-footer {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 50;
+  height: var(--footer-peek);
+  overflow: hidden;
+  background: #000;
+  transform: translateY(0);
+  transition:
+    height 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s;
+}
+.home-page:not(.is-framed) + .home-footer {
+  transform: translateY(100%);
+  visibility: hidden;
+}
+.home-site[data-footer-open="true"] .home-footer {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateY(0);
+  visibility: visible;
+}
+.home-footer-controls {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: #000;
+  z-index: 1;
+}
+/* A real viewport frame reserves layout space around the scrolling page. */
+.home-page {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #000;
+  padding: 0;
+  transition:
+    padding 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 550ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.home-page.is-framed {
+  height: calc(100dvh - var(--footer-peek));
+  padding: var(--home-header-height, 68px) 12px 0;
+}
+.home-viewport {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: auto;
+  overflow-anchor: none;
+  overscroll-behavior: contain;
+  border-radius: 0;
+  transition: border-radius 550ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.home-page.is-framed .home-viewport {
+  border-radius: 18px;
+}
+.home-scroll-header {
+  transform: translateY(var(--hero-header-y, 0px));
+}
+.home-scroll-header.is-floating {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  z-index: 45;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px);
+  transition:
+    transform 350ms ease,
+    opacity 200ms,
+    visibility 0s 350ms;
+}
+.home-scroll-header.is-floating.is-visible,
+.home-scroll-header.is-floating:focus-within {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    transform 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 250ms 100ms,
+    visibility 0s;
+}
+@media (max-width: 767px) {
+  .home-page .gauge {
+    width: 20px;
+    padding-inline: 8px;
+  }
+  .home-page .gauge::before {
+    width: 24px;
+  }
+  .home-page .gauge-rail {
+    height: clamp(96px, 18svh, 160px);
+  }
+  .home-page.is-framed .gauge {
+    left: 8px;
+  }
+  .home-page.is-framed {
+    padding: var(--home-header-height, 68px) 8px 0;
+  }
+  .home-page.is-framed .home-viewport {
+    border-radius: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-footer,
+  .home-page,
+  .home-page .gauge,
+  .home-page .gauge.is-visible,
+  .home-viewport,
+  .home-scroll-header.is-floating {
+    transition: none;
+  }
+}
