@@ -684,8 +684,6 @@ export function animateHome(container) {
   const tw = $("[data-tw]");
   const twBounce = $("[data-tw-bounce]");
   const twRoll = $("[data-tw-roll]");
-  const hudLabel = $("[data-hud-label]");
-  const hud = $(".journey-hud");
   const desert = $("[data-desert]");
   let jTop = 0,
     jDist = 0,
@@ -770,16 +768,7 @@ export function animateHome(container) {
     if (best !== currentStop) {
       currentStop = best;
       stops.forEach((s, i) => s.classList.toggle("is-current", i === best));
-      const y = best >= 0 ? stops[best].dataset.year : "";
-      const n = stops.length - 1;
-      hudLabel.textContent =
-        best < 0
-          ? "Partenza"
-          : best >= n
-            ? "Prossima tappa"
-            : "Tappa " + (best + 1) + " / " + n + " · " + y;
     }
-    hud.style.setProperty("--jp", p.toFixed(3));
   };
 
   // Tastiera: portare in vista la tappa che riceve il focus.
@@ -797,14 +786,6 @@ export function animateHome(container) {
   /* --- Ciclo di scroll ----------------------------------------------- */
   const fossils = $$("[data-fy]");
   const coreZone = $("[data-core-zone]");
-  const depthHud = $("[data-depth-hud]");
-  const depthValue = $("[data-depth-value]");
-  const depthLayer = $("[data-depth-layer]");
-  const depthLayers = [
-    ["#reperti", "Crosta"],
-    ["#sedimenti", "Mantello"],
-    ["#nucleo", "Nucleo"],
-  ].map(([sel, name]) => [$(sel), name]);
   let ticking = false;
 
   const onFrame = () => {
@@ -816,8 +797,6 @@ export function animateHome(container) {
     const docP = clamp(y / max);
     page.style.setProperty("--doc-p", docP.toFixed(4));
 
-    const uTop = localRect(underground).top;
-
     // Sezione attiva: l'ultima il cui inizio ha superato metà viewport.
     let idx = 0;
     sectionTops.forEach((t, i) => {
@@ -827,7 +806,6 @@ export function animateHome(container) {
 
     if (reduceMQ.matches) {
       words.forEach((w) => w.classList.add("lit"));
-      depthHud.classList.remove("is-on");
       return;
     }
 
@@ -844,6 +822,7 @@ export function animateHome(container) {
     updateJourney();
 
     // Reperti fossili con parallasse leggera
+    const uTop = localRect(underground).top;
     if (uTop < vh && uTop > -underground.offsetHeight) {
       fossils.forEach((f) => {
         const r = localRect(f);
@@ -855,17 +834,6 @@ export function animateHome(container) {
     // Il nucleo si scalda avvicinandosi
     const cr = localRect(coreZone);
     coreZone.style.setProperty("--heat", clamp((vh - cr.top) / (cr.height + vh * 0.2)).toFixed(3));
-
-    // Profondimetro: da 0 a 6.371 km lungo tutto il sottosuolo.
-    const uh = underground.offsetHeight;
-    const inside = uTop < vh * 0.55 && uTop + uh > vh * 0.45;
-    depthHud.classList.toggle("is-on", inside);
-    if (inside) {
-      const dp = clamp((vh * 0.5 - uTop) / Math.max(1, uh - vh * 0.5));
-      depthValue.textContent = `−${String(Math.round(6371 * dp ** 1.7)).replace(/\B(?=(\d{3})+(?!\d))/g, ".")} km`;
-      const layer = depthLayers.findLast(([el]) => localRect(el).top < vh * 0.5);
-      depthLayer.textContent = layer ? layer[1] : "Crosta";
-    }
   };
 
   const requestFrame = () => {
@@ -881,6 +849,7 @@ export function animateHome(container) {
     const previousScroll = scroller.scrollTop;
     const wasHorizontal = horizontal;
     root.style.setProperty("--home-viewport-height", `${scroller.clientHeight}px`);
+    root.style.setProperty("--home-viewport-width", `${scroller.clientWidth}px`);
     setupJourney();
     if (wasHorizontal && horizontal) {
       const adjusted = remapJourneyScroll(previousScroll, previous, {

@@ -726,9 +726,11 @@ export function HomePage({ projects, experiences, articles }: Props) {
                     {experiences.map((experience) => (
                       <li
                         className="stop"
+                        data-kind={experience.kind}
                         data-year={experience.startDate.slice(0, 4)}
                         key={experience.id}
                       >
+                        <span className="stop-pin" aria-hidden="true" />
                         <span className="stop-year">{experience.startDate.slice(0, 4)}</span>
                         <article className="stop-card">
                           <p className="stop-meta">{experience.period}</p>
@@ -774,12 +776,6 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       </article>
                     </li>
                   </ol>
-                  <div className="journey-hud" aria-hidden="true">
-                    <span data-hud-label="">{"Partenza"}</span>
-                    <span className="hud-bar">
-                      <span />
-                    </span>
-                  </div>
                 </div>
               </section>
 
@@ -889,15 +885,6 @@ export function HomePage({ projects, experiences, articles }: Props) {
                     </filter>
                   </defs>
                 </svg>
-                <div className="depth-hud" aria-hidden="true" data-depth-hud="">
-                  <span className="depth-hud-layer" data-depth-layer="">
-                    {"Crosta"}
-                  </span>
-                  <span className="depth-hud-value" data-depth-value="">
-                    {"−0 km"}
-                  </span>
-                </div>
-
                 <section
                   id="reperti"
                   className="layer layer-crust"
@@ -1137,10 +1124,6 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   </div>
                   <div className="wrap">
                     <header className="layer-head">
-                      <p className="depth-tag" data-reveal="">
-                        <span>{"−35 km"}</span>
-                        {" Crosta terrestre"}
-                      </p>
                       <h2 className="h2" id="reperti-title" data-reveal="">
                         {"Reperti, "}
                         <span className="serif">{"strato dopo strato."}</span>
@@ -1458,10 +1441,6 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   </div>
                   <div className="wrap">
                     <header className="layer-head">
-                      <p className="depth-tag" data-reveal="">
-                        <span>{"−670 km"}</span>
-                        {" Mantello"}
-                      </p>
                       <h2 className="h2" id="sedimenti-title" data-reveal="">
                         {"Notizie e opinioni "}
                         <span className="serif">{"sulla tecnologia."}</span>
@@ -2830,10 +2809,6 @@ export function HomePage({ projects, experiences, articles }: Props) {
                     </div>
                   </div>
                   <div className="wrap">
-                    <p className="depth-tag" data-reveal="">
-                      <span>{"−6.371 km"}</span>
-                      {" Nucleo"}
-                    </p>
                     <h2 className="h2" id="nucleo-title" data-reveal="">
                       {"Hai un’idea da trasformare "}
                       <span className="serif">{"in prodotto?"}</span>
@@ -3180,7 +3155,6 @@ function AmmonitePit() {
           </g>
         </svg>
       </div>
-      <span className="find-tag">{"Reperto 01 · −12 km"}</span>
     </>
   );
 }
@@ -3498,7 +3472,6 @@ function TrilobitePit() {
           </g>
         </svg>
       </div>
-      <span className="find-tag">{"Reperto 02 · −28 km"}</span>
     </>
   );
 }

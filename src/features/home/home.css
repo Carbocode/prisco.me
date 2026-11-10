@@ -1270,12 +1270,14 @@
 .home-traversata .journey-stage {
   position: relative;
 }
-.home-traversata .journey:not(.is-horizontal) .journey-stage {
-  display: flex;
-  flex-direction: column;
-}
-.home-traversata .journey:not(.is-horizontal) .desert-frame {
-  order: 2;
+@media (prefers-reduced-motion: reduce) {
+  .home-traversata .journey .journey-stage {
+    display: flex;
+    flex-direction: column;
+  }
+  .home-traversata .journey .desert-frame {
+    order: 2;
+  }
 }
 
 .home-traversata .desert-frame {
@@ -1587,253 +1589,219 @@
   gap: 0.75rem;
 }
 
-.home-traversata .journey-hud {
-  display: none;
-}
-
-/* --- Scena orizzontale condivisa tra desktop e mobile --- */
-.home-traversata .journey.is-horizontal {
-  background: var(--night-3);
-}
-.home-traversata .journey.is-horizontal .journey-stage {
-  position: sticky;
-  top: 0;
-  height: var(--home-viewport-height, 100vh);
-  height: var(--home-viewport-height, 100svh);
-  overflow: hidden;
-  overflow: clip;
-  background: linear-gradient(180deg, var(--night-3) 0%, var(--night-4) 35%, var(--night-5) 70%);
-}
-.home-traversata .journey.is-horizontal .desert-frame {
-  position: absolute;
-  inset: 0;
-}
-.home-traversata .journey.is-horizontal .desert {
-  position: absolute;
-  left: 50%;
-  bottom: calc(max(124vw, 160svh) * -0.0788);
-  width: max(124vw, 160svh);
-}
-.home-traversata .journey.is-horizontal .tw {
-  --ts: clamp(58px, 6.2vw, 104px);
-}
-.home-traversata .journey.is-horizontal .tw-bounce {
-  width: 100%;
-  height: 100%;
-}
-
-.home-traversata .journey.is-horizontal .track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: max-content;
-  margin: 0;
-  padding: 0 12vw 0 0;
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(3rem, 6vw, 6rem);
-  will-change: transform;
-}
-.home-traversata .journey.is-horizontal .stop::before {
-  display: none;
-}
-.home-traversata .journey.is-horizontal .journey-intro {
-  flex: none;
-  width: min(44rem, 52vw);
-  padding: calc(var(--bar-h) + 10vh) 0 0 max(6vw, 4.5rem);
-}
-.home-traversata .journey.is-horizontal .journey-hint {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.home-traversata .journey.is-horizontal .journey-hint::after {
-  content: "";
-  width: 4rem;
-  height: 1px;
-  background: currentColor;
-  animation: home-hint 2s var(--ease-io) infinite;
-  transform-origin: left;
-}
-@keyframes home-hint {
-  0% {
-    transform: scaleX(0.2);
+/* Select the scene before hydration to avoid flashing the static fallback. */
+@media (prefers-reduced-motion: no-preference) {
+  /* --- Scena orizzontale condivisa tra desktop e mobile --- */
+  .home-traversata .journey {
+    background: var(--night-3);
   }
-  50% {
-    transform: scaleX(1);
+  .home-traversata .journey .journey-stage {
+    position: sticky;
+    top: 0;
+    height: var(--home-viewport-height, 100vh);
+    height: var(--home-viewport-height, 100svh);
+    overflow: hidden;
+    overflow: clip;
+    background: linear-gradient(180deg, var(--night-3) 0%, var(--night-4) 35%, var(--night-5) 70%);
   }
-  100% {
-    transform: scaleX(0.2);
+  .home-traversata .journey .desert-frame {
+    position: absolute;
+    inset: 0;
   }
-}
-.home-traversata .journey.is-horizontal .stop {
-  flex: none;
-  width: clamp(18rem, 27vw, 24rem);
-  padding: 0;
-  margin-top: var(--lift, 24vh);
-}
-.home-traversata .journey.is-horizontal .stop:nth-of-type(even) {
-  --lift: 20vh;
-  --stem: 26vh;
-}
-.home-traversata .journey.is-horizontal .stop:nth-of-type(odd) {
-  --lift: 30vh;
-  --stem: 16vh;
-}
-.home-traversata .journey.is-horizontal .stop-pin {
-  left: 50%;
-  top: auto;
-  bottom: calc(-1 * var(--stem, 30vh));
-  transform: translateX(-50%);
-}
-.home-traversata .journey.is-horizontal .stop::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  height: calc(var(--stem, 30vh) - 0.5rem);
-  width: 1px;
-  background: repeating-linear-gradient(
-    180deg,
-    rgba(253, 242, 228, 0.7) 0 5px,
-    transparent 5px 10px
-  );
-}
-@media (max-height: 800px) {
-  .home-traversata .journey.is-horizontal .stop:nth-of-type(even) {
-    --lift: 16vh;
-    --stem: 20vh;
-  }
-  .home-traversata .journey.is-horizontal .stop:nth-of-type(odd) {
-    --lift: 23vh;
-    --stem: 13vh;
-  }
-  .home-traversata .journey.is-horizontal .stop blockquote {
-    font-size: 0.95rem;
-  }
-}
-.home-traversata .journey.is-horizontal .stop-card {
-  transform: scale(0.94);
-  opacity: 0.78;
-  transition:
-    transform 700ms var(--ease-out),
-    opacity 500ms,
-    border-color 400ms;
-}
-.home-traversata .journey.is-horizontal .stop.is-current .stop-card {
-  transform: none;
-  opacity: 1;
-  border-color: rgba(253, 242, 228, 0.4);
-}
-.home-traversata .journey.is-horizontal .stop-year {
-  position: absolute;
-  left: 0.2rem;
-  bottom: calc(100% - 0.12em);
-  margin: 0;
-  font-size: clamp(4rem, 2.5rem + 3vw, 6.5rem);
-  transform: translate3d(var(--yx, 0px), 0, 0);
-}
-
-.home-traversata .journey.is-horizontal .journey-hud {
-  position: absolute;
-  right: clamp(1.5rem, 4vw, 3rem);
-  bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.6rem 1rem;
-  border-radius: 999px;
-  background: rgba(10, 22, 34, 0.72);
-  border: 1px solid rgba(253, 242, 228, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-family: var(--f-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--warm-body);
-}
-.home-traversata .hud-bar {
-  position: relative;
-  width: 8rem;
-  height: 2px;
-  background: rgba(253, 242, 228, 0.2);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.home-traversata .hud-bar span {
-  position: absolute;
-  inset: 0;
-  transform-origin: left;
-  transform: scaleX(var(--jp, 0));
-  background: var(--sand-0);
-}
-
-/* The same dune scene on small screens, with one readable stop at a time. */
-@media (max-width: 1023px) {
-  .home-traversata .journey.is-horizontal .track {
-    gap: 2rem;
-    padding-right: 10vw;
-  }
-  .home-traversata .journey.is-horizontal .journey-intro {
-    width: min(88vw, 26rem);
-    padding: clamp(24px, 7svh, 56px) 20px 0;
-  }
-  .home-traversata .journey.is-horizontal .journey-intro .h2 {
-    font-size: clamp(1.8rem, 7vw, 2.7rem);
-  }
-  .home-traversata .journey.is-horizontal .journey-intro .lead {
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-  .home-traversata .journey.is-horizontal .stop {
-    width: min(82vw, 22rem);
-    margin-top: clamp(64px, 14svh, 110px);
-    --stem: 16svh;
-  }
-  .home-traversata .journey.is-horizontal .stop-card {
-    padding: 1.1rem;
-  }
-  .home-traversata .journey.is-horizontal .stop h3 {
-    margin-top: 0.6rem;
-    font-size: 1.25rem;
-  }
-  .home-traversata .journey.is-horizontal .stop p:not(.stop-meta) {
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-  .home-traversata .journey.is-horizontal .stop-year {
-    font-size: 3.25rem;
-  }
-  .home-traversata .journey.is-horizontal .journey-hud {
+  .home-traversata .journey .desert {
+    /* Keep a large scene on portrait screens and fit the peaks inside the frame. */
+    --desert-width: max(
+      var(--home-viewport-width, 100vw),
+      clamp(
+        calc(var(--home-viewport-height, 100svh) * 1.6),
+        calc(var(--home-viewport-width, 100vw) * 1.24),
+        calc(var(--home-viewport-height, 100svh) * 2)
+      )
+    );
+    position: absolute;
     left: 50%;
-    right: auto;
-    bottom: 1rem;
-    transform: translateX(-50%);
+    bottom: calc(var(--desert-width) * -0.0788);
+    width: var(--desert-width);
+  }
+  .home-traversata .journey .tw {
+    --ts: clamp(58px, 6.2vw, 104px);
+  }
+  .home-traversata .journey .tw-bounce {
+    width: 100%;
+    height: 100%;
+  }
+
+  .home-traversata .journey .track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: max-content;
+    margin: 0;
+    padding: 0 12vw 0 0;
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(3rem, 6vw, 6rem);
+    will-change: transform;
+  }
+  .home-traversata .journey .stop::before {
+    display: none;
+  }
+  .home-traversata .journey .journey-intro {
+    flex: none;
+    width: min(44rem, 52vw);
+    padding: calc(var(--bar-h) + 10vh) 0 0 max(6vw, 4.5rem);
+  }
+  .home-traversata .journey .journey-hint {
+    display: flex;
+    align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0.8rem;
-    white-space: nowrap;
-    font-size: 0.6rem;
   }
-  .home-traversata .journey.is-horizontal .hud-bar {
-    width: 3rem;
+  .home-traversata .journey .journey-hint::after {
+    content: "";
+    width: 4rem;
+    height: 1px;
+    background: currentColor;
+    animation: home-hint 2s var(--ease-io) infinite;
+    transform-origin: left;
   }
-  .home-traversata .journey.is-horizontal .tw {
-    --ts: 64px;
+  @keyframes home-hint {
+    0% {
+      transform: scaleX(0.2);
+    }
+    50% {
+      transform: scaleX(1);
+    }
+    100% {
+      transform: scaleX(0.2);
+    }
   }
-}
-/* Keep the cards reachable in short landscape viewports as well. */
-@media (max-height: 500px) and (prefers-reduced-motion: no-preference) {
-  .home-traversata .journey.is-horizontal .stop {
-    margin-top: 48px;
+  .home-traversata .journey .stop {
+    flex: none;
+    width: clamp(18rem, 27vw, 24rem);
+    padding: 0;
+    margin-top: var(--stop-offset, calc(var(--home-viewport-height, 100svh) * 0.24));
   }
-  .home-traversata .journey.is-horizontal .stop-card {
-    max-height: calc(var(--home-viewport-height, 100svh) - 100px);
-    overflow-y: auto;
+  .home-traversata .journey .stop:nth-of-type(even) {
+    --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.2);
+    --stem: calc(var(--home-viewport-height, 100svh) * 0.26);
   }
-  .home-traversata .journey.is-horizontal .journey-intro {
-    padding-top: 20px;
+  .home-traversata .journey .stop:nth-of-type(odd) {
+    --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.3);
+    --stem: calc(var(--home-viewport-height, 100svh) * 0.16);
+  }
+  .home-traversata .journey .stop-pin {
+    left: 50%;
+    top: auto;
+    bottom: calc(-1 * var(--stem, 30vh));
+    transform: translateX(-50%);
+  }
+  .home-traversata .journey .stop::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    height: calc(var(--stem, 30vh) - 0.5rem);
+    width: 1px;
+    background: repeating-linear-gradient(
+      180deg,
+      rgba(253, 242, 228, 0.7) 0 5px,
+      transparent 5px 10px
+    );
+  }
+  @media (max-height: 800px) {
+    .home-traversata .journey .stop:nth-of-type(even) {
+      --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.16);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.2);
+    }
+    .home-traversata .journey .stop:nth-of-type(odd) {
+      --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.23);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.13);
+    }
+    .home-traversata .journey .stop blockquote {
+      font-size: 0.95rem;
+    }
+  }
+  .home-traversata .journey .stop-card {
+    transform: scale(0.94);
+    opacity: 0.78;
+    transition:
+      transform 700ms var(--ease-out),
+      opacity 500ms,
+      border-color 400ms;
+  }
+  .home-traversata .journey .stop.is-current .stop-card {
+    transform: none;
+    opacity: 1;
+    border-color: rgba(253, 242, 228, 0.4);
+  }
+  .home-traversata .journey .stop-year {
+    position: absolute;
+    left: 0.2rem;
+    bottom: calc(100% - 0.12em);
+    margin: 0;
+    font-size: clamp(4rem, 2.5rem + 3vw, 6.5rem);
+    transform: translate3d(var(--yx, 0px), 0, 0);
+  }
+
+  /* The same dune scene on small screens, with one readable stop at a time. */
+  @media (max-width: 1023px) {
+    .home-traversata .journey .track {
+      gap: 2rem;
+      padding-right: 10vw;
+    }
+    .home-traversata .journey .journey-intro {
+      width: min(88vw, 26rem);
+      padding: clamp(24px, 7svh, 56px) 20px 0;
+    }
+    .home-traversata .journey .journey-intro .h2 {
+      font-size: clamp(1.8rem, 7vw, 2.7rem);
+    }
+    .home-traversata .journey .journey-intro .lead {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .home-traversata .journey .stop {
+      width: min(82vw, 22rem);
+    }
+    .home-traversata .journey .stop:nth-of-type(even) {
+      --stop-offset: clamp(64px, calc(var(--home-viewport-height, 100svh) * 0.14), 110px);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.2);
+    }
+    .home-traversata .journey .stop:nth-of-type(odd) {
+      --stop-offset: clamp(96px, calc(var(--home-viewport-height, 100svh) * 0.23), 180px);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.11);
+    }
+    .home-traversata .journey .stop-card {
+      padding: 1.1rem;
+    }
+    .home-traversata .journey .stop h3 {
+      margin-top: 0.6rem;
+      font-size: 1.25rem;
+    }
+    .home-traversata .journey .stop p:not(.stop-meta) {
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    .home-traversata .journey .stop-year {
+      font-size: 3.25rem;
+    }
+    .home-traversata .journey .tw {
+      --ts: 64px;
+    }
+  }
+  /* Keep the cards reachable in short landscape viewports as well. */
+  @media (max-height: 500px) and (prefers-reduced-motion: no-preference) {
+    .home-traversata .journey .stop {
+      margin-top: 48px;
+    }
+    .home-traversata .journey .stop-card {
+      max-height: calc(var(--home-viewport-height, 100svh) - 100px);
+      overflow-y: auto;
+    }
+    .home-traversata .journey .journey-intro {
+      padding-top: 20px;
+    }
   }
 }
 
@@ -1901,9 +1869,6 @@
 }
 
 /* L'indicatore delle tappe del deserto resta sopra il primo strato. */
-.home-traversata .journey-hud {
-  z-index: 6;
-}
 
 /* Decorazioni illustrate */
 .home-traversata .decor {
@@ -2022,48 +1987,9 @@
     align-items: end;
     column-gap: 4rem;
   }
-  .home-traversata .layer-head .depth-tag {
-    grid-column: 1 / -1;
-  }
 }
 .home-traversata .layer-head .lead {
   color: var(--warm-body);
-}
-.home-traversata .depth-tag {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-family: var(--f-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--warm-muted);
-}
-.home-traversata .depth-tag span {
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  border: 1px solid rgba(253, 242, 228, 0.25);
-  background: rgba(30, 12, 8, 0.35);
-  color: var(--warm-ink);
-  letter-spacing: 0.08em;
-}
-.home-traversata .depth-tag::after {
-  content: "";
-  flex: 0 1 5rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.45;
-}
-.home-traversata .layer-core .depth-tag {
-  justify-content: center;
-  color: #ffe2c2;
-}
-.home-traversata .layer-core .depth-tag::before {
-  content: "";
-  flex: 0 1 5rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.45;
 }
 .home-traversata .layer-more {
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
@@ -2131,22 +2057,6 @@
 .home-traversata .find.is-flipped:hover .fossil-art,
 .home-traversata .find.is-flipped:focus-within .fossil-art {
   transform: rotate(6deg) scale(1.06);
-}
-.home-traversata .find-tag {
-  position: absolute;
-  left: 50%;
-  bottom: 2%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  border: 1px dashed rgba(253, 242, 228, 0.35);
-  background: rgba(24, 10, 7, 0.75);
-  font-family: var(--f-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--warm-body);
 }
 
 .home-traversata .find-body,
@@ -2418,53 +2328,6 @@
 .home-traversata .core-actions .btn-ghost {
   border-color: rgba(255, 241, 228, 0.5);
   background: rgba(36, 9, 3, 0.35);
-}
-
-/* Profondimetro */
-.home-traversata .depth-hud {
-  position: fixed;
-  right: clamp(1rem, 2vw, 1.75rem);
-  bottom: clamp(1rem, 2vw, 1.75rem);
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.6rem 1rem;
-  border-radius: 999px;
-  background: rgba(28, 10, 6, 0.72);
-  border: 1px solid rgba(253, 242, 228, 0.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-family: var(--f-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--warm-body);
-  opacity: 0;
-  transform: translateY(12px);
-  pointer-events: none;
-  transition:
-    opacity 400ms,
-    transform 500ms var(--ease-out);
-}
-.home-traversata .depth-hud.is-on {
-  opacity: 1;
-  transform: none;
-}
-.home-traversata .depth-hud-value {
-  min-width: 7.5ch;
-  text-align: right;
-  color: var(--fire);
-  font-variant-numeric: tabular-nums;
-}
-@media (max-width: 640px) {
-  .home-traversata .depth-hud {
-    right: 50%;
-    transform: translate(50%, 12px);
-  }
-  .home-traversata .depth-hud.is-on {
-    transform: translate(50%, 0);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
