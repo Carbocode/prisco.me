@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight, Clock, MessageCircleHeart, Sparkles } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { useState } from "react";
 
+import CloudCarousel from "@/components/cloud-carousel";
 import ContactQuestionnaire from "@/components/contact-questionnaire";
+import CoreRings, { CoreRingsDefs } from "@/components/core-rings";
+import Jupiter from "@/components/jupiter";
+import Moon from "@/components/moon";
 import { PageShell } from "@/components/page-shell";
 import Star from "@/components/star";
 import { pageHead } from "@/lib/page-head";
@@ -38,12 +43,6 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-const promises = [
-  { icon: Clock, label: "Circa due minuti" },
-  { icon: MessageCircleHeart, label: "Ti rispondo io, personalmente" },
-  { icon: Sparkles, label: "Nessun impegno" },
-] as const;
-
 type ContactStarConfig = { top: number; left: number; size: "sm" | "md" | "lg"; opacity: number };
 
 const contactStars: ContactStarConfig[] = [
@@ -68,38 +67,21 @@ const embers = [
 ];
 
 function ContactPage() {
+  const [depth, setDepth] = useState(0);
+
   return (
     <PageShell hero={false} title="Contatti">
       <div className="relative isolate overflow-hidden bg-contact-core">
-        <ContactCore />
+        <ContactScene depth={depth} />
 
         <section className="relative z-10 flex h-dvh flex-col overflow-hidden px-4 pb-4 pt-20 sm:px-6 sm:pb-6">
           <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
-            <div className="flex shrink-0 flex-col items-start gap-2 lg:max-h-full lg:overflow-y-auto lg:gap-6">
-              <p className="display-font hidden text-xs font-semibold uppercase tracking-overline text-warm-highlight lg:block">
-                Fine del viaggio. Inizio della conversazione.
-              </p>
-              <h1 className="display-font text-2xl leading-tight font-semibold tracking-display-tight text-white text-shadow-core sm:text-3xl lg:text-6xl">
+            <div className="flex shrink-0 flex-col items-start gap-2 pb-2 lg:max-h-full lg:gap-6 lg:overflow-y-auto lg:pb-0">
+              <h1 className="display-font text-3xl leading-tight font-semibold tracking-display-tight text-white text-shadow-core sm:text-4xl lg:text-6xl">
                 Quel{" "}
                 <span className="font-editorial font-normal italic tracking-normal">«e se…»</span>{" "}
-                merita due parole.
+                <span className="block lg:inline">merita due parole.</span>
               </h1>
-              <p className="hidden max-w-lg text-lg leading-8 text-ember-ink text-shadow-core lg:block">
-                Un’idea appuntata al volo, un pezzo di codice che fa i capricci, una proposta
-                inattesa. Raccontami cosa ti frulla in testa: non serve arrivare con un piano
-                perfetto.
-              </p>
-              <ul className="hidden flex-wrap gap-2 lg:flex" aria-label="Cosa aspettarti">
-                {promises.map(({ icon: PromiseIcon, label }) => (
-                  <li
-                    key={label}
-                    className="flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-3.5 py-1.5 text-sm text-ember-ink backdrop-blur-sm"
-                  >
-                    <PromiseIcon className="size-4 text-warm-accent" aria-hidden="true" />
-                    {label}
-                  </li>
-                ))}
-              </ul>
               <div className="hidden items-center gap-3 lg:flex">
                 <span className="h-10 w-px bg-warm-accent/60" aria-hidden="true" />
                 <p className="text-sm leading-6 text-ember-ink">
@@ -123,9 +105,9 @@ function ContactPage() {
 
             <div
               id="scrivimi"
-              className="contact-questionnaire-theme mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col lg:h-full lg:max-h-176"
+              className="contact-questionnaire-theme mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col lg:max-h-full lg:flex-none"
             >
-              <ContactQuestionnaire />
+              <ContactQuestionnaire onStepChange={setDepth} />
             </div>
           </div>
         </section>
@@ -134,32 +116,59 @@ function ContactPage() {
   );
 }
 
-function ContactCore() {
+/**
+ * Lo stesso viaggio della home in una sola schermata: il cielo con luna, Giove e nuvole
+ * lascia spazio al nucleo, che sale a ogni passaggio del form.
+ */
+function ContactScene({ depth }: { depth: number }) {
   return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      <div
-        className="absolute inset-0 opacity-70 mask-fade-down dynamic-background-image dynamic-background-position dynamic-background-repeat dynamic-background-size"
-        style={{
-          "--dynamic-background-image": "url(/home/small-stars.svg)",
-          "--dynamic-background-position": "center top",
-          "--dynamic-background-repeat": "repeat",
-          "--dynamic-background-size": "1154px 427px",
-        }}
-      />
-      {contactStars.map((star) => (
-        <Star
-          key={`${star.top}-${star.left}`}
-          alt=""
-          size={star.size}
-          className="absolute drop-shadow-star dynamic-top dynamic-left dynamic-opacity"
+    <div
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      style={{ "--contact-depth": depth }}
+      aria-hidden="true"
+    >
+      <div className="absolute inset-0 contact-scene-sky">
+        <div
+          className="absolute inset-0 opacity-70 mask-fade-down dynamic-background-image dynamic-background-position dynamic-background-repeat dynamic-background-size"
           style={{
-            "--dynamic-top": `${star.top}%`,
-            "--dynamic-left": `${star.left}%`,
-            "--dynamic-opacity": star.opacity,
+            "--dynamic-background-image": "url(/home/small-stars.svg)",
+            "--dynamic-background-position": "center top",
+            "--dynamic-background-repeat": "repeat",
+            "--dynamic-background-size": "1154px 427px",
           }}
         />
-      ))}
-      <div className="absolute inset-x-0 bottom-0 h-4/5 bg-contact-core-halo animate-core-breathe" />
+        {contactStars.map((star) => (
+          <Star
+            key={`${star.top}-${star.left}`}
+            alt=""
+            size={star.size}
+            className="absolute drop-shadow-star dynamic-top dynamic-left dynamic-opacity"
+            style={{
+              "--dynamic-top": `${star.top}%`,
+              "--dynamic-left": `${star.left}%`,
+              "--dynamic-opacity": star.opacity,
+            }}
+          />
+        ))}
+        <Moon className="absolute -right-6 top-20 w-28 drop-shadow-star sm:w-40 lg:-right-36 lg:w-72" />
+        <div className="absolute inset-x-0 top-0 mx-auto hidden h-full max-w-6xl lg:block">
+          <Jupiter className="absolute left-1/3 top-24 size-20 animate-contact-float" />
+        </div>
+        <div className="absolute inset-0 hidden opacity-40 lg:block">
+          <CloudCarousel />
+        </div>
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-4/5 contact-scene-halo">
+        <div className="size-full bg-contact-core-halo animate-core-breathe" />
+      </div>
+      <svg
+        className="absolute contact-scene-core contact-core-rings"
+        viewBox="0 0 1200 720"
+        preserveAspectRatio="xMidYMax slice"
+      >
+        <CoreRingsDefs rimGradientId="contact-rim-warm" heatFilterId="contact-heat" />
+        <CoreRings rimGradientId="contact-rim-warm" heatFilterId="contact-heat" />
+      </svg>
       {embers.map((ember) => (
         <span
           key={ember.left}

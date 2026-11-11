@@ -1,10 +1,12 @@
 import { Questionnaire as QuestionnairePrimitive } from "@shadcn/react/questionnaire";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, PartyPopper, RotateCcw, SendIcon } from "lucide-react";
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { ArrowLeft, ArrowRight, MailCheck, PartyPopper, RotateCcw, SendIcon } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
+import { trackContactForm } from "@/components/contact-analytics";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Empty,
   EmptyContent,
@@ -13,6 +15,15 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
 import { Progress } from "@/components/ui/progress";
 import {
   Questionnaire,
@@ -66,41 +77,128 @@ const interestChoices = [
   },
 ] as const satisfies ReadonlyArray<{ value: Interest; label: string; description: string }>;
 
-const stageChoices = [
-  { value: "idea", label: "È ancora un’intuizione" },
-  { value: "prototype", label: "C’è già un prototipo" },
-  { value: "live", label: "È online e va migliorato" },
-  { value: "unsure", label: "Lo scopriamo insieme" },
-] as const;
+type Choice = { value: string; label: string };
 
-type Stage = (typeof stageChoices)[number]["value"];
+/**
+ * Each first answer opens its own path: the context step asks only what is useful
+ * for that kind of request, and the copy follows the conversation.
+ */
+type Flow = {
+  stepLabel: string;
+  title: string;
+  focus?: { legend: string; summary: string; choices: readonly Choice[] };
+  message: { placeholder: string; hint: string };
+  company?: { label: string; placeholder: string };
+  contactTitle: string;
+  phoneHint: string;
+  reply: string;
+};
 
-const messagePrompts: Record<Interest, { title: string; placeholder: string }> = {
+const flows: Record<Interest, Flow> = {
   product: {
+    stepLabel: "L’idea",
     title: "Che prodotto hai in mente?",
-    placeholder: "Es. un’app per prenotare lezioni di surf",
+    focus: {
+      legend: "A che punto sei?",
+      summary: "Fase",
+      choices: [
+        { value: "idea", label: "È ancora un’intuizione" },
+        { value: "prototype", label: "C’è già un prototipo" },
+        { value: "live", label: "È online e va migliorato" },
+        { value: "unsure", label: "Lo scopriamo insieme" },
+      ],
+    },
+    message: {
+      placeholder: "Es. un’app per prenotare lezioni di surf, da lanciare in primavera",
+      hint: "A chi serve e che problema risolve: bastano due righe.",
+    },
+    company: { label: "Nome del progetto o dell’azienda", placeholder: "Es. SurfBook" },
+    contactTitle: "Bella idea. Dove ti rispondo?",
+    phoneHint: "Se preferisci raccontarla a voce.",
+    reply: "con qualche domanda sull’idea e una proposta per sentirci",
   },
   technical: {
+    stepLabel: "Il problema",
     title: "Su cosa ti serve una mano?",
-    placeholder: "Es. migrare il backend su Cloudflare",
+    focus: {
+      legend: "Di che tipo di aiuto si tratta?",
+      summary: "Tipo di aiuto",
+      choices: [
+        { value: "fix", label: "Sistemare codice che esiste già" },
+        { value: "build", label: "Progettare qualcosa di nuovo" },
+        { value: "team", label: "Rinforzare il team per un periodo" },
+        { value: "review", label: "Una revisione o un parere esterno" },
+      ],
+    },
+    message: {
+      placeholder: "Es. migrare il backend su Cloudflare senza fermare il servizio",
+      hint: "Lo stack e cosa non funziona come vorresti.",
+    },
+    company: { label: "Azienda o team", placeholder: "Es. Acme S.r.l." },
+    contactTitle: "Ci diamo un’occhiata insieme. Dove ti rispondo?",
+    phoneHint: "Utile se la questione è urgente.",
+    reply: "con le prime domande tecniche per inquadrare il problema",
   },
   consulting: {
+    stepLabel: "La scelta",
     title: "Qual è la scelta da mettere a fuoco?",
-    placeholder: "Es. React Native o PWA per il nostro MVP?",
+    focus: {
+      legend: "Su cosa vuoi confrontarti?",
+      summary: "Tema",
+      choices: [
+        { value: "stack", label: "Tecnologie e architettura" },
+        { value: "product", label: "Prodotto e priorità" },
+        { value: "process", label: "Processi e modo di lavorare" },
+        { value: "unsure", label: "Un po’ di tutto" },
+      ],
+    },
+    message: {
+      placeholder: "Es. React Native o PWA per il nostro MVP?",
+      hint: "Le opzioni sul tavolo e cosa ti frena.",
+    },
+    company: { label: "Azienda o team", placeholder: "Es. Acme S.r.l." },
+    contactTitle: "Ragioniamoci. Dove ti rispondo?",
+    phoneHint: "Se preferisci una chiamata.",
+    reply: "con qualche domanda per preparare il confronto",
   },
   opportunity: {
-    title: "Di che ruolo o progetto si tratta?",
-    placeholder: "Es. senior engineer in un team prodotto",
+    stepLabel: "L’opportunità",
+    title: "Di che opportunità si tratta?",
+    focus: {
+      legend: "Che tipo di collaborazione?",
+      summary: "Collaborazione",
+      choices: [
+        { value: "hire", label: "Un’assunzione" },
+        { value: "freelance", label: "Un progetto freelance" },
+        { value: "partner", label: "Una partnership o un side project" },
+        { value: "talk", label: "Prima ne parliamo" },
+      ],
+    },
+    message: {
+      placeholder: "Es. senior engineer in un team prodotto, full remote",
+      hint: "Ruolo, team e tempistiche, se le conosci già.",
+    },
+    company: { label: "Azienda", placeholder: "Es. Acme S.r.l." },
+    contactTitle: "Mi fa piacere. Dove ti rispondo?",
+    phoneHint: "Se preferisci una prima chiacchierata al telefono.",
+    reply: "per capire meglio ruolo e tempistiche",
   },
   other: {
+    stepLabel: "Il contesto",
     title: "Dimmi pure, di cosa si tratta?",
-    placeholder: "Scrivi liberamente",
+    message: {
+      placeholder: "Scrivi liberamente",
+      hint: "Scrivilo come lo racconteresti a un caffè.",
+    },
+    contactTitle: "Mi hai incuriosito. Dove ti rispondo?",
+    phoneHint: "Se preferisci una chiamata.",
+    reply: "appena l’ho letta",
   },
 };
 
 type Answers = {
   interest?: Interest;
-  stage?: Stage;
+  focus?: string;
   message: string;
   name: string;
   email: string;
@@ -118,25 +216,56 @@ const emptyAnswers: Answers = {
   consentToContact: false,
 };
 
-type ItemName = "interest" | "stage" | "message" | "contact" | "extra" | "consent";
+type FieldName = Exclude<keyof Answers, "focus">;
+type ItemName = "interest" | "details" | "contact";
 
-const itemByField: Record<string, ItemName> = {
+// Three steps, each with a single purpose: what you need, the context, where to reply.
+const itemByField: Record<FieldName, ItemName> = {
   interest: "interest",
-  message: "message",
+  message: "details",
+  company: "details",
   name: "contact",
   email: "contact",
-  company: "extra",
-  phone: "extra",
-  consentToContact: "consent",
+  phone: "contact",
+  consentToContact: "contact",
 };
+
+type Errors = Partial<Record<FieldName, string>>;
+
+const isFieldName = (value: string): value is FieldName => value in itemByField;
+const isItemName = (value: string): value is ItemName =>
+  value === "interest" || value === "details" || value === "contact";
+
+type Sent = { name: string; email: string; interest: Interest };
 
 const firstName = (name: string) => name.trim().split(/\s+/)[0] ?? "";
 
-export default function ContactQuestionnaire() {
-  const [attempt, setAttempt] = useState(0);
-  const [sentTo, setSentTo] = useState<string | null>(null);
+function collectErrors(answers: Answers, item?: ItemName): Errors {
+  const parsed = contactRequestSchema.safeParse(answers);
+  if (parsed.success) return {};
+  const errors: Errors = {};
+  for (const issue of parsed.error.issues) {
+    const field = String(issue.path[0]);
+    if (!isFieldName(field) || (item && itemByField[field] !== item)) continue;
+    errors[field] ??= issue.message;
+  }
+  return errors;
+}
 
-  if (sentTo !== null) {
+type StepListener = (step: number) => void;
+
+/** `onStepChange` riceve il passo attivo (0–2) e 3 a richiesta inviata. */
+export default function ContactQuestionnaire({ onStepChange }: { onStepChange?: StepListener }) {
+  const [attempt, setAttempt] = useState(0);
+  const [sent, setSent] = useState<Sent | null>(null);
+
+  useEffect(() => {
+    if (sent !== null) onStepChange?.(3);
+  }, [sent, onStepChange]);
+
+  if (sent !== null) {
+    const name = firstName(sent.name);
+    const interest = interestChoices.find((choice) => choice.value === sent.interest)?.label;
     return (
       <div className="flex min-h-0 flex-1 flex-col">
         <Empty className="min-h-0 overflow-y-auto">
@@ -144,13 +273,21 @@ export default function ContactQuestionnaire() {
             <EmptyMedia variant="icon">
               <PartyPopper />
             </EmptyMedia>
-            <EmptyTitle>{sentTo ? `Grazie ${sentTo}, ci siamo!` : "Grazie, ci siamo!"}</EmptyTitle>
+            <EmptyTitle>
+              {name ? `Grazie ${name}, messaggio ricevuto!` : "Grazie, messaggio ricevuto!"}
+            </EmptyTitle>
             <EmptyDescription>
-              Ho ricevuto la tua richiesta. La leggo con calma e ti rispondo personalmente via email
-              con le prime domande o una proposta per sentirci.
+              La tua richiesta su «{interest}» è arrivata. La leggo io, Vincenzo, e ti scrivo a{" "}
+              <strong>{sent.email}</strong> {flows[sent.interest].reply}.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
+            <Alert>
+              <MailCheck />
+              <AlertDescription>
+                Se non trovi la risposta, dai un’occhiata alla cartella spam.
+              </AlertDescription>
+            </Alert>
             <Link className={buttonVariants()} to="/">
               <ArrowLeft data-icon="inline-start" />
               Torna alla home
@@ -158,7 +295,7 @@ export default function ContactQuestionnaire() {
             <Button
               variant="ghost"
               onClick={() => {
-                setSentTo(null);
+                setSent(null);
                 setAttempt((value) => value + 1);
               }}
             >
@@ -171,69 +308,88 @@ export default function ContactQuestionnaire() {
     );
   }
 
-  return <ContactQuestionnaireForm key={attempt} onSent={setSentTo} />;
+  return <ContactQuestionnaireForm key={attempt} onSent={setSent} onStepChange={onStepChange} />;
 }
 
-function ContactQuestionnaireForm({ onSent }: { onSent: (name: string) => void }) {
+function ContactQuestionnaireForm({
+  onSent,
+  onStepChange,
+}: {
+  onSent: (sent: Sent) => void;
+  onStepChange?: StepListener;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
+  const started = useRef(false);
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
-  const [activeItem, setActiveItem] = useState<string>("interest");
-  const [errors, setErrors] = useState<Partial<Record<ItemName, string>>>({});
+  const [activeItem, setActiveItem] = useState<ItemName>("interest");
+  const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Per le opportunità professionali la fase del progetto non ha senso: la saltiamo.
-  const asksStage = answers.interest !== "opportunity";
+  const flow = flows[answers.interest ?? "other"];
 
-  const items = useMemo(
+  const items = useMemo<
+    { name: ItemName; required: boolean; choices: readonly { value: string }[] }[]
+  >(
     () => [
       { name: "interest", required: true, choices: interestChoices },
-      ...(asksStage ? [{ name: "stage", required: false, choices: stageChoices }] : []),
-      { name: "message", required: false },
-      { name: "contact", required: true },
-      { name: "extra", required: false },
-      { name: "consent", required: true, choices: [{ value: "yes" }] },
+      { name: "details", required: false, choices: flow.focus?.choices ?? [] },
+      { name: "contact", required: true, choices: [] },
     ],
-    [asksStage],
+    [flow],
   );
 
   const current = Math.max(
     items.findIndex((item) => item.name === activeItem),
     0,
   );
-  const prompt = messagePrompts[answers.interest ?? "other"];
-  const greeting = firstName(answers.name);
+  const stepLabel = {
+    interest: "Come posso aiutarti",
+    details: flow.stepLabel,
+    contact: "Dove ti rispondo",
+  }[activeItem];
 
-  const update = (item: ItemName, patch: Partial<Answers>) => {
+  useEffect(() => {
+    trackContactForm("step_viewed", { step: activeItem, index: current + 1 });
+  }, [activeItem, current]);
+
+  useEffect(() => {
+    onStepChange?.(current);
+  }, [current, onStepChange]);
+
+  const update = (field: FieldName | "focus", patch: Partial<Answers>) => {
+    if (!started.current) {
+      started.current = true;
+      trackContactForm("started");
+    }
     setAnswers((previous) => ({ ...previous, ...patch }));
-    setErrors(({ [item]: _cleared, ...rest }) => rest);
+    if (field !== "focus") setErrors(({ [field]: _cleared, ...rest }) => rest);
   };
 
   const validateStep = () => {
-    const parsed = contactRequestSchema.safeParse(answers);
-    const issue = parsed.success
-      ? undefined
-      : parsed.error.issues.find((entry) => itemByField[String(entry.path[0])] === activeItem);
-    if (issue) {
-      setErrors((previous) => ({ ...previous, [activeItem]: issue.message }));
+    const stepErrors = collectErrors(answers, activeItem);
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors({ ...errors, ...stepErrors });
       return false;
     }
     return true;
   };
 
   const advance = () => {
-    if (validateStep() && current < items.length - 1) {
-      const emptyOptional =
-        (activeItem === "message" && !answers.message.trim()) ||
-        (activeItem === "extra" && !answers.company.trim() && !answers.phone.trim()) ||
-        (activeItem === "stage" && !answers.stage);
-      if (emptyOptional) {
-        formRef.current
-          ?.querySelector<HTMLButtonElement>('[data-slot="questionnaire-skip"]')
-          ?.click();
-      } else {
-        setActiveItem(items[current + 1].name);
-      }
+    if (!validateStep() || current >= items.length - 1) return;
+    // Each filled field replaces the previous one as the item's "answer", so the
+    // primitive's own status is the source of truth: an optional step it considers
+    // unanswered must be skipped explicitly, or the final submit is blocked.
+    const status = formRef.current
+      ?.querySelector('[data-slot="questionnaire-item"][data-active]')
+      ?.getAttribute("data-status");
+    const emptyOptional = activeItem === "details" && status !== "answered";
+    if (emptyOptional) {
+      formRef.current
+        ?.querySelector<HTMLButtonElement>('[data-slot="questionnaire-skip"]')
+        ?.click();
+    } else {
+      setActiveItem(items[current + 1].name);
     }
   };
 
@@ -241,48 +397,56 @@ function ContactQuestionnaireForm({ onSent }: { onSent: (name: string) => void }
     event.preventDefault();
     setSubmitError(null);
 
-    const parsed = contactRequestSchema.safeParse({
-      name: answers.name,
-      email: answers.email,
-      phone: answers.phone,
-      company: answers.company,
-      interest: answers.interest,
-      message: answers.message,
-      consentToContact: answers.consentToContact,
-    });
-
+    const parsed = contactRequestSchema.safeParse(answers);
     if (!parsed.success) {
-      const nextErrors: Partial<Record<ItemName, string>> = {};
-      for (const issue of parsed.error.issues) {
-        const item = itemByField[String(issue.path[0])];
-        if (item && !nextErrors[item]) nextErrors[item] = issue.message;
-      }
+      const nextErrors = collectErrors(answers);
       setErrors(nextErrors);
-      const firstInvalid = items.find((item) => item.name in nextErrors);
+      const firstInvalid = items.find((item) =>
+        Object.keys(nextErrors).some(
+          (field) => isFieldName(field) && itemByField[field] === item.name,
+        ),
+      );
       if (firstInvalid) setActiveItem(firstInvalid.name);
       return;
     }
 
-    const stage = asksStage
-      ? stageChoices.find((choice) => choice.value === answers.stage)
-      : undefined;
+    const interestFlow = flows[parsed.data.interest];
+    const focus = interestFlow.focus?.choices.find((choice) => choice.value === answers.focus);
     const value: ContactRequestValues = {
       ...parsed.data,
       phone: parsed.data.phone ?? "",
-      company: parsed.data.company ?? "",
-      message: stage ? `${parsed.data.message}\n\nFase: ${stage.label}` : parsed.data.message,
+      company: interestFlow.company ? (parsed.data.company ?? "") : "",
+      message: [parsed.data.message, focus && `${interestFlow.focus?.summary}: ${focus.label}`]
+        .filter(Boolean)
+        .join("\n\n"),
+    };
+    const analytics = {
+      interest: parsed.data.interest,
+      focus: focus?.value ?? "none",
+      has_message: parsed.data.message.length > 0,
+      has_company: Boolean(value.company),
+      has_phone: Boolean(parsed.data.phone),
     };
 
     setSubmitting(true);
     try {
       await createContactRequest({ data: value });
-      onSent(greeting);
+      trackContactForm("submitted", analytics);
+      onSent({ name: parsed.data.name, email: parsed.data.email, interest: parsed.data.interest });
     } catch {
-      setSubmitError("Qualcosa è andato storto durante l’invio. Riprova tra poco.");
+      trackContactForm("submit_failed", analytics);
+      setSubmitError(
+        "L’invio non è riuscito, ma le tue risposte sono ancora qui: riprova tra qualche istante.",
+      );
     } finally {
       setSubmitting(false);
     }
   };
+
+  const contactInvalid = (["name", "email", "phone", "consentToContact"] as const).some(
+    (field) => errors[field],
+  );
+  const detailsInvalid = Boolean(errors.message || errors.company);
 
   return (
     <Questionnaire
@@ -292,7 +456,7 @@ function ContactQuestionnaireForm({ onSent }: { onSent: (name: string) => void }
       item={activeItem}
       onItemChange={(item) => {
         const next = items.findIndex((entry) => entry.name === item);
-        if (next <= current || validateStep()) setActiveItem(item);
+        if (isItemName(item) && (next <= current || validateStep())) setActiveItem(item);
       }}
       onClickCapture={(event) => {
         if (
@@ -329,184 +493,169 @@ function ContactQuestionnaireForm({ onSent }: { onSent: (name: string) => void }
     >
       <Progress value={((current + 1) / items.length) * 100} aria-hidden="true" />
       <QuestionnaireProgress>
-        Domanda {current + 1} di {items.length}
+        Passo {current + 1} di {items.length} · {stepLabel}
       </QuestionnaireProgress>
 
-      <QuestionnaireItem
-        className="min-h-0 flex-1 overflow-y-auto"
-        name="interest"
-        required
-        invalid={Boolean(errors.interest)}
-      >
-        <QuestionnaireTitle>Partiamo dalla scintilla. Cosa ti porta qui?</QuestionnaireTitle>
-        <QuestionnaireDescription>
-          Non devi incastrare tutto in una categoria. Scegli la più vicina.
-        </QuestionnaireDescription>
-        <QuestionnaireChoices>
-          {interestChoices.map((choice) => (
-            <QuestionnaireChoice
-              key={choice.value}
-              value={choice.value}
-              onChange={() => update("interest", { interest: choice.value })}
-            >
-              <span className="font-medium">{choice.label}</span>
-              <QuestionnaireChoiceDescription>{choice.description}</QuestionnaireChoiceDescription>
-            </QuestionnaireChoice>
-          ))}
-        </QuestionnaireChoices>
-        <QuestionnaireError>
-          {errors.interest ?? "Scegli una risposta per continuare."}
-        </QuestionnaireError>
-      </QuestionnaireItem>
-
-      {asksStage && (
-        <QuestionnaireItem
-          className="min-h-0 flex-1 overflow-y-auto"
-          name="stage"
-          onStatusChange={(status) => {
-            if (status === "skipped") update("stage", { stage: undefined });
-          }}
-        >
-          <QuestionnaireTitle>A che punto sei?</QuestionnaireTitle>
+      {/* Margine negativo e padding: l’anello di focus dei campi non viene tagliato dallo scroll. */}
+      <div className="-m-1 flex min-h-0 flex-1 flex-col overflow-y-auto p-1">
+        <QuestionnaireItem name="interest" required invalid={Boolean(errors.interest)}>
+          <QuestionnaireTitle>Partiamo dalla scintilla. Come posso aiutarti?</QuestionnaireTitle>
           <QuestionnaireDescription>
-            Va bene anche un appunto nelle note del telefono.
+            Non devi incastrare tutto in una categoria: scegli la più vicina.
           </QuestionnaireDescription>
           <QuestionnaireChoices>
-            {stageChoices.map((choice) => (
+            {interestChoices.map((choice) => (
               <QuestionnaireChoice
                 key={choice.value}
                 value={choice.value}
-                onChange={() => update("stage", { stage: choice.value })}
+                onChange={() =>
+                  // A different path has different follow-up options: reset the old one.
+                  update("interest", { interest: choice.value, focus: undefined })
+                }
               >
                 <span className="font-medium">{choice.label}</span>
+                <QuestionnaireChoiceDescription>
+                  {choice.description}
+                </QuestionnaireChoiceDescription>
               </QuestionnaireChoice>
             ))}
           </QuestionnaireChoices>
-          <QuestionnaireError>Scegli una risposta o salta la domanda.</QuestionnaireError>
+          <QuestionnaireError>
+            {errors.interest ?? "Scegli l’opzione più vicina a quello che ti serve."}
+          </QuestionnaireError>
         </QuestionnaireItem>
-      )}
 
-      <QuestionnaireItem
-        className="min-h-0 flex-1 overflow-y-auto"
-        name="message"
-        invalid={Boolean(errors.message)}
-        onStatusChange={(status) => {
-          if (status === "skipped") update("message", { message: "" });
-        }}
-      >
-        <QuestionnaireTitle>{prompt.title}</QuestionnaireTitle>
-        <QuestionnaireDescription>
-          Scrivilo come lo racconteresti a un caffè. Anche due righe vanno bene. È facoltativo.
-        </QuestionnaireDescription>
-        <QuestionnaireChoices>
-          <QuestionnairePrimitive.Input
-            render={<Textarea rows={4} />}
-            aria-label={prompt.title}
-            placeholder={prompt.placeholder}
-            maxLength={3900}
-            onChange={(event) => update("message", { message: event.target.value })}
-          />
-        </QuestionnaireChoices>
-        <QuestionnaireError>
-          {errors.message ?? "Raccontami qualcosa in più oppure lascia il campo vuoto."}
-        </QuestionnaireError>
-      </QuestionnaireItem>
+        <QuestionnaireItem name="details" invalid={detailsInvalid}>
+          <QuestionnaireTitle>{flow.title}</QuestionnaireTitle>
+          <QuestionnaireDescription>
+            Tutto facoltativo: anche una sola risposta mi aiuta a risponderti meglio.
+          </QuestionnaireDescription>
+          {flow.focus && (
+            <FieldSet>
+              <FieldLegend variant="label">{flow.focus.legend} (facoltativo)</FieldLegend>
+              <QuestionnaireChoices>
+                {flow.focus.choices.map((choice) => (
+                  <QuestionnaireChoice
+                    key={choice.value}
+                    value={choice.value}
+                    onChange={() => update("focus", { focus: choice.value })}
+                  >
+                    <span className="font-medium">{choice.label}</span>
+                  </QuestionnaireChoice>
+                ))}
+              </QuestionnaireChoices>
+            </FieldSet>
+          )}
+          <Field data-invalid={Boolean(errors.message)}>
+            <FieldLabel htmlFor="contact-message">Messaggio (facoltativo)</FieldLabel>
+            <QuestionnairePrimitive.Input
+              id="contact-message"
+              render={<Textarea rows={3} />}
+              placeholder={flow.message.placeholder}
+              maxLength={3900}
+              aria-invalid={Boolean(errors.message)}
+              onChange={(event) => update("message", { message: event.target.value })}
+            />
+            {errors.message ? (
+              <FieldError>{errors.message}</FieldError>
+            ) : (
+              <FieldDescription>{flow.message.hint}</FieldDescription>
+            )}
+          </Field>
+          {flow.company && (
+            <Field data-invalid={Boolean(errors.company)}>
+              <FieldLabel htmlFor="contact-company">{flow.company.label} (facoltativo)</FieldLabel>
+              <QuestionnaireInput
+                id="contact-company"
+                autoComplete="organization"
+                placeholder={flow.company.placeholder}
+                maxLength={160}
+                aria-invalid={Boolean(errors.company)}
+                onChange={(event) => update("company", { company: event.target.value })}
+              />
+              {errors.company && <FieldError>{errors.company}</FieldError>}
+            </Field>
+          )}
+          <QuestionnaireError>
+            {detailsInvalid
+              ? "Controlla i campi evidenziati qui sopra."
+              : "Rispondi oppure vai avanti: è tutto facoltativo."}
+          </QuestionnaireError>
+        </QuestionnaireItem>
 
-      <QuestionnaireItem
-        className="min-h-0 flex-1 overflow-y-auto"
-        name="contact"
-        required
-        invalid={Boolean(errors.contact)}
-      >
-        <QuestionnaireTitle>Ora diamo un nome a questa conversazione.</QuestionnaireTitle>
-        <QuestionnaireDescription>
-          Come ti chiami e a quale email posso risponderti? Ti scrivo io, niente newsletter.
-        </QuestionnaireDescription>
-        <QuestionnaireChoices>
-          <QuestionnaireInput
-            aria-label="Nome"
-            placeholder="Il tuo nome"
-            autoComplete="name"
-            maxLength={120}
-            onChange={(event) => update("contact", { name: event.target.value })}
-          />
-          <QuestionnaireInput
-            type="email"
-            aria-label="Email"
-            placeholder="La tua email"
-            autoComplete="email"
-            maxLength={255}
-            onChange={(event) => update("contact", { email: event.target.value })}
-          />
-        </QuestionnaireChoices>
-        <QuestionnaireError>
-          {errors.contact ?? "Lasciami nome ed email per continuare."}
-        </QuestionnaireError>
-      </QuestionnaireItem>
-
-      <QuestionnaireItem
-        className="min-h-0 flex-1 overflow-y-auto"
-        name="extra"
-        invalid={Boolean(errors.extra)}
-        onStatusChange={(status) => {
-          if (status === "skipped") update("extra", { company: "", phone: "" });
-        }}
-      >
-        <QuestionnaireTitle>
-          {greeting ? `Piacere, ${greeting}! Vuoi aggiungere altro?` : "Vuoi aggiungere altro?"}
-        </QuestionnaireTitle>
-        <QuestionnaireDescription>
-          Azienda e telefono sono facoltativi: se preferisci, salta pure.
-        </QuestionnaireDescription>
-        <QuestionnaireChoices>
-          <QuestionnaireInput
-            aria-label="Azienda o progetto (facoltativo)"
-            placeholder="Azienda o progetto (facoltativo)"
-            autoComplete="organization"
-            maxLength={160}
-            onChange={(event) => update("extra", { company: event.target.value })}
-          />
-          <QuestionnaireInput
-            type="tel"
-            inputMode="tel"
-            aria-label="Telefono"
-            placeholder="Telefono"
-            autoComplete="tel"
-            maxLength={40}
-            onChange={(event) => update("extra", { phone: event.target.value })}
-          />
-        </QuestionnaireChoices>
-        <QuestionnaireError>
-          {errors.extra ?? "Compila un campo o salta la domanda."}
-        </QuestionnaireError>
-      </QuestionnaireItem>
-
-      <QuestionnaireItem
-        className="min-h-0 flex-1 overflow-y-auto"
-        name="consent"
-        required
-        multiple
-        invalid={Boolean(errors.consent)}
-      >
-        <QuestionnaireTitle>Ultimo passo, promesso.</QuestionnaireTitle>
-        <QuestionnaireDescription>
-          Da qui la conversazione continua via email. Mi dai il tuo ok?
-        </QuestionnaireDescription>
-        <QuestionnaireChoices>
-          <QuestionnaireChoice
-            value="yes"
-            onChange={(event) => update("consent", { consentToContact: event.target.checked })}
-          >
-            <span className="font-medium">Acconsento a essere ricontattato</span>
-            <QuestionnaireChoiceDescription>
-              Il consenso riguarda esclusivamente questa richiesta.
-            </QuestionnaireChoiceDescription>
-          </QuestionnaireChoice>
-        </QuestionnaireChoices>
-        <QuestionnaireError>
-          {errors.consent ?? "Conferma il consenso per inviare la richiesta."}
-        </QuestionnaireError>
-      </QuestionnaireItem>
+        <QuestionnaireItem name="contact" required multiple invalid={contactInvalid}>
+          <QuestionnaireTitle>{flow.contactTitle}</QuestionnaireTitle>
+          <QuestionnaireDescription>
+            Ti scrivo io, personalmente. Niente newsletter, niente spam.
+          </QuestionnaireDescription>
+          <Field data-invalid={Boolean(errors.name)}>
+            <FieldLabel htmlFor="contact-name">Nome</FieldLabel>
+            <QuestionnaireInput
+              id="contact-name"
+              autoComplete="name"
+              maxLength={120}
+              aria-invalid={Boolean(errors.name)}
+              onChange={(event) => update("name", { name: event.target.value })}
+            />
+            {errors.name && <FieldError>{errors.name}</FieldError>}
+          </Field>
+          <Field data-invalid={Boolean(errors.email)}>
+            <FieldLabel htmlFor="contact-email">Email</FieldLabel>
+            <QuestionnaireInput
+              id="contact-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              spellCheck={false}
+              maxLength={255}
+              aria-invalid={Boolean(errors.email)}
+              onChange={(event) => update("email", { email: event.target.value })}
+            />
+            {errors.email ? (
+              <FieldError>{errors.email}</FieldError>
+            ) : (
+              <FieldDescription>La uso solo per risponderti.</FieldDescription>
+            )}
+          </Field>
+          <Field data-invalid={Boolean(errors.phone)}>
+            <FieldLabel htmlFor="contact-phone">Telefono (facoltativo)</FieldLabel>
+            <QuestionnaireInput
+              id="contact-phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              maxLength={40}
+              aria-invalid={Boolean(errors.phone)}
+              onChange={(event) => update("phone", { phone: event.target.value })}
+            />
+            {errors.phone ? (
+              <FieldError>{errors.phone}</FieldError>
+            ) : (
+              <FieldDescription>{flow.phoneHint}</FieldDescription>
+            )}
+          </Field>
+          <Field orientation="horizontal" data-invalid={Boolean(errors.consentToContact)}>
+            <Checkbox
+              id="contact-consent"
+              checked={answers.consentToContact}
+              onCheckedChange={(checked) =>
+                update("consentToContact", { consentToContact: checked })
+              }
+              aria-invalid={Boolean(errors.consentToContact)}
+            />
+            <FieldContent>
+              <FieldLabel htmlFor="contact-consent">Acconsento a essere ricontattato</FieldLabel>
+              <FieldDescription>Solo per rispondere a questa richiesta.</FieldDescription>
+              {errors.consentToContact && <FieldError>{errors.consentToContact}</FieldError>}
+            </FieldContent>
+          </Field>
+          <QuestionnaireError>
+            {contactInvalid
+              ? "Controlla i campi evidenziati qui sopra."
+              : "Scrivi nome ed email per inviare la richiesta."}
+          </QuestionnaireError>
+        </QuestionnaireItem>
+      </div>
 
       {submitError && (
         <Alert variant="destructive">
@@ -515,13 +664,17 @@ function ContactQuestionnaireForm({ onSent }: { onSent: (name: string) => void }
       )}
 
       <QuestionnaireActions className="shrink-0">
-        <QuestionnairePrevious variant="ghost">Indietro</QuestionnairePrevious>
-        <QuestionnaireSkip variant="ghost">Salta</QuestionnaireSkip>
-        <QuestionnaireNext>
+        <QuestionnairePrevious size="lg" variant="ghost">
+          Indietro
+        </QuestionnairePrevious>
+        <QuestionnaireSkip size="lg" variant="ghost">
+          Salta
+        </QuestionnaireSkip>
+        <QuestionnaireNext size="lg">
           Avanti
           <ArrowRight data-icon="inline-end" />
         </QuestionnaireNext>
-        <QuestionnaireSubmit disabled={submitting}>
+        <QuestionnaireSubmit size="lg" disabled={submitting}>
           {submitting ? (
             <>
               <Spinner data-icon="inline-start" />

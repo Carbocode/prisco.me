@@ -32,6 +32,11 @@ function subscribeConsent(onChange: () => void) {
 }
 const serverConsent = () => null;
 
+/** Analytics events beyond anonymous diagnostics are sent only after explicit consent. */
+export function hasAnalyticsConsent() {
+  return typeof window !== "undefined" && readConsent() === "accepted";
+}
+
 export function CookieConsentProvider({ children }: PropsWithChildren) {
   const consent = useSyncExternalStore(subscribeConsent, readConsent, serverConsent);
   const hydrated = useHydrated();

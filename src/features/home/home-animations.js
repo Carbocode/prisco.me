@@ -299,6 +299,7 @@ export function animateHome(container) {
       const next = chartRoot.clientWidth < 760 ? "tall" : "wide";
       if (next === mode) return;
       mode = next;
+      chartRoot.dataset.skyLayout = mode;
       seen?.disconnect();
       seen =
         mode === "tall"
@@ -314,12 +315,14 @@ export function animateHome(container) {
           : null;
       svg.replaceChildren();
 
-      // Posizioni: nella carta desktop si usa "wide"; su mobile le costellazioni si impilano.
-      const W = mode === "wide" ? 1200 : 420;
-      let y = 70;
-      const placed = groups.map((g) => {
+      // Scale each complete mobile constellation, then stagger the rows left and right.
+      const panelWidth = 400;
+      const W = mode === "wide" ? 1200 : 480;
+      const mobileScale = 0.8;
+      let y = 0;
+      const placed = groups.map((g, index) => {
         if (mode === "wide") return { g, k: 1, ox: g.wide[0], oy: g.wide[1] };
-        // Ingombro stimato includendo le etichette, che non vengono scalate.
+        // Fit the star spacing and labels before scaling the complete group.
         const reach = ([label, x, , side]) => {
           const w = label.length * 7.6 + 16;
           return side === "e" ? [x, w] : side === "w" ? [x, -w] : [x, 0, w / 2];
@@ -338,21 +341,24 @@ export function animateHome(container) {
         );
         const spanX = Math.max(...g.stars.map((st) => st[1]));
         const maxY = Math.max(...g.stars.map((st) => st[2]));
-        const k = Math.min(1, (W - 30 - (right - left - spanX)) / spanX);
+        const k = Math.min(1, (panelWidth - 30 - (right - left - spanX)) / spanX);
         // Spazio extra per le illustrazioni che sporgono sopra le stelle.
         const lift = Math.max(0, -(g.top ?? 0) - 10) * k;
         const at = {
           g,
           k,
           lift,
-          ox: (W - (right - left - spanX) - spanX * k) / 2 - left,
-          oy: y + lift,
+          ox: (panelWidth - (right - left - spanX) - spanX * k) / 2 - left,
+          oy: 56 + lift,
+          titleX: panelWidth / 2,
+          transform: `translate(${index % 2 === 0 ? 8 : W - panelWidth * mobileScale - 8} ${y}) scale(${mobileScale})`,
         };
-        y += lift + maxY * k + 175;
+        y += (56 + lift + maxY * k + 50) * mobileScale;
         return at;
       });
-      const H = mode === "wide" ? 840 : y - 60;
+      const H = mode === "wide" ? 840 : Math.ceil(y);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.style.width = "100%";
 
       // Fondo: reticolo celeste, eclittica e polvere di stelle.
       const bg = el("g", {}, svg);
@@ -394,9 +400,10 @@ export function animateHome(container) {
       }
 
       let delay = 0;
-      placed.forEach(({ g, k, ox, oy, lift = 0 }) => {
+      placed.forEach(({ g, k, ox, oy, lift = 0, titleX, transform }) => {
         const pos = g.stars.map(([, x, sy]) => [ox + x * k, oy + sy * k]);
         const grp = el("g", { class: "sky-group", "data-group": g.id, style: `--c:${g.c}` }, svg);
+        if (transform) grp.setAttribute("transform", transform);
 
         // Area di hover: un rettangolo generoso attorno alla costellazione.
         const xs = pos.map((p) => p[0]),
@@ -416,7 +423,7 @@ export function animateHome(container) {
         // Nome della costellazione, come sulle carte antiche.
         const nameX = Math.min(...xs) - 10,
           nameY = Math.min(...ys) - (mode === "wide" ? 40 : 52 + lift);
-        const tx = mode === "wide" ? nameX : W / 2;
+        const tx = mode === "wide" ? nameX : titleX;
         const anchor = mode === "wide" ? "start" : "middle";
         el(
           "text",

@@ -1232,6 +1232,18 @@ code {
 @utility animate-ember-rise { animation: contact-ember-rise var(--dynamic-animation-duration, 7s) linear var(--dynamic-animation-delay, 0s) infinite; @media (prefers-reduced-motion: reduce) { animation: none; display: none; } }
 @utility shadow-ember { box-shadow: 0 0 10px 2px rgba(255,170,80,0.8); }
 
+/* La scena scende di un livello a ogni passaggio del form (--contact-depth: 0–3). */
+@utility contact-scene-sky { transform: translate3d(0,calc(var(--contact-depth,0) * -6vh),0); opacity: calc(1 - var(--contact-depth,0) * 0.18); transition: transform 1.4s cubic-bezier(.22,1,.36,1), opacity 1.4s ease; @media (prefers-reduced-motion: reduce) { transition: none; } }
+@utility contact-scene-core { left: 50%; bottom: 0; width: max(100%,56rem); aspect-ratio: 1200 / 720; transform: translate3d(-50%,calc(66% - var(--contact-depth,0) * 9%),0); transition: transform 1.6s cubic-bezier(.22,1,.36,1); @media (prefers-reduced-motion: reduce) { transition: none; } }
+@utility contact-scene-halo { opacity: calc(0.6 + var(--contact-depth,0) * 0.13); transition: opacity 1.6s ease; }
+@utility animate-contact-float { animation: contact-float 9s ease-in-out infinite; @media (prefers-reduced-motion: reduce) { animation: none; } }
+@utility contact-core-rings {
+  & .core-ring { transform-box: view-box; transform-origin: 600px 720px; animation: contact-core-spin var(--spin) linear infinite; }
+  & .core-ring.is-rev { animation-direction: reverse; }
+  @media (prefers-reduced-motion: reduce) { & .core-ring { animation: none; } }
+}
+@keyframes contact-core-spin { to { transform: rotate(360deg); } }
+@keyframes contact-float { 50% { transform: translate3d(0,-0.75rem,0) rotate(-4deg); } }
 @keyframes contact-core-breathe { 50% { opacity: 0.7; transform: scaleX(1.06); } }
 @keyframes contact-ember-rise {
   0% { opacity: 0; transform: translate3d(0,0,0); }
