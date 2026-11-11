@@ -84,6 +84,30 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   const root = createRoot(el);
   await act(async () => root.render(<HomePage {...props} />));
   expect(el.querySelector("[data-sky-svg] circle")).not.toBeNull();
+  const sky = el.querySelector<SVGSVGElement>("[data-sky-svg]");
+  const viewBox = sky?.getAttribute("viewBox")?.split(" ").map(Number);
+  expect(viewBox?.[2]).toBe(480);
+  expect(viewBox?.[3]).toBeLessThan(1400);
+  expect(sky?.style.width).toBe("100%");
+  expect(sky?.querySelectorAll(".sky-group")).toHaveLength(5);
+  const titlePositions = [...(sky?.querySelectorAll(".sky-name") ?? [])].map((title) =>
+    Number(title.getAttribute("x")),
+  );
+  expect(titlePositions).toEqual([200, 200, 200, 200, 200]);
+  const placements = [...(sky?.querySelectorAll(".sky-group") ?? [])].map((group) => {
+    const transform = group.getAttribute("transform") ?? "";
+    expect(transform).toContain("scale(0.8)");
+    return transform
+      .match(/translate\(([\d.]+) ([\d.]+)\)/)
+      ?.slice(1)
+      .map(Number);
+  });
+  expect(placements.map((position) => position?.[0])).toEqual([8, 152, 8, 152, 8]);
+  expect(
+    placements.every(
+      (position, index) => index === 0 || (position?.[1] ?? 0) > (placements[index - 1]?.[1] ?? 0),
+    ),
+  ).toBe(true);
   const scrollport = el.querySelector<HTMLElement>("[data-home-scroll]");
   expect(scrollport?.querySelector("footer")).toBeNull();
   expect(el.querySelector("[data-home-page] footer")).toBeNull();

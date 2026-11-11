@@ -855,6 +855,19 @@
   gap: 1.5rem;
   justify-items: center;
 }
+@media (max-width: 759px) {
+  .home-traversata .sky-map {
+    margin-top: 3rem;
+    gap: 1rem;
+  }
+}
+.home-traversata .sky-chart[data-sky-layout="tall"] {
+  min-width: 0;
+  gap: 0.5rem;
+}
+.home-traversata .sky-chart[data-sky-layout="tall"] .sky-label {
+  font-size: 16px;
+}
 .home-traversata .sky-chart-svg {
   display: block;
   width: 100%;
