@@ -71,7 +71,7 @@ function CareerGalaxy() {
       <div
         className="absolute inset-0 opacity-60 dynamic-background-image dynamic-background-position dynamic-background-repeat dynamic-background-size"
         style={{
-          "--dynamic-background-image": "url(/home/small-stars.svg)",
+          "--dynamic-background-image": "url(/home/small-stars.webp)",
           "--dynamic-background-position": "center top",
           "--dynamic-background-repeat": "repeat",
           "--dynamic-background-size": "1154px 427px",

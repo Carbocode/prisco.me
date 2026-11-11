@@ -24,7 +24,7 @@ export default function Sky({ className, children, ...props }: SkyProps) {
     <div className={classes} {...props}>
       <div className="absolute inset-y-0 left-1/2 w-full min-w-192 -translate-x-1/2 md:inset-0 md:min-w-0 md:translate-x-0">
         <img
-          src="/home/small-stars.svg"
+          src="/home/small-stars.webp"
           alt=""
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"

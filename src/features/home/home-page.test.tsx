@@ -85,7 +85,11 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   vi.stubGlobal("ResizeObserver", Observer);
   vi.stubGlobal(
     "matchMedia",
-    vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })),
+    vi.fn((query: string) => ({
+      matches: query === "(pointer: fine)",
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })),
   );
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   const remove = vi.spyOn(HTMLElement.prototype, "removeEventListener");
@@ -142,7 +146,29 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
     });
   };
   const page = el.querySelector("[data-home-page]");
+  const measureRect = vi.spyOn(Element.prototype, "getBoundingClientRect");
   await scrollToPosition(300);
+  // Scrolling must not force geometry reads while SVG/CSS animations are running.
+  expect(measureRect).not.toHaveBeenCalled();
+  measureRect.mockRestore();
+  const hero = el.querySelector<HTMLElement>("[data-hero]");
+  if (!hero) throw new Error("Missing hero");
+  const measurePointer = vi.spyOn(hero, "getBoundingClientRect");
+  await act(async () => {
+    for (let i = 0; i < 20; i++)
+      hero.dispatchEvent(new MouseEvent("pointermove", { clientX: i, clientY: i }));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  });
+  expect(measurePointer).toHaveBeenCalledTimes(1);
+  measurePointer.mockClear();
+  await act(async () => {
+    hero.dispatchEvent(new MouseEvent("pointermove", { clientX: 30, clientY: 30 }));
+    hero.dispatchEvent(new MouseEvent("pointerleave"));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  });
+  expect(measurePointer).not.toHaveBeenCalled();
+  expect(hero.style.getPropertyValue("--px")).toBe("0");
+  measurePointer.mockRestore();
   expect(page?.classList.contains("is-framed")).toBe(false);
   await scrollToPosition(1300);
   expect(page?.classList.contains("is-framed")).toBe(true);
@@ -172,6 +198,13 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
   });
   expect(page?.classList.contains("is-framed")).toBe(true);
+  // Wheel input releases a retained keyboard focus without requiring a blur.
+  await act(async () => {
+    page?.dispatchEvent(new WheelEvent("wheel", { deltaY: 100, bubbles: true }));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  });
+  expect(document.activeElement).toBe(homeLink);
+  expect(page?.classList.contains("is-framed")).toBe(false);
   await act(async () => {
     homeLink.blur();
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
@@ -211,7 +244,8 @@ it("mantiene viewport e riferimenti locali delle illustrazioni SVG esterne", () 
   images.forEach((image) => {
     const path = image.getAttribute("href");
     if (!path?.startsWith("/home/")) throw new Error("Unexpected artwork path");
-    const source = readFileSync(`public${path}`, "utf8");
+    // Cached artwork keeps the original SVG as its editable source.
+    const source = readFileSync(`public${path.replace(/\.webp$/, ".svg")}`, "utf8");
     const artwork = new DOMParser().parseFromString(source, "image/svg+xml");
     expect(artwork.querySelector("parsererror")).toBeNull();
     const viewBox = artwork.documentElement.getAttribute("viewBox")?.split(" ");

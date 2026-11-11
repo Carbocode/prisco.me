@@ -57,7 +57,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   <img
                     className="sky-stars depth"
                     style={{ "--d": "0.08" }}
-                    src="/home/small-stars.svg"
+                    src="/home/small-stars.webp"
                     alt=""
                     decoding="async"
                   />
@@ -110,7 +110,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5.2s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -123,7 +123,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "6.4s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -136,7 +136,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "4.6s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -149,7 +149,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5.8s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -162,7 +162,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "7s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -175,7 +175,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -188,7 +188,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "6s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -201,7 +201,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "4.8s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -214,7 +214,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5.6s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div
                     className="star depth"
@@ -227,13 +227,13 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "6.8s",
                     }}
                   >
-                    <img src="/home/star.svg" alt="" />
+                    <img src="/home/star.webp" alt="" />
                   </div>
                   <div className="jupiter depth" style={{ "--d": "0.35" }}>
-                    <img src="/home/jupiter.svg" alt="" width="450" height="450" />
+                    <img src="/home/jupiter.webp" alt="" width="450" height="450" />
                   </div>
                   <div className="moon depth" style={{ "--d": "0.6" }}>
-                    <img src="/home/moon.svg" alt="" width="450" height="450" />
+                    <img src="/home/moon.webp" alt="" width="450" height="450" />
                   </div>
                 </div>
                 <div className="hero-inner">
@@ -464,7 +464,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           "--o": "0.7",
                         }}
                       >
-                        <img src="/home/cloud-1.svg" alt="" />
+                        <img src="/home/cloud-1.webp" alt="" />
                       </div>
                       <div
                         className="cloud"
@@ -476,7 +476,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           "--o": "0.85",
                         }}
                       >
-                        <img src="/home/cloud-2.svg" alt="" />
+                        <img src="/home/cloud-2.webp" alt="" />
                       </div>
                       <div
                         className="cloud"
@@ -488,7 +488,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           "--o": "0.6",
                         }}
                       >
-                        <img src="/home/cloud-3.svg" alt="" />
+                        <img src="/home/cloud-3.webp" alt="" />
                       </div>
                     </div>
                     <div className="desert" data-desert="">
@@ -496,21 +496,21 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         className="mtn"
                         data-par="0.1"
                         style={{ "--b": "57%" }}
-                        src="/home/mountain-3.svg"
+                        src="/home/mountain-3.webp"
                         alt=""
                       />
                       <img
                         className="mtn"
                         data-par="0.16"
                         style={{ "--b": "52%" }}
-                        src="/home/mountain-2.svg"
+                        src="/home/mountain-2.webp"
                         alt=""
                       />
                       <img
                         className="mtn"
                         data-par="0.24"
                         style={{ "--b": "46%" }}
-                        src="/home/mountain-1.svg"
+                        src="/home/mountain-1.webp"
                         alt=""
                       />
                       <div className="desert-horizon" />
@@ -518,35 +518,35 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         className="dune"
                         data-par="0.32"
                         style={{ "--b": "8%" }}
-                        src="/home/dune-7.svg"
+                        src="/home/dune-7.webp"
                         alt=""
                       />
                       <img
                         className="dune"
                         data-par="0.42"
                         style={{ "--b": "6.65%" }}
-                        src="/home/dune-6.svg"
+                        src="/home/dune-6.webp"
                         alt=""
                       />
                       <img
                         className="dune"
                         data-par="0.52"
                         style={{ "--b": "5.3%" }}
-                        src="/home/dune-5.svg"
+                        src="/home/dune-5.webp"
                         alt=""
                       />
                       <img
                         className="dune"
                         data-par="0.62"
                         style={{ "--b": "4%" }}
-                        src="/home/dune-4.svg"
+                        src="/home/dune-4.webp"
                         alt=""
                       />
                       <img
                         className="dune"
                         data-par="0.74"
                         style={{ "--b": "2.65%" }}
-                        src="/home/dune-3.svg"
+                        src="/home/dune-3.webp"
                         alt=""
                       />
                       <div className="tw" data-tw="">
@@ -645,14 +645,14 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         className="dune"
                         data-par="0.87"
                         style={{ "--b": "0%" }}
-                        src="/home/dune-2.svg"
+                        src="/home/dune-2.webp"
                         alt=""
                       />
                       <img
                         className="dune"
                         data-par="1"
                         style={{ "--b": "0%" }}
-                        src="/home/dune-1.svg"
+                        src="/home/dune-1.webp"
                         alt=""
                       />
                     </div>
@@ -884,22 +884,22 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   </div>
                   <div className="decor" aria-hidden="true">
                     <svg className="roots roots-a" viewBox="0 0 180 287" aria-hidden="true">
-                      <image href="/home/roots-a.svg" width="180" height="287" />
+                      <image href="/home/roots-a.webp" width="180" height="287" />
                     </svg>
                     <svg className="roots roots-b" viewBox="0 0 180 237" aria-hidden="true">
-                      <image href="/home/roots-b.svg" width="180" height="237" />
+                      <image href="/home/roots-b.webp" width="180" height="237" />
                     </svg>
                     <svg className="roots roots-c" viewBox="0 0 180 175" aria-hidden="true">
-                      <image href="/home/roots-c.svg" width="180" height="175" />
+                      <image href="/home/roots-c.webp" width="180" height="175" />
                     </svg>
                     <svg className="pebbles pebbles-a" viewBox="0 0 184 70" aria-hidden="true">
-                      <image href="/home/pebbles-a.svg" width="184" height="70" />
+                      <image href="/home/pebbles-a.webp" width="184" height="70" />
                     </svg>
                     <svg className="pebbles pebbles-b" viewBox="0 0 166 70" aria-hidden="true">
-                      <image href="/home/pebbles-b.svg" width="166" height="70" />
+                      <image href="/home/pebbles-b.webp" width="166" height="70" />
                     </svg>
                     <svg className="bone" viewBox="0 0 180 90" aria-hidden="true">
-                      <image href="/home/bone.svg" width="180" height="90" />
+                      <image href="/home/bone.webp" width="180" height="90" />
                     </svg>
                   </div>
                   <div className="wrap">
@@ -1039,13 +1039,13 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   </div>
                   <div className="decor" aria-hidden="true">
                     <svg className="crystals crystals-a" viewBox="0 0 160 116" aria-hidden="true">
-                      <image href="/home/crystals-a.svg" width="160" height="116" />
+                      <image href="/home/crystals-a.webp" width="160" height="116" />
                     </svg>
                     <svg className="crystals crystals-b" viewBox="0 0 160 116" aria-hidden="true">
-                      <image href="/home/crystals-b.svg" width="160" height="116" />
+                      <image href="/home/crystals-b.webp" width="160" height="116" />
                     </svg>
                     <svg className="pebbles pebbles-c" viewBox="0 0 161 70" aria-hidden="true">
-                      <image href="/home/pebbles-c.svg" width="161" height="70" />
+                      <image href="/home/pebbles-c.webp" width="161" height="70" />
                     </svg>
                   </div>
                   <div className="wrap">
@@ -1099,7 +1099,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                                 fillOpacity=".55"
                               />
                               <g className="geode-crystals">
-                                <image href="/home/geode-crystals.svg" width="340" height="250" />
+                                <image href="/home/geode-crystals.webp" width="340" height="250" />
                               </g>
                               <path
                                 d="M196 116.3Q200.4 120 198.8 124.6Q197.1 129.2 192.3 133.6Q187.6 137.9 178.8 139.6Q170 141.2 161.1 139.7Q152.1 138.2 149 133.2Q145.8 128.2 139.5 124.1Q133.3 120 139.1 115.7Q145 111.5 150.7 108.8Q156.5 106.2 163.2 106Q170 105.9 177.5 105.3Q185.1 104.6 188.3 108.6Q191.5 112.7 196 116.3Z"
@@ -1444,11 +1444,11 @@ function AmmonitePit() {
   return (
     <>
       <svg className="pit" viewBox="0 0 320 300" aria-hidden="true" preserveAspectRatio="none">
-        <image href="/home/ammonite-pit.svg" width="320" height="300" />
+        <image href="/home/ammonite-pit.webp" width="320" height="300" />
       </svg>
       <div className="find-fossil" data-fy="0.04">
         <svg className="fossil-art" viewBox="0 0 240 240" aria-hidden="true">
-          <image href="/home/ammonite-fossil-art.svg" width="240" height="240" />
+          <image href="/home/ammonite-fossil-art.webp" width="240" height="240" />
         </svg>
       </div>
     </>
@@ -1458,11 +1458,11 @@ function TrilobitePit() {
   return (
     <>
       <svg className="pit" viewBox="0 0 320 300" aria-hidden="true" preserveAspectRatio="none">
-        <image href="/home/trilobite-pit.svg" width="320" height="300" />
+        <image href="/home/trilobite-pit.webp" width="320" height="300" />
       </svg>
       <div className="find-fossil" data-fy="0.04">
         <svg className="fossil-art" viewBox="0 0 220 260" aria-hidden="true">
-          <image href="/home/trilobite-fossil-art.svg" width="220" height="260" />
+          <image href="/home/trilobite-fossil-art.webp" width="220" height="260" />
         </svg>
       </div>
     </>

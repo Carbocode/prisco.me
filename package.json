@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "check": "bun run format:check && bun run lint && bun run typecheck",
+    "check": "bun run assets:check && bun run format:check && bun run lint && bun run typecheck",
     "ci": "bun run check && bun run test && bun run db:check && bun run build",
     "deploy": "bun run ci && wrangler deploy",
     "deploy:dry": "bun run ci && wrangler deploy --dry-run",
@@ -23,7 +23,9 @@
     "db:check": "drizzle-kit check",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply prisco-website --local",
-    "db:migrate:remote": "wrangler d1 migrations apply prisco-website --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply prisco-website --remote",
+    "assets:render": "bun scripts/render-static-artwork.js",
+    "assets:check": "bun scripts/render-static-artwork.js --check"
   },
   "dependencies": {
     "@ariakit/react": "^0.4.43",
@@ -132,7 +134,9 @@
     "oxfmt": "^0.78.0",
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2006",
+    "playwright": "1.65.0",
     "shadcn": "^4.23.0",
+    "sharp": "0.35.5",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vite": "^8.3.7",

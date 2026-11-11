@@ -5,7 +5,7 @@ interface JupiterProps extends ImgHTMLAttributes<HTMLImageElement> {}
 export default function Jupiter({ className, alt, ...props }: JupiterProps) {
   return (
     <img
-      src="/home/jupiter.svg"
+      src="/home/jupiter.webp"
       alt={alt ?? ""}
       width="450"
       height="450"
