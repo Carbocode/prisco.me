@@ -7,9 +7,9 @@ interface CloudProps extends ImgHTMLAttributes<HTMLImageElement> {
 }
 
 const cloudSources: Record<CloudVariant, string> = {
-  1: "/home/cloud-1.svg",
-  2: "/home/cloud-2.svg",
-  3: "/home/cloud-3.svg",
+  1: "/home/cloud-1.webp",
+  2: "/home/cloud-2.webp",
+  3: "/home/cloud-3.webp",
 };
 
 const cloudDimensions: Record<CloudVariant, { width: number; height: number }> = {

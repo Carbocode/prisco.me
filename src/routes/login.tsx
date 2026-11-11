@@ -90,6 +90,8 @@ function AccessPage() {
         : "Troppi tentativi. Attendi qualche istante e riprova.";
     }
     if (error.code === "MISSING_RESPONSE") return "Completa la verifica anti-bot.";
+    if (error.code === "INVALID_USERNAME")
+      return "Lo username può contenere solo lettere senza accenti, numeri, punti e underscore (_). Puoi anche accedere con l’email dell’account.";
     if (error.code === "VERIFICATION_FAILED" || error.status === 403)
       return "Verifica anti-bot non valida o scaduta. Riprova.";
     if (error.code === "UNKNOWN_ERROR" || (error.status ?? 0) >= 500)
@@ -106,7 +108,7 @@ function AccessPage() {
     setPending(true);
     setMessage("");
     let retryAfter: string | null = null;
-    const identifier = formString(data, "identifier");
+    const identifier = formString(data, "identifier").trim();
     const password = formString(data, "password");
     const result = identifier.includes("@")
       ? await authClient.signIn.email({

@@ -45,7 +45,6 @@ export function animateHome(container) {
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const reduceMQ = matchMedia("(prefers-reduced-motion: reduce)");
   const finePointer = matchMedia("(pointer: fine)");
-  const horizontalMQ = matchMedia("(prefers-reduced-motion: no-preference)");
   const root = container;
   root.classList.add("js");
 
@@ -296,7 +295,15 @@ export function animateHome(container) {
     ];
 
     let mode = "";
-    let seen = null;
+    const seen = observeIntersection(
+      (entries) =>
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          setActive(entry.target, true);
+          seen.unobserve(entry.target);
+        }),
+      { rootMargin: "-30% 0px -30% 0px" },
+    );
     let lit = false;
 
     const el = (tag, attrs, parent) => {
@@ -319,19 +326,7 @@ export function animateHome(container) {
       if (next === mode) return;
       mode = next;
       chartRoot.dataset.skyLayout = mode;
-      seen?.disconnect();
-      seen =
-        mode === "tall"
-          ? observeIntersection(
-              (entries) =>
-                entries.forEach((entry) => {
-                  if (!entry.isIntersecting) return;
-                  setActive(entry.target, true);
-                  seen.unobserve(entry.target);
-                }),
-              { rootMargin: "-30% 0px -30% 0px" },
-            )
-          : null;
+      seen.disconnect();
       svg.replaceChildren();
 
       // Measure the whole drawing and its labels, so mobile preserves proportions.
@@ -522,12 +517,7 @@ export function animateHome(container) {
             label;
         });
 
-        if (mode === "wide") {
-          listen(grp, "pointerenter", () => setActive(grp, true));
-          listen(grp, "pointerleave", () => setActive(grp, false));
-        } else {
-          seen.observe(grp);
-        }
+        if (mode === "tall") seen.observe(grp);
         delay += 520;
       });
 
@@ -537,6 +527,16 @@ export function animateHome(container) {
       }
     }
 
+    // Delegate hover so rebuilding the SVG never retains listeners on old groups.
+    for (const type of ["pointerover", "pointerout"]) {
+      listen(svg, type, (event) => {
+        if (mode !== "wide") return;
+        const group = event.target.closest(".sky-group");
+        if (!group || (event.relatedTarget instanceof Node && group.contains(event.relatedTarget)))
+          return;
+        setActive(group, type === "pointerover");
+      });
+    }
     render();
     observeResize(render).observe(chartRoot);
     if (reduceMQ.matches) {
@@ -572,11 +572,20 @@ export function animateHome(container) {
 
   /* --- Navigazione attiva + altimetro -------------------------------- */
   const sections = $$("[data-section]");
+  // Suspend decorative loops outside the viewport, with a small pre-roll margin.
+  const motionIO = observeIntersection(
+    (entries) => {
+      entries.forEach((entry) =>
+        entry.target.classList.toggle("is-motion-visible", entry.isIntersecting),
+      );
+    },
+    { rootMargin: "200px 0px" },
+  );
+  sections.forEach((section) => motionIO.observe(section));
   const rail = page.querySelector(".gauge-rail");
+  const gaugeCursor = page.querySelector(".gauge-cursor");
   const gauge = page.querySelector("[data-gauge]");
   let gaugeTimer;
-
-  const underground = $("[data-underground]");
 
   const ticks = sections.map(() => {
     const t = document.createElement("span");
@@ -614,6 +623,7 @@ export function animateHome(container) {
   // edges of the story can always open it without feeding back into this logic.
   let headerAnchor = scroller.scrollTop;
   let headerVisible = true;
+  let headerKeyboardFocus = false;
   let storyStarting = false;
   let storyStartTimer;
   const updateHeader = (y, maxScroll = scroller.scrollHeight - scroller.clientHeight) => {
@@ -632,8 +642,7 @@ export function animateHome(container) {
       headerVisible = !headerVisible;
       headerAnchor = y;
     }
-    const interacting =
-      header.matches(":focus-within") || !!header.querySelector('[aria-expanded="true"]');
+    const interacting = headerKeyboardFocus || !!header.querySelector('[aria-expanded="true"]');
     const visible = !storyStarting && (headerVisible || interacting);
     page.classList.toggle("is-framed", visible);
     header.classList.add("is-floating");
@@ -674,16 +683,21 @@ export function animateHome(container) {
   });
 
   let pointerRAF = 0;
+  let pointerPosition = null;
   listen(hero, "pointermove", (e) => {
     if (reduceMQ.matches || !finePointer.matches) return;
-    cancelAnimationFrame(pointerRAF);
+    pointerPosition = { x: e.clientX, y: e.clientY };
+    if (pointerRAF) return;
     pointerRAF = frame(() => {
+      pointerRAF = 0;
+      if (!pointerPosition) return;
       const r = hero.getBoundingClientRect();
-      hero.style.setProperty("--px", ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
-      hero.style.setProperty("--py", ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+      hero.style.setProperty("--px", ((pointerPosition.x - r.left) / r.width - 0.5).toFixed(3));
+      hero.style.setProperty("--py", ((pointerPosition.y - r.top) / r.height - 0.5).toFixed(3));
     });
   });
   listen(hero, "pointerleave", () => {
+    pointerPosition = null;
     hero.style.setProperty("--px", 0);
     hero.style.setProperty("--py", 0);
   });
@@ -706,6 +720,7 @@ export function animateHome(container) {
   const journey = $("[data-journey]");
   const stage = $("[data-journey-stage]");
   const track = $("[data-track]");
+  const trackItems = Array.from(track.children);
   const stops = $$(".stop", track);
   const parLayers = $$("[data-par]", journey).map((element) => ({
     element,
@@ -725,18 +740,22 @@ export function animateHome(container) {
     stopCenters = [];
   let sceneWidth = 0,
     tumbleweedSize = 60,
-    lastJourneyPosition = "";
+    lastJourneyProgress = -1,
+    lastJourneyExit = -1;
 
   const setupJourney = () => {
     sceneWidth = scroller.clientWidth;
     tumbleweedSize = tw.offsetWidth || 60;
-    lastJourneyPosition = "";
+    lastJourneyProgress = -1;
+    lastJourneyExit = -1;
     const wasHorizontal = horizontal;
-    horizontal = horizontalMQ.matches;
+    horizontal = !reduceMQ.matches;
     journey.classList.toggle("is-horizontal", horizontal);
     // Resizing the frame must never clear a live scene between animation frames.
     if (wasHorizontal && !horizontal) {
-      track.style.transform = "";
+      trackItems.forEach((element) => {
+        element.style.translate = "";
+      });
       parLayers.forEach(({ element }) => {
         element.style.transform = "";
       });
@@ -760,16 +779,21 @@ export function animateHome(container) {
   };
 
   let currentStop = -1;
-  const updateJourney = () => {
+  const updateJourney = (scrollY = scroller.scrollTop) => {
     if (!horizontal) return;
-    const distance = scroller.scrollTop - jTop;
+    const distance = scrollY - jTop;
     const p = trackDistance ? clamp(distance / trackDistance) : 0;
     const exit = exitDistance ? clamp((distance - trackDistance) / exitDistance) : 0;
-    const position = `${p}:${exit}`;
-    if (position === lastJourneyPosition) return;
-    lastJourneyPosition = position;
+    if (p === lastJourneyProgress && exit === lastJourneyExit) return;
+    lastJourneyProgress = p;
+    lastJourneyExit = exit;
     const x = p * trackDistance;
-    track.style.transform = "translate3d(" + (-x).toFixed(1) + "px,0,0)";
+    // Move bounded cards instead of promoting the entire, very wide track to
+    // one GPU surface. The scene and scroll distance stay exactly the same.
+    const translation = (-x).toFixed(1) + "px 0";
+    trackItems.forEach((element) => {
+      element.style.translate = translation;
+    });
     // La scena è più larga del viewport: ogni piano scorre entro il margine disponibile.
     parLayers.forEach(({ element, speed }) => {
       element.style.transform =
@@ -822,33 +846,50 @@ export function animateHome(container) {
   const fossils = $$("[data-fy]");
   const coreZone = $("[data-core-zone]");
   let ticking = false;
+  let geometry;
+  let contentHeight = 0;
+  const measureGeometry = () => {
+    const y = scroller.scrollTop;
+    const documentRect = (element) => {
+      const { top, height } = localRect(element);
+      return { top: top + y, height };
+    };
+    geometry = {
+      heroHeight: hero.offsetHeight,
+      manifestoRect: documentRect(manifesto),
+      coreRect: documentRect(coreZone),
+      fossilRects: fossils.map((element) => {
+        const rect = documentRect(element);
+        // Remove the existing parallax translation from the measured position.
+        return {
+          element,
+          top: rect.top - (parseFloat(element.style.getPropertyValue("--fy")) || 0),
+          height: rect.height,
+          speed: parseFloat(element.dataset.fy),
+        };
+      }),
+    };
+    contentHeight = root.offsetHeight;
+  };
 
   let litWords = -1;
+  const setScrollValue = (element, property, value) => {
+    // Reading inline style does not measure layout; no parallel cache is needed.
+    if (element.style.getPropertyValue(property) !== value)
+      element.style.setProperty(property, value);
+  };
   const onFrame = () => {
     ticking = false;
-    // Read geometry together before changing classes, transforms or CSS variables.
-    scrollOrigin = scroller.getBoundingClientRect().top;
+    // Layout measurements are cached: scrolling must not flush animated SVG layout.
     const y = scroller.scrollTop;
     const vh = scroller.clientHeight;
     const max = Math.max(1, scroller.scrollHeight - vh);
+    const { heroHeight, manifestoRect, coreRect, fossilRects } = geometry;
     const reduced = reduceMQ.matches;
-    const hp = reduced ? 0 : clamp(y / (hero.offsetHeight || vh));
-    const mr = reduced ? null : localRect(manifesto);
-    const ur = reduced ? null : localRect(underground);
-    const fossilOffsets =
-      ur && ur.top < vh && ur.bottom > 0
-        ? fossils.map((element) => {
-            const r = localRect(element);
-            return [
-              element,
-              ((r.top + r.height / 2 - vh / 2) * -parseFloat(element.dataset.fy)).toFixed(1),
-            ];
-          })
-        : [];
-    const cr = reduced ? null : localRect(coreZone);
+    const hp = reduced ? 0 : clamp(y / (heroHeight || vh || 1));
 
     updateHeader(y, max);
-    page.style.setProperty("--doc-p", clamp(y / max).toFixed(4));
+    setScrollValue(gaugeCursor, "--doc-p", clamp(y / max).toFixed(4));
     let idx = 0;
     sectionTops.forEach((t, i) => {
       if (y + vh * 0.45 >= t) idx = i;
@@ -857,17 +898,29 @@ export function animateHome(container) {
 
     const lit = reduced
       ? words.length
-      : Math.round(clamp((vh * 0.85 - mr.top) / (mr.height + vh * 0.35)) * words.length);
+      : Math.round(
+          clamp((vh * 0.85 - (manifestoRect.top - y)) / (manifestoRect.height + vh * 0.35)) *
+            words.length,
+        );
     if (lit !== litWords) {
-      words.forEach((word, i) => word.classList.toggle("lit", i < lit));
+      for (let i = Math.max(0, Math.min(litWords, lit)); i < Math.max(litWords, lit); i++)
+        words[i].classList.toggle("lit", i < lit);
       litWords = lit;
     }
     if (reduced) return;
 
-    hero.style.setProperty("--hp", hp.toFixed(4));
-    updateJourney();
-    fossilOffsets.forEach(([element, offset]) => element.style.setProperty("--fy", offset + "px"));
-    coreZone.style.setProperty("--heat", clamp((vh - cr.top) / (cr.height + vh * 0.2)).toFixed(3));
+    setScrollValue(hero, "--hp", hp.toFixed(4));
+    updateJourney(y);
+    for (const { element, top, height, speed } of fossilRects) {
+      if (top - y >= vh + 200 || top + height - y <= -200) continue;
+      const offset = ((top - y + height / 2 - vh / 2) * -speed).toFixed(1);
+      setScrollValue(element, "--fy", offset + "px");
+    }
+    setScrollValue(
+      coreZone,
+      "--heat",
+      clamp((vh - (coreRect.top - y)) / (coreRect.height + vh * 0.2)).toFixed(3),
+    );
   };
 
   const requestFrame = () => {
@@ -902,6 +955,7 @@ export function animateHome(container) {
       }
     }
     measureSections();
+    measureGeometry();
     currentStop = -2;
     // Paint the new geometry immediately, with no intermediate reset frame.
     updateJourney();
@@ -921,14 +975,32 @@ export function animateHome(container) {
   );
   // Keyboard focus reaching the hidden header opens the frame around it.
   if (header) {
-    listen(header, "focusin", requestFrame);
-    listen(header, "focusout", requestFrame);
+    listen(header, "focusin", (event) => {
+      headerKeyboardFocus = event.target.matches(":focus-visible");
+      requestFrame();
+    });
+    listen(header, "focusout", () => {
+      headerKeyboardFocus = false;
+      requestFrame();
+    });
+    // A retained navigation focus must not pin the frame after scrolling resumes.
+    for (const type of ["wheel", "touchstart"]) {
+      listen(
+        page,
+        type,
+        () => {
+          if (!headerKeyboardFocus) return;
+          headerKeyboardFocus = false;
+          requestFrame();
+        },
+        { passive: true },
+      );
+    }
   }
-  listen(horizontalMQ, "change", layout);
   listen(reduceMQ, "change", () => {
     layout();
     if (reduceMQ.matches) {
-      hero.style.setProperty("--hp", 0);
+      setScrollValue(hero, "--hp", "0.0000");
       $$("[data-reveal], [data-core]").forEach((el) => el.classList.add("is-in"));
     }
   });
@@ -936,6 +1008,10 @@ export function animateHome(container) {
   observeResize(() => {
     if (`${scroller.clientWidth}x${scroller.clientHeight}` !== viewportSize) layout();
   }).observe(scroller);
+  // Image decoding and responsive content can change height after initial layout.
+  observeResize(() => {
+    if (root.offsetHeight !== contentHeight) layout();
+  }).observe(root);
   listen(window, "load", layout);
   if (document.fonts && document.fonts.ready)
     void document.fonts.ready.then(() => {
@@ -951,7 +1027,8 @@ export function animateHome(container) {
     clearTimeout(storyStartTimer);
     root.classList.remove("js");
     page.classList.remove("is-framed", "has-home-motion");
-    page.style.removeProperty("--doc-p");
+    gaugeCursor.style.removeProperty("--doc-p");
+    sections.forEach((section) => section.classList.remove("is-motion-visible"));
     page.style.removeProperty("--home-header-height");
     site.style.removeProperty("--home-scrollbar");
     if (header) {

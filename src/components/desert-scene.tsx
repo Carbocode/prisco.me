@@ -10,7 +10,7 @@ type DesertSceneProps = HTMLAttributes<HTMLDivElement> & {
 
 const TUMBLEWEEDS = [
   {
-    afterDune: "/home/dune-5.svg",
+    afterDune: "/home/dune-5.webp",
     bottom: "43%",
     size: "clamp(22px, 3.2vw, 50px)",
     hop: "clamp(9px, 1.38vw, 22px)",
@@ -19,7 +19,7 @@ const TUMBLEWEEDS = [
     delay: 0,
   },
   {
-    afterDune: "/home/dune-4.svg",
+    afterDune: "/home/dune-4.webp",
     bottom: "35%",
     size: "clamp(28px, 4.2vw, 64px)",
     hop: "clamp(12px, 1.81vw, 28px)",
@@ -28,7 +28,7 @@ const TUMBLEWEEDS = [
     delay: 6,
   },
   {
-    afterDune: "/home/dune-3.svg",
+    afterDune: "/home/dune-3.webp",
     bottom: "27%",
     size: "clamp(32px, 5.2vw, 78px)",
     hop: "clamp(14px, 2.24vw, 34px)",
@@ -40,21 +40,21 @@ const TUMBLEWEEDS = [
 
 // Ordine dal piano piu lontano a quello piu vicino.
 const MOUNTAIN_LAYERS = [
-  { src: "/home/mountain-3.svg", bottom: "57%" },
-  { src: "/home/mountain-2.svg", bottom: "52%" },
-  { src: "/home/mountain-1.svg", bottom: "46%" },
+  { src: "/home/mountain-3.webp", bottom: "57%" },
+  { src: "/home/mountain-2.webp", bottom: "52%" },
+  { src: "/home/mountain-1.webp", bottom: "46%" },
 ];
 
 // I file con il numero piu alto formano i piani lontani; i numeri bassi
 // avanzano verso l'osservatore e coprono progressivamente la base del livello precedente.
 const DUNE_LAYERS = [
-  { src: "/home/dune-7.svg", bottom: "8%" },
-  { src: "/home/dune-6.svg", bottom: "6.65%" },
-  { src: "/home/dune-5.svg", bottom: "5.3%" },
-  { src: "/home/dune-4.svg", bottom: "4%" },
-  { src: "/home/dune-3.svg", bottom: "2.65%" },
-  { src: "/home/dune-2.svg", bottom: "0%" },
-  { src: "/home/dune-1.svg", bottom: "0%" },
+  { src: "/home/dune-7.webp", bottom: "8%" },
+  { src: "/home/dune-6.webp", bottom: "6.65%" },
+  { src: "/home/dune-5.webp", bottom: "5.3%" },
+  { src: "/home/dune-4.webp", bottom: "4%" },
+  { src: "/home/dune-3.webp", bottom: "2.65%" },
+  { src: "/home/dune-2.webp", bottom: "0%" },
+  { src: "/home/dune-1.webp", bottom: "0%" },
 ];
 
 export default function DesertScene({ className, skills = [], ...props }: DesertSceneProps) {
@@ -133,7 +133,7 @@ function RollingTumbleweed({
         <div className="relative size-full">
           <div className="tumbleweed-roll absolute inset-0">
             <img
-              src="/home/illustrations/tumbleweed.svg"
+              src="/home/illustrations/tumbleweed.webp"
               alt=""
               width="100"
               height="100"

@@ -33,7 +33,7 @@ export default function Star({ size = "md", alt, className, onLoad, ...props }: 
   return (
     <img
       ref={imageRef}
-      src="/home/star.svg"
+      src="/home/star.webp"
       alt={alt ?? ""}
       className={[
         sizeClass,

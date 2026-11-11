@@ -1,0 +1,248 @@
+[
+  {
+    "source": "home/ammonite-fossil-art.svg",
+    "width": 1280,
+    "sourceHash": "e0920feaa9862a9a180f75c35466cddb79ed25e4f8e85b18f6d50a58dec4eb53",
+    "outputHash": "c6194f6a55f4ec36da0d938d15e8fe0018f45d4e290cc7d461ff859cc369bbd6"
+  },
+  {
+    "source": "home/ammonite-pit.svg",
+    "width": 1280,
+    "sourceHash": "e2a92cc5aa273dcef2f00637f459d73317622d780bcf2884384f8c0167d1ab09",
+    "outputHash": "7067a7f21ed0a8b85793b9f93f5f6bfb0027599b68c69d41b159ebe4e612d1e1"
+  },
+  {
+    "source": "home/bone.svg",
+    "width": 768,
+    "sourceHash": "dc1300a7265b6c55b70aae091ad25f223e6d70f47fa1576177f365c1bc4b17b8",
+    "outputHash": "5b6550811458f95e4e432019b7967518603e3addaec33cba513c57ec5225b9f2"
+  },
+  {
+    "source": "home/cloud-1.svg",
+    "width": 1024,
+    "sourceHash": "fd922ed66b5f31b1a5f8b7166b26080b73b72ac4b962c607d0e712c39fbd9d6e",
+    "outputHash": "2ca764d8810257d49b06a1d4d21d1e49bdce89a57fa71ba38721f1414415218a"
+  },
+  {
+    "source": "home/cloud-2.svg",
+    "width": 1024,
+    "sourceHash": "5a5eed63739e65b890475ac0d358fe943078bea3e3e95f291b54de4d05b67a0b",
+    "outputHash": "69cad6b6ec5ae1833ac88116668ea9542c98bbfe9a41e8b6afde2a310d9ec3bf"
+  },
+  {
+    "source": "home/cloud-3.svg",
+    "width": 1024,
+    "sourceHash": "d5e7c7c9bfbb1614348b6429e33e390584d842fa28ea31f07f74bc39e3a97924",
+    "outputHash": "c8037e2d077725d323cb103bae3bb64b932fb79a6435e2af3baf3fdf1c8e3e90"
+  },
+  {
+    "source": "home/crystals-a.svg",
+    "width": 768,
+    "sourceHash": "1bce9a4f05125139a2bbfdcf1e2189693e38a5f3d5528f63f82a9d7a4624d1de",
+    "outputHash": "750bed2396f2b6735c0d2e38d63c1029c4991f0079a67d9f51a166ba85df98c2"
+  },
+  {
+    "source": "home/crystals-b.svg",
+    "width": 768,
+    "sourceHash": "b63d90958ac91ebf352b7230bd9c72b8f02b54eea69339ca9c80d02f2a382154",
+    "outputHash": "a835156091ccc254cc0137cc366b10b26718168f3f64472b2b9b0fba1c744734"
+  },
+  {
+    "source": "home/dune-1.svg",
+    "width": 3840,
+    "sourceHash": "cb8922c27dfca0c50a4c4e9a83f76dba528d4e9f724bd17abbabc8d51b3481a0",
+    "outputHash": "d9b8be52099947cc1f0e0ed9c5ef00570f294231b14b099565a2bac382295cc6"
+  },
+  {
+    "source": "home/dune-2.svg",
+    "width": 3840,
+    "sourceHash": "7ce267cbefc7bb055d39f7c2d0a30a61813c0720c95429b6cc7bcf1da4e735b8",
+    "outputHash": "ff35c87e9b4b99ccba555ea9fff0f66d81b9c14ab98bba870ed42290ee9ec822"
+  },
+  {
+    "source": "home/dune-3.svg",
+    "width": 3840,
+    "sourceHash": "a451be28ab79482dc9f835dcb71be12e2a5561a560b7c5b962f2b75f42d015f5",
+    "outputHash": "975c2aea495468f99f39d212d43de77a6025286bb8b28462b4314c9ad847b4ba"
+  },
+  {
+    "source": "home/dune-4.svg",
+    "width": 3840,
+    "sourceHash": "8f9ee163b3ae2eb7e472de30dcb2b89fbc2040c19e1513fc7cbb57faf9a7002a",
+    "outputHash": "6e57b6536b46549c42df3d177bf33fc6d0eb6357182615357621058914a537e1"
+  },
+  {
+    "source": "home/dune-5.svg",
+    "width": 3840,
+    "sourceHash": "3f9984aec4b71741701f4249e6e2f4e1aa86c90bb4d785d42a47b8b57f3c6be0",
+    "outputHash": "98fc41ff5762a77990e695c6ccc50cb939f5b8b4d541988c2d78f4f103623e22"
+  },
+  {
+    "source": "home/dune-6.svg",
+    "width": 3840,
+    "sourceHash": "de1df9a46a49efaf5631db6618a81909ab310d8aaed1760f7a3447c2d28208d8",
+    "outputHash": "d680f89884d1e02cba1795e6fa29c22310b7a8da9e9fb62273462fe34a32f649"
+  },
+  {
+    "source": "home/dune-7.svg",
+    "width": 3840,
+    "sourceHash": "8b5e6631962fcc3a8db1b25d4dae54180ee186c82e3454daf680a6ecb18de744",
+    "outputHash": "88864fd394096e3c1b7ad570b543557502a9f5db4f25172d285d8e8e580b1ebe"
+  },
+  {
+    "source": "home/geode-crystals.svg",
+    "width": 1280,
+    "sourceHash": "116a2c29ea8bbbd020546e8640be80cc8304ec226e9691dd8b1b6563e33ef1cb",
+    "outputHash": "223072bd1aea9a668260f45f29006c44e9cfe97cf5786d74344ac9c60eee79e2"
+  },
+  {
+    "source": "home/illustrations/ammonite.svg",
+    "width": 1280,
+    "sourceHash": "576000ed2360eeca5986b66d9c7024561463701595934b8b970393fed59b21e8",
+    "outputHash": "35427ba80e47e226def58ad235090572020566030ea539ca3a10c9d9415de7b4"
+  },
+  {
+    "source": "home/illustrations/bone.svg",
+    "width": 1280,
+    "sourceHash": "0b8fce7ce72bf1757758e720b7c0fae309dde2f9935062353f38a5c2b3e2e44f",
+    "outputHash": "436b49a629efbb5f274eea23e8a12d12a29c26c41d8d81d4e7528251bd1d4bc2"
+  },
+  {
+    "source": "home/illustrations/boulder.svg",
+    "width": 1280,
+    "sourceHash": "da0b57d557b69ccd2e816ee21d7814619bb569798e3cb7ad2af2ae399c6f7db9",
+    "outputHash": "1ca0b2c46068afdcfff5d2cde87fba3f4eb4d9fec28ded7b359ef1b2c5331795"
+  },
+  {
+    "source": "home/illustrations/crystals.svg",
+    "width": 1280,
+    "sourceHash": "18711bb0068ae72c80c39d3e984cd6a29564b4d1d8b7d35a0e791c522808f449",
+    "outputHash": "9b45ee39a0907ae034ad2cf3b7da16a30f5065c47a377fc3158a5a0b0a650e14"
+  },
+  {
+    "source": "home/illustrations/desert-landscape.svg",
+    "width": 1280,
+    "sourceHash": "5cec842ad52376b3c689d2a546cdb2e94ae36852b79a663b5f61faab07cb0338",
+    "outputHash": "cee89f93bccfe25cf2a68f9bd5e86891986b8d6b179ab0892c893b2f8c0c8eab"
+  },
+  {
+    "source": "home/illustrations/magma-crack.svg",
+    "width": 1280,
+    "sourceHash": "5620b2797ebbf68c39c23f15dcb33b469826aad2037cb7bb0ff20489e696ab3a",
+    "outputHash": "595c47391b26ef75d113dfa94993d4add76bcb15ec2182599ca1f6818e05d20d"
+  },
+  {
+    "source": "home/illustrations/ore-vein.svg",
+    "width": 1280,
+    "sourceHash": "7a3565d1fff41b6a9a61b9014a552afa6fa1348bdd6e3d54b75e0999eafae14d",
+    "outputHash": "78a46cd072820b787fb3e809c38f6a19168251a8359be1777cc151fce8d89699"
+  },
+  {
+    "source": "home/illustrations/pebbles.svg",
+    "width": 1280,
+    "sourceHash": "cd405e65eb6d83d91519b70d86d387bb7c7bcf1cc4ea244b7847be7e6802cfbb",
+    "outputHash": "628d2905b5530329f69fc131c776c5074ce950681ac7b6d24a50c162c2dd5e50"
+  },
+  {
+    "source": "home/illustrations/root.svg",
+    "width": 1280,
+    "sourceHash": "02eed0ecfd78e71298d8ce5025d58ceba230d68104c967b1e64602738a00427c",
+    "outputHash": "459130368e26a4606bb93b7b118fc78170b0a1ded60e59017e09dc43a112f513"
+  },
+  {
+    "source": "home/illustrations/tumbleweed.svg",
+    "width": 1280,
+    "sourceHash": "a6ee409a41cec3e3b3d363deee49ffa525487fbcdc761ac2357053df95e973c2",
+    "outputHash": "00c3e3510be7508616d59d6be98370eddcce3f2072e26b841f1c07e52e286bd7"
+  },
+  {
+    "source": "home/jupiter.svg",
+    "width": 1536,
+    "sourceHash": "0ea7ac4910a70e56033a18cdf721bb90e6cfca6ae3a4f86daade23628c78c832",
+    "outputHash": "6b8490ef2efc394ab73358dc17fb5e102d2a91938379a4cfc315389b40c7909c"
+  },
+  {
+    "source": "home/moon.svg",
+    "width": 1536,
+    "sourceHash": "68cb2eeb502dbefb0f1e244a0c10767b6c783fce705bb0c3ec39733c34a5d15c",
+    "outputHash": "31e2f2a20dc7adc19d0aec2df15051742f0565f94602e63cfe844f44af238ecc"
+  },
+  {
+    "source": "home/mountain-1.svg",
+    "width": 3840,
+    "sourceHash": "b0b17354765cd141ab980205488124e6baeff15d4ca2d809c03f19ff34d99df4",
+    "outputHash": "5a93ce8f89ba0184cb21b37191e1cbd73ee0e5874c6f66d39978212f103c00c3"
+  },
+  {
+    "source": "home/mountain-2.svg",
+    "width": 3840,
+    "sourceHash": "768f8e98ab2517f024eb34d4b8fcb44ad85d7207d1d9cfbd762d8597a61c16cf",
+    "outputHash": "c3ce5b2f4643229b445b40d1593f7e845b6fe5562bc8d545a39a2e277e8bc77b"
+  },
+  {
+    "source": "home/mountain-3.svg",
+    "width": 3840,
+    "sourceHash": "6148c3fc5f0c6a59a5eead8693514bc8b0289719c65383cb9d9c4bdccbcc684e",
+    "outputHash": "66df84a03f63d1dbd4f0ad65ff9620a5a0ac634b68fe4988d7e2fcdf1547f30a"
+  },
+  {
+    "source": "home/pebbles-a.svg",
+    "width": 768,
+    "sourceHash": "06f967b104a4d64f46f4b0537e23eb895af0a88a497d87e078ba5780889c4073",
+    "outputHash": "f96d35b7fa5a44801be949fbc0da1a76b82d4460e0a0f49faa9b77a53429cf7b"
+  },
+  {
+    "source": "home/pebbles-b.svg",
+    "width": 768,
+    "sourceHash": "c053d2cc559ec49a12d74e9383d828be68097585438a773be9bcabb0e8187abb",
+    "outputHash": "a09a05e7a58a44cb135279ae123eab31270b968ae19bc30f94aa3cb57fa7f184"
+  },
+  {
+    "source": "home/pebbles-c.svg",
+    "width": 768,
+    "sourceHash": "5095b3566d05941ed43b8b28098622b9a0bcbf49e22f7f00ee9ed90e027cf626",
+    "outputHash": "a009127fb1114df504f070b2e2ab26fae4f2f473f0cf90fd81a3823e0f6931cb"
+  },
+  {
+    "source": "home/roots-a.svg",
+    "width": 768,
+    "sourceHash": "1ab91348e4404ef8e05c73703c5b3ee72a6d3ab5acb5adf41b3d3426ddd9c869",
+    "outputHash": "88c73684213141e3fdafbb06ea2079d0cdfa5776477c3d37948759ec7dfa0304"
+  },
+  {
+    "source": "home/roots-b.svg",
+    "width": 768,
+    "sourceHash": "53355721efcdace3b29c4cee3471fb471c5623e459203d613d1a4d832a594c1b",
+    "outputHash": "a5e6c7bb8f09dd2b815d5f3bb080cd211bb19fd764ee3bd2f5ce5bf00b2d58ea"
+  },
+  {
+    "source": "home/roots-c.svg",
+    "width": 768,
+    "sourceHash": "e412a4d356b1bb8725ca6f940a64540b0c22c671de4f9f60d14e7e8e848e912f",
+    "outputHash": "c66914074933f89b1730bbbfbb0e3eab0dc94f2a35063931e1e409d2ba378e8b"
+  },
+  {
+    "source": "home/small-stars.svg",
+    "width": 3840,
+    "sourceHash": "d5202dc89b34eb760a4c3c9921f6efac5f1dada07302ab3f3d79002fd79f3362",
+    "outputHash": "e009039b5a86bb9610b24bd8e10b4051f82997d7da02ecf7f6f8df4b341ca9ec"
+  },
+  {
+    "source": "home/star.svg",
+    "width": 256,
+    "sourceHash": "e613f97b9b0c589638b331ed3179888b73e56df89eb8958f6c8cb5fceb329e28",
+    "outputHash": "de1bb4fc15f6670cbd20b57b1441baea51d171ff915ee969138db96d12a2ad13"
+  },
+  {
+    "source": "home/trilobite-fossil-art.svg",
+    "width": 1280,
+    "sourceHash": "50c72b7dd29a170d38d7eb8fcc93bdc17d97d87305ca760b6623d8b852710ded",
+    "outputHash": "c9d607e7be032fe8184e60b6e3c75ac55fdcd5c080f35802ef92ffec1460b34e"
+  },
+  {
+    "source": "home/trilobite-pit.svg",
+    "width": 1280,
+    "sourceHash": "ddcbc2725fe48827a74fbe34f22e361b4387b4749bc2354d7901bccd0e16314a",
+    "outputHash": "4d8d8a8fb305efca2ba24813fc96843fe2bd61336864c3328ab368892c911bf4"
+  }
+]

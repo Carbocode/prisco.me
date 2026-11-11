@@ -320,13 +320,13 @@
   isolation: isolate;
 }
 
-.home-traversata .sky-art {
+.home-traversata .hero > .sky-art {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
 }
-.home-traversata .sky-art > * {
+.home-traversata .hero > .sky-art > * {
   position: absolute;
 }
 
@@ -713,7 +713,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/home/small-stars.svg") center top / 140% auto no-repeat;
+  background: url("/home/small-stars.webp") center top / 140% auto no-repeat;
   opacity: 0.35;
   -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
   mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
@@ -921,6 +921,16 @@
   height: auto;
   overflow: visible;
 }
+/* Keep offscreen SVG loops from continuously repainting the long story. */
+.home-traversata.js [data-section]:not(.is-motion-visible) *,
+.home-traversata.js [data-section]:not(.is-motion-visible) *::before,
+.home-traversata.js [data-section]:not(.is-motion-visible) *::after,
+.home-site[data-footer-open="true"] .home-traversata *,
+.home-site[data-footer-open="true"] .home-traversata *::before,
+.home-site[data-footer-open="true"] .home-traversata *::after {
+  animation-play-state: paused !important;
+}
+
 .home-traversata .sky-grid {
   fill: none;
   stroke: #c9dcf5;
@@ -1551,7 +1561,6 @@
     display: flex;
     align-items: flex-start;
     gap: clamp(3rem, 6vw, 6rem);
-    will-change: transform;
   }
   .home-traversata .journey .stop::before {
     display: none;
@@ -1961,6 +1970,7 @@
 .home-traversata .find-body,
 .home-traversata .geode-body {
   position: relative;
+  display: flow-root;
   z-index: 1;
   padding: clamp(1.5rem, 3vw, 2.25rem);
   border-radius: 1.4rem;
@@ -1982,12 +1992,13 @@
 }
 .home-traversata .home-content-cover {
   display: block;
-  width: 100%;
+  float: right;
+  width: clamp(5rem, 18vw, 9rem);
   height: auto;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1;
   object-fit: cover;
   border-radius: 0.8rem;
-  margin-bottom: 1.25rem;
+  margin: 0 0 1rem 1.25rem;
   background: rgba(10, 2, 0, 0.2);
 }
 .home-traversata .find-meta {
@@ -2457,8 +2468,7 @@
     transform var(--frame-time) var(--frame-ease),
     opacity 200ms;
 }
-.home-scroll-header.is-floating.is-visible,
-.home-scroll-header.is-floating:focus-within {
+.home-scroll-header.is-floating.is-visible {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
