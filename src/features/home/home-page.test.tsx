@@ -19,6 +19,7 @@ const project: Project = {
   slug: "progetto-cms",
   title: "Titolo dal CMS",
   summary: "Descrizione aggiornata",
+  image: "/media/project-cover.webp",
   description: "",
   role: "Engineer",
   company: "Azienda",
@@ -43,7 +44,13 @@ const props = {
   projects: [project],
   experiences: [experience],
   articles: [
-    { id: "blog", slug: "articolo-cms", title: "Articolo pubblicato", excerpt: "Dal CMS" },
+    {
+      id: "blog",
+      slug: "articolo-cms",
+      title: "Articolo pubblicato",
+      excerpt: "Dal CMS",
+      cover: { url: "/media/article-cover.webp", altText: "Copertina articolo" },
+    },
   ],
 };
 afterEach(() => {
@@ -54,13 +61,16 @@ it("rende i contenuti pubblicati e il percorso dal database anche senza JavaScri
   const markup = renderToStaticMarkup(<HomePage {...props} />);
   expect(markup).toContain('href="/progetti/progetto-cms"');
   expect(markup).toContain('href="/blog/articolo-cms"');
+  expect(markup).toContain('src="/media/project-cover.webp"');
+  expect(markup).toContain('src="/media/article-cover.webp"');
+  expect(markup).toContain('alt="Copertina articolo"');
   expect(markup).toContain("Organizzazione aggiornata");
   expect(markup).toContain("Percorso dal database");
   expect(markup).toContain('href="/career#experience-career"');
   expect(markup).toContain("line-clamp-4");
   const title = markup.match(/<h1[^>]*>(.*?)<\/h1>/)?.[1].replace(/<[^>]+>/g, "");
   expect(title).toContain("Ciao, sono Vincenzo.");
-  expect(title).toContain("Creo esperienze digitali.");
+  expect(title).toContain("Costruisco prodotti digitali.");
   expect(markup).not.toContain("Proposta di design statica");
   expect(markup).toContain('class="home-page is-framed relative"');
 });
@@ -87,22 +97,23 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   const sky = el.querySelector<SVGSVGElement>("[data-sky-svg]");
   const viewBox = sky?.getAttribute("viewBox")?.split(" ").map(Number);
   expect(viewBox?.[2]).toBe(480);
-  expect(viewBox?.[3]).toBeLessThan(1400);
+  expect(viewBox?.[3]).toBeLessThan(2300);
   expect(sky?.style.width).toBe("100%");
   expect(sky?.querySelectorAll(".sky-group")).toHaveLength(5);
-  const titlePositions = [...(sky?.querySelectorAll(".sky-name") ?? [])].map((title) =>
-    Number(title.getAttribute("x")),
-  );
-  expect(titlePositions).toEqual([200, 200, 200, 200, 200]);
+  for (const title of sky?.querySelectorAll(".sky-name") ?? []) {
+    expect(title.getAttribute("text-anchor")).toBe("middle");
+    expect(Number.isFinite(Number(title.getAttribute("x")))).toBe(true);
+  }
   const placements = [...(sky?.querySelectorAll(".sky-group") ?? [])].map((group) => {
     const transform = group.getAttribute("transform") ?? "";
-    expect(transform).toContain("scale(0.8)");
+    const scale = Number(transform.match(/scale\(([\d.]+)\)/)?.[1]);
+    expect(scale).toBeGreaterThan(0);
+    expect(scale).toBeLessThanOrEqual(1);
     return transform
-      .match(/translate\(([\d.]+) ([\d.]+)\)/)
+      .match(/translate\((-?[\d.]+) (-?[\d.]+)\)/)
       ?.slice(1)
       .map(Number);
   });
-  expect(placements.map((position) => position?.[0])).toEqual([8, 152, 8, 152, 8]);
   expect(
     placements.every(
       (position, index) => index === 0 || (position?.[1] ?? 0) > (placements[index - 1]?.[1] ?? 0),

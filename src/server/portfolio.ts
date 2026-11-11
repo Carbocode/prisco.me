@@ -11,9 +11,11 @@ import {
   cmsArticleTags,
   cmsCategories,
   cmsOrganizations,
+  cmsMedia,
   cmsTags,
   user,
 } from "@/db/schema";
+import { mediaDeliveryBaseUrl, mediaUrl } from "@/features/cms/domain/media";
 import type { Experience, LinkedProject, Project, Skill } from "@/lib/projects";
 
 function toSkill(row: typeof cmsTags.$inferSelect): Skill {
@@ -51,12 +53,21 @@ async function loadPortfolio() {
         organizationName: cmsOrganizations.name,
         organizationType: cmsOrganizations.type,
         authorName: user.name,
+        coverStorageKey: cmsMedia.storageKey,
       })
       .from(cmsArticles)
       .innerJoin(cmsArticleCategories, eq(cmsArticleCategories.articleId, cmsArticles.id))
       .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
       .innerJoin(user, eq(cmsArticles.authorId, user.id))
       .leftJoin(cmsOrganizations, eq(cmsArticles.organizationId, cmsOrganizations.id))
+      .leftJoin(
+        cmsMedia,
+        and(
+          eq(cmsArticles.coverMediaId, cmsMedia.id),
+          isNull(cmsMedia.deletedAt),
+          eq(cmsMedia.mimeType, "image/webp"),
+        ),
+      )
       .where(
         and(
           eq(cmsCategories.slug, "progetti"),
@@ -134,6 +145,12 @@ async function loadPortfolio() {
         : undefined,
       author: { name: row.authorName },
       skills: skillsByProject.get(item.id) ?? [],
+      image: row.coverStorageKey
+        ? mediaUrl(
+            mediaDeliveryBaseUrl(import.meta.env.MODE, env.MEDIA_PUBLIC_URL),
+            row.coverStorageKey,
+          )
+        : undefined,
       period: item.projectPeriod ?? undefined,
       featured: item.projectFeatured,
       content: item.content,
