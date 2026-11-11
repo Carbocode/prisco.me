@@ -86,80 +86,8 @@ export function animateHome(container) {
     // Etichette: n/s/e/w rispetto alla stella. m:1 = stella principale.
     const groups = [
       {
-        id: "interfacce",
-        top: -52,
-        name: "Interfacce",
-        c: "#b6dfff",
-        art: "il Compasso",
-        shapes: [
-          "M190 -52L190 -24",
-          "M182 2L100 282L112 284L196 6Z",
-          "M198 6L318 284L330 280L206 2Z",
-          "M190 -24A13 13 0 1 1 189.9 -24Z",
-        ],
-        strokes: [
-          "M128 168Q190 190 262 166",
-          "M40 300Q215 372 395 296",
-          "M184 -38L196 -38",
-          "M106 270L116 270M316 270L326 268",
-        ],
-        wide: [70, 110],
-        stars: [
-          ["Angular", 0, 70, "s"],
-          ["React", 120, 20, "n", 1],
-          ["Next.js", 240, 40, "n"],
-          ["Astro", 300, 130, "e"],
-          ["Tailwind CSS", 130, 120, "e", 1],
-          ["Lit", 30, 190, "w"],
-          ["Web Components", 110, 260, "s"],
-          ["WCAG", 230, 220, "s"],
-          ["Storybook", 330, 265, "s"],
-        ],
-        edges: [
-          [0, 1],
-          [1, 2],
-          [2, 3],
-          [1, 4],
-          [4, 5],
-          [5, 6],
-          [4, 7],
-          [7, 8],
-          [3, 7],
-        ],
-      },
-      {
-        id: "mobile",
-        name: "Mobile",
-        c: "#e0c6ff",
-        art: "la Rondine",
-        shapes: [
-          "M158 78C118 56 58 18 -18 16C26 48 58 98 98 132C122 126 146 112 160 100Z",
-          "M182 78C222 56 282 18 358 16C314 48 282 98 242 132C218 126 194 112 180 100Z",
-          "M170 59C182 59 186 80 186 100C186 124 178 132 170 132C162 132 154 124 154 100C154 80 158 59 170 59Z",
-          "M170 38A11 11 0 1 1 169.9 38Z",
-          "M161 128L144 178L170 150L196 178L179 128Z",
-        ],
-        strokes: [
-          "M168 39L170 30L172 39",
-          "M30 34C70 52 100 80 118 108M60 30C92 50 120 78 136 102M342 34C302 52 272 80 254 108M310 30C278 50 250 78 234 102",
-        ],
-        wide: [770, 110],
-        stars: [
-          ["Ionic", 0, 40, "n"],
-          ["Capacitor", 85, 120, "s", 1],
-          ["React Native", 170, 45, "n"],
-          ["Swift / SwiftUI", 260, 130, "s", 1],
-          ["MVVM", 340, 40, "n"],
-        ],
-        edges: [
-          [0, 1],
-          [1, 2],
-          [2, 3],
-          [3, 4],
-        ],
-      },
-      {
         id: "dati",
+        bounds: [-40, -40, 398, 281],
         top: -40,
         name: "Backend e dati",
         c: "#a6ded8",
@@ -170,22 +98,26 @@ export function animateHome(container) {
         ],
         strokes: [
           "M340 146A4 4 0 1 1 339.9 146Z",
+          "M215 190Q245 205 230 248Q200 235 195 210M50 142Q62 173 88 189",
           "M306 214C338 224 370 212 394 192",
           "M170 262C224 272 292 266 346 244M190 248C240 256 296 250 344 230",
           "M326 6C320 -28 294 -40 280 -28M326 6C332 -28 358 -40 372 -28M326 6L326 -18",
         ],
-        wide: [420, 450],
+        wide: [80, 90],
         stars: [
-          ["PHP", 0, 60, "n"],
-          ["Symfony", 90, 20, "n"],
-          ["Java", 190, 50, "n", 1],
-          [".NET / C#", 280, 20, "n"],
-          ["Python", 370, 70, "n"],
-          ["MySQL", 130, 150, "w"],
-          ["Prisma ORM", 240, 140, "e"],
-          ["PostgreSQL", 200, 240, "s", 1],
-          ["MongoDB", 330, 200, "e"],
-          ["Elasticsearch", 70, 250, "s"],
+          ["PHP", 10, 75, "w"],
+          ["Rust", 100, 35, "n"],
+          ["Java", 220, 10, "n", 1],
+          [".NET / C#", 325, 55, "n"],
+          ["Python", 395, 145, "e"],
+          ["MySQL", 100, 205, "w"],
+          ["Bash", 235, 135, "s"],
+          ["PostgreSQL", 230, 275, "s", 1],
+          ["MongoDB", 350, 235, "e"],
+          ["Elasticsearch", 60, 285, "s"],
+          ["Docker", 310, 140, "n"],
+          ["Kubernetes", 10, 150, "s"],
+          ["Linux", 125, 125, "n"],
         ],
         edges: [
           [0, 1],
@@ -199,12 +131,95 @@ export function animateHome(container) {
           [7, 8],
           [8, 4],
           [7, 9],
+          [6, 10],
+          [10, 8],
+          [0, 11],
+          [0, 12],
+          [12, 5],
         ],
       },
       {
-        id: "prodotto",
+        id: "mobile",
+        bounds: [-18, 16, 358, 178],
+        name: "Mobile",
+        c: "#e0c6ff",
+        art: "la Rondine",
+        shapes: [
+          "M158 78C118 56 58 18 -18 16C26 48 58 98 98 132C122 126 146 112 160 100Z",
+          "M182 78C222 56 282 18 358 16C314 48 282 98 242 132C218 126 194 112 180 100Z",
+          "M170 59C182 59 186 80 186 100C186 124 178 132 170 132C162 132 154 124 154 100C154 80 158 59 170 59Z",
+          "M170 38A11 11 0 1 1 169.9 38Z",
+          "M161 128L144 178L170 150L196 178L179 128Z",
+        ],
+        strokes: [
+          "M168 39L170 30L172 39",
+          "M160 88Q170 96 180 88M165 105L170 126L175 105",
+          "M30 34C70 52 100 80 118 108M60 30C92 50 120 78 136 102M342 34C302 52 272 80 254 108M310 30C278 50 250 78 234 102",
+        ],
+        wide: [490, 360],
+        stars: [
+          ["Ionic", 0, 25, "n"],
+          ["Capacitor", 100, 115, "s", 1],
+          ["React Native", 170, 48, "n"],
+          ["Swift / SwiftUI", 240, 115, "s", 1],
+          ["MVVM", 340, 25, "n"],
+        ],
+        edges: [
+          [0, 1],
+          [1, 2],
+          [2, 3],
+          [3, 4],
+        ],
+      },
+      {
+        id: "interfacce",
+        bounds: [-5, -52, 400, 330],
+        top: -52,
+        name: "Framework",
+        c: "#b6dfff",
+        art: "il Compasso",
+        shapes: [
+          "M190 -52L190 -24",
+          "M182 2L100 282L112 284L196 6Z",
+          "M198 6L318 284L330 280L206 2Z",
+          "M190 -24A13 13 0 1 1 189.9 -24Z",
+        ],
+        strokes: [
+          "M145 155Q190 178 260 162",
+          "M152 148L148 161M172 156L170 169M194 159L194 173M217 157L220 170M240 152L245 165",
+          "M40 300Q215 372 395 296",
+          "M184 -38L196 -38",
+          "M106 270L116 270M316 270L326 268",
+        ],
+        wide: [710, 550],
+        stars: [
+          ["Angular", 105, 278, "w"],
+          ["React", 190, 0, "n", 1],
+          ["Next.js", 250, 140, "e"],
+          ["Astro", 324, 280, "s"],
+          ["Tailwind CSS", 145, 155, "w", 1],
+          ["Lit", 125, 220, "w"],
+          ["Symfony", 100, 325, "s"],
+          ["TanStack Start", 310, 325, "s"],
+          ["Storybook", 292, 215, "e"],
+        ],
+        edges: [
+          [1, 4],
+          [4, 5],
+          [5, 0],
+          [1, 2],
+          [2, 8],
+          [8, 3],
+          [4, 2],
+          [0, 6],
+          [7, 3],
+        ],
+      },
+      {
+        id: "ai-agenti",
+        bounds: [-54, -28, 262, 352],
         top: -28,
-        name: "Prodotto e progettazione",
+        name: "AI e Agenti",
         c: "#ffd4b1",
         art: "la Mongolfiera",
         shapes: [
@@ -214,16 +229,17 @@ export function animateHome(container) {
         strokes: [
           "M105 -28C58 40 70 180 94 256M105 -28C152 40 140 180 114 256M-27 120C60 148 150 148 235 120",
           "M86 256L70 318M122 256L114 318M100 270C96 280 104 288 100 298",
+          "M-5 174Q105 210 215 174M72 329L114 329M80 319L84 350M96 319L100 350",
         ],
-        wide: [850, 360],
+        wide: [980, 110],
         stars: [
-          ["Figma", 110, 0, "n", 1],
-          ["Product Design", 210, 90, "e"],
-          ["UML", 0, 80, "w"],
-          ["Software Architecture", 180, 200, "e"],
-          ["Stripe", 10, 190, "w"],
-          ["PostHog", 100, 240, "w", 1],
-          ["Mapbox", 90, 340, "s"],
+          ["Codex", 105, -10, "n", 1],
+          ["Claude Code", 235, 90, "e", 1],
+          ["T3Code", -25, 105, "w"],
+          ["Hermes", 215, 185, "e"],
+          ["OpenClaw", 5, 205, "w"],
+          ["MCP", 105, 265, "e", 1],
+          ["n8n", 95, 345, "s"],
         ],
         edges: [
           [0, 1],
@@ -237,7 +253,8 @@ export function animateHome(container) {
       },
       {
         id: "piattaforma",
-        name: "Piattaforma e strumenti",
+        bounds: [-36, 4, 364, 320],
+        name: "Piattaforma",
         c: "#c6d1ff",
         art: "il Veliero",
         shapes: [
@@ -249,24 +266,26 @@ export function animateHome(container) {
         ],
         strokes: [
           "M114 222L114 4M234 222L234 22",
+          "M10 238L326 238M40 276L280 276M18 218L114 30M116 70L234 26M116 202L234 202",
           "M-36 310Q-16 300 4 310T44 310T84 310T124 310T164 310T204 310T244 310T284 310T324 310T364 310",
           "M84 254A6 6 0 1 1 83.9 254ZM144 254A6 6 0 1 1 143.9 254ZM204 254A6 6 0 1 1 203.9 254ZM264 254A6 6 0 1 1 263.9 254Z",
         ],
-        wide: [70, 520],
+        wide: [160, 550],
         stars: [
-          ["Cloudflare", 20, 110, "n", 1],
-          ["TanStack Start", 110, 40, "n", 1],
-          ["Vite", 205, 90, "n"],
-          ["Sentry", 300, 35, "n"],
-          ["JWT", 290, 170, "e"],
-          ["Better Auth", 210, 250, "s"],
-          ["Claude Code", 100, 200, "w"],
-          ["Codex", 40, 280, "s"],
+          ["Cloudflare", 5, 225, "w", 1],
+          ["EXPO Services", 115, 35, "n", 1],
+          ["Supabase", 175, 130, "e"],
+          ["Sentry", 235, 40, "n"],
+          ["JWT", 315, 195, "e"],
+          ["Grafana", 255, 285, "s"],
+          ["PostHog", 90, 215, "n"],
+          ["Stripe", 60, 285, "s"],
         ],
         edges: [
           [0, 1],
-          [1, 2],
+          [1, 6],
           [2, 3],
+          [3, 4],
           [2, 4],
           [4, 5],
           [5, 6],
@@ -315,48 +334,41 @@ export function animateHome(container) {
           : null;
       svg.replaceChildren();
 
-      // Scale each complete mobile constellation, then stagger the rows left and right.
-      const panelWidth = 400;
-      const W = mode === "wide" ? 1200 : 480;
-      const mobileScale = 0.8;
-      let y = 0;
-      const placed = groups.map((g, index) => {
-        if (mode === "wide") return { g, k: 1, ox: g.wide[0], oy: g.wide[1] };
-        // Fit the star spacing and labels before scaling the complete group.
-        const reach = ([label, x, , side]) => {
-          const w = label.length * 7.6 + 16;
-          return side === "e" ? [x, w] : side === "w" ? [x, -w] : [x, 0, w / 2];
-        };
-        const left = Math.min(
-          ...g.stars.map((st) => {
-            const [x, d, half] = reach(st);
-            return x + Math.min(0, d) - (half ?? 0);
-          }),
-        );
-        const right = Math.max(
-          ...g.stars.map((st) => {
-            const [x, d, half] = reach(st);
-            return x + Math.max(0, d) + (half ?? 0);
-          }),
-        );
-        const spanX = Math.max(...g.stars.map((st) => st[1]));
-        const maxY = Math.max(...g.stars.map((st) => st[2]));
-        const k = Math.min(1, (panelWidth - 30 - (right - left - spanX)) / spanX);
-        // Spazio extra per le illustrazioni che sporgono sopra le stelle.
-        const lift = Math.max(0, -(g.top ?? 0) - 10) * k;
-        const at = {
-          g,
-          k,
-          lift,
-          ox: (panelWidth - (right - left - spanX) - spanX * k) / 2 - left,
-          oy: 56 + lift,
-          titleX: panelWidth / 2,
-          transform: `translate(${index % 2 === 0 ? 8 : W - panelWidth * mobileScale - 8} ${y}) scale(${mobileScale})`,
-        };
-        y += (56 + lift + maxY * k + 50) * mobileScale;
-        return at;
+      // Measure the whole drawing and its labels, so mobile preserves proportions.
+      const W = mode === "wide" ? 1320 : 480;
+      let y = 16;
+      const placed = groups.map((g) => {
+        const [artLeft, artTop, artRight, artBottom] = g.bounds;
+        const labelBounds = g.stars.map(([label, x, sy, side]) => {
+          const width = label.length * 8.4 + 20;
+          return [
+            x - (side === "w" ? width + 20 : side === "e" ? 0 : width / 2),
+            sy - (side === "n" ? 38 : 14),
+            x + (side === "e" ? width + 20 : side === "w" ? 0 : width / 2),
+            sy + (side === "s" ? 40 : 20),
+          ];
+        });
+        const left = Math.min(artLeft, ...labelBounds.map((b) => b[0]));
+        const top = Math.min(artTop, ...labelBounds.map((b) => b[1]));
+        const right = Math.max(artRight, ...labelBounds.map((b) => b[2]));
+        const bottom = Math.max(artBottom, ...labelBounds.map((b) => b[3]));
+        const titleY = top - 20;
+        const titleX = (artLeft + artRight) / 2;
+        if (mode === "wide")
+          return {
+            g,
+            k: 1,
+            ox: g.wide[0],
+            oy: g.wide[1],
+            titleX,
+            titleY,
+          };
+        const scale = Math.min(1, (W - 40) / (right - left));
+        const transform = `translate(${(W - (right - left) * scale) / 2 - left * scale} ${y - titleY * scale}) scale(${scale})`;
+        y += (bottom - titleY + 48) * scale;
+        return { g, k: 1, ox: 0, oy: 0, titleX, titleY, transform };
       });
-      const H = mode === "wide" ? 840 : Math.ceil(y);
+      const H = mode === "wide" ? 940 : Math.ceil(y);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
       svg.style.width = "100%";
 
@@ -400,7 +412,7 @@ export function animateHome(container) {
       }
 
       let delay = 0;
-      placed.forEach(({ g, k, ox, oy, lift = 0, titleX, transform }) => {
+      placed.forEach(({ g, k, ox, oy, titleX, titleY, transform }) => {
         const pos = g.stars.map(([, x, sy]) => [ox + x * k, oy + sy * k]);
         const grp = el("g", { class: "sky-group", "data-group": g.id, style: `--c:${g.c}` }, svg);
         if (transform) grp.setAttribute("transform", transform);
@@ -421,10 +433,9 @@ export function animateHome(container) {
         );
 
         // Nome della costellazione, come sulle carte antiche.
-        const nameX = Math.min(...xs) - 10,
-          nameY = Math.min(...ys) - (mode === "wide" ? 40 : 52 + lift);
-        const tx = mode === "wide" ? nameX : titleX;
-        const anchor = mode === "wide" ? "start" : "middle";
+        const tx = ox + titleX;
+        const nameY = oy + titleY;
+        const anchor = "middle";
         el(
           "text",
           { class: "sky-name", x: tx, y: nameY, "text-anchor": anchor, style: `--d:${delay}ms` },
@@ -599,27 +610,26 @@ export function animateHome(container) {
     measureHeader();
     observeResize(measureHeader).observe(header);
   }
+  // The frame is an overlay: toggling it never changes the scroll range, so the
+  // edges of the story can always open it without feeding back into this logic.
   let headerAnchor = scroller.scrollTop;
   let headerVisible = true;
-  let bottomAnchor = null;
   let storyStarting = false;
   let storyStartTimer;
   const updateHeader = (y, maxScroll = scroller.scrollHeight - scroller.clientHeight) => {
     if (!header) return;
-    // Keep the frame open while its transition reduces the scroll viewport.
-    if (maxScroll > 0 && y >= maxScroll - 8) bottomAnchor = y;
-    else if (bottomAnchor !== null) {
-      bottomAnchor = y < bottomAnchor - 8 ? null : Math.max(bottomAnchor, y);
-    }
-    const delta = y - headerAnchor;
     if (storyStarting) {
       headerVisible = false;
       headerAnchor = y;
-    } else if (y <= 8 || bottomAnchor !== null) {
+    } else if (y <= 8 || (maxScroll > 0 && y >= maxScroll - 8)) {
       headerVisible = true;
       headerAnchor = y;
-    } else if (Math.abs(delta) >= 8) {
-      headerVisible = delta < 0;
+    } else if (headerVisible ? y < headerAnchor : y > headerAnchor) {
+      // Follow the scroll while it confirms the current state: a reversal is
+      // measured from the furthest point reached, not from the last toggle.
+      headerAnchor = y;
+    } else if (Math.abs(y - headerAnchor) >= 8) {
+      headerVisible = !headerVisible;
       headerAnchor = y;
     }
     const interacting =
@@ -628,10 +638,20 @@ export function animateHome(container) {
     page.classList.toggle("is-framed", visible);
     header.classList.add("is-floating");
     header.classList.toggle("is-visible", visible);
-    header.inert = !visible;
   };
 
   const scrollCue = $(".scroll-cue");
+  // Any new input takes over from the cue, so its final jump cannot undo a reversal.
+  const cancelStoryStart = () => {
+    if (!storyStarting) return;
+    clearTimeout(storyStartTimer);
+    storyStarting = false;
+    headerAnchor = scroller.scrollTop;
+    requestFrame();
+  };
+  ["wheel", "touchstart", "pointerdown", "keydown"].forEach((type) =>
+    listen(scroller, type, cancelStoryStart, { passive: true }),
+  );
   listen(scrollCue, "click", (event) => {
     event.preventDefault();
     clearTimeout(storyStartTimer);
@@ -857,8 +877,12 @@ export function animateHome(container) {
     }
   };
 
-  let resizeTimer;
+  const site = page.parentElement;
+  let viewportSize = "";
   const layout = () => {
+    viewportSize = `${scroller.clientWidth}x${scroller.clientHeight}`;
+    // Classic scrollbars stay outside the overlay frame, header and footer peek.
+    site.style.setProperty("--home-scrollbar", `${scroller.offsetWidth - scroller.clientWidth}px`);
     scrollOrigin = scroller.getBoundingClientRect().top;
     const previous = { start: jTop, distance: jDist };
     const previousScroll = scroller.scrollTop;
@@ -895,10 +919,11 @@ export function animateHome(container) {
     },
     { passive: true },
   );
-  listen(window, "resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(layout, 120);
-  });
+  // Keyboard focus reaching the hidden header opens the frame around it.
+  if (header) {
+    listen(header, "focusin", requestFrame);
+    listen(header, "focusout", requestFrame);
+  }
   listen(horizontalMQ, "change", layout);
   listen(reduceMQ, "change", () => {
     layout();
@@ -907,10 +932,10 @@ export function animateHome(container) {
       $$("[data-reveal], [data-core]").forEach((el) => el.classList.add("is-in"));
     }
   });
-  listen(page, "transitionend", (event) => {
-    if (event.target === page && event.propertyName === "padding-left") layout();
-  });
-  observeResize(layout).observe(scroller);
+  // Only real viewport changes (window, rotation, scrollbar) reach the scroller now.
+  observeResize(() => {
+    if (`${scroller.clientWidth}x${scroller.clientHeight}` !== viewportSize) layout();
+  }).observe(scroller);
   listen(window, "load", layout);
   if (document.fonts && document.fonts.ready)
     void document.fonts.ready.then(() => {
@@ -922,16 +947,15 @@ export function animateHome(container) {
     disposed = true;
     disposers.forEach((fn) => fn());
     pendingFrames.forEach(cancelAnimationFrame);
-    clearTimeout(resizeTimer);
     clearTimeout(gaugeTimer);
     clearTimeout(storyStartTimer);
     root.classList.remove("js");
     page.classList.remove("is-framed", "has-home-motion");
     page.style.removeProperty("--doc-p");
     page.style.removeProperty("--home-header-height");
+    site.style.removeProperty("--home-scrollbar");
     if (header) {
       header.classList.remove("is-floating", "is-visible");
-      header.inert = false;
       header.style.removeProperty("--hero-header-y");
     }
     manifesto.replaceChildren(...originalManifesto);

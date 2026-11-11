@@ -17,10 +17,15 @@ import "./home.css";
 type Props = {
   projects: Project[];
   experiences: Experience[];
-  articles: { id: string; slug: string; title: string; excerpt: string | null }[];
+  articles: {
+    id: string;
+    slug: string;
+    title: string;
+    excerpt: string | null;
+    cover?: { url: string; altText?: string | null } | null;
+  }[];
 };
 export function HomePage({ projects, experiences, articles }: Props) {
-  const currentWork = experiences.find((item) => item.current && item.kind === "work");
   const currentStudy = experiences.find((item) => item.current && item.kind === "education");
   const [footerOpen, setFooterOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -230,44 +235,6 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   <div className="moon depth" style={{ "--d": "0.6" }}>
                     <img src="/home/moon.svg" alt="" width="450" height="450" />
                   </div>
-                  <div className="clouds">
-                    <div
-                      className="cloud"
-                      style={{
-                        "--top": "12%",
-                        "--w": "clamp(16rem,30vw,30rem)",
-                        "--dur": "46s",
-                        "--del": "-8s",
-                        "--o": "0.7",
-                      }}
-                    >
-                      <img src="/home/cloud-1.svg" alt="" />
-                    </div>
-                    <div
-                      className="cloud"
-                      style={{
-                        "--top": "48%",
-                        "--w": "clamp(18rem,34vw,34rem)",
-                        "--dur": "58s",
-                        "--del": "-30s",
-                        "--o": "0.85",
-                      }}
-                    >
-                      <img src="/home/cloud-2.svg" alt="" />
-                    </div>
-                    <div
-                      className="cloud"
-                      style={{
-                        "--top": "30%",
-                        "--w": "clamp(14rem,24vw,24rem)",
-                        "--dur": "40s",
-                        "--del": "-22s",
-                        "--o": "0.6",
-                      }}
-                    >
-                      <img src="/home/cloud-3.svg" alt="" />
-                    </div>
-                  </div>
                 </div>
                 <div className="hero-inner">
                   <div className="hero-copy">
@@ -278,14 +245,14 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         <span style={{ "--i": "2" }}>{"Vincenzo."}</span>
                       </span>
                       <span className="line serif">
-                        <span style={{ "--i": "3" }}>{"Creo"}</span>{" "}
-                        <span style={{ "--i": "4" }}>{"esperienze"}</span>{" "}
+                        <span style={{ "--i": "3" }}>{"Costruisco"}</span>{" "}
+                        <span style={{ "--i": "4" }}>{"prodotti"}</span>{" "}
                         <span style={{ "--i": "5" }}>{"digitali."}</span>
                       </span>
                     </h1>
                     <p className="hero-lede" style={{ "--delay": "800ms" }}>
                       {
-                        "Software engineer e product builder: progetto esperienze chiare, architetture solide e software pensato per durare."
+                        "Sono un software engineer: trasformo idee e problemi concreti in applicazioni web, dall’interfaccia ai sistemi che le fanno funzionare."
                       }
                     </p>
                     <div className="hero-actions" style={{ "--delay": "950ms" }}>
@@ -315,25 +282,13 @@ export function HomePage({ projects, experiences, articles }: Props) {
                     <dl>
                       <div>
                         <dt>{"Lavoro"}</dt>
-                        <dd>
-                          {currentWork
-                            ? `${currentWork.title} · ${currentWork.org}`
-                            : "Software engineer e product builder"}
-                          <small>{currentWork?.period}</small>
-                        </dd>
+                        <dd>{"Alla ricerca di nuove opportunità"}</dd>
                       </div>
                       <div>
                         <dt>{"Studio"}</dt>
                         <dd>
                           {currentStudy?.title ?? "Formazione e crescita continua"}
                           <small>{currentStudy?.org}</small>
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>{"Questo sito"}</dt>
-                        <dd>
-                          {"TanStack Start, React e TypeScript "}
-                          <small>{"hostato su Cloudflare"}</small>
                         </dd>
                       </div>
                     </dl>
@@ -351,17 +306,15 @@ export function HomePage({ projects, experiences, articles }: Props) {
                 aria-labelledby="mestiere-title"
               >
                 <div className="wrap">
-                  <h2 className="visually-hidden" id="mestiere-title">
-                    {"Cosa faccio"}
+                  <h2 className="approach-label" id="mestiere-title">
+                    {"Come lavoro?"}
                   </h2>
                   <p className="manifesto" data-manifesto="">
-                    {"Progetto esperienze "}
-                    <em>{"chiare"}</em>
-                    {", architetture "}
-                    <em>{"solide"}</em>
-                    {" e software pensato per "}
-                    <em>{"durare"}</em>
-                    {": dall’analisi dell’idea alla pubblicazione, fino al miglioramento continuo."}
+                    {"Affronto la "}
+                    <em>{"complessità"}</em>
+                    {" con metodo e cerco la "}
+                    <em>{"semplicità"}</em>
+                    {" con cura."}
                   </p>
                   <div className="crafts">
                     <article className="craft" data-reveal="" style={{ "--i": "0" }}>
@@ -380,39 +333,19 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       <p className="craft-num" aria-hidden="true">
                         {"i."}
                       </p>
-                      <h3>{"Dal concept al prodotto"}</h3>
+                      <h3>
+                        <a className="craft-link" href="/progetti">
+                          {"Startup e nuovi prodotti"}
+                        </a>
+                      </h3>
                       <ul>
                         <li style={{ "--i": "0" }}>{"Analisi dell’idea"}</li>
-                        <li style={{ "--i": "1" }}>{"Sviluppo iterativo"}</li>
-                        <li style={{ "--i": "2" }}>{"Pubblicazione"}</li>
-                        <li style={{ "--i": "3" }}>{"Miglioramento continuo"}</li>
+                        <li style={{ "--i": "1" }}>{"MVP e primi rilasci"}</li>
+                        <li style={{ "--i": "2" }}>{"Sviluppo iterativo"}</li>
+                        <li style={{ "--i": "3" }}>{"Evoluzione del prodotto"}</li>
                       </ul>
                     </article>
                     <article className="craft" data-reveal="" style={{ "--i": "1" }}>
-                      <svg
-                        viewBox="0 0 36 36"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M18 4 33 11.5 18 19 3 11.5Z" />
-                        <path d="m3 18 15 7.5L33 18" />
-                        <path d="m3 24.5 15 7.5 15-7.5" />
-                      </svg>
-                      <p className="craft-num" aria-hidden="true">
-                        {"ii."}
-                      </p>
-                      <h3>{"Architettura software"}</h3>
-                      <ul>
-                        <li style={{ "--i": "0" }}>{"Progettazione"}</li>
-                        <li style={{ "--i": "1" }}>{"Modularità"}</li>
-                        <li style={{ "--i": "2" }}>{"Manutenibilità"}</li>
-                        <li style={{ "--i": "3" }}>{"Decisioni proporzionate"}</li>
-                      </ul>
-                    </article>
-                    <article className="craft" data-reveal="" style={{ "--i": "2" }}>
                       <svg
                         viewBox="0 0 36 36"
                         fill="none"
@@ -426,30 +359,59 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         <rect x="23" y="13" width="10" height="18" rx="2.5" />
                       </svg>
                       <p className="craft-num" aria-hidden="true">
+                        {"ii."}
+                      </p>
+                      <h3>
+                        <a className="craft-link" href="/progetti">
+                          {"Sviluppo applicativi"}
+                        </a>
+                      </h3>
+                      <ul>
+                        <li style={{ "--i": "0" }}>{"Frontend e backend"}</li>
+                        <li style={{ "--i": "1" }}>{"Architettura software"}</li>
+                        <li style={{ "--i": "2" }}>{"Integrazione di servizi"}</li>
+                        <li style={{ "--i": "3" }}>{"Manutenzione ed evoluzione"}</li>
+                      </ul>
+                    </article>
+                    <article className="craft" data-reveal="" style={{ "--i": "2" }}>
+                      <svg
+                        viewBox="0 0 36 36"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <rect x="9" y="9" width="18" height="18" rx="4" />
+                        <path d="M14 3v6M22 3v6M14 27v6M22 27v6M3 14h6M3 22h6M27 14h6M27 22h6" />
+                        <path d="m18 13 1.5 3.5L23 18l-3.5 1.5L18 23l-1.5-3.5L13 18l3.5-1.5Z" />
+                      </svg>
+                      <p className="craft-num" aria-hidden="true">
                         {"iii."}
                       </p>
-                      <h3>{"Sviluppo web & mobile"}</h3>
+                      <h3>
+                        <a className="craft-link" href="/progetti">
+                          {"Soluzioni AI"}
+                        </a>
+                      </h3>
                       <ul>
-                        <li style={{ "--i": "0" }}>{"Applicazioni moderne"}</li>
-                        <li style={{ "--i": "1" }}>{"Frontend e backend"}</li>
-                        <li style={{ "--i": "2" }}>{"Prodotti multipiattaforma"}</li>
+                        <li style={{ "--i": "0" }}>{"Assistenti e agenti AI"}</li>
+                        <li style={{ "--i": "1" }}>{"Automazione dei processi"}</li>
+                        <li style={{ "--i": "2" }}>{"Integrazione di modelli AI"}</li>
                       </ul>
                     </article>
                   </div>
                   <div className="sky-map">
-                    <div className="sky-map-head" data-reveal="">
-                      <h3>
-                        {"Ogni tecnologia, una stella."}
-                        <br />
-                        <span>{"Il valore è nelle connessioni."}</span>
-                      </h3>
-                    </div>
                     <div
                       className="sky-chart"
                       data-reveal=""
                       style={{ "--i": "1" }}
                       data-sky-chart=""
                     >
+                      <h3 className="sky-chart-title">
+                        {"Gli strumenti"}
+                        <span>{"che mi accompagnano."}</span>
+                      </h3>
                       <svg
                         className="sky-chart-svg"
                         data-sky-svg=""
@@ -459,23 +421,21 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       <ul className="visually-hidden">
                         <li>
                           {
-                            "Interfacce: Angular, React, Next.js, Astro, Tailwind CSS, Lit, Web Components, WCAG, Storybook."
+                            "Framework: Angular, React, Next.js, Astro, Tailwind CSS, Lit, Symfony, TanStack Start, Storybook."
                           }
                         </li>
                         <li>{"Mobile: Ionic, Capacitor, React Native, Swift / SwiftUI, MVVM."}</li>
                         <li>
                           {
-                            "Backend e dati: .NET / C#, Java, Python, MongoDB, MySQL, PHP, Symfony, Prisma ORM, PostgreSQL, Elasticsearch."
+                            "Backend e dati: .NET / C#, Java, Python, MongoDB, MySQL, PHP, Rust, Bash, PostgreSQL, Elasticsearch, Docker, Kubernetes, Linux."
                           }
                         </li>
                         <li>
-                          {
-                            "Prodotto e progettazione: Product Design, Figma, UML, Stripe, PostHog, Software Architecture, Mapbox."
-                          }
+                          {"AI e Agenti: Codex, Claude Code, T3Code, Hermes, OpenClaw, MCP, n8n."}
                         </li>
                         <li>
                           {
-                            "Piattaforma e strumenti: Codex, Claude Code, Sentry, JWT, Better Auth, Vite, TanStack Start, Cloudflare."
+                            "Piattaforma: Sentry, JWT, Grafana, Supabase, EXPO Services, Cloudflare, PostHog, Stripe."
                           }
                         </li>
                       </ul>
@@ -493,6 +453,44 @@ export function HomePage({ projects, experiences, articles }: Props) {
               >
                 <div className="journey-stage" data-journey-stage="">
                   <div className="desert-frame" aria-hidden="true">
+                    <div className="clouds">
+                      <div
+                        className="cloud"
+                        style={{
+                          "--top": "12%",
+                          "--w": "clamp(16rem,30vw,30rem)",
+                          "--dur": "46s",
+                          "--del": "-8s",
+                          "--o": "0.7",
+                        }}
+                      >
+                        <img src="/home/cloud-1.svg" alt="" />
+                      </div>
+                      <div
+                        className="cloud"
+                        style={{
+                          "--top": "48%",
+                          "--w": "clamp(18rem,34vw,34rem)",
+                          "--dur": "58s",
+                          "--del": "-30s",
+                          "--o": "0.85",
+                        }}
+                      >
+                        <img src="/home/cloud-2.svg" alt="" />
+                      </div>
+                      <div
+                        className="cloud"
+                        style={{
+                          "--top": "30%",
+                          "--w": "clamp(14rem,24vw,24rem)",
+                          "--dur": "40s",
+                          "--del": "-22s",
+                          "--o": "0.6",
+                        }}
+                      >
+                        <img src="/home/cloud-3.svg" alt="" />
+                      </div>
+                    </div>
                     <div className="desert" data-desert="">
                       <img
                         className="mtn"
@@ -661,18 +659,20 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   </div>
                   <ol className="track" data-track="">
                     <li className="journey-intro">
-                      <h2 className="h2" id="percorso-title">
-                        {"Una traversata, "}
-                        <span className="serif">{"tappa per tappa."}</span>
-                      </h2>
-                      <p className="lead">
-                        {
-                          "Dalla prima riga di C# a quindici anni fino al ruolo attuale: scuola, università e due aziende, raccontate con le parole di chi le ha attraversate."
-                        }
-                      </p>
-                      <p className="journey-hint" aria-hidden="true">
-                        {"Continua a scorrere"}
-                      </p>
+                      <div className="journey-intro-copy">
+                        <h2 className="h2" id="percorso-title">
+                          {"Una traversata, "}
+                          <span className="serif">{"tappa per tappa."}</span>
+                        </h2>
+                        <p className="lead">
+                          {
+                            "Dalla prima riga di C# a quindici anni fino al ruolo attuale: scuola, università e due aziende, raccontate con le parole di chi le ha attraversate."
+                          }
+                        </p>
+                        <p className="journey-hint" aria-hidden="true">
+                          {"Continua a scorrere"}
+                        </p>
+                      </div>
                     </li>
 
                     {experiences.map((experience) => (
@@ -694,6 +694,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           <Button
                             className="mt-4"
                             variant="secondary"
+                            nativeButton={false}
                             render={
                               <a
                                 href={`/career#experience-${encodeURIComponent(experience.id)}`}
@@ -904,13 +905,11 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   <div className="wrap">
                     <header className="layer-head">
                       <h2 className="h2" id="reperti-title" data-reveal="">
-                        {"Reperti, "}
-                        <span className="serif">{"strato dopo strato."}</span>
+                        {"Il valore di un’idea. "}
+                        <span className="serif">{"È ciò che rende possibile."}</span>
                       </h2>
                       <p className="lead" data-reveal="" style={{ "--i": "1" }}>
-                        {
-                          "Gli ultimi progetti consegnati, riportati in superficie: cosa fanno, con quali tecnologie e da quale ecosistema arrivano."
-                        }
+                        {"La cura conta quando rende più semplice ciò che prima non lo era."}
                       </p>
                     </header>
                     <div className="finds">
@@ -920,6 +919,17 @@ export function HomePage({ projects, experiences, articles }: Props) {
                             {index % 2 === 0 ? <AmmonitePit /> : <TrilobitePit />}
                           </div>
                           <div className="find-body">
+                            {project.image ? (
+                              <img
+                                className="home-content-cover"
+                                src={project.image}
+                                alt=""
+                                loading="lazy"
+                                decoding="async"
+                                width="768"
+                                height="432"
+                              />
+                            ) : null}
                             <p className="find-meta">
                               {project.company} · {project.role}
                             </p>
@@ -1130,6 +1140,17 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           {articles.length ? (
                             articles.map((article) => (
                               <Fragment key={article.id}>
+                                {article.cover ? (
+                                  <img
+                                    className="home-content-cover"
+                                    src={article.cover.url}
+                                    alt={article.cover.altText ?? ""}
+                                    loading="lazy"
+                                    decoding="async"
+                                    width="768"
+                                    height="432"
+                                  />
+                                ) : null}
                                 <h3>
                                   <a href={`/blog/${article.slug}`}>{article.title}</a>
                                 </h3>
@@ -1390,6 +1411,15 @@ export function HomePage({ projects, experiences, articles }: Props) {
               </div>
             </main>
           </div>
+        </div>
+        <div className="home-frame" aria-hidden="true">
+          <span className="home-frame-top" />
+          <span className="home-frame-left" />
+          <span className="home-frame-right" />
+          <span className="home-frame-corner" data-corner="tl" />
+          <span className="home-frame-corner" data-corner="tr" />
+          <span className="home-frame-corner" data-corner="bl" />
+          <span className="home-frame-corner" data-corner="br" />
         </div>
       </div>
       <div className="home-footer" data-home-footer="">

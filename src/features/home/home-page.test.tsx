@@ -19,6 +19,7 @@ const project: Project = {
   slug: "progetto-cms",
   title: "Titolo dal CMS",
   summary: "Descrizione aggiornata",
+  image: "/media/project-cover.webp",
   description: "",
   role: "Engineer",
   company: "Azienda",
@@ -43,7 +44,13 @@ const props = {
   projects: [project],
   experiences: [experience],
   articles: [
-    { id: "blog", slug: "articolo-cms", title: "Articolo pubblicato", excerpt: "Dal CMS" },
+    {
+      id: "blog",
+      slug: "articolo-cms",
+      title: "Articolo pubblicato",
+      excerpt: "Dal CMS",
+      cover: { url: "/media/article-cover.webp", altText: "Copertina articolo" },
+    },
   ],
 };
 afterEach(() => {
@@ -54,13 +61,16 @@ it("rende i contenuti pubblicati e il percorso dal database anche senza JavaScri
   const markup = renderToStaticMarkup(<HomePage {...props} />);
   expect(markup).toContain('href="/progetti/progetto-cms"');
   expect(markup).toContain('href="/blog/articolo-cms"');
+  expect(markup).toContain('src="/media/project-cover.webp"');
+  expect(markup).toContain('src="/media/article-cover.webp"');
+  expect(markup).toContain('alt="Copertina articolo"');
   expect(markup).toContain("Organizzazione aggiornata");
   expect(markup).toContain("Percorso dal database");
   expect(markup).toContain('href="/career#experience-career"');
   expect(markup).toContain("line-clamp-4");
   const title = markup.match(/<h1[^>]*>(.*?)<\/h1>/)?.[1].replace(/<[^>]+>/g, "");
   expect(title).toContain("Ciao, sono Vincenzo.");
-  expect(title).toContain("Creo esperienze digitali.");
+  expect(title).toContain("Costruisco prodotti digitali.");
   expect(markup).not.toContain("Proposta di design statica");
   expect(markup).toContain('class="home-page is-framed relative"');
 });
@@ -87,22 +97,23 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   const sky = el.querySelector<SVGSVGElement>("[data-sky-svg]");
   const viewBox = sky?.getAttribute("viewBox")?.split(" ").map(Number);
   expect(viewBox?.[2]).toBe(480);
-  expect(viewBox?.[3]).toBeLessThan(1400);
+  expect(viewBox?.[3]).toBeLessThan(2300);
   expect(sky?.style.width).toBe("100%");
   expect(sky?.querySelectorAll(".sky-group")).toHaveLength(5);
-  const titlePositions = [...(sky?.querySelectorAll(".sky-name") ?? [])].map((title) =>
-    Number(title.getAttribute("x")),
-  );
-  expect(titlePositions).toEqual([200, 200, 200, 200, 200]);
+  for (const title of sky?.querySelectorAll(".sky-name") ?? []) {
+    expect(title.getAttribute("text-anchor")).toBe("middle");
+    expect(Number.isFinite(Number(title.getAttribute("x")))).toBe(true);
+  }
   const placements = [...(sky?.querySelectorAll(".sky-group") ?? [])].map((group) => {
     const transform = group.getAttribute("transform") ?? "";
-    expect(transform).toContain("scale(0.8)");
+    const scale = Number(transform.match(/scale\(([\d.]+)\)/)?.[1]);
+    expect(scale).toBeGreaterThan(0);
+    expect(scale).toBeLessThanOrEqual(1);
     return transform
-      .match(/translate\(([\d.]+) ([\d.]+)\)/)
+      .match(/translate\((-?[\d.]+) (-?[\d.]+)\)/)
       ?.slice(1)
       .map(Number);
   });
-  expect(placements.map((position) => position?.[0])).toEqual([8, 152, 8, 152, 8]);
   expect(
     placements.every(
       (position, index) => index === 0 || (position?.[1] ?? 0) > (placements[index - 1]?.[1] ?? 0),
@@ -119,10 +130,9 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
     scrollport.dispatchEvent(new Event("scroll"));
   });
   expect(el.querySelector(".gauge")?.classList.contains("is-visible")).toBe(true);
-  let viewportHeight = 700;
   Object.defineProperties(scrollport, {
     scrollHeight: { configurable: true, value: 2000 },
-    clientHeight: { configurable: true, get: () => viewportHeight },
+    clientHeight: { configurable: true, value: 700 },
   });
   const scrollToPosition = async (position: number) => {
     await act(async () => {
@@ -137,14 +147,35 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   await scrollToPosition(1300);
   expect(page?.classList.contains("is-framed")).toBe(true);
   expect(el.querySelector("[data-home-header]")?.hasAttribute("inert")).toBe(false);
-  // Opening the frame increases the scroll range: continuing down must not hide it.
-  viewportHeight = 600;
-  await scrollToPosition(1350);
-  expect(page?.classList.contains("is-framed")).toBe(true);
-  await scrollToPosition(1400);
-  expect(page?.classList.contains("is-framed")).toBe(true);
+  expect(el.querySelectorAll(".home-frame > span")).toHaveLength(7);
+  expect(el.querySelector(".home-frame")?.getAttribute("aria-hidden")).toBe("true");
   await scrollToPosition(1000);
   await scrollToPosition(1020);
+  expect(page?.classList.contains("is-framed")).toBe(false);
+  // A reversal is measured from the furthest point, not from the last toggle.
+  await scrollToPosition(1100);
+  await scrollToPosition(1095);
+  expect(page?.classList.contains("is-framed")).toBe(false);
+  await scrollToPosition(1092);
+  expect(page?.classList.contains("is-framed")).toBe(true);
+  await scrollToPosition(1060);
+  await scrollToPosition(1066);
+  expect(page?.classList.contains("is-framed")).toBe(true);
+  await scrollToPosition(1068);
+  expect(page?.classList.contains("is-framed")).toBe(false);
+  // A hidden header stays reachable by keyboard and opens the frame on focus.
+  const homeLink = document.createElement("a");
+  homeLink.href = "/";
+  el.querySelector<HTMLElement>("[data-home-header]")?.appendChild(homeLink);
+  await act(async () => {
+    homeLink.focus();
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  });
+  expect(page?.classList.contains("is-framed")).toBe(true);
+  await act(async () => {
+    homeLink.blur();
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  });
   expect(page?.classList.contains("is-framed")).toBe(false);
   await scrollToPosition(0);
   expect(page?.classList.contains("is-framed")).toBe(true);

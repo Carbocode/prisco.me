@@ -229,9 +229,9 @@
   opacity: 0;
   visibility: hidden;
   transform: translate(-110%, -50%) scaleX(0.8);
+  translate: 0 0;
   transition:
-    left 550ms cubic-bezier(0.16, 1, 0.3, 1),
-    top 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    translate var(--frame-time) var(--frame-ease),
     transform 400ms ease-in,
     opacity 220ms ease-in,
     visibility 0s 400ms;
@@ -243,8 +243,7 @@
   visibility: visible;
   transform: translate(0, -50%) scaleX(1);
   transition:
-    left 550ms cubic-bezier(0.16, 1, 0.3, 1),
-    top 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    translate var(--frame-time) var(--frame-ease),
     transform 650ms cubic-bezier(0.22, 1.35, 0.36, 1),
     opacity 180ms ease-out,
     visibility 0s;
@@ -297,9 +296,9 @@
   background: #fff;
   transform: translateY(-50%);
 }
+/* Follow the open frame: beside its left edge, centred between header and footer peek. */
 .home-page.is-framed .gauge {
-  left: 12px;
-  top: calc(50% + var(--home-header-height, 68px) / 2);
+  translate: var(--frame-x) calc((var(--home-header-height, 68px) - var(--footer-peek)) / 2);
 }
 /* ==========================================================================
    01 · Cielo (hero)
@@ -313,7 +312,9 @@
   min-height: var(--home-viewport-height, 100svh);
   display: grid;
   align-items: end;
-  padding: calc(var(--bar-h) + 4rem) 0 clamp(5rem, 12vh, 8rem);
+  /* The open frame covers the top and bottom of the first screen: keep the copy inside it. */
+  padding: calc(var(--bar-h) + 4rem + var(--home-header-height, 68px)) 0
+    calc(clamp(5rem, 12vh, 8rem) + var(--footer-peek, 0px));
   background: linear-gradient(180deg, var(--night-0) 0%, #081428 55%, var(--night-1) 100%);
   overflow: hidden;
   isolation: isolate;
@@ -355,6 +356,18 @@
   width: 100%;
   height: auto;
   animation: home-twinkle var(--tw, 5s) ease-in-out var(--twd, 0s) infinite;
+}
+.home-traversata .star::after {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, #edf5ff, transparent) center / 100% 1px no-repeat,
+    linear-gradient(transparent, #edf5ff, transparent) center / 1px 100% no-repeat,
+    radial-gradient(ellipse, #c6dfff80, transparent 55%);
+  opacity: 0;
+  animation: home-sky-glint var(--tw, 5s) ease-in-out calc(var(--in, 0ms) * -8) infinite;
 }
 .home-traversata.js .star img {
   opacity: 0;
@@ -481,8 +494,10 @@
 }
 
 .home-traversata .clouds {
-  inset: auto 0 0 0;
-  height: 46%;
+  position: absolute;
+  inset: 0 0 auto;
+  height: 35%;
+  pointer-events: none;
   overflow: hidden;
 }
 .home-traversata .cloud {
@@ -642,7 +657,7 @@
 .home-traversata .scroll-cue {
   position: absolute;
   left: 50%;
-  bottom: 1.25rem;
+  bottom: calc(1.25rem + var(--footer-peek, 0px));
   display: grid;
   justify-items: center;
   gap: 0.5rem;
@@ -690,7 +705,7 @@
 
 .home-traversata .horizon-sky {
   position: relative;
-  padding: clamp(6rem, 14vw, 11rem) 0 clamp(5rem, 10vw, 8rem);
+  padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(3rem, 6vw, 5rem);
   background: linear-gradient(180deg, var(--night-1) 0%, var(--night-2) 45%, var(--night-3) 100%);
   overflow: hidden;
 }
@@ -708,12 +723,21 @@
   position: relative;
 }
 
+.home-traversata .approach-label {
+  margin-bottom: 1.25rem;
+  color: var(--ink);
+  font-family: var(--f-display);
+  font-size: clamp(2.2rem, 1.5rem + 2.5vw, 3.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
 .home-traversata .manifesto {
-  margin-top: 2.25rem;
-  max-width: 62rem;
+  margin-top: 0;
+  max-width: 48rem;
   font-family: var(--f-display);
   font-weight: 500;
-  font-size: clamp(1.75rem, 0.9rem + 3.1vw, 3.9rem);
+  font-size: clamp(1.35rem, 1rem + 1.2vw, 2rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
   text-wrap: balance;
@@ -739,7 +763,7 @@
 .home-traversata .crafts {
   display: grid;
   gap: 1px;
-  margin-top: clamp(4rem, 8vw, 6.5rem);
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
   border-radius: 1.5rem;
   overflow: hidden;
   background: rgba(186, 230, 253, 0.14);
@@ -751,7 +775,7 @@
 }
 .home-traversata .craft {
   position: relative;
-  padding: clamp(1.5rem, 3vw, 2.4rem);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
   background: linear-gradient(180deg, rgba(11, 26, 49, 0.94), rgba(22, 39, 67, 0.94));
   overflow: hidden;
   transition: background-color 400ms;
@@ -775,14 +799,14 @@
 .home-traversata .craft-num {
   font-family: var(--f-serif);
   font-style: italic;
-  font-size: 3.4rem;
+  font-size: 2rem;
   line-height: 1;
   color: rgba(186, 230, 253, 0.55);
 }
 .home-traversata .craft svg {
   position: absolute;
-  top: clamp(1.5rem, 3vw, 2.4rem);
-  right: clamp(1.5rem, 3vw, 2.4rem);
+  top: clamp(1.25rem, 2vw, 1.75rem);
+  right: clamp(1.25rem, 2vw, 1.75rem);
   width: 2.25rem;
   height: 2.25rem;
   color: var(--link);
@@ -792,8 +816,8 @@
   transform: rotate(-10deg) scale(1.08);
 }
 .home-traversata .craft h3 {
-  position: relative;
-  margin-top: 2.5rem;
+  position: static;
+  margin-top: 1.25rem;
   font-family: var(--f-display);
   font-weight: 600;
   font-size: clamp(1.4rem, 1.1rem + 0.8vw, 1.85rem);
@@ -802,9 +826,9 @@
 }
 .home-traversata .craft ul {
   position: relative;
-  margin-top: 1.25rem;
+  margin-top: 0.875rem;
   display: grid;
-  gap: 0.45rem;
+  gap: 0.3rem;
   color: var(--ink-body);
   font-size: 0.95rem;
 }
@@ -827,27 +851,25 @@
   color: var(--ink);
 }
 
+.home-traversata .craft-link {
+  color: inherit;
+  text-decoration: none;
+}
+.home-traversata .craft-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.home-traversata .craft:focus-within {
+  outline: 2px solid var(--link);
+  outline-offset: -4px;
+}
 /* Costellazioni: un'unica carta celeste generata da dati, senza card. */
 .home-traversata .sky-map {
   display: grid;
   gap: 2rem;
-  margin-top: clamp(5rem, 10vw, 8rem);
-}
-.home-traversata .sky-map-head {
-  text-align: center;
-}
-.home-traversata .sky-map-head h3 {
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(1.9rem, 3.5vw, 3.1rem);
-  line-height: 1.12;
-  letter-spacing: -0.04em;
-}
-.home-traversata .sky-map-head h3 span {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 400;
-  color: #c4d8ee;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
 }
 .home-traversata .sky-chart {
   position: relative;
@@ -857,7 +879,7 @@
 }
 @media (max-width: 759px) {
   .home-traversata .sky-map {
-    margin-top: 3rem;
+    margin-top: 1.5rem;
     gap: 1rem;
   }
 }
@@ -867,6 +889,31 @@
 }
 .home-traversata .sky-chart[data-sky-layout="tall"] .sky-label {
   font-size: 16px;
+}
+.home-traversata .sky-chart-title {
+  max-width: 24rem;
+  text-align: center;
+  font-family: var(--f-display);
+  font-size: clamp(1.35rem, 2.5vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.home-traversata .sky-chart-title span {
+  display: block;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--link-hover);
+}
+.home-traversata .sky-chart[data-sky-layout="wide"] .sky-chart-title {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  width: 30%;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 .home-traversata .sky-chart-svg {
   display: block;
@@ -1109,6 +1156,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-traversata .star::after,
   .home-traversata .sky-star .sky-spark,
   .home-traversata .sky-glint,
   .home-traversata .sky-dust.is-twinkling,
@@ -1260,7 +1308,13 @@
 }
 
 .home-traversata .journey-intro {
+  position: relative;
   padding: clamp(6rem, 12vw, 9rem) 0 3rem;
+}
+.home-traversata .journey-intro-copy {
+  text-shadow:
+    0 2px 10px rgba(6, 16, 30, 0.6),
+    0 0 24px rgba(6, 16, 30, 0.45);
 }
 .home-traversata .journey-intro .h2 {
   margin-top: 1.5rem;
@@ -1687,8 +1741,9 @@
 }
 .home-traversata .layer-core {
   background: #7a2a12;
-  padding: clamp(7rem, 12vw, 9rem) 0 0;
-  min-height: clamp(40rem, 100vh, 56rem);
+  /* The footer peek covers the end of the story: reserve it so the last screen stays visible. */
+  padding: clamp(7rem, 12vw, 9rem) 0 var(--footer-peek, 0px);
+  min-height: calc(clamp(40rem, 100vh, 56rem) + var(--footer-peek, 0px));
   text-align: center;
 }
 .home-traversata .bands {
@@ -1924,6 +1979,16 @@
 .home-traversata .geode:focus-within .geode-body {
   border-color: rgba(253, 242, 228, 0.32);
   transform: translateY(-4px);
+}
+.home-traversata .home-content-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0.8rem;
+  margin-bottom: 1.25rem;
+  background: rgba(10, 2, 0, 0.2);
 }
 .home-traversata .find-meta {
   font-family: var(--f-mono);
@@ -2218,34 +2283,54 @@
 /* The story and footer share one screen; scrolling never leaks to the document. */
 .home-site {
   --footer-peek: clamp(88px, 12dvh, 112px);
+  --frame-x: 12px;
+  --frame-r: 18px;
+  --frame-time: 550ms;
+  --frame-ease: cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   height: 100dvh;
   overflow: hidden;
   background: #000;
 }
+@media (max-width: 767px) {
+  .home-site {
+    --frame-x: 8px;
+    --frame-r: 12px;
+  }
+}
 .home-footer {
   position: absolute;
-  inset: auto 0 0;
+  inset: auto var(--home-scrollbar, 0px) 0 0;
   z-index: 50;
   height: var(--footer-peek);
   overflow: hidden;
   background: #000;
   transform: translateY(0);
   transition:
-    height 550ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 550ms cubic-bezier(0.16, 1, 0.3, 1),
+    height var(--frame-time) var(--frame-ease),
+    transform var(--frame-time) var(--frame-ease),
     visibility 0s;
 }
+/* Hide the peek only once it has left the screen, so no gap opens behind it. */
 .home-page:not(.is-framed) + .home-footer {
   transform: translateY(100%);
   visibility: hidden;
+  transition:
+    height var(--frame-time) var(--frame-ease),
+    transform var(--frame-time) var(--frame-ease),
+    visibility 0s var(--frame-time);
 }
 .home-site[data-footer-open="true"] .home-footer {
+  right: 0;
   height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
   transform: translateY(0);
   visibility: visible;
+  transition:
+    height var(--frame-time) var(--frame-ease),
+    transform var(--frame-time) var(--frame-ease),
+    visibility 0s;
 }
 .home-footer-controls {
   position: sticky;
@@ -2256,60 +2341,130 @@
   background: #000;
   z-index: 1;
 }
-/* A real viewport frame reserves layout space around the scrolling page. */
+/* The scroller keeps one size: opening the frame never changes layout or the scroll range. */
 .home-page {
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  height: 100%;
   overflow: hidden;
   background: #000;
-  padding: 0;
-  transition:
-    padding 550ms cubic-bezier(0.16, 1, 0.3, 1),
-    height 550ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.home-page.is-framed {
-  height: calc(100dvh - var(--footer-peek));
-  padding: var(--home-header-height, 68px) 12px 0;
 }
 .home-viewport {
-  flex: 1;
-  min-height: 0;
+  height: 100%;
   width: 100%;
   overflow: auto;
   overflow-anchor: none;
   overscroll-behavior: contain;
-  border-radius: 0;
-  transition: border-radius 550ms cubic-bezier(0.16, 1, 0.3, 1);
+  /* Focus and anchors land inside the area left visible by the open frame. */
+  scroll-padding: var(--home-header-height, 68px) 0 var(--footer-peek);
 }
-.home-page.is-framed .home-viewport {
-  border-radius: 18px;
+/* The frame is drawn above the content and enters with transforms only.
+ * Bars and corners share duration and easing, so reversals stay aligned. */
+.home-frame {
+  position: absolute;
+  inset: 0 var(--home-scrollbar, 0px) 0 0;
+  z-index: 35;
+  overflow: hidden;
+  pointer-events: none;
+}
+.home-frame > span {
+  position: absolute;
+  background: #000;
+  transform: none;
+  transition: transform var(--frame-time) var(--frame-ease);
+}
+.home-frame-top {
+  inset: 0 0 auto;
+  height: var(--home-header-height, 68px);
+}
+.home-frame-left,
+.home-frame-right {
+  top: 0;
+  bottom: 0;
+  width: var(--frame-x);
+}
+.home-frame-left {
+  left: 0;
+}
+.home-frame-right {
+  right: 0;
+}
+.home-frame > .home-frame-corner {
+  width: var(--frame-r);
+  height: var(--frame-r);
+  --corner-hole: transparent calc(var(--frame-r) - 0.5px), #000 var(--frame-r);
+  transform: translate(0, 0) scale(1);
+}
+.home-frame-corner[data-corner="tl"] {
+  top: var(--home-header-height, 68px);
+  left: var(--frame-x);
+  transform-origin: 0 0;
+  background: radial-gradient(circle at 100% 100%, var(--corner-hole));
+}
+.home-frame-corner[data-corner="tr"] {
+  top: var(--home-header-height, 68px);
+  right: var(--frame-x);
+  transform-origin: 100% 0;
+  background: radial-gradient(circle at 0 100%, var(--corner-hole));
+}
+.home-frame-corner[data-corner="bl"] {
+  bottom: var(--footer-peek);
+  left: var(--frame-x);
+  transform-origin: 0 100%;
+  background: radial-gradient(circle at 100% 0, var(--corner-hole));
+}
+.home-frame-corner[data-corner="br"] {
+  bottom: var(--footer-peek);
+  right: var(--frame-x);
+  transform-origin: 100% 100%;
+  background: radial-gradient(circle at 0 0, var(--corner-hole));
+}
+.home-page:not(.is-framed) .home-frame-top {
+  transform: translateY(-100%);
+}
+.home-page:not(.is-framed) .home-frame-left {
+  transform: translateX(-100%);
+}
+.home-page:not(.is-framed) .home-frame-right {
+  transform: translateX(100%);
+}
+/* Each corner travels with the two edges it joins and grows like the old border radius. */
+.home-page:not(.is-framed) .home-frame-corner[data-corner="tl"] {
+  transform: translate(calc(-1 * var(--frame-x)), calc(-1 * var(--home-header-height, 68px)))
+    scale(0);
+}
+.home-page:not(.is-framed) .home-frame-corner[data-corner="tr"] {
+  transform: translate(var(--frame-x), calc(-1 * var(--home-header-height, 68px))) scale(0);
+}
+.home-page:not(.is-framed) .home-frame-corner[data-corner="bl"] {
+  transform: translate(calc(-1 * var(--frame-x)), var(--footer-peek)) scale(0);
+}
+.home-page:not(.is-framed) .home-frame-corner[data-corner="br"] {
+  transform: translate(var(--frame-x), var(--footer-peek)) scale(0);
 }
 .home-scroll-header {
   transform: translateY(var(--hero-header-y, 0px));
 }
+/* A hidden header stays focusable: keyboard focus reopens the frame instead of skipping the nav. */
 .home-scroll-header.is-floating {
   position: absolute;
-  inset: 0 0 auto;
-  width: 100%;
+  inset: 0 var(--home-scrollbar, 0px) auto 0;
+  width: auto;
   z-index: 45;
   opacity: 0;
-  visibility: hidden;
+  pointer-events: none;
   transform: translateY(-12px);
   transition:
-    transform 350ms ease,
-    opacity 200ms,
-    visibility 0s 350ms;
+    transform var(--frame-time) var(--frame-ease),
+    opacity 200ms;
 }
 .home-scroll-header.is-floating.is-visible,
 .home-scroll-header.is-floating:focus-within {
   opacity: 1;
-  visibility: visible;
+  pointer-events: auto;
   transform: translateY(0);
   transition:
-    transform 550ms cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 250ms 100ms,
-    visibility 0s;
+    transform var(--frame-time) var(--frame-ease),
+    opacity 250ms 100ms;
 }
 @media (max-width: 767px) {
   .home-page .gauge {
@@ -2322,22 +2477,12 @@
   .home-page .gauge-rail {
     height: clamp(96px, 18svh, 160px);
   }
-  .home-page.is-framed .gauge {
-    left: 8px;
-  }
-  .home-page.is-framed {
-    padding: var(--home-header-height, 68px) 8px 0;
-  }
-  .home-page.is-framed .home-viewport {
-    border-radius: 12px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .home-footer,
-  .home-page,
+  .home-frame > span,
   .home-page .gauge,
   .home-page .gauge.is-visible,
-  .home-viewport,
   .home-scroll-header.is-floating {
     transition: none;
   }
