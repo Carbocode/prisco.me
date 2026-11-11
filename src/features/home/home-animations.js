@@ -599,27 +599,26 @@ export function animateHome(container) {
     measureHeader();
     observeResize(measureHeader).observe(header);
   }
+  // The frame is an overlay: toggling it never changes the scroll range, so the
+  // edges of the story can always open it without feeding back into this logic.
   let headerAnchor = scroller.scrollTop;
   let headerVisible = true;
-  let bottomAnchor = null;
   let storyStarting = false;
   let storyStartTimer;
   const updateHeader = (y, maxScroll = scroller.scrollHeight - scroller.clientHeight) => {
     if (!header) return;
-    // Keep the frame open while its transition reduces the scroll viewport.
-    if (maxScroll > 0 && y >= maxScroll - 8) bottomAnchor = y;
-    else if (bottomAnchor !== null) {
-      bottomAnchor = y < bottomAnchor - 8 ? null : Math.max(bottomAnchor, y);
-    }
-    const delta = y - headerAnchor;
     if (storyStarting) {
       headerVisible = false;
       headerAnchor = y;
-    } else if (y <= 8 || bottomAnchor !== null) {
+    } else if (y <= 8 || (maxScroll > 0 && y >= maxScroll - 8)) {
       headerVisible = true;
       headerAnchor = y;
-    } else if (Math.abs(delta) >= 8) {
-      headerVisible = delta < 0;
+    } else if (headerVisible ? y < headerAnchor : y > headerAnchor) {
+      // Follow the scroll while it confirms the current state: a reversal is
+      // measured from the furthest point reached, not from the last toggle.
+      headerAnchor = y;
+    } else if (Math.abs(y - headerAnchor) >= 8) {
+      headerVisible = !headerVisible;
       headerAnchor = y;
     }
     const interacting =
@@ -628,10 +627,20 @@ export function animateHome(container) {
     page.classList.toggle("is-framed", visible);
     header.classList.add("is-floating");
     header.classList.toggle("is-visible", visible);
-    header.inert = !visible;
   };
 
   const scrollCue = $(".scroll-cue");
+  // Any new input takes over from the cue, so its final jump cannot undo a reversal.
+  const cancelStoryStart = () => {
+    if (!storyStarting) return;
+    clearTimeout(storyStartTimer);
+    storyStarting = false;
+    headerAnchor = scroller.scrollTop;
+    requestFrame();
+  };
+  ["wheel", "touchstart", "pointerdown", "keydown"].forEach((type) =>
+    listen(scroller, type, cancelStoryStart, { passive: true }),
+  );
   listen(scrollCue, "click", (event) => {
     event.preventDefault();
     clearTimeout(storyStartTimer);
@@ -857,8 +866,12 @@ export function animateHome(container) {
     }
   };
 
-  let resizeTimer;
+  const site = page.parentElement;
+  let viewportSize = "";
   const layout = () => {
+    viewportSize = `${scroller.clientWidth}x${scroller.clientHeight}`;
+    // Classic scrollbars stay outside the overlay frame, header and footer peek.
+    site.style.setProperty("--home-scrollbar", `${scroller.offsetWidth - scroller.clientWidth}px`);
     scrollOrigin = scroller.getBoundingClientRect().top;
     const previous = { start: jTop, distance: jDist };
     const previousScroll = scroller.scrollTop;
@@ -895,10 +908,11 @@ export function animateHome(container) {
     },
     { passive: true },
   );
-  listen(window, "resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(layout, 120);
-  });
+  // Keyboard focus reaching the hidden header opens the frame around it.
+  if (header) {
+    listen(header, "focusin", requestFrame);
+    listen(header, "focusout", requestFrame);
+  }
   listen(horizontalMQ, "change", layout);
   listen(reduceMQ, "change", () => {
     layout();
@@ -907,10 +921,10 @@ export function animateHome(container) {
       $$("[data-reveal], [data-core]").forEach((el) => el.classList.add("is-in"));
     }
   });
-  listen(page, "transitionend", (event) => {
-    if (event.target === page && event.propertyName === "padding-left") layout();
-  });
-  observeResize(layout).observe(scroller);
+  // Only real viewport changes (window, rotation, scrollbar) reach the scroller now.
+  observeResize(() => {
+    if (`${scroller.clientWidth}x${scroller.clientHeight}` !== viewportSize) layout();
+  }).observe(scroller);
   listen(window, "load", layout);
   if (document.fonts && document.fonts.ready)
     void document.fonts.ready.then(() => {
@@ -922,16 +936,15 @@ export function animateHome(container) {
     disposed = true;
     disposers.forEach((fn) => fn());
     pendingFrames.forEach(cancelAnimationFrame);
-    clearTimeout(resizeTimer);
     clearTimeout(gaugeTimer);
     clearTimeout(storyStartTimer);
     root.classList.remove("js");
     page.classList.remove("is-framed", "has-home-motion");
     page.style.removeProperty("--doc-p");
     page.style.removeProperty("--home-header-height");
+    site.style.removeProperty("--home-scrollbar");
     if (header) {
       header.classList.remove("is-floating", "is-visible");
-      header.inert = false;
       header.style.removeProperty("--hero-header-y");
     }
     manifesto.replaceChildren(...originalManifesto);

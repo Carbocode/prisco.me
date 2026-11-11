@@ -1391,6 +1391,15 @@ export function HomePage({ projects, experiences, articles }: Props) {
             </main>
           </div>
         </div>
+        <div className="home-frame" aria-hidden="true">
+          <span className="home-frame-top" />
+          <span className="home-frame-left" />
+          <span className="home-frame-right" />
+          <span className="home-frame-corner" data-corner="tl" />
+          <span className="home-frame-corner" data-corner="tr" />
+          <span className="home-frame-corner" data-corner="bl" />
+          <span className="home-frame-corner" data-corner="br" />
+        </div>
       </div>
       <div className="home-footer" data-home-footer="">
         <div className="home-footer-controls">

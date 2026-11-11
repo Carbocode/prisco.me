@@ -53,7 +53,20 @@ it("lascia al pulsante primario il proprio colore di testo", () => {
 
 it("mostra l’indicatore anche senza un breakpoint desktop e non aggiunge un bordo inferiore", () => {
   expect(declarations(".home-page.has-home-motion .gauge").display).toBe("block");
-  expect(declarations(".home-page.is-framed").padding).toBe(
-    "var(--home-header-height, 68px) 12px 0",
+});
+
+it("disegna la cornice sopra lo scroller animando soltanto transform", () => {
+  expect(declarations(".home-page.is-framed")).toEqual({});
+  expect(declarations(".home-page").padding).toBeUndefined();
+  expect(declarations(".home-viewport").transition).toBeUndefined();
+  expect(declarations(".home-frame > span").transition).toBe(
+    "transform var(--frame-time) var(--frame-ease)",
   );
+  expect(declarations(".home-frame").top).toBeUndefined();
+  expect(declarations(".home-frame")["pointer-events"]).toBe("none");
+  // The peek stays visible until it has slid away, so no black gap opens behind it.
+  expect(declarations(".home-page:not(.is-framed) + .home-footer").transition).toContain(
+    "visibility 0s var(--frame-time)",
+  );
+  expect(declarations(".home-page .gauge").transition).not.toMatch(/\b(left|top) /);
 });

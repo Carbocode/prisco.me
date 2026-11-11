@@ -119,10 +119,9 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
     scrollport.dispatchEvent(new Event("scroll"));
   });
   expect(el.querySelector(".gauge")?.classList.contains("is-visible")).toBe(true);
-  let viewportHeight = 700;
   Object.defineProperties(scrollport, {
     scrollHeight: { configurable: true, value: 2000 },
-    clientHeight: { configurable: true, get: () => viewportHeight },
+    clientHeight: { configurable: true, value: 700 },
   });
   const scrollToPosition = async (position: number) => {
     await act(async () => {
@@ -137,14 +136,35 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   await scrollToPosition(1300);
   expect(page?.classList.contains("is-framed")).toBe(true);
   expect(el.querySelector("[data-home-header]")?.hasAttribute("inert")).toBe(false);
-  // Opening the frame increases the scroll range: continuing down must not hide it.
-  viewportHeight = 600;
-  await scrollToPosition(1350);
-  expect(page?.classList.contains("is-framed")).toBe(true);
-  await scrollToPosition(1400);
-  expect(page?.classList.contains("is-framed")).toBe(true);
+  expect(el.querySelectorAll(".home-frame > span")).toHaveLength(7);
+  expect(el.querySelector(".home-frame")?.getAttribute("aria-hidden")).toBe("true");
   await scrollToPosition(1000);
   await scrollToPosition(1020);
+  expect(page?.classList.contains("is-framed")).toBe(false);
+  // A reversal is measured from the furthest point, not from the last toggle.
+  await scrollToPosition(1100);
+  await scrollToPosition(1095);
+  expect(page?.classList.contains("is-framed")).toBe(false);
+  await scrollToPosition(1092);
+  expect(page?.classList.contains("is-framed")).toBe(true);
+  await scrollToPosition(1060);
+  await scrollToPosition(1066);
+  expect(page?.classList.contains("is-framed")).toBe(true);
+  await scrollToPosition(1068);
+  expect(page?.classList.contains("is-framed")).toBe(false);
+  // A hidden header stays reachable by keyboard and opens the frame on focus.
+  const homeLink = document.createElement("a");
+  homeLink.href = "/";
+  el.querySelector<HTMLElement>("[data-home-header]")?.appendChild(homeLink);
+  await act(async () => {
+    homeLink.focus();
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  });
+  expect(page?.classList.contains("is-framed")).toBe(true);
+  await act(async () => {
+    homeLink.blur();
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  });
   expect(page?.classList.contains("is-framed")).toBe(false);
   await scrollToPosition(0);
   expect(page?.classList.contains("is-framed")).toBe(true);
