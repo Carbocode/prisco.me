@@ -43,7 +43,8 @@ export function articleRepository(db: CmsDb) {
       dateTo?: Date;
     }) {
       const filters = [isNull(cmsArticles.deletedAt)];
-      if (input.status) filters.push(eq(cmsArticles.status, input.status));
+      const effectiveStatus = sql<string>`case when ${cmsArticles.status} = 'scheduled' and ${cmsArticles.publishedAt} <= ${Date.now()} then 'published' else ${cmsArticles.status} end`;
+      if (input.status) filters.push(eq(effectiveStatus, input.status));
       if (input.authorId) filters.push(eq(cmsArticles.authorId, input.authorId));
       if (input.categoryId)
         filters.push(
@@ -95,6 +96,10 @@ export function articleRepository(db: CmsDb) {
       return {
         items: items.map((item) => ({
           ...item,
+          status:
+            item.status === "scheduled" && item.publishedAt && item.publishedAt <= new Date()
+              ? "published"
+              : item.status,
           categories: categoryRows
             .filter((category) => category.articleId === item.id)
             .map((category) => category.name),
@@ -136,6 +141,7 @@ export function articleRepository(db: CmsDb) {
         .where(
           and(
             isNull(cmsArticles.deletedAt),
+            sql`exists (select 1 from cms_article_categories ac join cms_categories c on c.id = ac.category_id where ac.article_id = ${cmsArticles.id} and c.deleted_at is null)`,
             inArray(cmsArticles.status, ["published", "scheduled"]),
             lte(cmsArticles.publishedAt, new Date()),
             cursorFilter,
@@ -175,6 +181,7 @@ export function articleRepository(db: CmsDb) {
             eq(cmsCategories.slug, categorySlug),
             isNull(cmsCategories.deletedAt),
             isNull(cmsArticles.deletedAt),
+            sql`exists (select 1 from cms_article_categories ac join cms_categories c on c.id = ac.category_id where ac.article_id = ${cmsArticles.id} and c.deleted_at is null)`,
             inArray(cmsArticles.status, ["published", "scheduled"]),
             lte(cmsArticles.publishedAt, new Date()),
           ),
@@ -189,7 +196,7 @@ export function articleRepository(db: CmsDb) {
           title: cmsArticles.title,
           slug: cmsArticles.slug,
           excerpt: cmsArticles.excerpt,
-          content: cmsArticles.content,
+          content: sql<string>`'{"type":"doc","content":[]}'`,
           readingTimeMinutes: cmsArticles.readingTimeMinutes,
           publishedAt: cmsArticles.publishedAt,
           updatedAt: cmsArticles.updatedAt,
@@ -209,6 +216,7 @@ export function articleRepository(db: CmsDb) {
         .where(
           and(
             isNull(cmsArticles.deletedAt),
+            sql`exists (select 1 from cms_article_categories ac join cms_categories c on c.id = ac.category_id where ac.article_id = ${cmsArticles.id} and c.deleted_at is null)`,
             inArray(cmsArticles.status, ["published", "scheduled"]),
             lte(cmsArticles.publishedAt, new Date()),
           ),
@@ -223,6 +231,7 @@ export function articleRepository(db: CmsDb) {
           and(
             eq(cmsArticles.slug, slug),
             isNull(cmsArticles.deletedAt),
+            sql`exists (select 1 from cms_article_categories ac join cms_categories c on c.id = ac.category_id where ac.article_id = ${cmsArticles.id} and c.deleted_at is null)`,
             inArray(cmsArticles.status, ["published", "scheduled"]),
             lte(cmsArticles.publishedAt, new Date()),
           ),

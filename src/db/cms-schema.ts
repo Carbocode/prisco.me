@@ -72,6 +72,9 @@ export const cmsOrganizations = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     type: text("organization_type").notNull(),
+    legacyType: text("type")
+      .notNull()
+      .$defaultFn(() => "company"),
     description: text("description"),
     websiteUrl: text("website_url"),
     createdAt: createdAt(),

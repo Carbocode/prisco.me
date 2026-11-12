@@ -14,6 +14,7 @@ import {
   getPreviewArticle,
   listAdminArticles,
   listArticleRevisions,
+  listArticleExperiences,
   publishArticle,
   restoreArticle,
   restoreArticleRevision,
@@ -60,3 +61,12 @@ export const restoreArticleRevisionFn = createServerFn({ method: "POST" })
     }),
   )
   .handler(({ data }) => restoreArticleRevision(data));
+
+export const articleStatsFn = createServerFn({ method: "GET" }).handler(async () => {
+  const { getArticleStats } = await import("./article.service");
+  return getArticleStats();
+});
+
+export const listArticleExperiencesFn = createServerFn({ method: "GET" }).handler(() =>
+  listArticleExperiences(),
+);

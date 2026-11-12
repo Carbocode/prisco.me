@@ -28,7 +28,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
@@ -48,8 +48,11 @@ import {
   listTagsFn,
   updateTagFn,
 } from "@/features/cms/server/tag.functions";
+import { authClient } from "@/lib/auth-client";
+import { roleHasPermission } from "@/lib/cms-permissions";
 
 type Tag = {
+  marqueeRow: number | null;
   id: string;
   name: string;
   slug: string;
@@ -69,11 +72,14 @@ export const Route = createFileRoute("/dashboard/cms/tags")({
 });
 
 function TagsPage() {
+  const { data: session } = authClient.useSession();
+  const canManage = roleHasPermission(session?.user.role, "cmsTag", "update");
   const { tags, categories } = Route.useLoaderData();
   const router = useRouter();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [icon, setIcon] = useState("");
+  const [marqueeRow, setMarqueeRow] = useState<number | null>(null);
   const [color, setColor] = useState("text-ink-soft bg-white/10 border-white/15");
   const [categoryId, setCategoryId] = useState(categories[0]?.id ?? "");
   const [query, setQuery] = useState("");
@@ -123,6 +129,7 @@ function TagsPage() {
           categoryId,
           icon: icon || null,
           color,
+          marqueeRow,
           mark: null,
           fluentIcon: null,
         },
@@ -158,97 +165,111 @@ function TagsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(event) => void create(event)}>
-            <FieldGroup className="grid items-end md:grid-cols-2 xl:grid-cols-(--layout-grid-cols-cms-search)">
-              <Field>
-                <FieldLabel htmlFor="tag-name">Nome</FieldLabel>
-                <Input
-                  id="tag-name"
-                  value={name}
-                  required
-                  onChange={(event) => {
-                    setName(event.target.value);
-                    if (!slug) setSlug(slugify(event.target.value));
-                  }}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="tag-slug">Slug</FieldLabel>
-                <Input
-                  id="tag-slug"
-                  value={slug}
-                  pattern={slugInputPattern}
-                  title="Lo slug non puo contenere solo numeri"
-                  required
-                  onChange={(event) => setSlug(event.target.value)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel>Categoria</FieldLabel>
-                <Select
-                  items={categories.map((category) => ({
-                    value: category.id,
-                    label: category.name,
-                  }))}
-                  value={categoryId}
-                  onValueChange={(value) => setCategoryId(value ?? "")}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="tag-icon">Icona</FieldLabel>
-                <Input
-                  id="tag-icon"
-                  value={icon}
-                  maxLength={80}
-                  placeholder="Es. simple-icons:react"
-                  onChange={(event) => setIcon(event.target.value)}
-                />
-                <FieldDescription>
-                  <Badge variant="outline">
-                    <SkillGlyph
-                      skill={{ name: name || "Anteprima", icon: icon || null, color }}
-                      size={12}
-                    />
-                    {icon || "Fallback"}
-                  </Badge>
-                </FieldDescription>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="tag-color">Colore</FieldLabel>
-                <Input
-                  id="tag-color"
-                  value={color}
-                  onChange={(event) => setColor(event.target.value)}
-                />
-                <FieldDescription>
-                  <Badge>
-                    <SkillGlyph
-                      skill={{ name: name || "Anteprima", icon: icon || null, color }}
-                      size={12}
-                    />
-                    {name || "Anteprima tag"}
-                  </Badge>
-                </FieldDescription>
-              </Field>
-              <Button size="sm" type="submit" disabled={pending}>
-                <Plus data-icon="inline-start" />
-                {pending ? "Creazione…" : "Crea"}
-              </Button>
-            </FieldGroup>
-          </form>
+          <FieldSet disabled={!canManage}>
+            <form onSubmit={(event) => void create(event)}>
+              <FieldGroup className="grid items-end md:grid-cols-2 xl:grid-cols-(--layout-grid-cols-cms-search)">
+                <Field>
+                  <FieldLabel htmlFor="tag-name">Nome</FieldLabel>
+                  <Input
+                    id="tag-name"
+                    value={name}
+                    required
+                    onChange={(event) => {
+                      setName(event.target.value);
+                      if (!slug) setSlug(slugify(event.target.value));
+                    }}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="tag-slug">Slug</FieldLabel>
+                  <Input
+                    id="tag-slug"
+                    value={slug}
+                    pattern={slugInputPattern}
+                    title="Lo slug non puo contenere solo numeri"
+                    required
+                    onChange={(event) => setSlug(event.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>Categoria</FieldLabel>
+                  <Select
+                    items={categories.map((category) => ({
+                      value: category.id,
+                      label: category.name,
+                    }))}
+                    value={categoryId}
+                    onValueChange={(value) => setCategoryId(value ?? "")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="tag-icon">Icona</FieldLabel>
+                  <Input
+                    id="tag-icon"
+                    value={icon}
+                    maxLength={80}
+                    placeholder="Es. simple-icons:react"
+                    onChange={(event) => setIcon(event.target.value)}
+                  />
+                  <FieldDescription>
+                    <Badge variant="outline">
+                      <SkillGlyph
+                        skill={{ name: name || "Anteprima", icon: icon || null, color }}
+                        size={12}
+                      />
+                      {icon || "Fallback"}
+                    </Badge>
+                  </FieldDescription>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="tag-color">Colore</FieldLabel>
+                  <Input
+                    id="tag-color"
+                    value={color}
+                    onChange={(event) => setColor(event.target.value)}
+                  />
+                  <FieldDescription>
+                    <Badge>
+                      <SkillGlyph
+                        skill={{ name: name || "Anteprima", icon: icon || null, color }}
+                        size={12}
+                      />
+                      {name || "Anteprima tag"}
+                    </Badge>
+                  </FieldDescription>
+                </Field>
+                <Button size="sm" type="submit" disabled={pending}>
+                  <Plus data-icon="inline-start" />
+                  {pending ? "Creazione…" : "Crea"}
+                </Button>
+                <Field>
+                  <FieldLabel>Riga marquee home (1–4, vuoto per nascondere)</FieldLabel>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={4}
+                    value={marqueeRow ?? ""}
+                    onChange={(event) =>
+                      setMarqueeRow(event.target.value ? event.target.valueAsNumber : null)
+                    }
+                  />
+                </Field>
+              </FieldGroup>
+            </form>
+          </FieldSet>
         </CardContent>
       </Card>
 
@@ -372,11 +393,14 @@ function TagRow({
   categories: Category[];
   refresh: () => Promise<unknown>;
 }) {
+  const { data: session } = authClient.useSession();
+  const canManage = roleHasPermission(session?.user.role, "cmsTag", "update");
   const [editing, setEditing] = useState(false);
   const [pending, setPending] = useState(false);
   const [name, setName] = useState(tag.name);
   const [slug, setSlug] = useState(tag.slug);
   const [icon, setIcon] = useState(tag.icon ?? "");
+  const [marqueeRow, setMarqueeRow] = useState<number | null>(tag.marqueeRow);
   const [color, setColor] = useState(tag.color);
   const [categoryId, setCategoryId] = useState(tag.categoryId);
 
@@ -385,7 +409,7 @@ function TagRow({
     setPending(true);
     try {
       await updateTagFn({
-        data: { id: tag.id, name, slug, categoryId, icon: icon || null, color },
+        data: { id: tag.id, name, slug, categoryId, icon: icon || null, color, marqueeRow },
       });
       setEditing(false);
       toast.success("Tag aggiornato");
@@ -505,6 +529,18 @@ function TagRow({
                   Annulla
                 </Button>
               </ButtonGroup>
+              <Field>
+                <FieldLabel>Riga marquee home (1–4, vuoto per nascondere)</FieldLabel>
+                <Input
+                  type="number"
+                  min={1}
+                  max={4}
+                  value={marqueeRow ?? ""}
+                  onChange={(event) =>
+                    setMarqueeRow(event.target.value ? event.target.valueAsNumber : null)
+                  }
+                />
+              </Field>
             </FieldGroup>
           </form>
         </TableCell>
@@ -539,12 +575,14 @@ function TagRow({
             size="icon-sm"
             variant="outline"
             aria-label={`Modifica ${tag.name}`}
+            disabled={!canManage}
             onClick={() => setEditing(true)}
           >
             <Pencil />
           </Button>
           <AlertDialog>
             <AlertDialogTrigger
+              disabled={!canManage}
               render={
                 <Button size="icon-sm" variant="destructive" aria-label={`Archivia ${tag.name}`} />
               }

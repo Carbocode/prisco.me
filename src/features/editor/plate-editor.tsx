@@ -578,6 +578,7 @@ const editorPlugins = [
 ];
 
 export function CmsEditor({
+  readOnly = false,
   value,
   onChange,
   media = [],
@@ -585,6 +586,7 @@ export function CmsEditor({
   value: CmsDocument;
   onChange: (value: CmsDocument) => void;
   media?: MediaItem[];
+  readOnly?: boolean;
 }) {
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkText, setLinkText] = useState("");
@@ -686,13 +688,16 @@ export function CmsEditor({
       <MediaContext.Provider value={mediaMap}>
         <EditorActionsProvider value={actions}>
           <Plate
+            readOnly={readOnly}
             editor={editor}
             onValueChange={({ value: next }) => onChange(fromPlateValue(next))}
           >
             <div className="cms-editor">
-              <FixedToolbar className="cms-editor__toolbar rounded-none">
-                <EditorToolbar onLink={openLinkDialog} />
-              </FixedToolbar>
+              {!readOnly ? (
+                <FixedToolbar className="cms-editor__toolbar rounded-none">
+                  <EditorToolbar onLink={openLinkDialog} />
+                </FixedToolbar>
+              ) : null}
               <EditorContainer className="cms-editor__canvas">
                 <Editor
                   id="cms-content-editor"

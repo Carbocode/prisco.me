@@ -1,8 +1,12 @@
 /* oxlint-disable no-underscore-dangle -- TanStack Router espone il parametro splat come `_splat`. */
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
-import { listPublicCategoriesFn } from "@/features/cms/server/public.functions";
+import {
+  getPublishedArticleFn,
+  getCmsRedirectFn,
+  listPublicCategoriesFn,
+} from "@/features/cms/server/public.functions";
 import {
   resolveArchive,
   resolveDateArchive,
@@ -36,6 +40,19 @@ type RouteData =
 export const Route = createFileRoute("/$archiveSlug/$")({
   validateSearch: searchSchema,
   loader: async ({ params }): Promise<RouteData> => {
+    const path = `/${params.archiveSlug}/${params._splat ?? ""}`.replace(/\/$/, "");
+    const visited = new Set<string>();
+    let destination = path;
+    while (!visited.has(destination) && visited.size < 20) {
+      visited.add(destination);
+      const entry = await getCmsRedirectFn({ data: { path: destination } });
+      if (!entry) break;
+      destination = entry.destinationPath;
+    }
+    if (destination !== path) {
+      const next = await getCmsRedirectFn({ data: { path: destination } });
+      if (!next) throw redirect({ href: destination, statusCode: 301 });
+    }
     const [articles, categories] = await Promise.all([
       listPublishedArticlesByFilterFn({ data: {} }),
       listPublicCategoriesFn(),
@@ -48,6 +65,11 @@ export const Route = createFileRoute("/$archiveSlug/$")({
       ? resolveDatedPath(params.archiveSlug, segments, articles)
       : resolveRegularPath(rootArchive, segments);
     if (!data) throw notFound();
+    if (data.type === "article") {
+      const fullArticle = await getPublishedArticleFn({ data: { slug: data.article.slug } });
+      if (!fullArticle) throw notFound();
+      return { ...data, article: fullArticle };
+    }
     return data;
   },
   head: ({ loaderData }) => {

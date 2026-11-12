@@ -26,7 +26,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -47,6 +47,8 @@ import {
   updateCategoryFn,
 } from "@/features/cms/server/category.functions";
 import { listMediaFn } from "@/features/cms/server/media.functions";
+import { authClient } from "@/lib/auth-client";
+import { roleHasPermission } from "@/lib/cms-permissions";
 import {
   categoryArchiveSortLabel,
   categoryArchiveSorts,
@@ -89,6 +91,8 @@ export const Route = createFileRoute("/dashboard/cms/categories")({
 });
 
 function CategoriesContent() {
+  const { data: session } = authClient.useSession();
+  const canManage = roleHasPermission(session?.user.role, "cmsCategory", "update");
   const { categories, media } = Route.useLoaderData();
   const router = useRouter();
   const [name, setName] = useState("");
@@ -204,126 +208,130 @@ function CategoriesContent() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(event) => void create(event)}>
-            <FieldGroup className="grid items-end sm:grid-cols-2 xl:grid-cols-4">
-              <Field>
-                <FieldLabel htmlFor="category-name">Nome</FieldLabel>
-                <Input
-                  id="category-name"
-                  value={name}
-                  onChange={(event) => {
-                    setName(event.target.value);
-                    if (!slug) setSlug(slugify(event.target.value));
-                  }}
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-slug">Slug</FieldLabel>
-                <Input
-                  id="category-slug"
-                  value={slug}
-                  pattern={slugInputPattern}
-                  title="Lo slug non puo contenere solo numeri"
-                  onChange={(event) => setSlug(event.target.value)}
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-description">Descrizione</FieldLabel>
-                <Textarea
-                  id="category-description"
-                  rows={1}
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-schema-type">Schema GEO</FieldLabel>
-                <Select
-                  value={schemaType}
-                  onValueChange={(value) => {
-                    if (isCategorySchemaType(value)) setSchemaType(value);
-                  }}
-                >
-                  <SelectTrigger id="category-schema-type" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {categorySchemaTypes.map((value) => (
-                        <SelectItem key={value} value={value}>
-                          {categorySchemaTypeLabel[value]}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-archive-sort">Ordinamento archivio</FieldLabel>
-                <Select
-                  value={archiveSort}
-                  onValueChange={(value) => {
-                    if (isCategoryArchiveSort(value)) setArchiveSort(value);
-                  }}
-                >
-                  <SelectTrigger id="category-archive-sort" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {categoryArchiveSorts.map((value) => (
-                        <SelectItem key={value} value={value}>
-                          {categoryArchiveSortLabel[value]}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="category-article-layout">Visualizzazione articoli</FieldLabel>
-                <Select
-                  value={articleLayout}
-                  onValueChange={(value) => {
-                    if (isCategoryArticleLayout(value)) setArticleLayout(value);
-                  }}
-                >
-                  <SelectTrigger id="category-article-layout" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {categoryArticleLayouts.map((value) => (
-                        <SelectItem key={value} value={value}>
-                          {categoryArticleLayoutLabel[value]}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <FieldDescription>Card è la visualizzazione predefinita.</FieldDescription>
-              </Field>
-              <Field>
-                <FieldLabel>Immagine hero</FieldLabel>
-                <MediaPicker
-                  items={imageMedia}
-                  value={heroMediaId}
-                  label="Scegli l’immagine hero"
-                  description="Naviga la libreria immagini e seleziona lo sfondo dell’archivio."
-                  onValueChange={setHeroMediaId}
-                />
-                <FieldDescription>
-                  Viene mostrata dietro al titolo nell’archivio pubblico della categoria.
-                </FieldDescription>
-              </Field>
-              <Button size="sm" type="submit" disabled={pending}>
-                <Plus data-icon="inline-start" />
-                {pending ? "Creazione…" : "Crea"}
-              </Button>
-            </FieldGroup>
-          </form>
+          <FieldSet disabled={!canManage}>
+            <form onSubmit={(event) => void create(event)}>
+              <FieldGroup className="grid items-end sm:grid-cols-2 xl:grid-cols-4">
+                <Field>
+                  <FieldLabel htmlFor="category-name">Nome</FieldLabel>
+                  <Input
+                    id="category-name"
+                    value={name}
+                    onChange={(event) => {
+                      setName(event.target.value);
+                      if (!slug) setSlug(slugify(event.target.value));
+                    }}
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="category-slug">Slug</FieldLabel>
+                  <Input
+                    id="category-slug"
+                    value={slug}
+                    pattern={slugInputPattern}
+                    title="Lo slug non puo contenere solo numeri"
+                    onChange={(event) => setSlug(event.target.value)}
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="category-description">Descrizione</FieldLabel>
+                  <Textarea
+                    id="category-description"
+                    rows={1}
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="category-schema-type">Schema GEO</FieldLabel>
+                  <Select
+                    value={schemaType}
+                    onValueChange={(value) => {
+                      if (isCategorySchemaType(value)) setSchemaType(value);
+                    }}
+                  >
+                    <SelectTrigger id="category-schema-type" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categorySchemaTypes.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {categorySchemaTypeLabel[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="category-archive-sort">Ordinamento archivio</FieldLabel>
+                  <Select
+                    value={archiveSort}
+                    onValueChange={(value) => {
+                      if (isCategoryArchiveSort(value)) setArchiveSort(value);
+                    }}
+                  >
+                    <SelectTrigger id="category-archive-sort" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categoryArchiveSorts.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {categoryArchiveSortLabel[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="category-article-layout">
+                    Visualizzazione articoli
+                  </FieldLabel>
+                  <Select
+                    value={articleLayout}
+                    onValueChange={(value) => {
+                      if (isCategoryArticleLayout(value)) setArticleLayout(value);
+                    }}
+                  >
+                    <SelectTrigger id="category-article-layout" className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categoryArticleLayouts.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {categoryArticleLayoutLabel[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FieldDescription>Card è la visualizzazione predefinita.</FieldDescription>
+                </Field>
+                <Field>
+                  <FieldLabel>Immagine hero</FieldLabel>
+                  <MediaPicker
+                    items={imageMedia}
+                    value={heroMediaId}
+                    label="Scegli l’immagine hero"
+                    description="Naviga la libreria immagini e seleziona lo sfondo dell’archivio."
+                    onValueChange={setHeroMediaId}
+                  />
+                  <FieldDescription>
+                    Viene mostrata dietro al titolo nell’archivio pubblico della categoria.
+                  </FieldDescription>
+                </Field>
+                <Button size="sm" type="submit" disabled={pending}>
+                  <Plus data-icon="inline-start" />
+                  {pending ? "Creazione…" : "Crea"}
+                </Button>
+              </FieldGroup>
+            </form>
+          </FieldSet>
         </CardContent>
       </Card>
 
@@ -371,6 +379,8 @@ function CategoryRow({
   media: CategoryMedia[];
   refresh: () => Promise<unknown>;
 }) {
+  const { data: session } = authClient.useSession();
+  const canManage = roleHasPermission(session?.user.role, "cmsCategory", "update");
   const [editing, setEditing] = useState(false);
   const [pending, setPending] = useState(false);
   const [name, setName] = useState(category.name);
@@ -566,12 +576,14 @@ function CategoryRow({
               size="icon-sm"
               variant="outline"
               aria-label={`Modifica ${category.name}`}
+              disabled={!canManage}
               onClick={() => setEditing(true)}
             >
               <Pencil />
             </Button>
             <AlertDialog>
               <AlertDialogTrigger
+                disabled={!canManage}
                 render={
                   <Button
                     size="icon-sm"

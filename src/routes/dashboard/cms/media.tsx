@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/empty";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Item, ItemGroup, ItemContent, ItemTitle, ItemActions } from "@/components/ui/item";
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import type { MediaProcessingUpdate } from "@/features/cms/client/media-processing";
@@ -37,11 +38,15 @@ import {
   deleteMediaFn,
   getMediaUsageFn,
   listMediaFn,
+  listTrashedMediaFn,
+  restoreMediaFn,
   updateMediaFn,
 } from "@/features/cms/server/media.functions";
+import { authClient } from "@/lib/auth-client";
+import { roleHasPermission } from "@/lib/cms-permissions";
 
 export const Route = createFileRoute("/dashboard/cms/media")({
-  loader: () => listMediaFn(),
+  loader: async () => ({ media: await listMediaFn(), trash: await listTrashedMediaFn() }),
   component: MediaContent,
 });
 
@@ -53,7 +58,7 @@ const processMediaForUpload = createClientOnlyFn(
 );
 
 function MediaContent() {
-  const media = Route.useLoaderData();
+  const { media, trash } = Route.useLoaderData();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState(false);
@@ -234,6 +239,37 @@ function MediaContent() {
           </EmptyHeader>
         </Empty>
       )}
+      {trash.length ? (
+        <section>
+          <h2>Cestino media</h2>
+          <p>I file sono conservati su R2 e possono essere ripristinati.</p>
+          <ItemGroup>
+            {trash.map((item) => (
+              <Item key={item.id}>
+                <ItemContent>
+                  <ItemTitle>{item.name || item.filename}</ItemTitle>
+                </ItemContent>
+                <ItemActions>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      void restoreMediaFn({ data: { id: item.id } })
+                        .then(() => router.invalidate())
+                        .catch((error) =>
+                          toast.error(
+                            error instanceof Error ? error.message : "Ripristino non riuscito",
+                          ),
+                        );
+                    }}
+                  >
+                    Ripristina
+                  </Button>
+                </ItemActions>
+              </Item>
+            ))}
+          </ItemGroup>
+        </section>
+      ) : null}
     </div>
   );
 }
@@ -245,6 +281,8 @@ function ManagedMediaCard({
   item: Awaited<ReturnType<typeof listMediaFn>>[number];
   refresh: () => Promise<unknown>;
 }) {
+  const { data: session } = authClient.useSession();
+  const canManage = roleHasPermission(session?.user.role, "cmsMedia", "delete");
   const [name, setName] = useState(mediaDisplayName(item));
   const [altText, setAltText] = useState(item.altText ?? "");
   const [caption, setCaption] = useState(item.caption ?? "");
@@ -291,9 +329,7 @@ function ManagedMediaCard({
     try {
       await deleteMediaFn({ data: { id: item.id, confirmedUsage: usage.total } });
       setDeleteOpen(false);
-      toast.success(
-        usage.total ? `Media eliminato e dissociato da ${usage.total} utilizzi` : "Media eliminato",
-      );
+      toast.success("Media spostato nel cestino");
       await refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Eliminazione non riuscita");
@@ -348,7 +384,10 @@ function ManagedMediaCard({
         }
         actions={
           <>
-            <CollapsibleTrigger render={<Button type="button" size="sm" variant="outline" />}>
+            <CollapsibleTrigger
+              disabled={!canManage}
+              render={<Button type="button" size="sm" variant="outline" />}
+            >
               <Pencil data-icon="inline-start" />
               {editing ? "Chiudi" : "Modifica"}
             </CollapsibleTrigger>
@@ -367,8 +406,8 @@ function ManagedMediaCard({
             <Button
               size="icon-sm"
               variant="destructive"
-              disabled={pending}
-              aria-label={`Elimina ${displayName}`}
+              disabled={pending || !canManage}
+              aria-label={`Sposta nel cestino ${displayName}`}
               onClick={() => void checkBeforeDelete()}
             >
               {pending ? <Spinner /> : <Trash2 />}
@@ -382,19 +421,19 @@ function ManagedMediaCard({
             <AlertDialogTitle>Eliminare “{displayName}”?</AlertDialogTitle>
             <AlertDialogDescription>
               {usage.total
-                ? `Il media è associato ${usage.total} ${usage.total === 1 ? "volta" : "volte"}: ${usage.articleCovers} cover, ${usage.articleContent} contenuti e ${usage.categoryHeroes} hero di categoria. Verrà dissociato da tutti questi punti e rimosso definitivamente da R2.`
-                : "Il media non risulta associato. Verrà rimosso definitivamente dalla libreria e da R2."}
+                ? `Il media è utilizzato ${usage.total} volte. Rimuovi le associazioni prima di spostarlo nel cestino. Anche lo storico delle revisioni viene protetto.`
+                : "Il media verrà nascosto dalla libreria. Il file e lo storico saranno conservati; potrai ripristinarlo dal cestino."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annulla</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
-              disabled={pending}
+              disabled={pending || usage.total > 0}
               onClick={() => void deleteMedia()}
             >
               {pending ? <Spinner data-icon="inline-start" /> : null}
-              Elimina definitivamente
+              Sposta nel cestino
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

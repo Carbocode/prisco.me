@@ -10,10 +10,29 @@ import {
   createCategorySchema,
   createOrganizationSchema,
   createTagSchema,
+  updateArticleSchema,
+  updateCategorySchema,
 } from "./validation";
 import { canEditArticle, publicationState } from "./workflow";
 
 describe("CMS domain", () => {
+  it("non cancella le associazioni omesse da un aggiornamento parziale", () => {
+    const patch = {
+      id: "123e4567-e89b-42d3-a456-426614174000",
+      version: 1,
+      title: "Titolo aggiornato",
+    };
+    expect(updateArticleSchema.parse(patch)).toEqual(patch);
+    expect(updateArticleSchema.parse({ ...patch, tagIds: [], experienceIds: [] })).toEqual({
+      ...patch,
+      tagIds: [],
+      experienceIds: [],
+    });
+  });
+  it("non ripristina i default delle categorie durante una modifica parziale", () => {
+    const patch = { id: "123e4567-e89b-42d3-a456-426614174000", name: "Nuovo nome" };
+    expect(updateCategorySchema.parse(patch)).toEqual(patch);
+  });
   it("normalizza slug Unicode e separatori", () => {
     expect(slugify("  Caffè & Codice -- 2026! ")).toBe("caffe-codice-2026");
     expect(slugPattern.test("slug-valido")).toBe(true);
