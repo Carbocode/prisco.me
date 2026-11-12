@@ -22,6 +22,7 @@ export const listTagsFn = createServerFn({ method: "GET" }).handler(async () => 
       color: cmsTags.color,
       mark: cmsTags.mark,
       fluentIcon: cmsTags.fluentIcon,
+      marqueeRow: cmsTags.marqueeRow,
       createdAt: cmsTags.createdAt,
       updatedAt: cmsTags.updatedAt,
     })

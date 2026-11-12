@@ -1,8 +1,16 @@
 import { env } from "cloudflare:workers";
-import { asc, inArray } from "drizzle-orm";
+import { asc, inArray, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { cmsArticleTags, cmsCategories, cmsMedia, cmsOrganizations, cmsTags } from "@/db/schema";
+import {
+  cmsArticleTags,
+  cmsCategories,
+  cmsMedia,
+  cmsOrganizations,
+  cmsTags,
+  experienceProjects,
+  experiences,
+} from "@/db/schema";
 
 import {
   CURRENT_CONTENT_VERSION,
@@ -17,9 +25,11 @@ import {
   createArticleSchema,
   listArticlesSchema,
   publishArticleSchema,
+  revisionSnapshotSchema,
   updateArticleSchema,
 } from "../domain/validation";
 import { publicationState } from "../domain/workflow";
+import { assertArticleRelations } from "./article-relations";
 import { requireArticleAccess, requireCmsPermission } from "./cms-auth";
 import { CmsError, notFound } from "./cms-errors";
 import {
@@ -58,8 +68,13 @@ export async function getAdminArticle(id: string) {
     .innerJoin(cmsTags, eq(cmsArticleTags.tagId, cmsTags.id))
     .where(and(eq(cmsArticleTags.articleId, id), isNull(cmsTags.deletedAt)))
     .orderBy(asc(cmsArticleTags.sortOrder), asc(cmsTags.name));
+  const links = await db()
+    .select({ id: experienceProjects.experienceId })
+    .from(experienceProjects)
+    .where(eq(experienceProjects.articleId, id));
   return {
     ...item,
+    experienceIds: links.map((link) => link.id),
     categoryIds: categories.map((category) => category.categoryId),
     tagIds: tags.map((tag) => tag.tagId),
   };
@@ -67,6 +82,7 @@ export async function getAdminArticle(id: string) {
 export async function createArticle(input: unknown) {
   const session = await requireCmsPermission("cmsArticle", "create");
   const data = createArticleSchema.parse(input);
+  await assertArticleRelations(db(), { ...data, content: serializeCmsDocument(data.content) });
   const id = crypto.randomUUID();
   const now = new Date();
   try {
@@ -76,6 +92,7 @@ export async function createArticle(input: unknown) {
         .values({
           id,
           title: data.title,
+          publishedAt: data.publishedAt,
           slug: data.slug,
           excerpt: data.excerpt,
           content: serializeCmsDocument(data.content),
@@ -92,11 +109,15 @@ export async function createArticle(input: unknown) {
           seoTitle: data.seoTitle,
           seoDescription: data.seoDescription,
           noIndex: data.noIndex,
+          canonicalUrl: data.canonicalUrl,
           createdAt: now,
           updatedAt: now,
         }),
       ...data.categoryIds.map((categoryId) =>
         db().insert(cmsArticleCategories).values({ articleId: id, categoryId }),
+      ),
+      ...data.experienceIds.map((experienceId, sortOrder) =>
+        db().insert(experienceProjects).values({ articleId: id, experienceId, sortOrder }),
       ),
       ...data.tagIds.map((tagId, sortOrder) =>
         db().insert(cmsArticleTags).values({ articleId: id, tagId, sortOrder }),
@@ -106,6 +127,11 @@ export async function createArticle(input: unknown) {
         .values(auditInsert(session.user.id, "article.created", "article", id)),
     ]);
   } catch (error) {
+    if (
+      String(error).includes("CONTENT_VERSION_CONFLICT") ||
+      String(error).includes("cms_article_revisions")
+    )
+      throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
     if (String(error).includes("UNIQUE"))
       throw new CmsError(409, "SLUG_CONFLICT", "Slug already in use");
     throw error;
@@ -119,11 +145,30 @@ export async function updateArticle(input: unknown) {
   const current = await articleRepository(database).byId(data.id);
   if (!current) throw notFound("article");
   requireArticleAccess(session.user, current, "update");
+  if (session.user.role === "author" && current.status !== "draft")
+    throw new CmsError(
+      403,
+      "FORBIDDEN",
+      "Solo un editor può modificare contenuti già pubblicati o archiviati",
+    );
   if (current.version !== data.version)
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
+  const associations = await getAdminArticle(current.id);
+  await assertArticleRelations(database, {
+    ...associations,
+    ...data,
+    content: data.content ? serializeCmsDocument(data.content) : current.content,
+  });
   const revision = (await articleRepository(database).nextRevision(current.id))[0]?.value ?? 1;
   const now = new Date();
+  if (data.publishedAt !== undefined && !["admin", "editor"].includes(session.user.role ?? ""))
+    throw new CmsError(403, "FORBIDDEN", "Permission denied");
   const values = {
+    ...(data.publishedAt !== undefined
+      ? ["published", "scheduled"].includes(current.status)
+        ? publicationState(data.publishedAt ?? undefined)
+        : { publishedAt: data.publishedAt }
+      : {}),
     ...(data.title !== undefined && { title: data.title }),
     ...(data.slug !== undefined && { slug: data.slug }),
     ...(data.excerpt !== undefined && { excerpt: data.excerpt }),
@@ -140,14 +185,17 @@ export async function updateArticle(input: unknown) {
     ...(data.projectSortOrder !== undefined && { projectSortOrder: data.projectSortOrder }),
     ...(data.seoTitle !== undefined && { seoTitle: data.seoTitle }),
     ...(data.seoDescription !== undefined && { seoDescription: data.seoDescription }),
+    ...(data.canonicalUrl !== undefined && { canonicalUrl: data.canonicalUrl }),
     ...(data.noIndex !== undefined && { noIndex: data.noIndex }),
     lastEditedById: session.user.id,
     updatedAt: now,
-    version: current.version + 1,
+    version: data.version + 1,
   };
-  const changedSlug =
-    data.slug && data.slug !== current.slug && ["published", "scheduled"].includes(current.status);
-  const sourceCategories = changedSlug
+  const changedPath =
+    ((data.slug && data.slug !== current.slug) ||
+      (data.categoryIds !== undefined && data.categoryIds[0] !== associations.categoryIds[0])) &&
+    ["published", "scheduled"].includes(current.status);
+  const sourceCategories = changedPath
     ? await database
         .select({ slug: cmsCategories.slug })
         .from(cmsArticleCategories)
@@ -155,35 +203,38 @@ export async function updateArticle(input: unknown) {
         .where(eq(cmsArticleCategories.articleId, current.id))
     : [];
   const destinationCategories =
-    changedSlug && data.categoryIds
+    changedPath && data.categoryIds
       ? await database
           .select({ slug: cmsCategories.slug })
           .from(cmsCategories)
           .where(inArray(cmsCategories.id, data.categoryIds))
       : sourceCategories;
-  const redirectPaths = changedSlug
+  const redirectPaths = changedPath
     ? {
         source: `/${publicArchiveSlug(sourceCategories[0]?.slug)}/${current.slug}`,
-        destination: `/${publicArchiveSlug(destinationCategories[0]?.slug)}/${data.slug}`,
+        destination: `/${publicArchiveSlug(destinationCategories[0]?.slug)}/${data.slug ?? current.slug}`,
       }
     : null;
+  const mutation = database
+    .update(cmsArticles)
+    .set(values)
+    .where(
+      and(
+        eq(cmsArticles.id, current.id),
+        eq(cmsArticles.version, data.version),
+        isNull(cmsArticles.deletedAt),
+      ),
+    )
+    .returning();
+  let updated: typeof current | undefined;
   const statements = [
     database.insert(cmsArticleRevisions).values({
       articleId: current.id,
       revision,
-      snapshot: JSON.stringify(current),
+      snapshot: JSON.stringify({ ...(await getAdminArticle(current.id)), ...current }),
       createdById: session.user.id,
     }),
-    database
-      .update(cmsArticles)
-      .set(values)
-      .where(
-        and(
-          eq(cmsArticles.id, current.id),
-          eq(cmsArticles.version, data.version),
-          isNull(cmsArticles.deletedAt),
-        ),
-      ),
+    mutation,
     ...(data.categoryIds
       ? [
           database
@@ -191,6 +242,16 @@ export async function updateArticle(input: unknown) {
             .where(eq(cmsArticleCategories.articleId, current.id)),
           ...data.categoryIds.map((categoryId) =>
             database.insert(cmsArticleCategories).values({ articleId: current.id, categoryId }),
+          ),
+        ]
+      : []),
+    ...(data.experienceIds
+      ? [
+          database.delete(experienceProjects).where(eq(experienceProjects.articleId, current.id)),
+          ...data.experienceIds.map((experienceId, sortOrder) =>
+            database
+              .insert(experienceProjects)
+              .values({ articleId: current.id, experienceId, sortOrder }),
           ),
         ]
       : []),
@@ -202,14 +263,29 @@ export async function updateArticle(input: unknown) {
           ),
         ]
       : []),
-    ...(redirectPaths
+    ...(redirectPaths && redirectPaths.source !== redirectPaths.destination
       ? [
-          database.insert(cmsRedirects).values({
-            sourcePath: redirectPaths.source,
-            destinationPath: redirectPaths.destination,
-            entityType: "article",
-            entityId: current.id,
-          }),
+          database
+            .delete(cmsRedirects)
+            .where(eq(cmsRedirects.sourcePath, redirectPaths.destination)),
+          database
+            .update(cmsRedirects)
+            .set({ destinationPath: redirectPaths.destination })
+            .where(
+              and(eq(cmsRedirects.entityId, current.id), eq(cmsRedirects.entityType, "article")),
+            ),
+          database
+            .insert(cmsRedirects)
+            .values({
+              sourcePath: redirectPaths.source,
+              destinationPath: redirectPaths.destination,
+              entityType: "article",
+              entityId: current.id,
+            })
+            .onConflictDoUpdate({
+              target: cmsRedirects.sourcePath,
+              set: { destinationPath: redirectPaths.destination },
+            }),
         ]
       : []),
     database
@@ -217,7 +293,7 @@ export async function updateArticle(input: unknown) {
       .values(
         auditInsert(
           session.user.id,
-          changedSlug ? "article.slug_changed" : "article.updated",
+          changedPath ? "article.slug_changed" : "article.updated",
           "article",
           current.id,
           { fromStatus: current.status },
@@ -225,13 +301,18 @@ export async function updateArticle(input: unknown) {
       ),
   ];
   try {
-    await database.batch(statements as [(typeof statements)[0], ...typeof statements]); // oxlint-disable-line typescript/no-unsafe-type-assertion
+    const results = await database.batch([statements[0], mutation, ...statements.slice(2)]);
+    updated = results[1][0];
   } catch (error) {
+    if (
+      String(error).includes("CONTENT_VERSION_CONFLICT") ||
+      String(error).includes("cms_article_revisions")
+    )
+      throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
     if (String(error).includes("UNIQUE"))
       throw new CmsError(409, "SLUG_CONFLICT", "Slug already in use");
     throw error;
   }
-  const updated = await articleRepository(database).byId(current.id);
   if (!updated || updated.version === current.version)
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
   return updated;
@@ -248,12 +329,19 @@ export async function publishArticle(input: unknown) {
   const current = await articleRepository(database).byId(data.id);
   if (!current) throw notFound("article");
   requireArticleAccess(session.user, current, "publish");
+  if (current.version !== data.version)
+    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
+  await assertArticleRelations(database, await getAdminArticle(current.id));
+  const publishedCategory = await database.query.cmsCategories.findFirst({
+    where: eq(cmsCategories.id, (await getAdminArticle(current.id)).categoryIds[0] ?? ""),
+  });
+  const publishedPath = `/${publishedCategory?.slug}/${current.slug}`;
   const state = publicationState(data.publishedAt);
-  const result = await database
+  const mutation = database
     .update(cmsArticles)
     .set({
       ...state,
-      version: current.version + 1,
+      version: data.version + 1,
       updatedAt: new Date(),
       lastEditedById: session.user.id,
     })
@@ -265,18 +353,24 @@ export async function publishArticle(input: unknown) {
       ),
     )
     .returning({ id: cmsArticles.id });
-  if (!result.length)
-    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
-  await database
-    .insert(cmsAuditLogs)
-    .values(
-      auditInsert(
-        session.user.id,
-        state.status === "scheduled" ? "article.scheduled" : "article.published",
-        "article",
-        current.id,
+  const result = await database.batch([
+    (await transitionSnapshot(database, current, session.user.id)).statement,
+    mutation,
+    database.delete(cmsRedirects).where(eq(cmsRedirects.sourcePath, publishedPath)),
+    database
+      .insert(cmsAuditLogs)
+      .values(
+        auditInsert(
+          session.user.id,
+          state.status === "scheduled" ? "article.scheduled" : "article.published",
+          "article",
+          current.id,
+        ),
       ),
-    );
+  ]);
+  if (!result[1].length)
+    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
+
   return articleRepository(database).byId(current.id);
 }
 export async function archiveArticle(input: { id: string; version: number }) {
@@ -285,11 +379,13 @@ export async function archiveArticle(input: { id: string; version: number }) {
   const current = await articleRepository(database).byId(input.id);
   if (!current) throw notFound("article");
   requireArticleAccess(session.user, current, "delete");
-  const result = await database
+  if (current.version !== input.version)
+    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
+  const mutation = database
     .update(cmsArticles)
     .set({
       status: "archived",
-      version: current.version + 1,
+      version: input.version + 1,
       updatedAt: new Date(),
       lastEditedById: session.user.id,
     })
@@ -301,11 +397,16 @@ export async function archiveArticle(input: { id: string; version: number }) {
       ),
     )
     .returning({ id: cmsArticles.id });
-  if (!result.length)
+  const result = await database.batch([
+    (await transitionSnapshot(database, current, session.user.id)).statement,
+    mutation,
+    database
+      .insert(cmsAuditLogs)
+      .values(auditInsert(session.user.id, "article.archived", "article", input.id)),
+  ]);
+  if (!result[1].length)
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
-  await database
-    .insert(cmsAuditLogs)
-    .values(auditInsert(session.user.id, "article.archived", "article", input.id));
+
   return { ok: true };
 }
 export async function unpublishArticle(input: { id: string; version: number }) {
@@ -314,12 +415,14 @@ export async function unpublishArticle(input: { id: string; version: number }) {
   const current = await articleRepository(database).byId(input.id);
   if (!current) throw notFound("article");
   requireArticleAccess(session.user, current, "publish");
-  const result = await database
+  if (current.version !== input.version)
+    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
+  const mutation = database
     .update(cmsArticles)
     .set({
       status: "draft",
       publishedAt: null,
-      version: current.version + 1,
+      version: input.version + 1,
       updatedAt: new Date(),
       lastEditedById: session.user.id,
     })
@@ -331,11 +434,16 @@ export async function unpublishArticle(input: { id: string; version: number }) {
       ),
     )
     .returning({ id: cmsArticles.id });
-  if (!result.length)
+  const result = await database.batch([
+    (await transitionSnapshot(database, current, session.user.id)).statement,
+    mutation,
+    database
+      .insert(cmsAuditLogs)
+      .values(auditInsert(session.user.id, "article.unpublished", "article", input.id)),
+  ]);
+  if (!result[1].length)
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
-  await database
-    .insert(cmsAuditLogs)
-    .values(auditInsert(session.user.id, "article.unpublished", "article", input.id));
+
   return articleRepository(database).byId(input.id);
 }
 export async function restoreArticle(input: { id: string; version: number }) {
@@ -343,23 +451,30 @@ export async function restoreArticle(input: { id: string; version: number }) {
   const database = db();
   const current = await articleRepository(database).byId(input.id);
   if (!current) throw notFound("article");
-  const result = await database
+  if (current.version !== input.version)
+    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
+  const mutation = database
     .update(cmsArticles)
     .set({
       status: "draft",
       publishedAt: null,
       deletedAt: null,
-      version: current.version + 1,
+      version: input.version + 1,
       updatedAt: new Date(),
       lastEditedById: session.user.id,
     })
     .where(and(eq(cmsArticles.id, input.id), eq(cmsArticles.version, input.version)))
     .returning({ id: cmsArticles.id });
-  if (!result.length)
+  const result = await database.batch([
+    (await transitionSnapshot(database, current, session.user.id)).statement,
+    mutation,
+    database
+      .insert(cmsAuditLogs)
+      .values(auditInsert(session.user.id, "article.restored", "article", input.id)),
+  ]);
+  if (!result[1].length)
     throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
-  await database
-    .insert(cmsAuditLogs)
-    .values(auditInsert(session.user.id, "article.restored", "article", input.id));
+
   return articleRepository(database).byId(input.id);
 }
 export async function listArticleRevisions(articleId: string) {
@@ -380,6 +495,8 @@ export async function restoreArticleRevision(input: {
   const current = await articleRepository(database).byId(input.articleId);
   if (!current) throw notFound("article");
   requireArticleAccess(session.user, current, "restore");
+  if (current.version !== input.version)
+    throw new CmsError(409, "CONTENT_VERSION_CONFLICT", "Content was modified elsewhere");
   const revision = await database.query.cmsArticleRevisions.findFirst({
     where: and(
       eq(cmsArticleRevisions.id, input.revisionId),
@@ -390,13 +507,19 @@ export async function restoreArticleRevision(input: {
   const parsedSnapshot: unknown = JSON.parse(revision.snapshot);
   if (!parsedSnapshot || typeof parsedSnapshot !== "object")
     throw new CmsError(422, "INVALID_REVISION", "Invalid revision snapshot");
-  const snapshot = parsedSnapshot as typeof current; // oxlint-disable-line typescript/no-unsafe-type-assertion
+  const snapshot = revisionSnapshotSchema.parse(parsedSnapshot);
+  const associations = await getAdminArticle(current.id);
+  await assertArticleRelations(database, {
+    ...snapshot,
+    categoryIds: snapshot.categoryIds ?? associations.categoryIds,
+    tagIds: snapshot.tagIds ?? associations.tagIds,
+  });
   const nextRevision = (await articleRepository(database).nextRevision(current.id))[0]?.value ?? 1;
   const result = await database.batch([
     database.insert(cmsArticleRevisions).values({
       articleId: current.id,
       revision: nextRevision,
-      snapshot: JSON.stringify(current),
+      snapshot: JSON.stringify({ ...(await getAdminArticle(current.id)), ...current }),
       createdById: session.user.id,
     }),
     database
@@ -420,11 +543,39 @@ export async function restoreArticleRevision(input: {
         noIndex: snapshot.noIndex,
         status: "draft",
         publishedAt: null,
-        version: current.version + 1,
+        version: input.version + 1,
         updatedAt: new Date(),
         lastEditedById: session.user.id,
       })
       .where(and(eq(cmsArticles.id, current.id), eq(cmsArticles.version, input.version))),
+    ...(snapshot.categoryIds
+      ? [
+          database
+            .delete(cmsArticleCategories)
+            .where(eq(cmsArticleCategories.articleId, current.id)),
+          ...snapshot.categoryIds.map((categoryId) =>
+            database.insert(cmsArticleCategories).values({ articleId: current.id, categoryId }),
+          ),
+        ]
+      : []),
+    ...(snapshot.experienceIds
+      ? [
+          database.delete(experienceProjects).where(eq(experienceProjects.articleId, current.id)),
+          ...snapshot.experienceIds.map((experienceId, sortOrder) =>
+            database
+              .insert(experienceProjects)
+              .values({ articleId: current.id, experienceId, sortOrder }),
+          ),
+        ]
+      : []),
+    ...(snapshot.tagIds
+      ? [
+          database.delete(cmsArticleTags).where(eq(cmsArticleTags.articleId, current.id)),
+          ...snapshot.tagIds.map((tagId, sortOrder) =>
+            database.insert(cmsArticleTags).values({ articleId: current.id, tagId, sortOrder }),
+          ),
+        ]
+      : []),
     database.insert(cmsAuditLogs).values(
       auditInsert(session.user.id, "revision.restored", "article", current.id, {
         revision: revision.revision,
@@ -516,7 +667,9 @@ async function hydratePublicArticles<
     })
     .from(cmsArticleCategories)
     .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
-    .where(inArray(cmsArticleCategories.articleId, articleIds));
+    .where(
+      and(inArray(cmsArticleCategories.articleId, articleIds), isNull(cmsCategories.deletedAt)),
+    );
   const tagRows = await db()
     .select({
       articleId: cmsArticleTags.articleId,
@@ -631,4 +784,43 @@ function decodeCursor(cursor: string) {
   } catch {
     throw new CmsError(400, "INVALID_CURSOR", "Invalid pagination cursor");
   }
+}
+
+export async function getArticleStats() {
+  const session = await requireCmsPermission("cmsArticle", "list");
+  const effectiveStatus = sql<string>`case when ${cmsArticles.status} = 'scheduled' and ${cmsArticles.publishedAt} <= ${Date.now()} then 'published' else ${cmsArticles.status} end`;
+  return db()
+    .select({ status: effectiveStatus, count: sql<number>`count(*)` })
+    .from(cmsArticles)
+    .where(
+      and(
+        isNull(cmsArticles.deletedAt),
+        session.user.role === "author" ? eq(cmsArticles.authorId, session.user.id) : undefined,
+      ),
+    )
+    .groupBy(effectiveStatus);
+}
+
+export async function listArticleExperiences() {
+  await requireCmsPermission("cmsArticle", "read");
+  return db()
+    .select({ id: experiences.id, title: experiences.title, org: experiences.org })
+    .from(experiences)
+    .orderBy(asc(experiences.sortOrder));
+}
+
+async function transitionSnapshot(
+  database: ReturnType<typeof db>,
+  current: NonNullable<Awaited<ReturnType<ReturnType<typeof articleRepository>["byId"]>>>,
+  actorId: string,
+) {
+  const revision = (await articleRepository(database).nextRevision(current.id))[0]?.value ?? 1;
+  return {
+    statement: database.insert(cmsArticleRevisions).values({
+      articleId: current.id,
+      revision,
+      snapshot: JSON.stringify({ ...(await getAdminArticle(current.id)), ...current }),
+      createdById: actorId,
+    }),
+  };
 }

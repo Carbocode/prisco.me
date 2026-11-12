@@ -5,6 +5,7 @@ export type MediaUsage = {
   articleContent: number;
   categoryHeroes: number;
   total: number;
+  revisions: number;
 };
 
 export const emptyMediaUsage = (): MediaUsage => ({
@@ -12,6 +13,7 @@ export const emptyMediaUsage = (): MediaUsage => ({
   articleContent: 0,
   categoryHeroes: 0,
   total: 0,
+  revisions: 0,
 });
 
 export function countMediaInDocument(document: CmsDocument, mediaId: string) {

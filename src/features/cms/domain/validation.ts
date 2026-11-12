@@ -32,9 +32,11 @@ const seoContent = {
   seoTitle: nullableText(70),
   seoDescription: nullableText(180),
   noIndex: z.boolean().optional(),
+  canonicalUrl: webUrl.nullable().optional(),
 };
 
 export const createArticleSchema = z.object({
+  publishedAt: z.coerce.date().nullable().optional(),
   title: z.string().trim().min(3).max(160),
   slug: articleSlug,
   excerpt: nullableText(320),
@@ -46,11 +48,16 @@ export const createArticleSchema = z.object({
   projectFeatured: z.boolean().optional(),
   projectSortOrder: z.int().min(-10000).max(10000).optional(),
   categoryIds: z.array(z.string().uuid()).length(1, "Seleziona una sola categoria"),
+  experienceIds: z.array(z.string().uuid()).max(50).default([]),
   tagIds: z.array(z.string().uuid()).max(50).default([]),
 });
-export const updateArticleSchema = createArticleSchema
-  .partial()
-  .extend({ id: z.string().uuid(), version: z.int().positive() });
+export const updateArticleSchema = createArticleSchema.partial().extend({
+  tagIds: createArticleSchema.shape.tagIds.removeDefault().optional(),
+  experienceIds: createArticleSchema.shape.experienceIds.removeDefault().optional(),
+  id: z.string().uuid(),
+  version: z.int().positive(),
+  publishedAt: z.coerce.date().nullable().optional(),
+});
 export const publishArticleSchema = z.object({
   id: z.string().uuid(),
   version: z.int().positive(),
@@ -77,9 +84,13 @@ export const createCategorySchema = z.object({
   archiveEyebrow: z.string().trim().min(2).max(80).default(defaultCategoryConfig.archiveEyebrow),
   heroMediaId: z.string().uuid().nullable().optional(),
 });
-export const updateCategorySchema = createCategorySchema
-  .partial()
-  .extend({ id: z.string().uuid() });
+export const updateCategorySchema = createCategorySchema.partial().extend({
+  id: z.string().uuid(),
+  schemaType: createCategorySchema.shape.schemaType.removeDefault().optional(),
+  archiveSort: createCategorySchema.shape.archiveSort.removeDefault().optional(),
+  articleLayout: createCategorySchema.shape.articleLayout.removeDefault().optional(),
+  archiveEyebrow: createCategorySchema.shape.archiveEyebrow.removeDefault().optional(),
+});
 export const createTagSchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug,
@@ -88,6 +99,7 @@ export const createTagSchema = z.object({
   color: z.string().trim().min(1).max(160),
   mark: nullableText(20),
   fluentIcon: nullableText(80),
+  marqueeRow: z.int().min(1).max(4).nullable().optional(),
 });
 export const updateTagSchema = createTagSchema.partial().extend({ id: z.string().uuid() });
 
@@ -104,3 +116,13 @@ export const updateOrganizationSchema = createOrganizationSchema
 
 export type CreateArticleInput = z.infer<typeof createArticleSchema>;
 export type UpdateArticleInput = z.infer<typeof updateArticleSchema>;
+
+export const revisionSnapshotSchema = createArticleSchema
+  .omit({ content: true, categoryIds: true, tagIds: true, experienceIds: true })
+  .extend({
+    content: z.string(),
+    contentVersion: z.int().positive(),
+    categoryIds: z.array(z.string().uuid()).optional(),
+    tagIds: z.array(z.string().uuid()).optional(),
+    experienceIds: z.array(z.string().uuid()).optional(),
+  });

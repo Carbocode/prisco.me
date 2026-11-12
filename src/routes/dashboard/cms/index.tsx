@@ -1,10 +1,12 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { ArrowRight, FilePlus2, FileText } from "lucide-react";
 import { useMemo } from "react";
+import { toast } from "sonner";
 
 import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -21,19 +23,26 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { listArticlesFn } from "@/features/cms/server/article.functions";
+import { Item, ItemGroup, ItemContent, ItemTitle, ItemActions } from "@/components/ui/item";
+import { articleStatsFn, listArticlesFn } from "@/features/cms/server/article.functions";
+import { listTaxonomyTrashFn, restoreTaxonomyFn } from "@/features/cms/server/trash.functions";
 
 export const Route = createFileRoute("/dashboard/cms/")({
   loader: async () => {
-    const articles = await listArticlesFn({ data: { page: 1, pageSize: 100 } });
-    return { articles: articles.items };
+    const articles = await listArticlesFn({ data: { page: 1, pageSize: 8 } });
+    return {
+      articles: articles.items,
+      stats: await articleStatsFn(),
+      trash: await listTaxonomyTrashFn(),
+    };
   },
   component: CmsDashboardContent,
 });
 
 function CmsDashboardContent() {
-  const { articles } = Route.useLoaderData();
-  const count = (status: string) => articles.filter((article) => article.status === status).length;
+  const router = useRouter();
+  const { articles, stats, trash } = Route.useLoaderData();
+  const count = (status: string) => stats.find((item) => item.status === status)?.count ?? 0;
   const recent = [...articles]
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
     .slice(0, 8);
@@ -91,7 +100,11 @@ function CmsDashboardContent() {
         <StatCard title="Pubblicati" value={count("published")} hint="articoli online" />
         <StatCard title="Bozze" value={count("draft")} hint="da completare" />
         <StatCard title="Programmati" value={count("scheduled")} hint="in calendario" />
-        <StatCard title="Totale" value={articles.length} hint="contenuti editoriali" />
+        <StatCard
+          title="Totale"
+          value={stats.reduce((sum, item) => sum + item.count, 0)}
+          hint="contenuti editoriali"
+        />
       </div>
 
       <Card size="sm">
@@ -131,6 +144,38 @@ function CmsDashboardContent() {
           )}
         </CardContent>
       </Card>
+      {trash.length ? (
+        <section>
+          <h2>Cestino tassonomie</h2>
+          <ItemGroup>
+            {trash.map((item) => (
+              <Item key={item.id}>
+                <ItemContent>
+                  <ItemTitle>
+                    {item.name} · {item.kind}
+                  </ItemTitle>
+                </ItemContent>
+                <ItemActions>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      void restoreTaxonomyFn({ data: { id: item.id, kind: item.kind } })
+                        .then(() => router.invalidate())
+                        .catch((error) =>
+                          toast.error(
+                            error instanceof Error ? error.message : "Ripristino non riuscito",
+                          ),
+                        );
+                    }}
+                  >
+                    Ripristina
+                  </Button>
+                </ItemActions>
+              </Item>
+            ))}
+          </ItemGroup>
+        </section>
+      ) : null}
     </div>
   );
 }

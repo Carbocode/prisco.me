@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { and, asc, eq, isNull, lte } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, lte } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import {
@@ -59,7 +59,13 @@ async function loadPortfolio() {
       .innerJoin(cmsArticleCategories, eq(cmsArticleCategories.articleId, cmsArticles.id))
       .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
       .innerJoin(user, eq(cmsArticles.authorId, user.id))
-      .leftJoin(cmsOrganizations, eq(cmsArticles.organizationId, cmsOrganizations.id))
+      .leftJoin(
+        cmsOrganizations,
+        and(
+          eq(cmsArticles.organizationId, cmsOrganizations.id),
+          isNull(cmsOrganizations.deletedAt),
+        ),
+      )
       .leftJoin(
         cmsMedia,
         and(
@@ -71,7 +77,8 @@ async function loadPortfolio() {
       .where(
         and(
           eq(cmsCategories.slug, "progetti"),
-          eq(cmsArticles.status, "published"),
+          isNull(cmsCategories.deletedAt),
+          inArray(cmsArticles.status, ["published", "scheduled"]),
           lte(cmsArticles.publishedAt, new Date()),
           isNull(cmsArticles.deletedAt),
         ),
@@ -87,7 +94,8 @@ async function loadPortfolio() {
       .where(
         and(
           eq(cmsCategories.slug, "progetti"),
-          eq(cmsArticles.status, "published"),
+          isNull(cmsCategories.deletedAt),
+          inArray(cmsArticles.status, ["published", "scheduled"]),
           lte(cmsArticles.publishedAt, new Date()),
           isNull(cmsArticles.deletedAt),
           isNull(cmsTags.deletedAt),
@@ -108,7 +116,8 @@ async function loadPortfolio() {
       .where(
         and(
           eq(cmsCategories.slug, "progetti"),
-          eq(cmsArticles.status, "published"),
+          isNull(cmsCategories.deletedAt),
+          inArray(cmsArticles.status, ["published", "scheduled"]),
           lte(cmsArticles.publishedAt, new Date()),
           isNull(cmsArticles.deletedAt),
         ),
