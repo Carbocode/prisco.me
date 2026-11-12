@@ -103,7 +103,7 @@ export const deleteMediaFn = createServerFn({ method: "POST" })
     });
     if (!media) throw notFound("media");
 
-    const associations = await loadMediaAssociations(database);
+    const associations = await loadMediaAssociations(database, { revisions: true });
     const usage = mediaUsageMap(associations).get(media.id) ?? emptyMediaUsage();
     if (usage.total !== data.confirmedUsage) {
       throw new CmsError(
@@ -131,7 +131,9 @@ export const deleteMediaFn = createServerFn({ method: "POST" })
             updatedAt: now,
             version: article.version + 1,
           })
-          .where(eq(cmsArticles.id, article.id)),
+          // Il controllo di versione evita di sovrascrivere una modifica concorrente
+          // con il contenuto letto prima del batch.
+          .where(and(eq(cmsArticles.id, article.id), eq(cmsArticles.version, article.version))),
       );
     }
     for (const category of associations.categories) {
@@ -169,29 +171,64 @@ export const deleteMediaFn = createServerFn({ method: "POST" })
       statements as [(typeof statements)[number], ...(typeof statements)[number][]], // oxlint-disable-line typescript/no-unsafe-type-assertion
     );
 
-    try {
-      await env.CMS_MEDIA.delete(media.storageKey);
-    } catch (error) {
+    // Il file su R2 è l'unico passo irreversibile: prima di eseguirlo verifica che
+    // nessun articolo o categoria usi ancora il media (modifica concorrente o
+    // aggiornamento scartato dal controllo di versione).
+    const remaining = mediaUsageMap(await loadMediaAssociations(database)).get(media.id);
+    if (remaining?.total) {
       await database.batch([
         database
           .update(cmsMedia)
           .set({ deletedAt: null, updatedAt: new Date() })
           .where(eq(cmsMedia.id, media.id)),
         database.insert(cmsAuditLogs).values(
-          auditInsert(session.user.id, "media.storage_delete_failed", "media", media.id, {
-            storageKey: media.storageKey,
+          auditInsert(session.user.id, "media.delete_conflict", "media", media.id, {
+            remaining,
           }),
         ),
       ]);
-      throw error;
+      throw new CmsError(
+        409,
+        "MEDIA_USAGE_CHANGED",
+        "Le associazioni del media sono cambiate. Controlla di nuovo prima di eliminarlo.",
+      );
     }
 
-    return { ok: true, usage };
+    // Le associazioni sono già state rimosse: un errore di R2 non deve riportare il
+    // media in libreria senza i suoi riferimenti. Il file resta orfano e tracciato
+    // nell'audit log.
+    const storageDeleted = await deleteStoredMedia(media.storageKey);
+    if (!storageDeleted) {
+      await database.insert(cmsAuditLogs).values(
+        auditInsert(session.user.id, "media.storage_delete_failed", "media", media.id, {
+          storageKey: media.storageKey,
+        }),
+      );
+    }
+
+    return { ok: true, usage, storageDeleted };
   });
+
+async function deleteStoredMedia(storageKey: string) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await env.CMS_MEDIA.delete(storageKey);
+      return true;
+    } catch (error) {
+      console.error("Eliminazione del media da R2 non riuscita", {
+        action: "media_storage_delete_error",
+        storageKey,
+        attempt,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+  return false;
+}
 
 type MediaAssociations = Awaited<ReturnType<typeof loadMediaAssociations>>;
 
-async function loadMediaAssociations(database: CmsDb) {
+async function loadMediaAssociations(database: CmsDb, options: { revisions?: boolean } = {}) {
   const [articles, categories, revisions] = await Promise.all([
     database
       .select({
@@ -204,9 +241,12 @@ async function loadMediaAssociations(database: CmsDb) {
     database
       .select({ id: cmsCategories.id, heroMediaId: cmsCategories.heroMediaId })
       .from(cmsCategories),
-    database
-      .select({ id: cmsArticleRevisions.id, snapshot: cmsArticleRevisions.snapshot })
-      .from(cmsArticleRevisions),
+    // Le revisioni servono solo all'eliminazione: elenco e conteggi non le leggono.
+    options.revisions
+      ? database
+          .select({ id: cmsArticleRevisions.id, snapshot: cmsArticleRevisions.snapshot })
+          .from(cmsArticleRevisions)
+      : [],
   ]);
   return { articles, categories, revisions };
 }
