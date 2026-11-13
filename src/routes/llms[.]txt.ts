@@ -2,22 +2,23 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const llmsTxt = `# Prisco.me
 
-> Prisco.me e il mio spazio personale: un posto in cui parlo di me, del mio percorso, dei progetti che costruisco e degli argomenti che mi piacciono o mi appassionano.
+> Prisco.me is Vincenzo Prisco's personal website, covering his background, career, projects, and topics he finds interesting.
 
-## Pagine principali
+## Main pages
 - [Home](https://prisco.me/)
-- [Progetti](https://prisco.me/progetti)
-- [Carriera](https://prisco.me/career)
-- [Informazioni](https://prisco.me/about)
-- [Contatti](https://prisco.me/contact)
+- [Projects](https://prisco.me/progetti)
+- [Career](https://prisco.me/career)
+- [About](https://prisco.me/about)
+- [Contact](https://prisco.me/contact)
 
-## Fatti chiave
-- Prisco.me è lo spazio personale di Vincenzo Prisco.
-- Il sito racconta chi è, il suo percorso professionale e i progetti che considera significativi.
-- Il sito è costruito con TanStack Start, React, TypeScript ed è hostato su Cloudflare.
-- I contenuti principali possono riguardare software engineering, esperienze personali, interessi e commenti su attualità.
+## Key facts
+- Prisco.me is Vincenzo Prisco's personal website.
+- The site presents his background, professional journey, and selected projects.
+- It is built with TanStack Start, React, and TypeScript, and hosted on Cloudflare.
+- Topics may include software engineering, personal experiences, interests, and commentary on current events.
+- Public pages and editorial content are primarily in Italian.
 
-## Contatto
+## Contact
 - [Website](https://prisco.me/)
 - [Contact page](https://prisco.me/contact)
 - [LinkedIn](https://www.linkedin.com/in/vincenzoprisco/)

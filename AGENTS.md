@@ -1,102 +1,108 @@
-# Architettura e organizzazione obbligatorie
+# Mandatory architecture and organization
 
-Queste regole valgono per tutto il repository e per ogni nuova implementazione o refactoring. Prima di modificare il codice, leggere [docs/architecture.md](docs/architecture.md) e gli eventuali README della feature interessata. Per la home leggere anche [src/features/home/README.md](src/features/home/README.md).
+These rules apply throughout the repository and to every new implementation or refactoring. Before changing code, read [docs/architecture.md](docs/architecture.md) and any README for the affected feature. For the home page, also read [src/features/home/README.md](src/features/home/README.md).
 
-## Collocazione del codice
+## Language
 
-- Organizzare il codice applicativo per funzionalità in `src/features/<feature>`. Estendere la feature proprietaria esistente prima di crearne una nuova.
-- Mantenere pagine in `pages/`, componenti specifici in `components/`, modelli e funzioni pure in `domain/`, operazioni server in `server/`, integrazioni browser in `client/` e stili specifici in `styles/`, quando queste suddivisioni servono. Non creare directory vuote o livelli senza responsabilità concreta.
-- Le feature esistenti e le rispettive responsabilità sono elencate in `docs/architecture.md`. In particolare: `cms` gestisce scrittura e amministrazione editoriale, `content` possiede modello dei documenti e lettura pubblica, `editor` possiede l'interfaccia Plate. `auth` gestisce accesso e permessi; `account` gestisce le impostazioni dell'utente; `dashboard` gestisce shell e navigazione dell'area riservata.
-- `src/components` ospita soltanto componenti condivisi, organizzati nelle directory `ui`, `layout`, `artwork`, `media` e `data-table`. I componenti usati da una sola feature rimangono nella feature.
-- `src/lib` e `src/hooks` ospitano soltanto utilità e hook trasversali. Non spostarvi logica di dominio per comodità e non ricreare contenitori generici come `src/server`, `src/services` o un insieme di componenti applicativi nella radice di `src/components`.
-- Identità, URL e impostazioni comuni del sito appartengono a `src/config/site.ts`. Schema e infrastruttura del database appartengono a `src/db`; le query applicative appartengono al server della feature.
+- Write technical documentation, agent instructions, architecture notes, setup guides, audit reports, and AI discovery resources in English. This includes README files, `AGENTS.md`, `docs/`, `llms.txt`, ARD descriptions and representative queries, and future machine-readable API documentation.
+- Keep public editorial content and interface copy in their intended language. SEO/GEO metadata and structured data that describe an Italian page must accurately reflect that page; preserve its Italian titles, descriptions, and `inLanguage`/locale values. Do not relabel Italian content as English merely because its metadata is machine-readable.
+- Preserve protocol keys, identifiers, URLs, commands, code examples, and historical technical references when translating documentation.
 
-## Route e confini tra moduli
+## Code placement
 
-- Mantenere `src/routes` dedicato a configurazione TanStack Start: loader, parametri e ricerca, autorizzazione, endpoint, redirect e metadati. Estrarre le viste articolate in `features/<feature>/pages`; nelle route sono ammessi piccoli adattatori di composizione.
-- Le pagine estratte devono usare `getRouteApi` quando leggono i dati della route. Non importare il modulo `Route` dalla pagina che quel modulo importa.
-- Mantenere documento HTML e provider globali in `src/app`. Conservare gli entrypoint richiesti dal framework nelle posizioni configurate. Non modificare manualmente `src/routeTree.gen.ts`.
-- I moduli `domain` devono restare indipendenti da React, route, componenti, hook e runtime server. Usare import di soli tipi quando la dipendenza serve esclusivamente ai tipi.
-- I moduli client possono chiamare le server function attraverso `*.functions.ts`. Non devono importare direttamente repository, connessioni D1, accesso R2, segreti o configurazione server dell'autenticazione, nemmeno attraverso riesportazioni.
-- Le server function devono mantenere validazione e controlli di accesso sul server; nascondere un controllo nell'interfaccia non costituisce autorizzazione.
-- Il renderer pubblico dei contenuti non deve dipendere dall'editor Plate. Modello canonico del documento ed embed condivisi appartengono a `content`; l'editor li riutilizza.
-- Le dipendenze tra feature devono puntare al modulo proprietario della capacità o del modello condiviso. Non importare una pagina di un'altra feature per riusarne la logica e non duplicare tipi o validazioni canonici.
-- Non introdurre dipendenze circolari. Non aggiungere file di riesportazione che nascondano i confini o mescolino moduli client e server.
+- Organize application code by feature in `src/features/<feature>`. Extend the existing owning feature before creating a new one.
+- Put pages in `pages/`, feature-specific components in `components/`, models and pure functions in `domain/`, server operations in `server/`, browser integrations in `client/`, and feature styles in `styles/` where these divisions are useful. Do not create empty directories or layers without a concrete responsibility.
+- Existing features and their responsibilities are listed in `docs/architecture.md`. In particular, `cms` owns editorial writing and administration, `content` owns the document model and public reading, and `editor` owns the Plate interface. `auth` owns access and permissions; `account` owns user settings; `dashboard` owns the private area shell and navigation.
+- `src/components` contains only shared components, organized under `ui`, `layout`, `artwork`, `media`, and `data-table`. Components used by a single feature stay in that feature.
+- `src/lib` and `src/hooks` contain only cross-feature utilities and hooks. Do not move domain logic there for convenience or recreate generic containers such as `src/server`, `src/services`, or a flat set of application components under `src/components`.
+- Site identity, URLs, and common settings belong in `src/config/site.ts`. Database schema and infrastructure belong in `src/db`; application queries belong in the owning feature's server modules.
 
-## Separazione delle responsabilità
+## Routes and module boundaries
 
-- Separare composizione della vista, gestione dello stato, trasformazioni pure e persistenza quando hanno responsabilità distinte. Non riaccorpare in un solo file i moduli già separati.
-- Per il form degli articoli mantenere la separazione tra vista, `use-article-form.ts`, modello, tipi e confronto revisioni. Per l'editor mantenere separati plugin, nodi, dialog, toolbar e dati statici. Per il questionario mantenere il modello del flusso separato dalla vista.
-- In `cms/server/articles` mantenere distinti query, mutazioni, pubblicazione, revisioni, idratazione e snapshot. Non ricreare un servizio monolitico degli articoli.
-- Per home e career mantenere separati pagina, componenti o sezioni, illustrazioni, animazioni e calcoli puri. Listener, observer e frame devono essere rilasciati allo smontaggio.
-- Suddividere per responsabilità, senza soglie arbitrarie di righe né astrazioni speculative. I componenti di composizione non devono diventare wrapper delle primitive shadcn: valgono le regole specifiche sotto.
+- Keep `src/routes` focused on TanStack Start configuration: loaders, params and search validation, authorization, endpoints, redirects, and metadata. Extract substantial views into `features/<feature>/pages`; small composition adapters may remain in routes.
+- Extracted pages must use `getRouteApi` when reading route data. Do not import the `Route` module from the page that the route itself imports.
+- Keep the HTML document and global providers in `src/app`. Preserve framework entrypoints in their configured locations. Do not manually edit `src/routeTree.gen.ts`.
+- `domain` modules must remain independent of React, routes, components, hooks, and server runtimes. Use type-only imports for dependencies needed exclusively as types.
+- Client modules may call server functions through `*.functions.ts`. They must not directly import repositories, D1 connections, R2 access, secrets, or server authentication configuration, including through re-exports.
+- Server functions must retain server-side validation and access checks; hiding an interface control is not authorization.
+- The public content renderer must not depend on the Plate editor. The canonical document model and shared embeds belong to `content`; the editor reuses them.
+- Cross-feature dependencies must point to the module that owns the shared capability or model. Do not import another feature's page to reuse its logic or duplicate canonical types or validation.
+- Do not introduce circular dependencies. Do not add re-export files that obscure boundaries or mix client and server modules.
 
-## Stili, rendering e manutenzione
+## Separation of responsibilities
 
-- Mantenere `src/styles.css` come ingresso globale e preservare l'ordine della cascata dei suoi import. Collocare gli stili delle feature nelle feature; per la home preservare l'ingresso `home.css` e la divisione per scena.
-- Per date pubbliche e raggruppamenti per giorno o anno riutilizzare `src/lib/dates.ts` e il fuso definito in `src/config/site.ts`. Non usare il fuso implicito del browser per markup renderizzato anche sul server.
-- Non calcolare date correnti destinate al rendering durante l'inizializzazione dei moduli Worker. Mantenere coerente il primo rendering server e client.
-- Prima di spostare un modulo, cercarne tutti gli utilizzatori e aggiornare import statici, import dinamici, mock, test e documentazione. Non modificare URL pubblici o schema del database come conseguenza di un semplice spostamento di file.
-- Tenere i test accanto al modulo verificato. Per modifiche al codice eseguire `bun run check` e i test pertinenti; per refactoring trasversali eseguire `bun run ci` e verificare i flussi coinvolti nel browser. Usare un database locale isolato per prove che scrivono dati.
-- Quando cambiano responsabilità, confini o struttura delle directory, aggiornare `docs/architecture.md` e gli eventuali README interessati nella stessa modifica. Aggiornare anche queste regole se cambia una convenzione obbligatoria. Non eliminare o indebolire una regola soltanto per adattarla all'implementazione appena scritta.
-- Prima di concludere, verificare che ogni nuovo file abbia un proprietario chiaro, che non siano stati introdotti cicli o import server nel client e che i controlli eseguiti siano riportati con eventuali limiti reali.
+- Separate view composition, state management, pure transformations, and persistence when they have distinct responsibilities. Do not merge previously separated modules back into one file.
+- For the article form, preserve the separation between the view, `use-article-form.ts`, model, types, and revision comparison. For the editor, keep plugins, nodes, dialogs, toolbar, and static data separate. For the questionnaire, keep the flow model separate from its view.
+- In `cms/server/articles`, keep queries, mutations, publication, revisions, hydration, and snapshots separate. Do not recreate a monolithic article service.
+- For home and career, keep pages, components or sections, artwork, animations, and pure calculations separate. Release listeners, observers, and animation frames on unmount.
+- Split by responsibility, without arbitrary line-count thresholds or speculative abstractions. Composition components must not become wrappers around shadcn primitives: the specific rules below apply.
 
-# Regole per l'interfaccia
+## Styles, rendering, and maintenance
 
-## Illustrazioni SVG statiche e cache WebP
+- Keep `src/styles.css` as the global entrypoint and preserve its import cascade order. Keep feature styles inside their features; for home, preserve the `home.css` entrypoint and scene-based division.
+- For public dates and grouping by day or year, reuse `src/lib/dates.ts` and the time zone in `src/config/site.ts`. Do not use the browser's implicit time zone for markup also rendered on the server.
+- Do not compute current dates used in rendering during Worker module initialization. Keep the first server and client render consistent.
+- Before moving a module, find all consumers and update static imports, dynamic imports, mocks, tests, and documentation. Do not change public URLs or the database schema as a consequence of simply moving files.
+- Keep tests beside the module they verify. For code changes, run `bun run check` and relevant tests; for cross-cutting refactors, run `bun run ci` and verify the affected browser flows. Use an isolated local database for checks that write data.
+- When responsibilities, boundaries, or directory structure change, update `docs/architecture.md` and affected README files in the same change. Also update these instructions when a mandatory convention changes. Do not remove or weaken a rule merely to fit the implementation just written.
+- Before finishing, check that every new file has a clear owner, no cycles or server imports into clients were introduced, and report the checks performed and any actual limitations.
 
-- Per le illustrazioni statiche complesse o con filtri, preferire un WebP prerenderizzato lossless, uguale su tutti i browser. Conservare sempre lo SVG originale come sorgente modificabile.
-- Le trasformazioni e animazioni CSS dell'intera immagine (parallasse, rotazione, opacità) sono compatibili con il prerender. Mantenere SVG per animazioni della geometria interna, elementi interattivi, icone e loghi che beneficiano del formato vettoriale.
-- Il manifest `scripts/static-artwork.json` elenca sorgenti, risoluzioni e hash dei WebP generati. Aggiungere le nuove illustrazioni idonee al manifest e usare il corrispondente `.webp` nei componenti e negli sfondi CSS.
-- Quando si modifica uno SVG nel manifest, rigenerare autonomamente il relativo WebP con `bun run assets:render`, senza attendere una richiesta dell'utente. Il comando aggiorna solo asset mancanti o cambiati e non richiede un server del sito.
-- Se manca il browser di rendering, installarlo con `bunx playwright install firefox`, poi ripetere il comando.
-- Eseguire `bun run assets:check` prima di completare il lavoro: verifica gli hash delle sorgenti, delle impostazioni e degli output. Il controllo è incluso in `bun run check` e quindi nella CI.
-- Non eliminare effetti per risolvere problemi di performance e non introdurre versioni grafiche diverse per Firefox. Dopo una modifica alle illustrazioni verificare trasparenza, risoluzione e conservazione degli effetti.
+# Interface rules
 
-## Sezioni funzionali
+## Static SVG artwork and WebP caches
 
-Tutte le sezioni funzionali dell'applicazione devono utilizzare obbligatoriamente i componenti shadcn disponibili nel progetto. Questa regola si applica, tra le altre, a form, selettori, liste e tabelle.
+- For complex static artwork or artwork with filters, prefer a prerendered lossless WebP that looks the same in all browsers. Always retain the original SVG as an editable source.
+- CSS transformations and animations of the whole image (parallax, rotation, opacity) are compatible with prerendering. Keep SVG for internal geometry animations, interactive elements, icons, and logos that benefit from vectors.
+- `scripts/static-artwork.json` lists sources, resolutions, and hashes of generated WebPs. Add eligible new artwork to the manifest and use its corresponding `.webp` in components and CSS backgrounds.
+- When changing an SVG listed in the manifest, regenerate its WebP autonomously with `bun run assets:render`, without waiting for a user request. The command updates only missing or changed assets and does not require a site server.
+- If the rendering browser is missing, install it with `bunx playwright install firefox`, then rerun the command.
+- Run `bun run assets:check` before finishing: it verifies source, settings, and output hashes. This check is included in `bun run check` and CI.
+- Do not remove effects to fix performance issues or introduce different artwork for Firefox. After artwork changes, verify transparency, resolution, and preservation of effects.
 
-In queste sezioni:
+## Functional sections
 
-- utilizzare direttamente i componenti shadcn appropriati;
-- non racchiudere i componenti shadcn in wrapper custom;
-- non sovrascrivere, estendere o personalizzare lo stile dei componenti shadcn;
-- non ricreare con HTML o componenti custom un elemento già disponibile come componente shadcn.
+All functional application sections must use the shadcn components available in the project. This includes forms, selectors, lists, and tables.
 
-Sono escluse da questa regola esclusivamente le sezioni di tipo landing page, hero e showcase, per le quali è consentita una composizione visiva personalizzata.
+In these sections:
 
-# Regole TanStack Start
+- Use the appropriate shadcn components directly.
+- Do not enclose shadcn components in custom wrappers.
+- Do not override, extend, or customize shadcn component styles.
+- Do not recreate an element already available in shadcn using HTML or custom components.
 
-## GEO e structured data
+Only landing page, hero, and showcase sections are exempt and may use custom visual composition.
 
-Per Generative Engine Optimization (GEO) seguire la guida ufficiale TanStack Start:
+# TanStack Start rules
+
+## GEO and structured data
+
+For Generative Engine Optimization (GEO), follow the official TanStack Start guide:
 https://tanstack.com/start/latest/docs/framework/react/guide/geo
 
-- inserire i dati strutturati JSON-LD tramite `head()` della route, usando la proprieta `scripts`;
-- usare `children: JSON.stringify(...)` negli oggetti di `scripts`;
-- non inserire tag `<script type="application/ld+json">` direttamente nei componenti React o nel document shell;
-- non usare `dangerouslySetInnerHTML` per JSON-LD;
-- se il JSON-LD dipende da dati dinamici, caricare quei dati nel `loader` della route e leggerli da `loaderData` dentro `head()`;
-- usare vocabolario `schema.org` coerente con il contenuto: `WebSite` e `Person` nella root, `Article` per articoli, `CreativeWork` per progetti, `ContactPage` per la pagina contatti, `FAQPage` per FAQ;
-- mantenere anche meta tag tradizionali, canonical URL e Open Graph nel `head()`;
-- strutturare i contenuti con affermazioni chiare, gerarchia di heading corretta e attribuzione autore quando utile;
-- valutare endpoint machine-readable o `llms.txt` solo quando aggiungono informazioni realmente mantenibili.
+- Insert JSON-LD through the route's `head()`, using the `scripts` property.
+- Use `children: JSON.stringify(...)` in `scripts` objects.
+- Do not place `<script type="application/ld+json">` tags directly in React components or the document shell.
+- Do not use `dangerouslySetInnerHTML` for JSON-LD.
+- When JSON-LD depends on dynamic data, load it in the route's `loader` and read it from `loaderData` inside `head()`.
+- Use `schema.org` vocabulary consistent with the content: `WebSite` and `Person` in the root, `Article` for articles, `CreativeWork` for projects, `ContactPage` for contact pages, and `FAQPage` for FAQs.
+- Also maintain traditional meta tags, canonical URLs, and Open Graph in `head()`.
+- Structure content with clear statements, a correct heading hierarchy, and author attribution where useful.
+- Consider machine-readable endpoints or `llms.txt` only when they add genuinely maintainable information.
 
-Per `llms.txt`, seguire la sezione dedicata della guida TanStack Start:
+For `llms.txt`, follow the dedicated section:
 https://tanstack.com/start/latest/docs/framework/react/guide/geo#llms-txt
 
-- creare la route come `src/routes/llms[.]txt.ts`;
-- esporre il path pubblico `/llms.txt`;
-- usare una server route con `server.handlers.GET`;
-- restituire `new Response(content, { headers: { "Content-Type": "text/plain" } })`;
-- mantenere il contenuto breve, fattuale e aggiornabile: descrizione del sito, pagine principali, fatti chiave e contatto;
-- non includere segreti, dati personali non pubblici, contenuti promozionali fragili o informazioni che richiedono aggiornamenti manuali frequenti.
+- Create the route as `src/routes/llms[.]txt.ts`.
+- Expose the public path `/llms.txt`.
+- Use a server route with `server.handlers.GET`.
+- Return `new Response(content, { headers: { "Content-Type": "text/plain" } })`.
+- Keep content brief, factual, and maintainable: site description, main pages, key facts, and contact details.
+- Do not include secrets, non-public personal data, fragile promotional content, or information requiring frequent manual updates.
 
-Per `ContactPage`, seguire anche questa reference:
+For `ContactPage`, also follow:
 https://www.karpi.studio/schema-glossary-types/contact-page
 
-- usare almeno `name`, `description`, `url`, `mainEntity`, `isPartOf` e `inLanguage`;
-- collegare `mainEntity` all'entita principale del sito (`Person` per questo progetto personale, `Organization` solo se il contesto cambia);
-- collegare `isPartOf` al `WebSite` root;
-- preferire riferimenti `@id` stabili, ad esempio `https://prisco.me/#person` e `https://prisco.me/#website`.
+- Include at least `name`, `description`, `url`, `mainEntity`, `isPartOf`, and `inLanguage`.
+- Connect `mainEntity` to the site's main entity (`Person` for this personal project; use `Organization` only if the context changes).
+- Connect `isPartOf` to the root `WebSite`.
+- Prefer stable `@id` references such as `https://prisco.me/#person` and `https://prisco.me/#website`.

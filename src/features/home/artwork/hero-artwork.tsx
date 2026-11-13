@@ -63,14 +63,16 @@ export function HeroArtwork() {
           "--tw": "5.2s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -83,14 +85,16 @@ export function HeroArtwork() {
           "--tw": "6.4s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -103,14 +107,16 @@ export function HeroArtwork() {
           "--tw": "4.6s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -123,14 +129,16 @@ export function HeroArtwork() {
           "--tw": "5.8s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -143,14 +151,16 @@ export function HeroArtwork() {
           "--tw": "7s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -163,14 +173,16 @@ export function HeroArtwork() {
           "--tw": "5s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -183,14 +195,16 @@ export function HeroArtwork() {
           "--tw": "6s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -203,14 +217,16 @@ export function HeroArtwork() {
           "--tw": "4.8s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -223,14 +239,16 @@ export function HeroArtwork() {
           "--tw": "5.6s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div
         className="star depth"
@@ -243,14 +261,16 @@ export function HeroArtwork() {
           "--tw": "6.8s",
         }}
       >
-        <img
-          src="/home/star.webp"
-          srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
-          sizes="2.6rem"
-          alt=""
-          width="256"
-          height="256"
-        />
+        <span className="star-enter">
+          <img
+            src="/home/star.webp"
+            srcSet="/home/star-64.webp 64w, /home/star-128.webp 128w, /home/star.webp 256w"
+            sizes="2.6rem"
+            alt=""
+            width="256"
+            height="256"
+          />
+        </span>
       </div>
       <div className="jupiter depth" style={{ "--d": "0.35" }}>
         <img

@@ -196,7 +196,9 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
   });
   expect(measurePointer).not.toHaveBeenCalled();
-  expect(hero.style.getPropertyValue("--px")).toBe("0");
+  expect(hero.style.getPropertyValue("--px")).toBe("");
+  for (const layer of hero.querySelectorAll<HTMLElement>(".depth"))
+    expect(layer.style.getPropertyValue("--px")).toBe("0");
   measurePointer.mockRestore();
   expect(page?.classList.contains("is-framed")).toBe(false);
   await scrollToPosition(1300);

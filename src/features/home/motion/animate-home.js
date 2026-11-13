@@ -1,4 +1,5 @@
 import { createAnimationScope } from "./animation-scope.js";
+import { createHeroParallax } from "./hero-parallax.js";
 import { createJourneyMotion } from "./journey-motion.js";
 import { remapJourneyScroll } from "./journey-position";
 import { createManifestoWords } from "./manifesto-words.js";
@@ -100,6 +101,7 @@ export function animateHome(container) {
 
   /* --- Hero: parallasse col puntatore -------------------------------- */
   const hero = $("[data-hero]");
+  const heroParallax = createHeroParallax(hero);
   if (header) {
     setScrollValue(page, "--home-header-height", `${initialHeaderHeight}px`);
     observeResize((entries) => {
@@ -170,7 +172,7 @@ export function animateHome(container) {
     );
   });
 
-  attachPointerEffects(container, hero, { listen, frame, reduceMQ, finePointer });
+  attachPointerEffects(container, hero, { listen, frame, reduceMQ, finePointer, heroParallax });
 
   /* --- Traversata orizzontale ---------------------------------------- */
   const journeyMotion = createJourneyMotion(container, scroller, { listen, reduceMQ, localRect });
@@ -243,7 +245,7 @@ export function animateHome(container) {
     }
     if (reduced) return;
 
-    setScrollValue(hero, "--hp", hp.toFixed(4));
+    heroParallax.scroll(hp.toFixed(4));
     updateJourney(y);
     for (const { element, top, height, speed } of fossilRects) {
       if (top - y >= vh + 200 || top + height - y <= -200) continue;
@@ -348,7 +350,8 @@ export function animateHome(container) {
   listen(reduceMQ, "change", () => {
     layout();
     if (reduceMQ.matches) {
-      setScrollValue(hero, "--hp", "0.0000");
+      heroParallax.scroll("0.0000");
+      heroParallax.pointer("0", "0");
       $$("[data-reveal], [data-core]").forEach((el) => el.classList.add("is-in"));
     }
   });
@@ -371,6 +374,7 @@ export function animateHome(container) {
 
   return () => {
     scope.dispose();
+    heroParallax.dispose();
     clearTimeout(gaugeTimer);
     clearTimeout(storyStartTimer);
     root.classList.remove("js");

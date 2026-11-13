@@ -2,11 +2,14 @@ import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
 import { env as cloudflareEnv } from "cloudflare:workers";
 
 import { createAuth, isLocalRequest } from "@/features/auth/server/auth";
+import { ardPath } from "@/features/site/domain/ard";
 
 export default createServerEntry({
   async fetch(request: Request) {
     try {
-      if (new URL(request.url).pathname.startsWith("/.well-known/")) {
+      const path = new URL(request.url).pathname;
+      // Site discovery is served by its route; preserve Better Auth's other well-known endpoints.
+      if (path.startsWith("/.well-known/") && path !== ardPath) {
         return createAuth(cloudflareEnv, {
           captchaEnabled: !isLocalRequest(request),
         }).handler(request);

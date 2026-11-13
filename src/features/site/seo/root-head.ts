@@ -1,6 +1,8 @@
 import bricolageGrotesqueFont from "@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 
+import { ardPath } from "../domain/ard";
+
 export const rootHead = () => ({
   meta: [
     { charSet: "utf-8" },
@@ -34,6 +36,7 @@ export const rootHead = () => ({
     { "apple-mobile-web-app-title": "Prisco.me" },
   ],
   links: [
+    { rel: "ard", href: ardPath, type: "application/json" },
     {
       rel: "preload",
       href: interFont,
