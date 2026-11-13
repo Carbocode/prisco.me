@@ -1,8 +1,8 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
 
 import { cmsCategories, cmsTags, cmsOrganizations, cmsMedia } from "@/db/schema";
+import { parseCmsDocument } from "@/features/content/domain/document";
 
-import { parseCmsDocument } from "../domain/cms-document";
 import { mediaIdsInDocument } from "../domain/media-associations";
 import { CmsError } from "./cms-errors";
 import type { CmsDb } from "./cms.repository";

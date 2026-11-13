@@ -30,8 +30,8 @@ import { KEYS } from "platejs";
 import type { PlateEditor } from "platejs/react";
 import type * as React from "react";
 
-import type { MediaKind } from "@/features/editor/editor-actions-context";
-import { insertBlock, insertInlineElement, setBlockType } from "@/features/editor/transforms";
+import type { MediaKind } from "./editor-actions-context";
+import { insertBlock, insertInlineElement, setBlockType } from "./transforms";
 
 export type InsertContext = {
   editor: PlateEditor;

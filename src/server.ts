@@ -1,7 +1,7 @@
 import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
 import { env as cloudflareEnv } from "cloudflare:workers";
 
-import { createAuth, isLocalRequest } from "@/lib/auth";
+import { createAuth, isLocalRequest } from "@/features/auth/server/auth";
 
 export default createServerEntry({
   async fetch(request: Request) {

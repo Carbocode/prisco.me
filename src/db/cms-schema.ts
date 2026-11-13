@@ -17,7 +17,7 @@ import {
   type CategoryArchiveSort,
   type CategoryArticleLayout,
   type CategorySchemaType,
-} from "@/lib/content-category";
+} from "@/features/content/domain/content-category";
 
 import { user } from "./schema";
 

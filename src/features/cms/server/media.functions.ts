@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { getDb } from "@/db";
 import { cmsAuditLogs, cmsMedia } from "@/db/schema";
-import { roleHasPermission } from "@/lib/cms-permissions";
+import { roleHasPermission } from "@/features/auth/domain/permissions";
 
 import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
 import { emptyMediaUsage, type MediaUsage } from "../domain/media-associations";

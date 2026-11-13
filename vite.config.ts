@@ -8,12 +8,20 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
+  resolve: {
+    alias: [
+      { find: "@", replacement: fileURLToPath(new URL("./src", import.meta.url)) },
+      {
+        find: /^@posthog\/browser-common\/utils\/array-(?:at|find-last)-polyfill$/,
+        replacement: fileURLToPath(new URL("./src/lib/native-array-methods.ts", import.meta.url)),
+      },
+    ],
+  },
   plugins: [
     devtools(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({ server: { build: { inlineCss: true } } }),
     viteReact(),
   ],
 });

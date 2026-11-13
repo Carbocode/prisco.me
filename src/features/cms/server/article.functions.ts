@@ -1,26 +1,30 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { createArticle, updateArticle } from "@/features/cms/server/articles/mutations";
+import {
+  archiveArticle,
+  publishArticle,
+  restoreArticle,
+  unpublishArticle,
+} from "@/features/cms/server/articles/publication";
+import {
+  getAdminArticle,
+  getPreviewArticle,
+  listAdminArticles,
+  listArticleExperiences,
+} from "@/features/cms/server/articles/queries";
+import {
+  listArticleRevisions,
+  restoreArticleRevision,
+} from "@/features/cms/server/articles/revisions";
+
 import {
   createArticleSchema,
   listArticlesSchema,
   publishArticleSchema,
   updateArticleSchema,
 } from "../domain/validation";
-import {
-  archiveArticle,
-  createArticle,
-  getAdminArticle,
-  getPreviewArticle,
-  listAdminArticles,
-  listArticleRevisions,
-  listArticleExperiences,
-  publishArticle,
-  restoreArticle,
-  restoreArticleRevision,
-  unpublishArticle,
-  updateArticle,
-} from "./article.service";
 
 export const listArticlesFn = createServerFn({ method: "GET" })
   .validator(listArticlesSchema)
@@ -63,7 +67,7 @@ export const restoreArticleRevisionFn = createServerFn({ method: "POST" })
   .handler(({ data }) => restoreArticleRevision(data));
 
 export const articleStatsFn = createServerFn({ method: "GET" }).handler(async () => {
-  const { getArticleStats } = await import("./article.service");
+  const { getArticleStats } = await import("./articles/queries");
   return getArticleStats();
 });
 

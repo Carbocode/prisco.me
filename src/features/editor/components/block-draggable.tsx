@@ -34,9 +34,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useEditorActions } from "@/features/editor/editor-actions-context";
-import { INSERT_GROUPS, TURN_INTO_GROUPS } from "@/features/editor/insert-items";
 import { cn } from "@/lib/utils";
+
+import { useEditorActions } from "../editor-actions-context";
+import { INSERT_GROUPS, TURN_INTO_GROUPS } from "../insert-items";
 
 const UNDRAGGABLE_KEYS = [KEYS.column, KEYS.tr, KEYS.td];
 

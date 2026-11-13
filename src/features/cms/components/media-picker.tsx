@@ -1,7 +1,7 @@
 import { ArrowDownUp, ChevronLeft, ChevronRight, ImageIcon, Search } from "lucide-react";
 import { useId, useMemo, useState } from "react";
 
-import { HoverAnimatedImage } from "@/components/hover-animated-image";
+import { HoverAnimatedImage } from "@/components/media/hover-animated-image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,11 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  MediaCard as MediaLibraryCard,
-  mediaDisplayName,
-} from "@/features/cms/components/media-card";
 import { cn } from "@/lib/utils";
+
+import { MediaCard as MediaLibraryCard, mediaDisplayName } from "./media-card";
 
 export type MediaPickerItem = {
   id: string;

@@ -5,9 +5,12 @@ import { z } from "zod";
 
 import { getDb } from "@/db";
 import { cmsCategories, cmsMedia, cmsRedirects } from "@/db/schema";
+import {
+  getPublishedArticleBySlug,
+  listPublishedArticles,
+} from "@/features/cms/server/articles/queries";
 
 import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
-import { getPublishedArticleBySlug, listPublishedArticles } from "./article.service";
 export const listPublishedArticlesFn = createServerFn({ method: "GET" })
   .validator(
     z.object({

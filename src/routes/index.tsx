@@ -3,8 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { listPublishedArticlesFn } from "@/features/cms/server/public.functions";
 import { HomePage } from "@/features/home/home-page";
-import { pageHead } from "@/lib/page-head";
-import { getPortfolioQueryOptions } from "@/server/portfolio";
+import { getPortfolioQueryOptions } from "@/features/portfolio/server/portfolio.functions";
+import { pageHead } from "@/features/site/seo/page-head";
 export const Route = createFileRoute("/")({
   head: () =>
     pageHead({

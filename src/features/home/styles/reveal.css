@@ -1,0 +1,13 @@
+/* --- Rivelazioni generiche --- */
+.home-traversata.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 900ms var(--ease-out),
+    transform 1000ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.home-traversata.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}

@@ -1,8 +1,8 @@
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { env } from "cloudflare:workers";
 
-import { createAuth } from "@/lib/auth";
-import { roleHasPermission, type CmsResource } from "@/lib/cms-permissions";
+import { roleHasPermission, type CmsResource } from "@/features/auth/domain/permissions";
+import { createAuth } from "@/features/auth/server/auth";
 
 import { canEditArticle } from "../domain/workflow";
 import { CmsError } from "./cms-errors";

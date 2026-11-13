@@ -1,4 +1,4 @@
-import type { CmsDocument, CmsNode } from "./cms-document";
+import type { CmsDocument, CmsNode } from "@/features/content/domain/document";
 
 export const WORDS_PER_MINUTE = 200;
 

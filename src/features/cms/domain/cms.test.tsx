@@ -1,8 +1,13 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { renderCmsDocument } from "../editor/render-cms-document";
-import { parseCmsDocument, serializeCmsDocument, toPlateValue } from "./cms-document";
+import {
+  parseCmsDocument,
+  serializeCmsDocument,
+  toPlateValue,
+} from "@/features/content/domain/document";
+import { renderCmsDocument } from "@/features/content/rendering/render-document";
+
 import { hasValidMediaSignature, mediaStorageKey } from "./media";
 import { slugify, slugPattern } from "./slug";
 import {

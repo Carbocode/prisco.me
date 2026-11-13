@@ -1,0 +1,312 @@
+/* Costellazioni: un'unica carta celeste generata da dati, senza card. */
+.home-traversata .sky-map {
+  display: grid;
+  gap: 2rem;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+.home-traversata .sky-chart {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+}
+@media (max-width: 759px) {
+  .home-traversata .sky-map {
+    margin-top: 1.5rem;
+    gap: 1rem;
+  }
+}
+.home-traversata .sky-chart[data-sky-layout="tall"] {
+  min-width: 0;
+  gap: 0.5rem;
+}
+.home-traversata .sky-chart[data-sky-layout="tall"] .sky-label {
+  font-size: 16px;
+}
+.home-traversata .sky-chart-title {
+  max-width: 24rem;
+  text-align: center;
+  font-family: var(--f-display);
+  font-size: clamp(1.35rem, 2.5vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.home-traversata .sky-chart-title span {
+  display: block;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--link-hover);
+}
+.home-traversata .sky-chart[data-sky-layout="wide"] .sky-chart-title {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  width: 30%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.home-traversata .sky-chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* Keep offscreen SVG loops from continuously repainting the long story. */
+.home-traversata.js [data-section]:not(.is-motion-visible) *,
+.home-traversata.js [data-section]:not(.is-motion-visible) *::before,
+.home-traversata.js [data-section]:not(.is-motion-visible) *::after,
+.home-site[data-footer-open="true"] .home-traversata *,
+.home-site[data-footer-open="true"] .home-traversata *::before,
+.home-site[data-footer-open="true"] .home-traversata *::after {
+  animation-play-state: paused !important;
+}
+
+.home-traversata .sky-grid {
+  fill: none;
+  stroke: #c9dcf5;
+  stroke-width: 0.7;
+  opacity: 0.09;
+}
+.home-traversata .sky-grid.is-ecliptic {
+  stroke-dasharray: 2 7;
+  opacity: 0.22;
+}
+.home-traversata .sky-dust {
+  fill: #d5e7ff;
+}
+.home-traversata .sky-group {
+  color: var(--c);
+  transition: opacity 500ms var(--ease-out);
+}
+.home-traversata .sky-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  opacity: 0.45;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition:
+    opacity 400ms,
+    stroke-width 400ms;
+}
+.home-traversata .sky-halo {
+  fill: currentColor;
+  opacity: 0.08;
+}
+.home-traversata .sky-spark {
+  fill: currentColor;
+}
+.home-traversata .sky-core {
+  fill: #fff;
+}
+/* Animated stars are drawn around (0, 0); a separate SVG group positions them.
+   A fixed origin avoids bounding-box feedback between nested SVG animations. */
+.home-traversata .sky-star {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  cursor: default;
+}
+.home-traversata .sky-hit-star {
+  fill: transparent;
+}
+.home-traversata .sky-body {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.home-traversata .sky-star .sky-spark {
+  animation: home-sky-twinkle var(--tw) ease-in-out var(--twd) infinite;
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+.home-traversata .sky-glint {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: home-sky-glint var(--gl) ease-in-out var(--gld) infinite;
+}
+.home-traversata .sky-burst {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+.home-traversata .sky-dust.is-twinkling {
+  animation: home-sky-dust var(--dt) ease-in-out var(--dd) infinite;
+}
+/* Passaggio sulla singola stella: si gonfia, ruota il bagliore e lancia un'onda. */
+.home-traversata .sky-star:hover .sky-body {
+  transform: scale(1.55) rotate(45deg);
+}
+.home-traversata .sky-star:hover .sky-halo {
+  opacity: 0.22;
+}
+.home-traversata .sky-star:hover .sky-burst {
+  animation: home-sky-burst 900ms var(--ease-out) both;
+}
+.home-traversata .sky-star:hover .sky-label {
+  fill: #fff;
+  font-weight: 600;
+}
+/* Illustrazione della costellazione. */
+.home-traversata .sky-art {
+  pointer-events: none;
+  transition: filter 600ms;
+}
+.home-traversata .sky-art-line {
+  fill: currentColor;
+  fill-opacity: 0;
+  stroke: currentColor;
+  stroke-opacity: 0;
+  stroke-width: var(--sw);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition:
+    stroke-dashoffset 900ms var(--ease-out),
+    stroke-opacity 400ms 300ms,
+    fill-opacity 500ms;
+}
+.home-traversata .sky-art-line.is-stroke {
+  fill: none;
+}
+.home-traversata .sky-group.is-active .sky-art {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c) 45%, transparent));
+}
+.home-traversata .sky-group.is-active .sky-art-line {
+  stroke-dashoffset: 0;
+  stroke-opacity: 0.5;
+  fill-opacity: 0.045;
+  transition:
+    stroke-dashoffset 1500ms var(--ease-out) var(--a),
+    stroke-opacity 300ms var(--a),
+    fill-opacity 900ms calc(var(--a) + 500ms);
+}
+.home-traversata .sky-group.is-active .sky-art-line.is-stroke {
+  stroke-opacity: 0.35;
+}
+.home-traversata .sky-group.is-active .sky-halo {
+  opacity: 0.14;
+}
+.home-traversata .sky-label {
+  pointer-events: none;
+  fill: #dde7f3;
+  font: 400 14px var(--f-text);
+  paint-order: stroke;
+  stroke: #0d1a2e;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+  transition: fill 400ms;
+}
+.home-traversata .sky-name {
+  fill: currentColor;
+  font: italic 400 25px var(--f-serif);
+}
+.home-traversata .sky-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+.home-traversata .sky-group.is-active .sky-line {
+  opacity: 0.85;
+  stroke-width: 1.5;
+}
+.home-traversata .sky-group.is-active .sky-label {
+  fill: #fff;
+}
+
+/* Ingresso: stelle che si accendono, poi le linee che le uniscono. */
+.home-traversata.js .sky-chart:not(.is-lit) .sky-star {
+  opacity: 0;
+  transform: scale(0.2);
+}
+.home-traversata.js .sky-chart:not(.is-lit) .sky-line {
+  stroke-dashoffset: 1;
+}
+.home-traversata.js .sky-chart:not(.is-lit) .sky-name {
+  opacity: 0;
+}
+.home-traversata .sky-chart.is-lit .sky-star {
+  transition:
+    opacity 500ms var(--ease-out) var(--d),
+    transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--d);
+}
+.home-traversata .sky-chart.is-lit .sky-line {
+  transition:
+    stroke-dashoffset 1100ms var(--ease-out) var(--d),
+    opacity 400ms,
+    stroke-width 400ms;
+}
+.home-traversata .sky-chart.is-lit .sky-name {
+  transition:
+    opacity 700ms var(--ease-out) var(--d),
+    fill 400ms;
+}
+.home-traversata .sky-chart.is-instant * {
+  transition: none !important;
+}
+@keyframes home-sky-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+  45% {
+    opacity: 0.5;
+    transform: scale(0.72) rotate(14deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+@keyframes home-sky-glint {
+  0%,
+  86%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3) rotate(0deg);
+  }
+  92% {
+    opacity: 0.75;
+    transform: scale(1) rotate(10deg);
+  }
+}
+@keyframes home-sky-dust {
+  50% {
+    opacity: 0.9;
+  }
+}
+@keyframes home-sky-burst {
+  from {
+    opacity: 0.7;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-traversata .star::after,
+  .home-traversata .sky-star .sky-spark,
+  .home-traversata .sky-glint,
+  .home-traversata .sky-dust.is-twinkling,
+  .home-traversata .sky-star:hover .sky-burst {
+    animation: none;
+  }
+  .home-traversata .sky-art-line {
+    transition: none !important;
+  }
+}
