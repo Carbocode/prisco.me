@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Empty,
   EmptyContent,
@@ -20,7 +20,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -125,7 +125,7 @@ export function ArticlesContent() {
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{articles.total} contenuti</p>
@@ -141,115 +141,126 @@ export function ArticlesContent() {
       </header>
 
       <Card size="sm">
+        <CardHeader>
+          <CardTitle>Trova un articolo</CardTitle>
+          <CardDescription>Cerca per titolo o slug e filtra per stato e categoria.</CardDescription>
+        </CardHeader>
         <CardContent>
           <form
-            className="grid items-end gap-2 lg:grid-cols-(--layout-grid-cols-cms-toolbar)"
             onSubmit={(event) => {
               event.preventDefault();
               updateSearch({ query: query || undefined, page: 1 });
             }}
           >
-            <Field>
-              <FieldLabel htmlFor="article-search">Titolo o slug</FieldLabel>
-              <Input
-                id="article-search"
-                type="search"
-                value={query}
-                placeholder="Cerca negli articoli"
-                onChange={(event) => setQuery(event.target.value)}
-              />
-            </Field>
-            <Field>
-              <FieldLabel>Stato</FieldLabel>
-              <Select
-                items={[
-                  { value: "all", label: "Tutti gli stati" },
-                  { value: "draft", label: "Bozza" },
-                  { value: "scheduled", label: "Programmato" },
-                  { value: "published", label: "Pubblicato" },
-                  { value: "archived", label: "Archiviato" },
-                ]}
-                value={search.status ?? "all"}
-                onValueChange={(value) =>
-                  updateSearch({
-                    status: value === "all" ? undefined : (value as typeof search.status), // oxlint-disable-line typescript/no-unsafe-type-assertion
-                    page: 1,
-                  })
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">Tutti gli stati</SelectItem>
-                    <SelectItem value="draft">Bozza</SelectItem>
-                    <SelectItem value="scheduled">Programmato</SelectItem>
-                    <SelectItem value="published">Pubblicato</SelectItem>
-                    <SelectItem value="archived">Archiviato</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <FieldLabel>Categoria</FieldLabel>
-              <Select
-                items={[
-                  { value: "all", label: "Tutte le categorie" },
-                  ...categories.map((category) => ({
-                    value: category.id,
-                    label: category.name,
-                  })),
-                ]}
-                value={search.categoryId ?? "all"}
-                onValueChange={(value) =>
-                  updateSearch({
-                    categoryId: value === "all" ? undefined : (value ?? undefined),
-                    page: 1,
-                  })
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="all">Tutte le categorie</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-            <ButtonGroup>
-              <Button size="sm" type="submit">
-                <Search data-icon="inline-start" />
-                Cerca
-              </Button>
-              {hasFilters ? (
-                <Button
-                  size="sm"
-                  type="button"
-                  variant="outline"
-                  aria-label="Azzera filtri"
-                  onClick={() => {
-                    setQuery("");
-                    void navigate({ search: { page: 1 } });
-                  }}
+            <FieldGroup className="grid items-end md:grid-cols-2 xl:grid-cols-4">
+              <Field>
+                <FieldLabel htmlFor="article-search">Titolo o slug</FieldLabel>
+                <Input
+                  id="article-search"
+                  type="search"
+                  value={query}
+                  placeholder="Cerca negli articoli"
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+              </Field>
+              <Field>
+                <FieldLabel>Stato</FieldLabel>
+                <Select
+                  items={[
+                    { value: "all", label: "Tutti gli stati" },
+                    { value: "draft", label: "Bozza" },
+                    { value: "scheduled", label: "Programmato" },
+                    { value: "published", label: "Pubblicato" },
+                    { value: "archived", label: "Archiviato" },
+                  ]}
+                  value={search.status ?? "all"}
+                  onValueChange={(value) =>
+                    updateSearch({
+                      status: value === "all" ? undefined : (value as typeof search.status), // oxlint-disable-line typescript/no-unsafe-type-assertion
+                      page: 1,
+                    })
+                  }
                 >
-                  <X />
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="all">Tutti gli stati</SelectItem>
+                      <SelectItem value="draft">Bozza</SelectItem>
+                      <SelectItem value="scheduled">Programmato</SelectItem>
+                      <SelectItem value="published">Pubblicato</SelectItem>
+                      <SelectItem value="archived">Archiviato</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field>
+                <FieldLabel>Categoria</FieldLabel>
+                <Select
+                  items={[
+                    { value: "all", label: "Tutte le categorie" },
+                    ...categories.map((category) => ({
+                      value: category.id,
+                      label: category.name,
+                    })),
+                  ]}
+                  value={search.categoryId ?? "all"}
+                  onValueChange={(value) =>
+                    updateSearch({
+                      categoryId: value === "all" ? undefined : (value ?? undefined),
+                      page: 1,
+                    })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="all">Tutte le categorie</SelectItem>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <ButtonGroup>
+                <Button size="sm" type="submit">
+                  <Search data-icon="inline-start" />
+                  Cerca
                 </Button>
-              ) : null}
-            </ButtonGroup>
+                {hasFilters ? (
+                  <Button
+                    size="sm"
+                    type="button"
+                    variant="outline"
+                    aria-label="Azzera filtri"
+                    onClick={() => {
+                      setQuery("");
+                      void navigate({ search: { page: 1 } });
+                    }}
+                  >
+                    <X />
+                  </Button>
+                ) : null}
+              </ButtonGroup>
+            </FieldGroup>
           </form>
         </CardContent>
       </Card>
 
       {articles.items.length ? (
         <Card size="sm">
+          <CardHeader>
+            <CardTitle>Risultati</CardTitle>
+            <CardDescription>
+              {articles.total} articoli · pagina {search.page} di {pages}
+            </CardDescription>
+          </CardHeader>
           <CardContent>
             <DashboardDataTable
               columns={columns}
@@ -284,7 +295,13 @@ export function ArticlesContent() {
           </EmptyHeader>
           <EmptyContent>
             {hasFilters ? (
-              <Button variant="outline" onClick={() => void navigate({ search: { page: 1 } })}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setQuery("");
+                  void navigate({ search: { page: 1 } });
+                }}
+              >
                 Azzera filtri
               </Button>
             ) : (

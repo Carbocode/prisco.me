@@ -31,22 +31,17 @@
 }
 
 .cms-editor__canvas {
-  min-height: 42rem;
+  min-height: 24rem;
   background: var(--background);
-}
-
-.cms-editor__toolbar > [data-slot="select"] [data-slot="select-trigger"],
-.cms-editor__toolbar > [data-slot="select-trigger"] {
-  min-width: 9rem;
 }
 
 .cms-editor__content {
   min-height: 42rem;
   width: 100%;
-  max-width: 48rem;
+  max-width: 52rem;
   margin-inline: auto;
   padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem) 12rem;
-  padding-left: clamp(4rem, 7vw, 5rem);
+  padding-left: clamp(6.5rem, 9vw, 7rem);
   color: var(--foreground);
   font-size: 1rem;
   line-height: 1.8;
@@ -337,7 +332,7 @@
 @media (max-width: 640px) {
   .cms-editor__content {
     min-height: 22rem;
-    padding-left: 3.25rem;
+    padding-left: 6.5rem;
   }
 
   .cms-plate-block-controls {
@@ -348,4 +343,33 @@
   .cms-editor__media-fields {
     grid-template-columns: 1fr;
   }
+}
+
+/* Use a named group so hovering nested blocks never reveals an ancestor's menu. */
+.cms-block-controls {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cms-block-controls {
+    opacity: 0;
+  }
+
+  .group\/block:hover > .cms-block-controls,
+  .group\/block:focus-within > .cms-block-controls {
+    opacity: 1;
+  }
+}
+
+.cms-editor__content .slate-blockWrapper {
+  min-width: 0;
+}
+
+.cms-editor__content :is(td, th) {
+  min-width: 8rem;
+  vertical-align: top;
+}
+
+.cms-editor__content :is(td, th) p:last-child {
+  margin-bottom: 0;
 }

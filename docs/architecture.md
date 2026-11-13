@@ -47,6 +47,8 @@ The article service is divided under `cms/server/articles`: queries, mutations, 
 
 `src/components/ui` contains shadcn primitives. Functional sections use them directly under the rules in `AGENTS.md`. `layout`, `artwork`, `media`, and `data-table` hold components shared across the site. Components specific to one feature stay in that feature.
 
+CMS workspace composition and validation are described in the [CMS guide](../src/features/cms/README.md). List and creation workflows use separate shadcn tabs; category editing uses a dialog. The article workspace separates writing from properties with resizable desktop panels and mounted mobile tabs.
+
 The article form lives in `cms/components/article-form`: the view composes fields, `use-article-form.ts` manages state and actions, and types, conversions, and revision comparison have separate files. The editor separates plugin configuration, nodes, dialogs, toolbar, and static palette data. The contact questionnaire separates its flow model from presentation.
 
 Split modules by responsibility and dependencies. A view may remain large when composing many related fields. Avoid re-export files that obscure dependencies or mix browser and server modules.

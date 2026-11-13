@@ -44,7 +44,7 @@ export function DashboardShell() {
   const session = authClient.useSession();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { setOpenMobile } = useSidebar();
   const user = session.data!.user;
   const pageTitle = dashboardTitle(pathname);
   const isArticleEditor = /^\/dashboard\/cms\/articles\/[^/]+\/?$/.test(pathname);
@@ -283,12 +283,8 @@ export function DashboardShell() {
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4">
           <div className="flex min-w-0 items-center gap-2">
-            {isMobile && (
-              <>
-                <SidebarTrigger />
-                <Separator orientation="vertical" />
-              </>
-            )}
+            <SidebarTrigger />
+            <Separator orientation="vertical" />
             <DashboardBreadcrumb pathname={pathname} pageTitle={pageTitle} />
           </div>
           <div className="flex items-center gap-2">

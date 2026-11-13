@@ -16,6 +16,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Field, FieldLabel, FieldGroup, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -26,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/features/auth/client/auth-client";
 import { roleHasPermission } from "@/features/auth/domain/permissions";
 import {
@@ -107,164 +117,50 @@ export function CategoryRow({
   }
 
   return (
-    <TableRow>
-      <TableCell>
-        {editing ? (
-          <Input
-            aria-label="Nome categoria"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-        ) : (
-          <span className="font-medium">{category.name}</span>
-        )}
-      </TableCell>
-      <TableCell>
-        {editing ? (
-          <Select
-            value={schemaType}
-            onValueChange={(value) => {
-              if (isCategorySchemaType(value)) setSchemaType(value);
-            }}
-          >
-            <SelectTrigger aria-label="Schema GEO categoria" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {categorySchemaTypes.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {categorySchemaTypeLabel[value]}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        ) : (
-          categorySchemaTypeLabel[category.schemaType]
-        )}
-      </TableCell>
-      <TableCell>
-        {editing ? (
-          <Select
-            value={archiveSort}
-            onValueChange={(value) => {
-              if (isCategoryArchiveSort(value)) setArchiveSort(value);
-            }}
-          >
-            <SelectTrigger aria-label="Ordinamento archivio categoria" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {categoryArchiveSorts.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {categoryArchiveSortLabel[value]}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        ) : (
-          categoryArchiveSortLabel[category.archiveSort]
-        )}
-      </TableCell>
-      <TableCell>
-        {editing ? (
-          <Select
-            value={articleLayout}
-            onValueChange={(value) => {
-              if (isCategoryArticleLayout(value)) setArticleLayout(value);
-            }}
-          >
-            <SelectTrigger aria-label="Visualizzazione articoli categoria" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {categoryArticleLayouts.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {categoryArticleLayoutLabel[value]}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        ) : (
-          categoryArticleLayoutLabel[category.articleLayout]
-        )}
-      </TableCell>
-      <TableCell>
-        {editing ? (
-          <MediaPicker
-            items={media}
-            value={heroMediaId}
-            label="Scegli l’immagine hero"
-            description={`Seleziona l’immagine hero per ${category.name}.`}
-            compact
-            onValueChange={setHeroMediaId}
-          />
-        ) : (
-          (media.find((item) => item.id === category.heroMediaId)?.filename ?? "—")
-        )}
-      </TableCell>
-      <TableCell>
-        {editing ? (
-          <Input
-            aria-label="Slug categoria"
-            value={slug}
-            pattern={slugInputPattern}
-            title="Lo slug non puo contenere solo numeri"
-            onChange={(event) => setSlug(event.target.value)}
-          />
-        ) : (
-          <span className="text-muted-foreground">/{category.slug}</span>
-        )}
-      </TableCell>
-      <TableCell>
-        {editing ? (
-          <Input
-            aria-label="Descrizione categoria"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-          />
-        ) : (
-          (category.description ?? "—")
-        )}
-      </TableCell>
-      <TableCell className="text-right">
-        {editing ? (
-          <ButtonGroup>
-            <Button size="sm" disabled={pending} onClick={() => void save()}>
-              Salva
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={pending}
-              onClick={() => setEditing(false)}
-            >
-              Annulla
-            </Button>
-          </ButtonGroup>
-        ) : (
+    <>
+      <TableRow>
+        <TableCell>
+          <div className="flex flex-col gap-1">
+            <span className="font-medium">{category.name}</span>
+            <span className="text-sm text-muted-foreground">/{category.slug}</span>
+          </div>
+        </TableCell>
+        <TableCell>{categorySchemaTypeLabel[category.schemaType]}</TableCell>
+        <TableCell>
+          <div className="flex flex-col gap-1">
+            <span>{categoryArticleLayoutLabel[category.articleLayout]}</span>
+            <span className="text-sm text-muted-foreground">
+              {categoryArchiveSortLabel[category.archiveSort]}
+            </span>
+          </div>
+        </TableCell>
+        <TableCell>
           <ButtonGroup>
             <Button
               size="icon-sm"
               variant="outline"
               aria-label={`Modifica ${category.name}`}
               disabled={!canManage}
-              onClick={() => setEditing(true)}
+              onClick={() => {
+                setName(category.name);
+                setSlug(category.slug);
+                setDescription(category.description ?? "");
+                setSchemaType(category.schemaType);
+                setArchiveSort(category.archiveSort);
+                setArticleLayout(category.articleLayout);
+                setHeroMediaId(category.heroMediaId ?? "");
+                setEditing(true);
+              }}
             >
               <Pencil />
             </Button>
             <AlertDialog>
               <AlertDialogTrigger
-                disabled={!canManage}
+                disabled={!canManage || pending}
                 render={
                   <Button
                     size="icon-sm"
-                    variant="destructive"
+                    variant="outline"
                     aria-label={`Archivia ${category.name}`}
                   />
                 }
@@ -287,8 +183,159 @@ export function CategoryRow({
               </AlertDialogContent>
             </AlertDialog>
           </ButtonGroup>
-        )}
-      </TableCell>
-    </TableRow>
+        </TableCell>
+      </TableRow>
+      <Dialog
+        open={editing}
+        onOpenChange={(open) => {
+          if (!pending) setEditing(open);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Modifica categoria</DialogTitle>
+            <DialogDescription>
+              Gestisci identità, archivio pubblico e immagine di {category.name}.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            className="flex min-h-0 flex-col gap-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void save();
+            }}
+          >
+            <FieldSet disabled={pending}>
+              <FieldGroup className="grid max-h-viewport-half overflow-y-auto sm:grid-cols-2">
+                <Field>
+                  <FieldLabel htmlFor={`category-${category.id}-name`}>Nome</FieldLabel>
+                  <Input
+                    id={`category-${category.id}-name`}
+                    value={name}
+                    required
+                    onChange={(event) => setName(event.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor={`category-${category.id}-slug`}>Slug</FieldLabel>
+                  <Input
+                    id={`category-${category.id}-slug`}
+                    value={slug}
+                    required
+                    pattern={slugInputPattern}
+                    onChange={(event) => setSlug(event.target.value)}
+                  />
+                </Field>
+                <Field className="sm:col-span-2">
+                  <FieldLabel htmlFor={`category-${category.id}-description`}>
+                    Descrizione
+                  </FieldLabel>
+                  <Textarea
+                    id={`category-${category.id}-description`}
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor={`category-${category.id}-schemaType`}>
+                    Tipo di contenuto (GEO)
+                  </FieldLabel>
+                  <Select
+                    value={schemaType}
+                    onValueChange={(value) => {
+                      if (isCategorySchemaType(value)) setSchemaType(value);
+                    }}
+                  >
+                    <SelectTrigger id={`category-${category.id}-schemaType`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categorySchemaTypes.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {categorySchemaTypeLabel[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor={`category-${category.id}-archiveSort`}>
+                    Ordinamento archivio
+                  </FieldLabel>
+                  <Select
+                    value={archiveSort}
+                    onValueChange={(value) => {
+                      if (isCategoryArchiveSort(value)) setArchiveSort(value);
+                    }}
+                  >
+                    <SelectTrigger id={`category-${category.id}-archiveSort`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categoryArchiveSorts.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {categoryArchiveSortLabel[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor={`category-${category.id}-articleLayout`}>
+                    Visualizzazione articoli
+                  </FieldLabel>
+                  <Select
+                    value={articleLayout}
+                    onValueChange={(value) => {
+                      if (isCategoryArticleLayout(value)) setArticleLayout(value);
+                    }}
+                  >
+                    <SelectTrigger id={`category-${category.id}-articleLayout`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {categoryArticleLayouts.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {categoryArticleLayoutLabel[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel>Immagine hero</FieldLabel>
+                  <MediaPicker
+                    items={media}
+                    value={heroMediaId}
+                    label="Scegli l’immagine hero"
+                    description={`Seleziona l’immagine hero per ${category.name}.`}
+                    onValueChange={setHeroMediaId}
+                  />
+                </Field>
+              </FieldGroup>
+            </FieldSet>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={pending}
+                onClick={() => setEditing(false)}
+              >
+                Annulla
+              </Button>
+              <Button type="submit" disabled={pending}>
+                {pending ? "Salvataggio…" : "Salva modifiche"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

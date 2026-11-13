@@ -72,7 +72,7 @@ export function CmsDashboardContent() {
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-muted-foreground">Centro contenuti</p>
@@ -90,14 +90,66 @@ export function CmsDashboardContent() {
       </header>
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
-        <StatCard title="Pubblicati" value={count("published")} hint="articoli online" />
-        <StatCard title="Bozze" value={count("draft")} hint="da completare" />
-        <StatCard title="Programmati" value={count("scheduled")} hint="in calendario" />
-        <StatCard
-          title="Totale"
-          value={stats.reduce((sum, item) => sum + item.count, 0)}
-          hint="contenuti editoriali"
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>Pubblicati</CardTitle>
+            <CardDescription>articoli online</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              to="/dashboard/cms/articles"
+              search={{ page: 1, status: "published" }}
+            >
+              {count("published")} · Visualizza
+            </Link>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Bozze</CardTitle>
+            <CardDescription>da completare</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              to="/dashboard/cms/articles"
+              search={{ page: 1, status: "draft" }}
+            >
+              {count("draft")} · Visualizza
+            </Link>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Programmati</CardTitle>
+            <CardDescription>in calendario</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              to="/dashboard/cms/articles"
+              search={{ page: 1, status: "scheduled" }}
+            >
+              {count("scheduled")} · Visualizza
+            </Link>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Totale</CardTitle>
+            <CardDescription>Contenuti editoriali</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              to="/dashboard/cms/articles"
+              search={{ page: 1 }}
+            >
+              {stats.reduce((sum, item) => sum + item.count, 0)} · Visualizza
+            </Link>
+          </CardContent>
+        </Card>
       </div>
 
       <Card size="sm">
@@ -138,50 +190,43 @@ export function CmsDashboardContent() {
         </CardContent>
       </Card>
       {trash.length ? (
-        <section>
-          <h2>Cestino tassonomie</h2>
-          <ItemGroup>
-            {trash.map((item) => (
-              <Item key={item.id}>
-                <ItemContent>
-                  <ItemTitle>
-                    {item.name} · {item.kind}
-                  </ItemTitle>
-                </ItemContent>
-                <ItemActions>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      void restoreTaxonomyFn({ data: { id: item.id, kind: item.kind } })
-                        .then(() => router.invalidate())
-                        .catch((error) =>
-                          toast.error(
-                            error instanceof Error ? error.message : "Ripristino non riuscito",
-                          ),
-                        );
-                    }}
-                  >
-                    Ripristina
-                  </Button>
-                </ItemActions>
-              </Item>
-            ))}
-          </ItemGroup>
-        </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Cestino tassonomie</CardTitle>
+            <CardDescription>Ripristina categorie e tag archiviati.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ItemGroup>
+              {trash.map((item) => (
+                <Item key={item.id}>
+                  <ItemContent>
+                    <ItemTitle>
+                      {item.name} · {item.kind}
+                    </ItemTitle>
+                  </ItemContent>
+                  <ItemActions>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        void restoreTaxonomyFn({ data: { id: item.id, kind: item.kind } })
+                          .then(() => router.invalidate())
+                          .catch((error) =>
+                            toast.error(
+                              error instanceof Error ? error.message : "Ripristino non riuscito",
+                            ),
+                          );
+                      }}
+                    >
+                      Ripristina
+                    </Button>
+                  </ItemActions>
+                </Item>
+              ))}
+            </ItemGroup>
+          </CardContent>
+        </Card>
       ) : null}
     </div>
-  );
-}
-
-function StatCard({ title, value, hint }: { title: string; value: number; hint: string }) {
-  return (
-    <Card size="sm">
-      <CardHeader>
-        <CardDescription>{title}</CardDescription>
-        <CardAction>{value}</CardAction>
-      </CardHeader>
-      <CardContent>{hint}</CardContent>
-    </Card>
   );
 }
 
