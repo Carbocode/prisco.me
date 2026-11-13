@@ -77,43 +77,127 @@
     "source": "home/dune-1.svg",
     "width": 3840,
     "sourceHash": "cb8922c27dfca0c50a4c4e9a83f76dba528d4e9f724bd17abbabc8d51b3481a0",
-    "outputHash": "d9b8be52099947cc1f0e0ed9c5ef00570f294231b14b099565a2bac382295cc6"
+    "outputHash": "d9b8be52099947cc1f0e0ed9c5ef00570f294231b14b099565a2bac382295cc6",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "68f3bb0d623d74b45d0bf3c491a5bc43f2c44338b44cf6ffa07cf693b2d7ca79",
+        "outputHash": "4997495f3da8bfb282be21be5a20aae4ad89ecdf46117adee1ef5112bac71693"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "bbf5669b1935856084209bfb176db343c7f2fec026f046022e743afef4a3d260",
+        "outputHash": "d0f0f48ff7845a6ddfd574b4b1b918ae080f9069e4ce6e342e9b359d203c8e3c"
+      }
+    ]
   },
   {
     "source": "home/dune-2.svg",
     "width": 3840,
     "sourceHash": "7ce267cbefc7bb055d39f7c2d0a30a61813c0720c95429b6cc7bcf1da4e735b8",
-    "outputHash": "ff35c87e9b4b99ccba555ea9fff0f66d81b9c14ab98bba870ed42290ee9ec822"
+    "outputHash": "ff35c87e9b4b99ccba555ea9fff0f66d81b9c14ab98bba870ed42290ee9ec822",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "fe1d54cdf75faddba6845bb104107a187c506c9e25c2886cccfbfc262cd93cca",
+        "outputHash": "792e667fff32d43b26804d2423ab995480e4f7571b79794ab973c7aa5b5b12bc"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "a63385c81fdad0e945abba4dd8e204ee4a32e5bb44460eb9613c1bd3e2dd4a67",
+        "outputHash": "dbeac599ab471a25e49992539776db140b18f53f25630142291948f6060d194e"
+      }
+    ]
   },
   {
     "source": "home/dune-3.svg",
     "width": 3840,
     "sourceHash": "a451be28ab79482dc9f835dcb71be12e2a5561a560b7c5b962f2b75f42d015f5",
-    "outputHash": "975c2aea495468f99f39d212d43de77a6025286bb8b28462b4314c9ad847b4ba"
+    "outputHash": "975c2aea495468f99f39d212d43de77a6025286bb8b28462b4314c9ad847b4ba",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "7574ff1d7a7fcb29477b553f24f418444b5e94270f9e4081b5228a799bede4c3",
+        "outputHash": "68378909733625a19c3929d36a055731fe13c58f558a033fabbd79ced831a9e2"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "e4c781a68045bee0ffc721eafe7849fdf2dc8d0810b994b975d8622e8f2d7704",
+        "outputHash": "2caf18dbccce5bfe53b15a50928948e59c263cf3ec8a9cb282581a3706a54df6"
+      }
+    ]
   },
   {
     "source": "home/dune-4.svg",
     "width": 3840,
     "sourceHash": "8f9ee163b3ae2eb7e472de30dcb2b89fbc2040c19e1513fc7cbb57faf9a7002a",
-    "outputHash": "6e57b6536b46549c42df3d177bf33fc6d0eb6357182615357621058914a537e1"
+    "outputHash": "6e57b6536b46549c42df3d177bf33fc6d0eb6357182615357621058914a537e1",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "bba1f80dcb2f65e459eb352d27768416c14c2f294e5fc368795daef15e96998e",
+        "outputHash": "5f434b28a40ce6974960f52b4389a224b3375043eadb079c2fda5d86ba0541b8"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "e23c9ec4588ab9cc9ad659596a7a6de4d2c9450eac6da7b7fa45373f87990566",
+        "outputHash": "5bd8f03b7543d357066a7aada9448b27faa3f5d2c389109097de41dd7cc39385"
+      }
+    ]
   },
   {
     "source": "home/dune-5.svg",
     "width": 3840,
     "sourceHash": "3f9984aec4b71741701f4249e6e2f4e1aa86c90bb4d785d42a47b8b57f3c6be0",
-    "outputHash": "98fc41ff5762a77990e695c6ccc50cb939f5b8b4d541988c2d78f4f103623e22"
+    "outputHash": "98fc41ff5762a77990e695c6ccc50cb939f5b8b4d541988c2d78f4f103623e22",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "9189672dd438dcce660cb17d64e0e967ad052c92e024e47aae2908d275b8462f",
+        "outputHash": "b50e5b8d44eda180a951be11c5294b9ceaff0f75fff9059c3dcbd98bb2d9e0e7"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "6b2df58f3eff17fc646e2179817a57a3a2677a6d0e2345e708e121c0e5ab0972",
+        "outputHash": "eb83aeb6557abb0a0ba5723c4ec006269524f6dd3a1c66e331e00c869ff7f68c"
+      }
+    ]
   },
   {
     "source": "home/dune-6.svg",
     "width": 3840,
     "sourceHash": "de1df9a46a49efaf5631db6618a81909ab310d8aaed1760f7a3447c2d28208d8",
-    "outputHash": "d680f89884d1e02cba1795e6fa29c22310b7a8da9e9fb62273462fe34a32f649"
+    "outputHash": "d680f89884d1e02cba1795e6fa29c22310b7a8da9e9fb62273462fe34a32f649",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "0cd094276fa916669ab9225c01ea0d22d40e984b0a3248f73ecf5bdeca166e84",
+        "outputHash": "892ab42a8861c5d6487639b81a83af0d7a2db37d706fae6c41d18e6f46a94f68"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "f64afe9328beedc411999f7f5b17570c2a68d534930f7ac653ccc8ffda69a5c7",
+        "outputHash": "a723b5a53463beb3fe3d18dd9639aa4d8dfea8bc202dd24e25f0222e628948c2"
+      }
+    ]
   },
   {
     "source": "home/dune-7.svg",
     "width": 3840,
     "sourceHash": "8b5e6631962fcc3a8db1b25d4dae54180ee186c82e3454daf680a6ecb18de744",
-    "outputHash": "88864fd394096e3c1b7ad570b543557502a9f5db4f25172d285d8e8e580b1ebe"
+    "outputHash": "88864fd394096e3c1b7ad570b543557502a9f5db4f25172d285d8e8e580b1ebe",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "60fdb782586cb9c21f73acbec13bd63946870b14a3b48d7573c307440c295e52",
+        "outputHash": "f3398c5e005aab5214c736e4f8f3c9485fc03c69d307b2202e8f683c0e2bf048"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "5192ee0866ae2266b6121b8e79529a3fe820b953ede8163f9f88ae42766a7f44",
+        "outputHash": "edb59377155e11476141e4328c1027075f05e92bc15b516dee5dcc1e659187f3"
+      }
+    ]
   },
   {
     "source": "home/geode-crystals.svg",
@@ -233,19 +317,55 @@
     "source": "home/mountain-1.svg",
     "width": 3840,
     "sourceHash": "b0b17354765cd141ab980205488124e6baeff15d4ca2d809c03f19ff34d99df4",
-    "outputHash": "5a93ce8f89ba0184cb21b37191e1cbd73ee0e5874c6f66d39978212f103c00c3"
+    "outputHash": "5a93ce8f89ba0184cb21b37191e1cbd73ee0e5874c6f66d39978212f103c00c3",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "c9c6651c9adc2cb191978132a11276545d9641c4c99df3e2754a25b553cbf5ac",
+        "outputHash": "6a1be82d1139d782497e3b2ee6bf6a9c887080b4df12ff0697ea9063f3615a52"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "f16f34614366ab1eb8b005c2236b6337dd76c014e2f3fe7db6a31647d06873ab",
+        "outputHash": "046c101bd8de75a48910c44f18f659e7f008702a9035cffadd0fbc0fa0c4286e"
+      }
+    ]
   },
   {
     "source": "home/mountain-2.svg",
     "width": 3840,
     "sourceHash": "768f8e98ab2517f024eb34d4b8fcb44ad85d7207d1d9cfbd762d8597a61c16cf",
-    "outputHash": "c3ce5b2f4643229b445b40d1593f7e845b6fe5562bc8d545a39a2e277e8bc77b"
+    "outputHash": "c3ce5b2f4643229b445b40d1593f7e845b6fe5562bc8d545a39a2e277e8bc77b",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "30137be3eae0cfa22bc0d5648ff6cb1f0de742f66388a7d8e7d80a41ca85fb50",
+        "outputHash": "e6bf60a2ae6ac17db16be04c57aac1f3a9a1c0134c5faef61df239a74a39f7fe"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "3abadd03bc9248c68408861abcb6ec1b14154c7fda36483aaf74e645cb758ac2",
+        "outputHash": "d6c866858195542ffc09b77dd011f40fe03d4154d354d16bface031fbd9f6046"
+      }
+    ]
   },
   {
     "source": "home/mountain-3.svg",
     "width": 3840,
     "sourceHash": "6148c3fc5f0c6a59a5eead8693514bc8b0289719c65383cb9d9c4bdccbcc684e",
-    "outputHash": "66df84a03f63d1dbd4f0ad65ff9620a5a0ac634b68fe4988d7e2fcdf1547f30a"
+    "outputHash": "66df84a03f63d1dbd4f0ad65ff9620a5a0ac634b68fe4988d7e2fcdf1547f30a",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "cb0e63dcfbcece0421e146b613ad23a5192f849c5c07119c14932c47d6373256",
+        "outputHash": "5d3ca6c08c0fe0c81e4b43e461d3ec622704ed4aff8e650a002baf822f61b1c8"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "1665c156e3ec04a751d40aedcde5226f323d396243ae1b27240f9a5e42bc2084",
+        "outputHash": "cb27c5684774551c59ce55844c3837e32d054ea0162ddccb5e961225a8a672c0"
+      }
+    ]
   },
   {
     "source": "home/pebbles-a.svg",
@@ -287,7 +407,19 @@
     "source": "home/small-stars.svg",
     "width": 3840,
     "sourceHash": "d5202dc89b34eb760a4c3c9921f6efac5f1dada07302ab3f3d79002fd79f3362",
-    "outputHash": "e009039b5a86bb9610b24bd8e10b4051f82997d7da02ecf7f6f8df4b341ca9ec"
+    "outputHash": "e009039b5a86bb9610b24bd8e10b4051f82997d7da02ecf7f6f8df4b341ca9ec",
+    "variants": [
+      {
+        "width": 1280,
+        "sourceHash": "53bb7611061740220e89d2e98227222dac9a29585fabdd127737ca778b032e6e",
+        "outputHash": "d105ba7244a18c618e03f1607a69cb34c3d95172c1bc9ace0c4ca051347767d1"
+      },
+      {
+        "width": 2560,
+        "sourceHash": "64ed1695a6b3244e033b8964a34fc909ba13e112c02228856b0ad07c7926f061",
+        "outputHash": "b4a7b20f321f2fe7c0f001ff523eaf35260331ec9e81e8e343457d4fac7b2d26"
+      }
+    ]
   },
   {
     "source": "home/star.svg",

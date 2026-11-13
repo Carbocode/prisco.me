@@ -245,7 +245,10 @@ it("mantiene viewport e riferimenti locali delle illustrazioni SVG esterne", () 
     const path = image.getAttribute("href");
     if (!path?.startsWith("/home/")) throw new Error("Unexpected artwork path");
     // Cached artwork keeps the original SVG as its editable source.
-    const source = readFileSync(`public${path.replace(/\.webp$/, ".svg")}`, "utf8");
+    const source = readFileSync(
+      `public${path.replace(/-(?:384|768)\.webp$/, ".webp").replace(/\.webp$/, ".svg")}`,
+      "utf8",
+    );
     const artwork = new DOMParser().parseFromString(source, "image/svg+xml");
     expect(artwork.querySelector("parsererror")).toBeNull();
     const viewBox = artwork.documentElement.getAttribute("viewBox")?.split(" ");

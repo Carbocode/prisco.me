@@ -932,16 +932,25 @@ export function animateHome(container) {
 
   const site = page.parentElement;
   let viewportSize = "";
+  let layoutPending = false;
+  const requestLayout = () => {
+    if (layoutPending) return;
+    layoutPending = true;
+    frame(() => {
+      layoutPending = false;
+      layout();
+    });
+  };
   const layout = () => {
     viewportSize = `${scroller.clientWidth}x${scroller.clientHeight}`;
     // Classic scrollbars stay outside the overlay frame, header and footer peek.
-    site.style.setProperty("--home-scrollbar", `${scroller.offsetWidth - scroller.clientWidth}px`);
+    setScrollValue(site, "--home-scrollbar", `${scroller.offsetWidth - scroller.clientWidth}px`);
     scrollOrigin = scroller.getBoundingClientRect().top;
     const previous = { start: jTop, distance: jDist };
     const previousScroll = scroller.scrollTop;
     const wasHorizontal = horizontal;
-    root.style.setProperty("--home-viewport-height", `${scroller.clientHeight}px`);
-    root.style.setProperty("--home-viewport-width", `${scroller.clientWidth}px`);
+    setScrollValue(root, "--home-viewport-height", `${scroller.clientHeight}px`);
+    setScrollValue(root, "--home-viewport-width", `${scroller.clientWidth}px`);
     setupJourney();
     if (wasHorizontal && horizontal) {
       const adjusted = remapJourneyScroll(previousScroll, previous, {
@@ -1006,16 +1015,16 @@ export function animateHome(container) {
   });
   // Only real viewport changes (window, rotation, scrollbar) reach the scroller now.
   observeResize(() => {
-    if (`${scroller.clientWidth}x${scroller.clientHeight}` !== viewportSize) layout();
+    if (`${scroller.clientWidth}x${scroller.clientHeight}` !== viewportSize) requestLayout();
   }).observe(scroller);
   // Image decoding and responsive content can change height after initial layout.
   observeResize(() => {
-    if (root.offsetHeight !== contentHeight) layout();
+    if (root.offsetHeight !== contentHeight) requestLayout();
   }).observe(root);
-  listen(window, "load", layout);
+  listen(window, "load", requestLayout);
   if (document.fonts && document.fonts.ready)
     void document.fonts.ready.then(() => {
-      if (!disposed) layout();
+      if (!disposed) requestLayout();
     });
   layout();
 

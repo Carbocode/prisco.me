@@ -58,6 +58,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                     className="sky-stars depth"
                     style={{ "--d": "0.08" }}
                     src="/home/small-stars.webp"
+                    srcSet="/home/small-stars-1280.webp 1280w, /home/small-stars-2560.webp 2560w, /home/small-stars.webp 3840w"
+                    sizes="100vw"
                     fetchPriority="high"
                     alt=""
                     decoding="async"
@@ -243,6 +245,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   <div className="moon depth" style={{ "--d": "0.6" }}>
                     <img
                       src="/home/moon.webp"
+                      fetchPriority="high"
                       srcSet="/home/moon-384.webp 384w, /home/moon-768.webp 768w, /home/moon.webp 1536w"
                       sizes="clamp(14rem, 40vw, 33rem)"
                       alt=""
@@ -512,6 +515,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.1"
                         style={{ "--b": "57%" }}
                         src="/home/mountain-3.webp"
+                        srcSet="/home/mountain-3-1280.webp 1280w, /home/mountain-3-2560.webp 2560w, /home/mountain-3.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -521,6 +526,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.16"
                         style={{ "--b": "52%" }}
                         src="/home/mountain-2.webp"
+                        srcSet="/home/mountain-2-1280.webp 1280w, /home/mountain-2-2560.webp 2560w, /home/mountain-2.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -530,6 +537,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.24"
                         style={{ "--b": "46%" }}
                         src="/home/mountain-1.webp"
+                        srcSet="/home/mountain-1-1280.webp 1280w, /home/mountain-1-2560.webp 2560w, /home/mountain-1.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -540,6 +549,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.32"
                         style={{ "--b": "8%" }}
                         src="/home/dune-7.webp"
+                        srcSet="/home/dune-7-1280.webp 1280w, /home/dune-7-2560.webp 2560w, /home/dune-7.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -549,6 +560,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.42"
                         style={{ "--b": "6.65%" }}
                         src="/home/dune-6.webp"
+                        srcSet="/home/dune-6-1280.webp 1280w, /home/dune-6-2560.webp 2560w, /home/dune-6.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -558,6 +571,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.52"
                         style={{ "--b": "5.3%" }}
                         src="/home/dune-5.webp"
+                        srcSet="/home/dune-5-1280.webp 1280w, /home/dune-5-2560.webp 2560w, /home/dune-5.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -567,6 +582,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.62"
                         style={{ "--b": "4%" }}
                         src="/home/dune-4.webp"
+                        srcSet="/home/dune-4-1280.webp 1280w, /home/dune-4-2560.webp 2560w, /home/dune-4.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -576,6 +593,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.74"
                         style={{ "--b": "2.65%" }}
                         src="/home/dune-3.webp"
+                        srcSet="/home/dune-3-1280.webp 1280w, /home/dune-3-2560.webp 2560w, /home/dune-3.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -677,6 +696,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="0.87"
                         style={{ "--b": "0%" }}
                         src="/home/dune-2.webp"
+                        srcSet="/home/dune-2-1280.webp 1280w, /home/dune-2-2560.webp 2560w, /home/dune-2.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -686,6 +707,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         data-par="1"
                         style={{ "--b": "0%" }}
                         src="/home/dune-1.webp"
+                        srcSet="/home/dune-1-1280.webp 1280w, /home/dune-1-2560.webp 2560w, /home/dune-1.webp 3840w"
+                        sizes="max(100vw, clamp(160svh, 124vw, 200svh))"
                         alt=""
                         loading="lazy"
                         decoding="async"
@@ -1074,10 +1097,10 @@ export function HomePage({ projects, experiences, articles }: Props) {
                   </div>
                   <div className="decor" aria-hidden="true">
                     <svg className="crystals crystals-a" viewBox="0 0 160 116" aria-hidden="true">
-                      <image href="/home/crystals-a.webp" width="160" height="116" />
+                      <image href="/home/crystals-a-384.webp" width="160" height="116" />
                     </svg>
                     <svg className="crystals crystals-b" viewBox="0 0 160 116" aria-hidden="true">
-                      <image href="/home/crystals-b.webp" width="160" height="116" />
+                      <image href="/home/crystals-b-384.webp" width="160" height="116" />
                     </svg>
                     <svg className="pebbles pebbles-c" viewBox="0 0 161 70" aria-hidden="true">
                       <image href="/home/pebbles-c.webp" width="161" height="70" />
@@ -1134,7 +1157,11 @@ export function HomePage({ projects, experiences, articles }: Props) {
                                 fillOpacity=".55"
                               />
                               <g className="geode-crystals">
-                                <image href="/home/geode-crystals.webp" width="340" height="250" />
+                                <image
+                                  href="/home/geode-crystals-768.webp"
+                                  width="340"
+                                  height="250"
+                                />
                               </g>
                               <path
                                 d="M196 116.3Q200.4 120 198.8 124.6Q197.1 129.2 192.3 133.6Q187.6 137.9 178.8 139.6Q170 141.2 161.1 139.7Q152.1 138.2 149 133.2Q145.8 128.2 139.5 124.1Q133.3 120 139.1 115.7Q145 111.5 150.7 108.8Q156.5 106.2 163.2 106Q170 105.9 177.5 105.3Q185.1 104.6 188.3 108.6Q191.5 112.7 196 116.3Z"
@@ -1483,7 +1510,7 @@ function AmmonitePit() {
       </svg>
       <div className="find-fossil" data-fy="0.04">
         <svg className="fossil-art" viewBox="0 0 240 240" aria-hidden="true">
-          <image href="/home/ammonite-fossil-art.webp" width="240" height="240" />
+          <image href="/home/ammonite-fossil-art-768.webp" width="240" height="240" />
         </svg>
       </div>
     </>
@@ -1497,7 +1524,7 @@ function TrilobitePit() {
       </svg>
       <div className="find-fossil" data-fy="0.04">
         <svg className="fossil-art" viewBox="0 0 220 260" aria-hidden="true">
-          <image href="/home/trilobite-fossil-art.webp" width="220" height="260" />
+          <image href="/home/trilobite-fossil-art-768.webp" width="220" height="260" />
         </svg>
       </div>
     </>

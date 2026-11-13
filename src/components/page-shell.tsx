@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { LockKeyhole } from "lucide-react";
-import type { PropsWithChildren, ReactNode } from "react";
+import { useState, type PropsWithChildren, type ReactNode } from "react";
 
 import Header from "@/components/header";
 import { buttonVariants } from "@/components/ui/button";
@@ -14,8 +14,6 @@ type PageShellProps = PropsWithChildren<{
   hero?: boolean;
   heroImage?: { url: string; altText?: string | null } | null;
 }>;
-
-const copyrightYear = new Date().getFullYear();
 
 export function PageShell({
   title,
@@ -88,6 +86,8 @@ function PageHeading({
 }
 
 export function SiteFooter() {
+  // Workers initialize modules before a request, when their clock can be at the epoch.
+  const [copyrightYear] = useState(() => new Date().getUTCFullYear());
   return (
     <footer className="border-t border-white/10 bg-black px-6 py-12 text-sm text-ink-subtle">
       <div className="mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-2 lg:grid-cols-(--layout-grid-cols-footer)">

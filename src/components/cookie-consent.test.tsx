@@ -19,14 +19,35 @@ vi.mock("./cookie-banner", () => ({
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllGlobals();
   window.localStorage.clear();
 });
 
 describe("CookieConsentProvider", () => {
+  it("defers diagnostics until the page is loaded and the browser is idle", async () => {
+    let startAnalytics = () => {};
+    const cancelIdle = vi.fn();
+    vi.stubGlobal("requestIdleCallback", (callback: () => void) => {
+      startAnalytics = callback;
+      return 1;
+    });
+    vi.stubGlobal("cancelIdleCallback", cancelIdle);
+    render(<CookieConsentProvider>Contenuto</CookieConsentProvider>);
+    await screen.findByRole("button", { name: "Accetta analisi" });
+    act(() => {
+      window.dispatchEvent(new Event("load"));
+    });
+    expect(screen.queryByLabelText("Analisi")).toBeNull();
+    act(() => startAnalytics());
+    expect((await screen.findByLabelText("Analisi")).textContent).toBe("false");
+    cleanup();
+    expect(cancelIdle).toHaveBeenCalledWith(1);
+  });
+
   it("attiva le analisi solo dopo il consenso e permette di riaprire le preferenze", async () => {
     render(<CookieConsentProvider>Contenuto</CookieConsentProvider>);
     await screen.findByRole("button", { name: "Accetta analisi" });
-    expect(screen.getByLabelText("Analisi").textContent).toBe("false");
+    expect((await screen.findByLabelText("Analisi")).textContent).toBe("false");
     fireEvent.click(screen.getByRole("button", { name: "Accetta analisi" }));
     expect(window.localStorage.getItem("prisco-cookie-consent")).toBe("accepted");
     expect(screen.getByLabelText("Analisi").textContent).toBe("true");
@@ -34,7 +55,7 @@ describe("CookieConsentProvider", () => {
 
     act(() => openCookiePreferences());
     expect(screen.getByRole("button", { name: "Rifiuta analisi" })).toBeTruthy();
-    expect(screen.getByLabelText("Analisi").textContent).toBe("false");
+    expect((await screen.findByLabelText("Analisi")).textContent).toBe("false");
   });
 
   it("rispetta il rifiuto salvato e sincronizza i cambiamenti da altre schede", async () => {
@@ -42,7 +63,7 @@ describe("CookieConsentProvider", () => {
     render(<CookieConsentProvider>Contenuto</CookieConsentProvider>);
     await screen.findByLabelText("Analisi");
     expect(screen.queryByRole("button", { name: "Accetta analisi" })).toBeNull();
-    expect(screen.getByLabelText("Analisi").textContent).toBe("false");
+    expect((await screen.findByLabelText("Analisi")).textContent).toBe("false");
 
     act(() => {
       window.localStorage.setItem("prisco-cookie-consent", "accepted");
