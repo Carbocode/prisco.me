@@ -51,6 +51,10 @@ The article form lives in `cms/components/article-form`: the view composes field
 
 Split modules by responsibility and dependencies. A view may remain large when composing many related fields. Avoid re-export files that obscure dependencies or mix browser and server modules.
 
+### Agent-assisted article writing
+
+The editor's `domain/agent-document.ts` validates bounded block edits and stale-document revisions; `domain/agent-widgets.ts` describes widget examples. `client/use-editor-site-tools.ts` registers live Plate operations. CMS `client/use-article-site-tools.ts` exposes editorial fields and draft-only persistence through the existing article form save operation. Shared browser registration belongs to `src/lib/webmcp.ts`; it contains no model calls or server dependencies. Tools are scoped to the mounted form and released using AbortSignal. Public discovery manifests do not advertise authenticated editorial tools. See the [editor guide](../src/features/editor/README.md) for client requirements and verification.
+
 ## Styles, assets, and dates
 
 ### ARD discovery

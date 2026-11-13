@@ -131,7 +131,7 @@ export function useArticleForm({
     setDirty(true);
   }
   async function save() {
-    if (pending) return;
+    if (pending) return { saved: false, error: "Save already in progress" };
     const validationError = validateArticleInput({
       title,
       slug: effectiveSlug,
@@ -140,7 +140,7 @@ export function useArticleForm({
     });
     if (validationError) {
       toast.error(validationError, { id: "article-save" });
-      return;
+      return { saved: false, error: validationError };
     }
     const toastId = toast.loading(article ? "Salvataggio modifiche…" : "Creazione bozza…", {
       id: "article-save",
@@ -188,10 +188,12 @@ export function useArticleForm({
           to: "/dashboard/cms/articles/$articleId",
           params: { articleId: saved.id },
         });
+      return { saved: true, id: saved.id, version: saved.version };
     } catch (error) {
       const message = articleSaveError(error);
       if (message.type === "conflict") setConflict(true);
       toast.error(message.text, { id: toastId });
+      return { saved: false, error: message.text };
     } finally {
       setPending(false);
     }

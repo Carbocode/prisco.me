@@ -79,6 +79,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { useArticleSiteTools } from "@/features/cms/client/use-article-site-tools";
 import { RevisionComparison } from "@/features/cms/components/article-form/revision-comparison";
 import { MediaPicker } from "@/features/cms/components/media-picker";
 import { slugInputPattern } from "@/features/cms/domain/slug";
@@ -91,6 +92,8 @@ const CmsEditor = lazy(() =>
   import("@/features/editor/cms-editor").then((module) => ({ default: module.CmsEditor })),
 );
 export function ArticleForm(props: ArticleFormProps) {
+  const state = useArticleForm(props);
+  useArticleSiteTools(state);
   const {
     article,
     categories,
@@ -167,7 +170,7 @@ export function ArticleForm(props: ArticleFormProps) {
     changeStatus,
     restoreRevision,
     statusLabel,
-  } = useArticleForm(props);
+  } = state;
   return (
     <form
       className="flex flex-col xl:h-(--layout-h-hero-viewport) xl:overflow-hidden"
