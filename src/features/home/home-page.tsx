@@ -58,6 +58,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                     className="sky-stars depth"
                     style={{ "--d": "0.08" }}
                     src="/home/small-stars.webp"
+                    fetchPriority="high"
                     alt=""
                     decoding="async"
                   />
@@ -110,7 +111,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5.2s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -123,7 +124,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "6.4s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -136,7 +137,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "4.6s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -149,7 +150,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5.8s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -162,7 +163,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "7s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -175,7 +176,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -188,7 +189,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "6s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -201,7 +202,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "4.8s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -214,7 +215,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "5.6s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div
                     className="star depth"
@@ -227,13 +228,27 @@ export function HomePage({ projects, experiences, articles }: Props) {
                       "--tw": "6.8s",
                     }}
                   >
-                    <img src="/home/star.webp" alt="" />
+                    <img src="/home/star.webp" alt="" width="256" height="256" />
                   </div>
                   <div className="jupiter depth" style={{ "--d": "0.35" }}>
-                    <img src="/home/jupiter.webp" alt="" width="450" height="450" />
+                    <img
+                      src="/home/jupiter.webp"
+                      srcSet="/home/jupiter-384.webp 384w, /home/jupiter-768.webp 768w, /home/jupiter.webp 1536w"
+                      sizes="clamp(5rem, 12vw, 10rem)"
+                      alt=""
+                      width="450"
+                      height="450"
+                    />
                   </div>
                   <div className="moon depth" style={{ "--d": "0.6" }}>
-                    <img src="/home/moon.webp" alt="" width="450" height="450" />
+                    <img
+                      src="/home/moon.webp"
+                      srcSet="/home/moon-384.webp 384w, /home/moon-768.webp 768w, /home/moon.webp 1536w"
+                      sizes="clamp(14rem, 40vw, 33rem)"
+                      alt=""
+                      width="450"
+                      height="450"
+                    />
                   </div>
                 </div>
                 <div className="hero-inner">
@@ -464,7 +479,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           "--o": "0.7",
                         }}
                       >
-                        <img src="/home/cloud-1.webp" alt="" />
+                        <img src="/home/cloud-1.webp" alt="" loading="lazy" decoding="async" />
                       </div>
                       <div
                         className="cloud"
@@ -476,7 +491,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           "--o": "0.85",
                         }}
                       >
-                        <img src="/home/cloud-2.webp" alt="" />
+                        <img src="/home/cloud-2.webp" alt="" loading="lazy" decoding="async" />
                       </div>
                       <div
                         className="cloud"
@@ -488,7 +503,7 @@ export function HomePage({ projects, experiences, articles }: Props) {
                           "--o": "0.6",
                         }}
                       >
-                        <img src="/home/cloud-3.webp" alt="" />
+                        <img src="/home/cloud-3.webp" alt="" loading="lazy" decoding="async" />
                       </div>
                     </div>
                     <div className="desert" data-desert="">
@@ -498,6 +513,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "57%" }}
                         src="/home/mountain-3.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <img
                         className="mtn"
@@ -505,6 +522,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "52%" }}
                         src="/home/mountain-2.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <img
                         className="mtn"
@@ -512,6 +531,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "46%" }}
                         src="/home/mountain-1.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="desert-horizon" />
                       <img
@@ -520,6 +541,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "8%" }}
                         src="/home/dune-7.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <img
                         className="dune"
@@ -527,6 +550,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "6.65%" }}
                         src="/home/dune-6.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <img
                         className="dune"
@@ -534,6 +559,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "5.3%" }}
                         src="/home/dune-5.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <img
                         className="dune"
@@ -541,6 +568,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "4%" }}
                         src="/home/dune-4.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <img
                         className="dune"
@@ -548,6 +577,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "2.65%" }}
                         src="/home/dune-3.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="tw" data-tw="">
                         <span className="tw-shadow" />
@@ -647,6 +678,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "0%" }}
                         src="/home/dune-2.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                       <img
                         className="dune"
@@ -654,6 +687,8 @@ export function HomePage({ projects, experiences, articles }: Props) {
                         style={{ "--b": "0%" }}
                         src="/home/dune-1.webp"
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                   </div>

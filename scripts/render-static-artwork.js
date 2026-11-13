@@ -6,6 +6,7 @@ const publicRoot = new URL("../public/", import.meta.url);
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 const digest = (value) => createHash("sha256").update(value).digest("hex");
 const pending = [];
+let variantsChanged = false;
 
 for (const asset of manifest) {
   const svg = await readFile(new URL(asset.source, publicRoot), "utf8");
@@ -64,3 +65,36 @@ if (process.argv.includes("--check")) {
     await browser.close();
   }
 } else console.log("Static artwork is up to date.");
+
+// Derive smaller lossless images from the canonical render to preserve all SVG effects.
+for (const asset of manifest) {
+  for (const variant of asset.variants ?? []) {
+    const output = asset.source.replace(/\.svg$/, `-${variant.width}.webp`);
+    const source = await readFile(new URL(asset.source.replace(/\.svg$/, ".webp"), publicRoot));
+    const sourceHash = digest(`sharp-resize-v1:${variant.width}:${digest(source)}`);
+    let outputHash;
+    try {
+      outputHash = digest(await readFile(new URL(output, publicRoot)));
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+    if (variant.sourceHash === sourceHash && outputHash && variant.outputHash === outputHash)
+      continue;
+    if (process.argv.includes("--check")) {
+      console.error(`Run bun run assets:render for ${output}`);
+      process.exitCode = 1;
+      continue;
+    }
+    const { default: sharp } = await import("sharp");
+    const webp = await sharp(source)
+      .resize({ width: variant.width })
+      .webp({ lossless: true, effort: 6 })
+      .toBuffer();
+    await writeFile(new URL(output, publicRoot), webp);
+    variant.sourceHash = sourceHash;
+    variant.outputHash = digest(webp);
+    variantsChanged = true;
+    console.log(output);
+  }
+}
+if (variantsChanged) await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + "\n");

@@ -25,7 +25,11 @@ export default function Header({ className, ...props }: HTMLAttributes<HTMLEleme
   return (
     <header className={classes} {...props}>
       <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 drop-shadow-floating-glyph lg:px-8">
-        <Link to="/" className="flex items-center gap-3" aria-label="Torna alla home">
+        <Link
+          to="/"
+          className="flex items-center gap-3"
+          aria-label="Vincenzo Prisco — torna alla home"
+        >
           <img src="/favicon/favicon.svg" alt="" className="h-9 w-9" />
           <p className="display-font text-2xl leading-tight font-semibold">Vincenzo Prisco</p>
         </Link>

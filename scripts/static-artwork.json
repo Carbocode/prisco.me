@@ -3,7 +3,19 @@
     "source": "home/ammonite-fossil-art.svg",
     "width": 1280,
     "sourceHash": "e0920feaa9862a9a180f75c35466cddb79ed25e4f8e85b18f6d50a58dec4eb53",
-    "outputHash": "c6194f6a55f4ec36da0d938d15e8fe0018f45d4e290cc7d461ff859cc369bbd6"
+    "outputHash": "c6194f6a55f4ec36da0d938d15e8fe0018f45d4e290cc7d461ff859cc369bbd6",
+    "variants": [
+      {
+        "width": 384,
+        "sourceHash": "d1012b800f2f2f52763f5b3bcfc774c071f53f30c22067137361344729c16db1",
+        "outputHash": "b1b0780751194ee6aa6e1dc07a89f4cad3f37181c171d16f959a64956aecfe6e"
+      },
+      {
+        "width": 768,
+        "sourceHash": "7c2b1311303406950a1bae0d65929970423b73be0a7ca742866e150a03873067",
+        "outputHash": "e9b69be181793f6d9279ddb76c33e11a0af3ef184d294bd871cdafc2c36540ed"
+      }
+    ]
   },
   {
     "source": "home/ammonite-pit.svg",
@@ -39,13 +51,27 @@
     "source": "home/crystals-a.svg",
     "width": 768,
     "sourceHash": "1bce9a4f05125139a2bbfdcf1e2189693e38a5f3d5528f63f82a9d7a4624d1de",
-    "outputHash": "750bed2396f2b6735c0d2e38d63c1029c4991f0079a67d9f51a166ba85df98c2"
+    "outputHash": "750bed2396f2b6735c0d2e38d63c1029c4991f0079a67d9f51a166ba85df98c2",
+    "variants": [
+      {
+        "width": 384,
+        "sourceHash": "9ca69f1c8fe31b9e1c0776fae0f4f63546d20a397495d29209882cf14ce9dec3",
+        "outputHash": "a11fa6d50ca98728976bebe6d00a86f407a70511e906626dc1391c3c18770ae1"
+      }
+    ]
   },
   {
     "source": "home/crystals-b.svg",
     "width": 768,
     "sourceHash": "b63d90958ac91ebf352b7230bd9c72b8f02b54eea69339ca9c80d02f2a382154",
-    "outputHash": "a835156091ccc254cc0137cc366b10b26718168f3f64472b2b9b0fba1c744734"
+    "outputHash": "a835156091ccc254cc0137cc366b10b26718168f3f64472b2b9b0fba1c744734",
+    "variants": [
+      {
+        "width": 384,
+        "sourceHash": "76067f65903f3c8d03b25dd1b5177546f955973ca6017bb5e0e136ee31d282d6",
+        "outputHash": "80051fcee977b3dfea4c29c0c5bbd333df4518063b58bb1844fec1bf5ea7a3e6"
+      }
+    ]
   },
   {
     "source": "home/dune-1.svg",
@@ -93,7 +119,19 @@
     "source": "home/geode-crystals.svg",
     "width": 1280,
     "sourceHash": "116a2c29ea8bbbd020546e8640be80cc8304ec226e9691dd8b1b6563e33ef1cb",
-    "outputHash": "223072bd1aea9a668260f45f29006c44e9cfe97cf5786d74344ac9c60eee79e2"
+    "outputHash": "223072bd1aea9a668260f45f29006c44e9cfe97cf5786d74344ac9c60eee79e2",
+    "variants": [
+      {
+        "width": 384,
+        "sourceHash": "871e1c27cdc68405e1d3626f87552146bb03d783dd1263cc56b5ccf5180a5be9",
+        "outputHash": "89483fffaa4b9161c1ae80d2ec7928a462dc232b6c156634a4d4c5d4a7ac3692"
+      },
+      {
+        "width": 768,
+        "sourceHash": "35082f53cbd7481b8f614f568c4b010c5ab3e2521ad52e6a19d06b84e439c3e5",
+        "outputHash": "f5fedb2a7151887e27d3ca4292c87b5ece7a9e52c375c1f0ff2a1e7c0268dcf1"
+      }
+    ]
   },
   {
     "source": "home/illustrations/ammonite.svg",
@@ -159,13 +197,37 @@
     "source": "home/jupiter.svg",
     "width": 1536,
     "sourceHash": "0ea7ac4910a70e56033a18cdf721bb90e6cfca6ae3a4f86daade23628c78c832",
-    "outputHash": "6b8490ef2efc394ab73358dc17fb5e102d2a91938379a4cfc315389b40c7909c"
+    "outputHash": "6b8490ef2efc394ab73358dc17fb5e102d2a91938379a4cfc315389b40c7909c",
+    "variants": [
+      {
+        "width": 384,
+        "sourceHash": "28698c6a757baefd2a261a616ad471b182faeb63bb984afd4b8bc348ea127021",
+        "outputHash": "dd484a1baaf1ca4765b94c8cff51958f07864fcc8cc4030c42e19cfb179214f1"
+      },
+      {
+        "width": 768,
+        "sourceHash": "6d4813a323fc237bd02f104701e522fb5b68ee012cc44f2efc5e3d7d3525b732",
+        "outputHash": "830b63b13b0693039ed09e40ed6234bd4dcdd4c457c4043b7e62286d923ceadd"
+      }
+    ]
   },
   {
     "source": "home/moon.svg",
     "width": 1536,
     "sourceHash": "68cb2eeb502dbefb0f1e244a0c10767b6c783fce705bb0c3ec39733c34a5d15c",
-    "outputHash": "31e2f2a20dc7adc19d0aec2df15051742f0565f94602e63cfe844f44af238ecc"
+    "outputHash": "31e2f2a20dc7adc19d0aec2df15051742f0565f94602e63cfe844f44af238ecc",
+    "variants": [
+      {
+        "width": 384,
+        "sourceHash": "e673767c0e528f6741fcbbba671313f38c2fdacf454b1f618c9a0e6487c6e527",
+        "outputHash": "504cdde27e0ae4d2835133ef7fcbc49a0f4136793f55262cc14781a5025c042c"
+      },
+      {
+        "width": 768,
+        "sourceHash": "5ef8990edc4bb67f686cff6593f8facc592925cc2fe8169c858012f049d100fd",
+        "outputHash": "06c6e5c5f587b85ca062f20a68083551c9365aa927de7f0378fd807bdb44799a"
+      }
+    ]
   },
   {
     "source": "home/mountain-1.svg",
@@ -237,7 +299,19 @@
     "source": "home/trilobite-fossil-art.svg",
     "width": 1280,
     "sourceHash": "50c72b7dd29a170d38d7eb8fcc93bdc17d97d87305ca760b6623d8b852710ded",
-    "outputHash": "c9d607e7be032fe8184e60b6e3c75ac55fdcd5c080f35802ef92ffec1460b34e"
+    "outputHash": "c9d607e7be032fe8184e60b6e3c75ac55fdcd5c080f35802ef92ffec1460b34e",
+    "variants": [
+      {
+        "width": 384,
+        "sourceHash": "750c75b7a3f10502d7e6d92f5ca826a9decfa4383cee86f35bb472cd5dd083a2",
+        "outputHash": "c14a131b9f6889efe7f933a2f0ead5c60d14eb975383989b5cdde604d5b810d8"
+      },
+      {
+        "width": 768,
+        "sourceHash": "65cdaa208dc20af230fbd972edf056471de954103087a2a1fbd9fedb332a14c1",
+        "outputHash": "b9da8a30394b6729ce47512ae389c9e34b24f64e3c868875493de4c9044b01fb"
+      }
+    ]
   },
   {
     "source": "home/trilobite-pit.svg",

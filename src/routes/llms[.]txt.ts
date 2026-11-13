@@ -5,11 +5,11 @@ const llmsTxt = `# Prisco.me
 > Prisco.me e il mio spazio personale: un posto in cui parlo di me, del mio percorso, dei progetti che costruisco e degli argomenti che mi piacciono o mi appassionano.
 
 ## Pagine principali
-- Home: https://prisco.me/
-- Progetti: https://prisco.me/progetti
-- Carriera: https://prisco.me/career
-- Informazioni: https://prisco.me/about
-- Contatti: https://prisco.me/contact
+- [Home](https://prisco.me/)
+- [Progetti](https://prisco.me/progetti)
+- [Carriera](https://prisco.me/career)
+- [Informazioni](https://prisco.me/about)
+- [Contatti](https://prisco.me/contact)
 
 ## Fatti chiave
 - Prisco.me è lo spazio personale di Vincenzo Prisco.
@@ -18,9 +18,9 @@ const llmsTxt = `# Prisco.me
 - I contenuti principali possono riguardare software engineering, esperienze personali, interessi e commenti su attualità.
 
 ## Contatto
-- Website: https://prisco.me/
-- Contact page: https://prisco.me/contact
-- LinkedIn: https://www.linkedin.com/in/vincenzoprisco/
+- [Website](https://prisco.me/)
+- [Contact page](https://prisco.me/contact)
+- [LinkedIn](https://www.linkedin.com/in/vincenzoprisco/)
 `;
 
 export const Route = createFileRoute("/llms.txt")({
