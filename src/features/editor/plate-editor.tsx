@@ -8,6 +8,7 @@ import { Field } from "@/components/ui/field";
 import { getEmbedPreviewFn } from "@/features/cms/server/embed.functions";
 import { fromPlateValue, toPlateValue, type CmsDocument } from "@/features/content/domain/document";
 import { toPublicHttpUrl } from "@/features/content/embeds/embed-url";
+import { useEditorSiteTools } from "@/features/editor/client/use-editor-site-tools";
 import { EmbedDialog } from "@/features/editor/components/dialogs/embed-dialog";
 import { ImageDialog } from "@/features/editor/components/dialogs/image-dialog";
 import { LinkDialog } from "@/features/editor/components/dialogs/link-dialog";
@@ -48,6 +49,8 @@ export function CmsEditor({
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- CMS nodes are validated before reaching Plate.
     value: toPlateValue(value) as Value,
   });
+
+  useEditorSiteTools(editor, readOnly, media, onChange);
 
   useEffect(() => {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- CMS nodes are validated before reaching Plate.
