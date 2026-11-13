@@ -16,7 +16,7 @@ export function DashboardPage() {
 
 function DashboardLayout() {
   return (
-    <SidebarProvider open>
+    <SidebarProvider>
       <DashboardShell />
     </SidebarProvider>
   );

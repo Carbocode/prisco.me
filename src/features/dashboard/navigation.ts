@@ -23,6 +23,10 @@ export function dashboardTitle(pathname: string) {
   if (pathname.includes("/admin/contacts")) return "Richieste di contatto";
   if (pathname.includes("/admin/users/new")) return "Crea utente";
   if (pathname.includes("/admin/users")) return "Utenti";
+  if (pathname.endsWith("/cms/categories/new")) return "Nuova categoria";
+  if (pathname.endsWith("/cms/tags/new")) return "Nuovo tag";
+  if (pathname.endsWith("/cms/organizations/new")) return "Nuova organizzazione";
+  if (pathname.endsWith("/cms/media/new")) return "Carica media";
   if (pathname.includes("/cms/articles/new")) return "Nuovo articolo";
   if (pathname.includes("/cms/articles/")) return "Modifica articolo";
   if (pathname.endsWith("/cms/articles")) return "Articoli";

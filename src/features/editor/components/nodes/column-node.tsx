@@ -82,7 +82,7 @@ export function ColumnElement(props: PlateElementProps<TColumnElement>) {
     <PlateElement
       className={cn(
         cn(
-          "min-w-0 border border-transparent p-1.5",
+          "cms-editor-column min-w-0 border border-transparent p-1.5",
           !readOnly && "rounded-lg border-border border-dashed",
         ),
         "w-(--dynamic-width)",

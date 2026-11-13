@@ -1,17 +1,19 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { and, desc, eq, isNull, isNotNull, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNull, isNotNull, sql, not, like } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/db";
 import { cmsAuditLogs, cmsMedia } from "@/db/schema";
 import { roleHasPermission } from "@/features/auth/domain/permissions";
 
+import { listSearchSchema } from "../domain/list-search";
 import { mediaDeliveryBaseUrl, mediaUrl } from "../domain/media";
 import { emptyMediaUsage, type MediaUsage } from "../domain/media-associations";
 import { requireSession, requireCmsPermission } from "./cms-auth";
 import { CmsError, notFound } from "./cms-errors";
 import { auditInsert, type CmsDb } from "./cms.repository";
+import { listOrder, listTextFilter, listPage } from "./list-query";
 import { MEDIA_USAGE_SQL } from "./media-usage";
 
 export const listMediaFn = createServerFn({ method: "GET" }).handler(async () => {
@@ -166,3 +168,55 @@ async function loadMediaUsage(database: CmsDb) {
     ]),
   );
 }
+
+export const listMediaPageFn = createServerFn({ method: "GET" })
+  .validator(listSearchSchema)
+  .handler(async ({ data }) => {
+    await requireCmsPermission("cmsMedia", data.scope === "trash" ? "delete" : "list");
+    const database = getDb(env);
+    const mimeFilter =
+      data.kind === "file"
+        ? and(
+            not(like(cmsMedia.mimeType, "image/%")),
+            not(like(cmsMedia.mimeType, "video/%")),
+            not(like(cmsMedia.mimeType, "audio/%")),
+          )
+        : data.kind && ["image", "video", "audio"].includes(data.kind)
+          ? like(cmsMedia.mimeType, `${data.kind}/%`)
+          : undefined;
+    const where = and(
+      data.scope === "trash" ? isNotNull(cmsMedia.deletedAt) : isNull(cmsMedia.deletedAt),
+      mimeFilter,
+      listTextFilter(data.query, cmsMedia.name, cmsMedia.filename),
+    );
+    const [totalRow] = await database.select({ value: count() }).from(cmsMedia).where(where);
+    const total = totalRow?.value ?? 0;
+    const page = listPage(data.page, data.pageSize, total);
+    const items = await database
+      .select()
+      .from(cmsMedia)
+      .where(where)
+      .orderBy(
+        listOrder(
+          {
+            name: sql`coalesce(${cmsMedia.name},${cmsMedia.filename})`,
+            createdAt: cmsMedia.createdAt,
+            mimeType: cmsMedia.mimeType,
+            sizeBytes: cmsMedia.sizeBytes,
+          },
+          data.sortBy,
+          data.direction,
+          cmsMedia.createdAt,
+        ),
+        asc(cmsMedia.id),
+      )
+      .limit(data.pageSize)
+      .offset((page - 1) * data.pageSize);
+    const baseUrl = mediaDeliveryBaseUrl(import.meta.env.MODE, env.MEDIA_PUBLIC_URL);
+    return {
+      items: items.map((item) => ({ ...item, url: mediaUrl(baseUrl, item.storageKey) })),
+      total,
+      page,
+      pageSize: data.pageSize,
+    };
+  });

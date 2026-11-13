@@ -52,6 +52,10 @@ import { Route as ApiContentV1TagsRouteImport } from './routes/api/content/v1/ta
 import { Route as DashboardAdminUsersNewRouteImport } from './routes/dashboard/admin/users_.new'
 import { Route as DashboardCmsArticlesArticleIdRouteImport } from './routes/dashboard/cms/articles_.$articleId'
 import { Route as DashboardCmsArticlesNewRouteImport } from './routes/dashboard/cms/articles_.new'
+import { Route as DashboardCmsCategoriesNewRouteImport } from './routes/dashboard/cms/categories_.new'
+import { Route as DashboardCmsMediaNewRouteImport } from './routes/dashboard/cms/media_.new'
+import { Route as DashboardCmsOrganizationsNewRouteImport } from './routes/dashboard/cms/organizations_.new'
+import { Route as DashboardCmsTagsNewRouteImport } from './routes/dashboard/cms/tags_.new'
 import { Route as ApiContentV1ArticlesIndexRouteImport } from './routes/api/content/v1/articles/index'
 import { Route as ApiContentV1ArticlesSlugRouteImport } from './routes/api/content/v1/articles/$slug'
 import { Route as DashboardCmsArticlesArticleIdPreviewRouteImport } from './routes/dashboard/cms/articles_.$articleId_.preview'
@@ -276,6 +280,28 @@ const DashboardCmsArticlesNewRoute = DashboardCmsArticlesNewRouteImport.update({
   path: '/articles/new',
   getParentRoute: () => DashboardCmsRouteRoute,
 } as any)
+const DashboardCmsCategoriesNewRoute =
+  DashboardCmsCategoriesNewRouteImport.update({
+    id: '/categories_/new',
+    path: '/categories/new',
+    getParentRoute: () => DashboardCmsRouteRoute,
+  } as any)
+const DashboardCmsMediaNewRoute = DashboardCmsMediaNewRouteImport.update({
+  id: '/media_/new',
+  path: '/media/new',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
+const DashboardCmsOrganizationsNewRoute =
+  DashboardCmsOrganizationsNewRouteImport.update({
+    id: '/organizations_/new',
+    path: '/organizations/new',
+    getParentRoute: () => DashboardCmsRouteRoute,
+  } as any)
+const DashboardCmsTagsNewRoute = DashboardCmsTagsNewRouteImport.update({
+  id: '/tags_/new',
+  path: '/tags/new',
+  getParentRoute: () => DashboardCmsRouteRoute,
+} as any)
 const ApiContentV1ArticlesIndexRoute =
   ApiContentV1ArticlesIndexRouteImport.update({
     id: '/api/content/v1/articles/',
@@ -339,6 +365,10 @@ export interface FileRoutesByFullPath {
   '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/cms/articles/$articleId': typeof DashboardCmsArticlesArticleIdRoute
   '/dashboard/cms/articles/new': typeof DashboardCmsArticlesNewRoute
+  '/dashboard/cms/categories/new': typeof DashboardCmsCategoriesNewRoute
+  '/dashboard/cms/media/new': typeof DashboardCmsMediaNewRoute
+  '/dashboard/cms/organizations/new': typeof DashboardCmsOrganizationsNewRoute
+  '/dashboard/cms/tags/new': typeof DashboardCmsTagsNewRoute
   '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
   '/dashboard/cms/articles/$articleId/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
   '/api/content/v1/articles/': typeof ApiContentV1ArticlesIndexRoute
@@ -383,6 +413,10 @@ export interface FileRoutesByTo {
   '/dashboard/admin/users/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/cms/articles/$articleId': typeof DashboardCmsArticlesArticleIdRoute
   '/dashboard/cms/articles/new': typeof DashboardCmsArticlesNewRoute
+  '/dashboard/cms/categories/new': typeof DashboardCmsCategoriesNewRoute
+  '/dashboard/cms/media/new': typeof DashboardCmsMediaNewRoute
+  '/dashboard/cms/organizations/new': typeof DashboardCmsOrganizationsNewRoute
+  '/dashboard/cms/tags/new': typeof DashboardCmsTagsNewRoute
   '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
   '/dashboard/cms/articles/$articleId/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
   '/api/content/v1/articles': typeof ApiContentV1ArticlesIndexRoute
@@ -432,6 +466,10 @@ export interface FileRoutesById {
   '/dashboard/admin/users_/new': typeof DashboardAdminUsersNewRoute
   '/dashboard/cms/articles_/$articleId': typeof DashboardCmsArticlesArticleIdRoute
   '/dashboard/cms/articles_/new': typeof DashboardCmsArticlesNewRoute
+  '/dashboard/cms/categories_/new': typeof DashboardCmsCategoriesNewRoute
+  '/dashboard/cms/media_/new': typeof DashboardCmsMediaNewRoute
+  '/dashboard/cms/organizations_/new': typeof DashboardCmsOrganizationsNewRoute
+  '/dashboard/cms/tags_/new': typeof DashboardCmsTagsNewRoute
   '/api/content/v1/articles/$slug': typeof ApiContentV1ArticlesSlugRoute
   '/dashboard/cms/articles_/$articleId_/preview': typeof DashboardCmsArticlesArticleIdPreviewRoute
   '/api/content/v1/articles/': typeof ApiContentV1ArticlesIndexRoute
@@ -482,6 +520,10 @@ export interface FileRouteTypes {
     | '/dashboard/admin/users/new'
     | '/dashboard/cms/articles/$articleId'
     | '/dashboard/cms/articles/new'
+    | '/dashboard/cms/categories/new'
+    | '/dashboard/cms/media/new'
+    | '/dashboard/cms/organizations/new'
+    | '/dashboard/cms/tags/new'
     | '/api/content/v1/articles/$slug'
     | '/dashboard/cms/articles/$articleId/preview'
     | '/api/content/v1/articles/'
@@ -526,6 +568,10 @@ export interface FileRouteTypes {
     | '/dashboard/admin/users/new'
     | '/dashboard/cms/articles/$articleId'
     | '/dashboard/cms/articles/new'
+    | '/dashboard/cms/categories/new'
+    | '/dashboard/cms/media/new'
+    | '/dashboard/cms/organizations/new'
+    | '/dashboard/cms/tags/new'
     | '/api/content/v1/articles/$slug'
     | '/dashboard/cms/articles/$articleId/preview'
     | '/api/content/v1/articles'
@@ -574,6 +620,10 @@ export interface FileRouteTypes {
     | '/dashboard/admin/users_/new'
     | '/dashboard/cms/articles_/$articleId'
     | '/dashboard/cms/articles_/new'
+    | '/dashboard/cms/categories_/new'
+    | '/dashboard/cms/media_/new'
+    | '/dashboard/cms/organizations_/new'
+    | '/dashboard/cms/tags_/new'
     | '/api/content/v1/articles/$slug'
     | '/dashboard/cms/articles_/$articleId_/preview'
     | '/api/content/v1/articles/'
@@ -909,6 +959,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCmsArticlesNewRouteImport
       parentRoute: typeof DashboardCmsRouteRoute
     }
+    '/dashboard/cms/categories_/new': {
+      id: '/dashboard/cms/categories_/new'
+      path: '/categories/new'
+      fullPath: '/dashboard/cms/categories/new'
+      preLoaderRoute: typeof DashboardCmsCategoriesNewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/media_/new': {
+      id: '/dashboard/cms/media_/new'
+      path: '/media/new'
+      fullPath: '/dashboard/cms/media/new'
+      preLoaderRoute: typeof DashboardCmsMediaNewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/organizations_/new': {
+      id: '/dashboard/cms/organizations_/new'
+      path: '/organizations/new'
+      fullPath: '/dashboard/cms/organizations/new'
+      preLoaderRoute: typeof DashboardCmsOrganizationsNewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
+    '/dashboard/cms/tags_/new': {
+      id: '/dashboard/cms/tags_/new'
+      path: '/tags/new'
+      fullPath: '/dashboard/cms/tags/new'
+      preLoaderRoute: typeof DashboardCmsTagsNewRouteImport
+      parentRoute: typeof DashboardCmsRouteRoute
+    }
     '/api/content/v1/articles/': {
       id: '/api/content/v1/articles/'
       path: '/api/content/v1/articles'
@@ -970,6 +1048,10 @@ interface DashboardCmsRouteRouteChildren {
   DashboardCmsIndexRoute: typeof DashboardCmsIndexRoute
   DashboardCmsArticlesArticleIdRoute: typeof DashboardCmsArticlesArticleIdRoute
   DashboardCmsArticlesNewRoute: typeof DashboardCmsArticlesNewRoute
+  DashboardCmsCategoriesNewRoute: typeof DashboardCmsCategoriesNewRoute
+  DashboardCmsMediaNewRoute: typeof DashboardCmsMediaNewRoute
+  DashboardCmsOrganizationsNewRoute: typeof DashboardCmsOrganizationsNewRoute
+  DashboardCmsTagsNewRoute: typeof DashboardCmsTagsNewRoute
   DashboardCmsArticlesArticleIdPreviewRoute: typeof DashboardCmsArticlesArticleIdPreviewRoute
 }
 
@@ -982,6 +1064,10 @@ const DashboardCmsRouteRouteChildren: DashboardCmsRouteRouteChildren = {
   DashboardCmsIndexRoute: DashboardCmsIndexRoute,
   DashboardCmsArticlesArticleIdRoute: DashboardCmsArticlesArticleIdRoute,
   DashboardCmsArticlesNewRoute: DashboardCmsArticlesNewRoute,
+  DashboardCmsCategoriesNewRoute: DashboardCmsCategoriesNewRoute,
+  DashboardCmsMediaNewRoute: DashboardCmsMediaNewRoute,
+  DashboardCmsOrganizationsNewRoute: DashboardCmsOrganizationsNewRoute,
+  DashboardCmsTagsNewRoute: DashboardCmsTagsNewRoute,
   DashboardCmsArticlesArticleIdPreviewRoute:
     DashboardCmsArticlesArticleIdPreviewRoute,
 }

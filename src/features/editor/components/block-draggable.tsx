@@ -66,11 +66,11 @@ function Draggable(props: PlateElementProps) {
   const isInTable = path.length === 4;
 
   return (
-    <div className={cn("group/block relative", isDragging && "opacity-50")}>
+    <div className={cn("cms-editor-block group/block relative", isDragging && "opacity-50")}>
       {!isInTable && (
         <div
           className={cn(
-            "slate-gutterLeft absolute top-0 left-0 z-50 flex -translate-x-full items-center pr-1",
+            "slate-gutterLeft absolute top-0 left-0 z-1 flex -translate-x-full items-center pr-1",
             "cms-block-controls transition-opacity",
             isInColumn && "pr-1.5",
           )}
@@ -280,7 +280,7 @@ const DropLine = React.memo(function DropLine({
       {...props}
       className={cn(
         "slate-dropLine",
-        "absolute inset-x-0 z-50 h-0.5 rounded-full bg-primary opacity-100 transition-opacity",
+        "absolute inset-x-0 z-2 h-0.5 rounded-full bg-primary opacity-100 transition-opacity",
         dropLine === "top" && "-top-px",
         dropLine === "bottom" && "-bottom-px",
         className,

@@ -57,7 +57,7 @@ export function DashboardShell() {
 
   return (
     <>
-      <Sidebar collapsible="icon">
+      <Sidebar collapsible="offcanvas">
         <SidebarHeader>
           <Link
             className={buttonVariants({ size: "sm", variant: "outline" })}
@@ -280,7 +280,7 @@ export function DashboardShell() {
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4">
           <div className="flex min-w-0 items-center gap-2">
             <SidebarTrigger />
@@ -298,7 +298,7 @@ export function DashboardShell() {
         <main
           id="dashboard-content"
           className={cn(
-            "w-full flex-1",
+            "w-full min-w-0 max-w-full flex-1",
             isArticleEditor ? "min-h-0 overflow-hidden" : "mx-auto max-w-7xl p-4 md:p-6",
           )}
         >

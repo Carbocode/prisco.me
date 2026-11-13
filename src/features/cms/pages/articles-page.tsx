@@ -1,8 +1,8 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { getRouteApi } from "@tanstack/react-router";
-import { Eye, FilePlus2, FileText, Pencil, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Eye, FilePlus2, Pencil } from "lucide-react";
+import { useMemo } from "react";
 
 import {
   DashboardDataTable,
@@ -11,39 +11,31 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
-import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CATEGORY_ARCHIVE_SORT } from "@/features/content/domain/content-category";
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useListSearch } from "@/features/cms/client/use-list-search";
+import { formatSiteDate } from "@/lib/dates";
 
 const routeApi = getRouteApi("/dashboard/cms/articles");
 
 export function ArticlesContent() {
   const { articles, categories } = routeApi.useLoaderData();
   const search = routeApi.useSearch();
+  const router = useRouter();
   const navigate = useNavigate({ from: "/dashboard/cms/articles" });
-  const [query, setQuery] = useState(search.query ?? "");
   const pageSize = search.pageSize ?? 20;
   const pages = Math.max(1, Math.ceil(articles.total / pageSize));
-  const hasFilters = Boolean(search.query || search.status || search.categoryId);
   const updateSearch = (changes: Partial<typeof search>) =>
     void navigate({ search: { ...search, ...changes } });
+  const query = useListSearch(search.query, (nextQuery) =>
+    updateSearch({ query: nextQuery || undefined, page: 1 }),
+  );
   const columns = useMemo<DashboardColumnDef<(typeof articles.items)[number]>[]>(
     () => [
       {
@@ -73,27 +65,27 @@ export function ArticlesContent() {
       {
         id: "categories",
         header: "Categoria",
+        enableSorting: false,
         size: 220,
         cell: ({ row }) => row.original.categories.join(", ") || "—",
       },
       {
-        id: "archiveOrder",
-        header: "Ordinamento",
-        size: 170,
-        cell: ({ row }) => {
-          const article = row.original;
-          return (
-            <span className="tabular-nums text-muted-foreground">
-              {article.archiveSort === CATEGORY_ARCHIVE_SORT.MANUAL
-                ? article.projectSortOrder
-                : article.publishedAt?.toLocaleDateString("it-IT") || "—"}
-            </span>
-          );
-        },
+        accessorKey: "updatedAt",
+        header: "Modificato",
+        size: 180,
+        cell: ({ row }) => formatSiteDate(row.original.updatedAt),
+      },
+      {
+        accessorKey: "publishedAt",
+        header: "Pubblicazione",
+        size: 180,
+        cell: ({ row }) =>
+          row.original.publishedAt ? formatSiteDate(row.original.publishedAt) : "—",
       },
       {
         id: "actions",
-        header: () => <span className="sr-only">Azioni</span>,
+        header: "Azioni",
+        enableSorting: false,
         size: 90,
         minSize: 90,
         maxSize: 120,
@@ -124,205 +116,94 @@ export function ArticlesContent() {
     [],
   );
 
+  const statuses = ["draft", "scheduled", "published", "archived"] as const;
+  const sortKeys = ["title", "status", "authorName", "updatedAt", "publishedAt"] as const;
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">{articles.total} contenuti</p>
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">Articoli</h1>
-          <p className="text-sm text-muted-foreground">
-            Cerca, filtra e apri un contenuto senza cambiare contesto.
-          </p>
-        </div>
+    <div className="flex min-w-0 max-w-full flex-col gap-4">
+      <h1 className="sr-only">Articoli</h1>
+      <div className="flex justify-end">
         <Link className={buttonVariants({ size: "sm" })} to="/dashboard/cms/articles/new">
           <FilePlus2 data-icon="inline-start" />
           Nuovo articolo
         </Link>
-      </header>
-
-      <Card size="sm">
-        <CardHeader>
-          <CardTitle>Trova un articolo</CardTitle>
-          <CardDescription>Cerca per titolo o slug e filtra per stato e categoria.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              updateSearch({ query: query || undefined, page: 1 });
-            }}
-          >
-            <FieldGroup className="grid items-end md:grid-cols-2 xl:grid-cols-4">
-              <Field>
-                <FieldLabel htmlFor="article-search">Titolo o slug</FieldLabel>
-                <Input
-                  id="article-search"
-                  type="search"
-                  value={query}
-                  placeholder="Cerca negli articoli"
-                  onChange={(event) => setQuery(event.target.value)}
-                />
-              </Field>
-              <Field>
-                <FieldLabel>Stato</FieldLabel>
-                <Select
-                  items={[
-                    { value: "all", label: "Tutti gli stati" },
-                    { value: "draft", label: "Bozza" },
-                    { value: "scheduled", label: "Programmato" },
-                    { value: "published", label: "Pubblicato" },
-                    { value: "archived", label: "Archiviato" },
-                  ]}
-                  value={search.status ?? "all"}
-                  onValueChange={(value) =>
-                    updateSearch({
-                      status: value === "all" ? undefined : (value as typeof search.status), // oxlint-disable-line typescript/no-unsafe-type-assertion
-                      page: 1,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="all">Tutti gli stati</SelectItem>
-                      <SelectItem value="draft">Bozza</SelectItem>
-                      <SelectItem value="scheduled">Programmato</SelectItem>
-                      <SelectItem value="published">Pubblicato</SelectItem>
-                      <SelectItem value="archived">Archiviato</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field>
-                <FieldLabel>Categoria</FieldLabel>
-                <Select
-                  items={[
-                    { value: "all", label: "Tutte le categorie" },
-                    ...categories.map((category) => ({
-                      value: category.id,
-                      label: category.name,
-                    })),
-                  ]}
+      </div>
+      <DashboardDataTable
+        columns={columns}
+        data={articles.items}
+        getRowId={(article) => article.id}
+        search={query}
+        onRefresh={() => router.invalidate({ sync: true })}
+        sorting={{
+          value: [{ id: search.sortBy, desc: search.direction === "desc" }],
+          onChange: (value) =>
+            updateSearch({
+              sortBy: sortKeys.find((key) => key === value[0]?.id) ?? "updatedAt",
+              direction: value[0]?.desc ? "desc" : "asc",
+              page: 1,
+            }),
+        }}
+        pagination={{
+          pageIndex: articles.page - 1,
+          pageSize,
+          pageCount: pages,
+          total: articles.total,
+          onChange: ({ pageIndex, pageSize: nextPageSize }) =>
+            updateSearch({
+              page: pageIndex + 1,
+              pageSize: nextPageSize === 10 || nextPageSize === 50 ? nextPageSize : 20,
+            }),
+        }}
+        toolbarLeft={
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button size="sm" variant="outline" />}>
+                Categoria
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuRadioGroup
                   value={search.categoryId ?? "all"}
                   onValueChange={(value) =>
-                    updateSearch({
-                      categoryId: value === "all" ? undefined : (value ?? undefined),
-                      page: 1,
-                    })
+                    updateSearch({ categoryId: value === "all" ? undefined : value, page: 1 })
                   }
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="all">Tutte le categorie</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <ButtonGroup>
-                <Button size="sm" type="submit">
-                  <Search data-icon="inline-start" />
-                  Cerca
-                </Button>
-                {hasFilters ? (
-                  <Button
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                    aria-label="Azzera filtri"
-                    onClick={() => {
-                      setQuery("");
-                      void navigate({ search: { page: 1 } });
-                    }}
-                  >
-                    <X />
-                  </Button>
-                ) : null}
-              </ButtonGroup>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-
-      {articles.items.length ? (
-        <Card size="sm">
-          <CardHeader>
-            <CardTitle>Risultati</CardTitle>
-            <CardDescription>
-              {articles.total} articoli · pagina {search.page} di {pages}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <DashboardDataTable
-              columns={columns}
-              data={articles.items}
-              getRowId={(article) => article.id}
-              pagination={{
-                pageIndex: search.page - 1,
-                pageSize,
-                pageCount: pages,
-                total: articles.total,
-                onChange: ({ pageIndex, pageSize: nextPageSize }) =>
-                  updateSearch({
-                    page: pageIndex + 1,
-                    pageSize: nextPageSize === 10 || nextPageSize === 50 ? nextPageSize : 20,
-                  }),
-              }}
-            />
-          </CardContent>
-        </Card>
-      ) : (
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <FileText />
-            </EmptyMedia>
-            <EmptyTitle>{hasFilters ? "Nessun risultato" : "Nessun articolo"}</EmptyTitle>
-            <EmptyDescription>
-              {hasFilters
-                ? "Modifica o azzera i filtri per ampliare la ricerca."
-                : "Crea il primo articolo per iniziare a pubblicare."}
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            {hasFilters ? (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setQuery("");
-                  void navigate({ search: { page: 1 } });
-                }}
-              >
-                Azzera filtri
-              </Button>
-            ) : (
-              <Link className={buttonVariants()} to="/dashboard/cms/articles/new">
-                Nuovo articolo
-              </Link>
-            )}
-          </EmptyContent>
-        </Empty>
-      )}
+                  <DropdownMenuRadioItem value="all">Tutte le categorie</DropdownMenuRadioItem>
+                  {categories.map((category) => (
+                    <DropdownMenuRadioItem key={category.id} value={category.id}>
+                      {category.name}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
+        }
+        toolbarCenter={
+          <ToggleGroup
+            value={[search.status ?? "all"]}
+            onValueChange={(value) =>
+              updateSearch({ status: statuses.find((status) => status === value[0]), page: 1 })
+            }
+            variant="outline"
+            size="sm"
+            spacing={0}
+            aria-label="Stato articolo"
+          >
+            <ToggleGroupItem value="all">Tutti</ToggleGroupItem>
+            {statuses.map((status) => (
+              <ToggleGroupItem key={status} value={status}>
+                {statusLabel(status)}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        }
+      />
     </div>
   );
 }
-
 function statusLabel(status: string) {
   return (
-    {
-      draft: "Bozza",
-      scheduled: "Programmato",
-      published: "Pubblicato",
-      archived: "Archiviato",
-    }[status] ?? status
+    { draft: "Bozze", scheduled: "Programmati", published: "Pubblicati", archived: "Archiviati" }[
+      status
+    ] ?? status
   );
 }

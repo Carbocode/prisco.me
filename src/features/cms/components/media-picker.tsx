@@ -1,5 +1,5 @@
 import { ArrowDownUp, ChevronLeft, ChevronRight, ImageIcon, Search } from "lucide-react";
-import { useId, useMemo, useState } from "react";
+import { lazy, Suspense, useId, useMemo, useState } from "react";
 
 import { HoverAnimatedImage } from "@/components/media/hover-animated-image";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,10 @@ import { cn } from "@/lib/utils";
 
 import { MediaCard as MediaLibraryCard, mediaDisplayName } from "./media-card";
 
+const RemoteMediaBrowser = lazy(() =>
+  import("./remote-media-browser").then((module) => ({ default: module.RemoteMediaBrowser })),
+);
+
 export type MediaPickerItem = {
   id: string;
   name?: string | null;
@@ -71,6 +75,7 @@ export function MediaPicker({
   description,
   emptyLabel = "Nessuna immagine",
   compact = false,
+  remote = false,
 }: {
   items: MediaPickerItem[];
   value: string;
@@ -79,6 +84,7 @@ export function MediaPicker({
   description: string;
   emptyLabel?: string;
   compact?: boolean;
+  remote?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [draftValue, setDraftValue] = useState(value);
@@ -113,14 +119,22 @@ export function MediaPicker({
         ) : (
           <ImageIcon data-icon="inline-start" />
         )}
-        <span className="truncate">{selected ? mediaDisplayName(selected) : emptyLabel}</span>
+        <span className="truncate">
+          {selected ? mediaDisplayName(selected) : value ? "Immagine selezionata" : emptyLabel}
+        </span>
       </DialogTrigger>
       <DialogContent className="flex max-h-(--layout-max-h-diagram-dialog) w-(--layout-w-dialog-inset) max-w-6xl flex-col sm:max-w-6xl">
         <DialogHeader>
           <DialogTitle>{label}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <MediaBrowser items={items} value={draftValue} onValueChange={setDraftValue} />
+        {remote ? (
+          <Suspense fallback={<p>Caricamento immagini…</p>}>
+            <RemoteMediaBrowser value={draftValue} onValueChange={setDraftValue} />
+          </Suspense>
+        ) : (
+          <MediaBrowser items={items} value={draftValue} onValueChange={setDraftValue} />
+        )}
         <DialogFooter>
           {draftValue ? (
             <Button type="button" variant="outline" onClick={() => setDraftValue("")}>

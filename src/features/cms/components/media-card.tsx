@@ -1,26 +1,24 @@
-import { AudioLines, Check, Eye, FileIcon, ImageIcon, Video } from "lucide-react";
-import type { ReactNode } from "react";
+import { AudioLines, Check, Eye, FileIcon, ImageIcon, MoreHorizontal, Video } from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { HoverAnimatedImage } from "@/components/media/hover-animated-image";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export type MediaCardItem = {
   id: string;
@@ -44,85 +42,107 @@ export function MediaCard({
   item,
   selected = false,
   onSelect,
-  details,
-  actions,
+  menuItems,
+  pending = false,
 }: {
   item: MediaCardItem;
   selected?: boolean;
   onSelect?: () => void;
-  details?: ReactNode;
-  actions?: ReactNode;
+  menuItems?: ReactNode;
+  pending?: boolean;
+}) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const displayName = mediaDisplayName(item);
+  return (
+    <>
+      <Card size="sm" className="min-w-0">
+        <MediaThumbnail item={item} />
+        <CardHeader className="min-w-0">
+          <CardTitle className="min-w-0">
+            <span className="block min-w-0 truncate" title={displayName}>
+              {displayName}
+            </span>
+          </CardTitle>
+          <CardAction>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="ghost"
+                    disabled={pending}
+                    aria-label={`Azioni per ${displayName}`}
+                  />
+                }
+              >
+                <MoreHorizontal />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => setPreviewOpen(true)}>
+                    <Eye />
+                    Anteprima e dettagli
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                {menuItems ? (
+                  <>
+                    <DropdownMenuSeparator />
+                    {menuItems}
+                  </>
+                ) : null}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardAction>
+        </CardHeader>
+        {onSelect ? (
+          <CardFooter>
+            <Button
+              type="button"
+              size="sm"
+              variant={selected ? "secondary" : "outline"}
+              aria-pressed={selected}
+              onClick={onSelect}
+            >
+              {selected ? <Check data-icon="inline-start" /> : null}
+              {selected ? "Selezionato" : "Seleziona"}
+            </Button>
+          </CardFooter>
+        ) : null}
+      </Card>
+      <MediaPreview item={item} open={previewOpen} onOpenChange={setPreviewOpen} />
+    </>
+  );
+}
+
+function MediaPreview({
+  item,
+  open,
+  onOpenChange,
+}: {
+  item: MediaCardItem;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
   const displayName = mediaDisplayName(item);
   const type = mediaType(item.mimeType);
 
   return (
-    <Card size="sm">
-      <MediaThumbnail item={item} />
-      <CardHeader>
-        <CardTitle>{displayName}</CardTitle>
-        <CardDescription>{item.filename}</CardDescription>
-        <CardAction>
-          <Badge variant="outline">
-            <type.icon />
-            {type.label}
-          </Badge>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="flex flex-col">
-        <p className="text-xs tabular-nums text-muted-foreground">
-          {item.sizeBytes === undefined ? null : `${Math.round(item.sizeBytes / 1024)} KiB`}
-          {item.sizeBytes !== undefined && item.width && item.height ? " · " : null}
-          {item.width && item.height ? `${item.width}×${item.height}` : null}
-        </p>
-        {item.caption ? (
-          <p className="line-clamp-2 text-sm text-muted-foreground">{item.caption}</p>
-        ) : null}
-        {details}
-      </CardContent>
-      <CardFooter className="flex flex-wrap">
-        <MediaPreview item={item} />
-        {onSelect ? (
-          <Button
-            type="button"
-            size="sm"
-            variant={selected ? "secondary" : "outline"}
-            aria-pressed={selected}
-            onClick={onSelect}
-          >
-            {selected ? <Check data-icon="inline-start" /> : null}
-            {selected ? "Selezionato" : "Seleziona"}
-          </Button>
-        ) : null}
-        {item.usage ? (
-          <Badge variant="secondary">
-            {item.usage.total} {item.usage.total === 1 ? "utilizzo" : "utilizzi"}
-          </Badge>
-        ) : null}
-        {actions}
-      </CardFooter>
-    </Card>
-  );
-}
-
-function MediaPreview({ item }: { item: MediaCardItem }) {
-  const displayName = mediaDisplayName(item);
-  const type = mediaType(item.mimeType);
-
-  return (
-    <Dialog>
-      <DialogTrigger render={<Button type="button" size="sm" variant="outline" />}>
-        <Eye data-icon="inline-start" />
-        Anteprima
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-(--layout-max-h-dialog-viewport) overflow-y-auto sm:max-w-4xl">
         <DialogHeader>
-          <DialogTitle>{displayName}</DialogTitle>
+          <DialogTitle>
+            <span className="block min-w-0 break-words">{displayName}</span>
+          </DialogTitle>
           <DialogDescription>
-            {type.label} · {item.filename}
+            {type.label} · <span className="break-all">{item.filename}</span>
             {item.width && item.height ? ` · ${item.width}×${item.height}` : ""}
           </DialogDescription>
         </DialogHeader>
+        {item.sizeBytes !== undefined ? (
+          <p className="text-sm text-muted-foreground">{Math.round(item.sizeBytes / 1024)} KiB</p>
+        ) : null}
+        {item.caption ? <p className="text-sm">{item.caption}</p> : null}
         {type.kind === "image" ? (
           <HoverAnimatedImage
             src={item.url}
@@ -169,11 +189,11 @@ function MediaThumbnail({ item }: { item: MediaCardItem }) {
       width={item.width ?? 640}
       height={item.height ?? 360}
       loading="lazy"
-      containerClassName="aspect-video w-full"
-      className="size-full object-cover"
+      containerClassName="aspect-square w-full"
+      className="size-full object-contain"
     />
   ) : (
-    <div className="flex aspect-video w-full items-center justify-center text-muted-foreground">
+    <div className="flex aspect-square w-full items-center justify-center text-muted-foreground">
       <Icon className="size-10" />
     </div>
   );

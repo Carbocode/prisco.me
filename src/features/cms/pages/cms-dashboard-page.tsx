@@ -1,16 +1,14 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { getRouteApi } from "@tanstack/react-router";
 import { ArrowRight, FilePlus2, FileText } from "lucide-react";
 import { useMemo } from "react";
-import { toast } from "sonner";
 
 import {
   DashboardDataTable,
   type DashboardColumnDef,
 } from "@/components/data-table/dashboard-data-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -27,14 +25,11 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Item, ItemGroup, ItemContent, ItemTitle, ItemActions } from "@/components/ui/item";
-import { restoreTaxonomyFn } from "@/features/cms/server/trash.functions";
 
 const routeApi = getRouteApi("/dashboard/cms/");
 
 export function CmsDashboardContent() {
-  const router = useRouter();
-  const { articles, stats, trash } = routeApi.useLoaderData();
+  const { articles, stats } = routeApi.useLoaderData();
   const count = (status: string) => stats.find((item) => item.status === status)?.count ?? 0;
   const recent = [...articles]
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
@@ -189,43 +184,6 @@ export function CmsDashboardContent() {
           )}
         </CardContent>
       </Card>
-      {trash.length ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Cestino tassonomie</CardTitle>
-            <CardDescription>Ripristina categorie e tag archiviati.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ItemGroup>
-              {trash.map((item) => (
-                <Item key={item.id}>
-                  <ItemContent>
-                    <ItemTitle>
-                      {item.name} · {item.kind}
-                    </ItemTitle>
-                  </ItemContent>
-                  <ItemActions>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        void restoreTaxonomyFn({ data: { id: item.id, kind: item.kind } })
-                          .then(() => router.invalidate())
-                          .catch((error) =>
-                            toast.error(
-                              error instanceof Error ? error.message : "Ripristino non riuscito",
-                            ),
-                          );
-                      }}
-                    >
-                      Ripristina
-                    </Button>
-                  </ItemActions>
-                </Item>
-              ))}
-            </ItemGroup>
-          </CardContent>
-        </Card>
-      ) : null}
     </div>
   );
 }

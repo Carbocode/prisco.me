@@ -1,18 +1,17 @@
 .cms-editor {
+  isolation: isolate;
   display: flex;
-  flex: 1;
+  flex: 0 0 auto;
   min-height: 0;
   flex-direction: column;
-  overflow: clip;
+  overflow: visible;
   background: var(--background);
 }
 
 .cms-editor__toolbar {
   position: sticky;
-  top: 4.5rem;
+  top: 0;
   z-index: 10;
-  /* On large screens the editor column scrolls independently, so the toolbar
-     pins to the top of that column instead of sitting below the page header. */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -20,8 +19,7 @@
   min-height: 3rem;
   padding: 0.5rem;
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--card) 94%, transparent);
-  backdrop-filter: blur(12px);
+  background: var(--card);
 }
 
 @media (min-width: 1280px) {
@@ -31,17 +29,19 @@
 }
 
 .cms-editor__canvas {
+  position: relative;
+  isolation: isolate;
+  z-index: 0;
   min-height: 24rem;
   background: var(--background);
 }
 
 .cms-editor__content {
-  min-height: 42rem;
+  min-height: 30rem;
   width: 100%;
-  max-width: 52rem;
+  max-width: 56rem;
   margin-inline: auto;
-  padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem) 12rem;
-  padding-left: clamp(6.5rem, 9vw, 7rem);
+  padding: 2rem 2rem 10rem 6rem;
   color: var(--foreground);
   font-size: 1rem;
   line-height: 1.8;
@@ -372,4 +372,71 @@
 
 .cms-editor__content :is(td, th) p:last-child {
   margin-bottom: 0;
+}
+
+/* Block controls align with the first rendered line, including headings. */
+.cms-editor__content .cms-editor-block {
+  margin-block: 0 1rem;
+}
+
+.cms-editor__content
+  .cms-editor-block
+  > .slate-blockWrapper
+  > :is(p, h1, h2, h3, h4, h5, blockquote, figure) {
+  margin-block: 0;
+}
+
+.cms-editor__content .cms-editor-block:has(> .slate-blockWrapper > :is(h1, h2, h3, h4, h5)) {
+  margin-block: 1.5rem 0.75rem;
+}
+
+.cms-editor__content > .cms-editor-block:first-child {
+  margin-top: 0;
+}
+
+.cms-editor__content .cms-editor-block:has(> .slate-blockWrapper > .cms-plate-list-item) {
+  margin-block: 0.25rem;
+}
+
+.cms-editor__content .cms-editor-block:last-child {
+  margin-bottom: 0;
+}
+
+.cms-editor__content .slate-blockWrapper > :is(h1, h2, h3, h4, h5) + * {
+  margin-top: 0;
+}
+
+.cms-editor__content .cms-editor-block > .slate-blockWrapper > .cms-plate-list-item {
+  margin-block: 0;
+}
+
+/* Nested column blocks need their own gutter; otherwise controls overlap the previous column. */
+.cms-editor__content .cms-editor-column {
+  padding-left: 6rem;
+}
+
+.cms-editor__content
+  .cms-editor-block
+  > .slate-blockWrapper
+  > :is([data-slate-node="element"], .cms-content-table) {
+  margin-block: 0;
+}
+
+.cms-editor__content .cms-editor-column > .cms-editor-block:first-child {
+  margin-top: 0;
+}
+
+.cms-editor__content blockquote > p:last-child {
+  margin-bottom: 0;
+}
+
+/* Editor cells are opaque surfaces; selection tint stays inside its own cell. */
+.cms-editor__content td,
+.cms-editor__content th {
+  isolation: isolate;
+  background: var(--background);
+}
+
+.cms-editor__content th {
+  background: var(--muted);
 }
