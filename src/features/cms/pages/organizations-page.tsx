@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/features/auth/client/auth-client";
 import { roleHasPermission } from "@/features/auth/domain/permissions";
 import {
@@ -45,10 +46,18 @@ export function OrganizationsPage() {
   const canManage = roleHasPermission(session?.user.role, "cmsCategory", "update");
   const organizations = routeApi.useLoaderData();
   const router = useRouter();
+  const [view, setView] = useState("list");
+  const [query, setQuery] = useState("");
+  const filtered = organizations.filter((item) =>
+    `${item.name} ${item.slug}`
+      .toLocaleLowerCase("it-IT")
+      .includes(query.trim().toLocaleLowerCase("it-IT")),
+  );
   const [description, setDescription] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [slugTouched, setSlugTouched] = useState(false);
   const [type, setType] = useState<"company" | "education">("company");
   const [pending, setPending] = useState(false);
   const columns = useMemo<DashboardColumnDef<Organization>[]>(
@@ -85,6 +94,8 @@ export function OrganizationsPage() {
       setWebsiteUrl("");
       setName("");
       setSlug("");
+      setSlugTouched(false);
+      setView("list");
       toast.success("Organizzazione creata");
       await router.invalidate();
     } catch (error) {
@@ -95,7 +106,7 @@ export function OrganizationsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <header>
         <p className="text-sm font-medium text-muted-foreground">
           {organizations.length} organizzazioni
@@ -106,118 +117,144 @@ export function OrganizationsPage() {
         </p>
       </header>
 
-      <Card size="sm">
-        <CardHeader>
-          <CardTitle>Nuova organizzazione</CardTitle>
-          <CardDescription>
-            Crea un’azienda o un ente di istruzione riutilizzabile nei progetti.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FieldSet disabled={!canManage}>
-            <form onSubmit={(event) => void create(event)}>
-              <FieldGroup className="grid items-end lg:grid-cols-(--layout-grid-cols-cms-filters)">
-                <Field>
-                  <FieldLabel htmlFor="organization-name">Nome</FieldLabel>
-                  <Input
-                    id="organization-name"
-                    value={name}
-                    required
-                    onChange={(event) => {
-                      setName(event.target.value);
-                      if (!slug) setSlug(slugify(event.target.value));
-                    }}
+      <Tabs value={view} onValueChange={(value) => setView(String(value))}>
+        <TabsList aria-label="Sezioni organizzazioni">
+          <TabsTrigger value="list">Organizzazioni</TabsTrigger>
+          <TabsTrigger value="create">Nuova organizzazione</TabsTrigger>
+        </TabsList>
+        <TabsContent value="list">
+          <div className="flex flex-col gap-6">
+            <Field>
+              <FieldLabel htmlFor="organizzazioni-search">Cerca organizzazioni</FieldLabel>
+              <Input
+                id="organizzazioni-search"
+                type="search"
+                value={query}
+                placeholder="Cerca per nome o slug"
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </Field>
+            {filtered.length ? (
+              <Card size="sm">
+                <CardContent>
+                  <DashboardDataTable
+                    columns={columns}
+                    data={filtered}
+                    getRowId={(organization) => organization.id}
+                    renderRow={(row) => (
+                      <OrganizationRow
+                        key={row.id}
+                        organization={row.original}
+                        refresh={() => router.invalidate()}
+                      />
+                    )}
                   />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="organization-slug">Slug</FieldLabel>
-                  <Input
-                    id="organization-slug"
-                    value={slug}
-                    pattern={slugInputPattern}
-                    title="Lo slug non puo contenere solo numeri"
-                    required
-                    onChange={(event) => setSlug(event.target.value)}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel>Tipo</FieldLabel>
-                  <Select
-                    items={organizationTypeOptions}
-                    value={type}
-                    onValueChange={(value) =>
-                      setType(value === "education" ? "education" : "company")
-                    }
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="company">Azienda</SelectItem>
-                        <SelectItem value="education">Istruzione</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="org-description">Descrizione</FieldLabel>
-                  <Input
-                    id="org-description"
-                    maxLength={320}
-                    value={description}
-                    onChange={(event) => setDescription(event.target.value)}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="org-website">Sito web</FieldLabel>
-                  <Input
-                    id="org-website"
-                    type="url"
-                    value={websiteUrl}
-                    onChange={(event) => setWebsiteUrl(event.target.value)}
-                  />
-                </Field>
-                <Button size="sm" type="submit" disabled={pending}>
-                  <Plus data-icon="inline-start" />
-                  {pending ? "Creazione…" : "Crea"}
-                </Button>
-              </FieldGroup>
-            </form>
-          </FieldSet>
-        </CardContent>
-      </Card>
-
-      {organizations.length ? (
-        <Card size="sm">
-          <CardContent>
-            <DashboardDataTable
-              columns={columns}
-              data={organizations}
-              getRowId={(organization) => organization.id}
-              renderRow={(row) => (
-                <OrganizationRow
-                  key={row.id}
-                  organization={row.original}
-                  refresh={() => router.invalidate()}
-                />
-              )}
-            />
-          </CardContent>
-        </Card>
-      ) : (
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Building2 />
-            </EmptyMedia>
-            <EmptyTitle>Nessuna organizzazione</EmptyTitle>
-            <EmptyDescription>
-              Crea la prima organizzazione con il modulo qui sopra.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      )}
+                </CardContent>
+              </Card>
+            ) : (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Building2 />
+                  </EmptyMedia>
+                  <EmptyTitle>{query ? "Nessun risultato" : "Nessuna organizzazione"}</EmptyTitle>
+                  <EmptyDescription>
+                    {query
+                      ? "Prova un altro nome o cancella la ricerca."
+                      : "Apri “Nuova organizzazione” per aggiungere la prima organizzazione."}
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </div>
+        </TabsContent>
+        <TabsContent value="create">
+          <Card size="sm">
+            <CardHeader>
+              <CardTitle>Nuova organizzazione</CardTitle>
+              <CardDescription>
+                Crea un’azienda o un ente di istruzione riutilizzabile nei progetti.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FieldSet disabled={!canManage || pending}>
+                <form onSubmit={(event) => void create(event)}>
+                  <FieldGroup className="grid items-start md:grid-cols-2">
+                    <Field>
+                      <FieldLabel htmlFor="organization-name">Nome</FieldLabel>
+                      <Input
+                        id="organization-name"
+                        value={name}
+                        required
+                        onChange={(event) => {
+                          setName(event.target.value);
+                          if (!slugTouched) setSlug(slugify(event.target.value));
+                        }}
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="organization-slug">Slug</FieldLabel>
+                      <Input
+                        id="organization-slug"
+                        value={slug}
+                        pattern={slugInputPattern}
+                        title="Lo slug non puo contenere solo numeri"
+                        required
+                        onChange={(event) => {
+                          setSlugTouched(true);
+                          setSlug(event.target.value);
+                        }}
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel>Tipo</FieldLabel>
+                      <Select
+                        items={organizationTypeOptions}
+                        value={type}
+                        onValueChange={(value) =>
+                          setType(value === "education" ? "education" : "company")
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="company">Azienda</SelectItem>
+                            <SelectItem value="education">Istruzione</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="org-description">Descrizione</FieldLabel>
+                      <Input
+                        id="org-description"
+                        maxLength={320}
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="org-website">Sito web</FieldLabel>
+                      <Input
+                        id="org-website"
+                        type="url"
+                        value={websiteUrl}
+                        onChange={(event) => setWebsiteUrl(event.target.value)}
+                      />
+                    </Field>
+                    <Button size="sm" type="submit" disabled={pending}>
+                      <Plus data-icon="inline-start" />
+                      {pending ? "Creazione…" : "Crea"}
+                    </Button>
+                  </FieldGroup>
+                </form>
+              </FieldSet>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

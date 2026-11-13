@@ -2,7 +2,7 @@
 
 import { useDraggable, useDropLine } from "@platejs/dnd";
 import { useComposedRef } from "@udecode/cn";
-import { Copy, Eraser, GripVertical, Plus, Trash2 } from "lucide-react";
+import { Copy, Eraser, GripVertical, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { isType, KEYS } from "platejs";
 import {
   type PlateElementProps,
@@ -14,17 +14,6 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuGroup,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -32,6 +21,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -74,18 +66,28 @@ function Draggable(props: PlateElementProps) {
   const isInTable = path.length === 4;
 
   return (
-    <div className={cn("group relative", isDragging && "opacity-50")}>
+    <div className={cn("group/block relative", isDragging && "opacity-50")}>
       {!isInTable && (
         <div
           className={cn(
             "slate-gutterLeft absolute top-0 left-0 z-50 flex -translate-x-full items-center pr-1",
-            "opacity-0 transition-opacity group-hover:opacity-100",
+            "cms-block-controls transition-opacity",
             isInColumn && "pr-1.5",
           )}
           contentEditable={false}
         >
           <AddBlockButton />
-          <BlockMenu handleRef={handleRef} />
+          <Button
+            ref={handleRef}
+            type="button"
+            size="icon-sm"
+            variant="ghost"
+            data-plate-prevent-deselect
+            aria-label="Trascina il blocco"
+          >
+            <GripVertical />
+          </Button>
+          <BlockMenu />
         </div>
       )}
 
@@ -119,12 +121,13 @@ function AddBlockButton() {
             <DropdownMenuTrigger
               render={
                 <Button
-                  className="size-6 shrink-0"
+                  size="icon-sm"
+                  type="button"
                   variant="ghost"
                   data-plate-prevent-deselect
                   aria-label="Inserisci un blocco"
                 >
-                  <Plus className="size-4" />
+                  <Plus />
                 </Button>
               }
             />
@@ -163,7 +166,7 @@ function AddBlockButton() {
   );
 }
 
-function BlockMenu({ handleRef }: { handleRef: React.Ref<HTMLButtonElement> }) {
+function BlockMenu() {
   const editor = useEditorRef();
   const element = useElement();
   const { onMedia, onEmbed } = useEditorActions();
@@ -183,57 +186,63 @@ function BlockMenu({ handleRef }: { handleRef: React.Ref<HTMLButtonElement> }) {
   };
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger
+    <DropdownMenu>
+      <DropdownMenuTrigger
         render={
           <Button
-            ref={handleRef}
-            className="size-6 shrink-0 cursor-grab active:cursor-grabbing"
+            type="button"
+            size="icon-sm"
             variant="ghost"
             data-plate-prevent-deselect
-            aria-label="Trascina il blocco (tasto destro per il menu)"
+            aria-label="Azioni blocco"
           >
-            <GripVertical className="size-4" />
+            <MoreHorizontal />
           </Button>
         }
       />
-      <ContextMenuContent className="min-w-45">
-        <ContextMenuSub>
-          <ContextMenuSubTrigger>Trasforma in</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="max-h-(--layout-max-h-viewport-content) overflow-y-auto">
-            {TURN_INTO_GROUPS.map((group, index) => (
-              <React.Fragment key={group.group}>
-                {index > 0 && <ContextMenuSeparator />}
-                {group.items.map((item) => (
-                  <ContextMenuItem
-                    key={item.label}
-                    onClick={() => {
-                      focusBlock();
-                      item.turnInto?.({ editor, onMedia, onEmbed });
-                    }}
-                  >
-                    {item.icon} {item.label}
-                  </ContextMenuItem>
+      <DropdownMenuContent align="start">
+        <DropdownMenuGroup>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Trasforma in</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="max-h-(--layout-max-h-viewport-content) overflow-y-auto">
+              <DropdownMenuGroup>
+                {TURN_INTO_GROUPS.map((group, index) => (
+                  <React.Fragment key={group.group}>
+                    {index > 0 && <DropdownMenuSeparator />}
+                    {group.items.map((item) => (
+                      <DropdownMenuItem
+                        key={item.label}
+                        onClick={() => {
+                          focusBlock();
+                          item.turnInto?.({ editor, onMedia, onEmbed });
+                        }}
+                      >
+                        {item.icon} {item.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </React.Fragment>
                 ))}
-              </React.Fragment>
-            ))}
-          </ContextMenuSubContent>
-        </ContextMenuSub>
-        <ContextMenuSeparator />
-        <ContextMenuGroup>
-          <ContextMenuItem
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
             onClick={() =>
               withPath((path) => void navigator.clipboard.writeText(editor.api.string(path)))
             }
           >
             <Copy /> Copia testo
-          </ContextMenuItem>
-          <ContextMenuItem
-            onClick={() => withPath((path) => editor.tf.duplicateNodes({ at: path }))}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              withPath((path) => editor.tf.duplicateNodes({ nodes: [[element, path]] }))
+            }
           >
             <Copy /> Duplica blocco
-          </ContextMenuItem>
-          <ContextMenuItem
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={() =>
               withPath((path) => {
                 editor.tf.setNodes({ type: KEYS.p }, { at: path });
@@ -242,19 +251,19 @@ function BlockMenu({ handleRef }: { handleRef: React.Ref<HTMLButtonElement> }) {
             }
           >
             <Eraser /> Rimuovi formattazione
-          </ContextMenuItem>
-        </ContextMenuGroup>
-        <ContextMenuSeparator />
-        <ContextMenuGroup>
-          <ContextMenuItem
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
             variant="destructive"
             onClick={() => withPath((path) => editor.tf.removeNodes({ at: path }))}
           >
             <Trash2 /> Elimina blocco
-          </ContextMenuItem>
-        </ContextMenuGroup>
-      </ContextMenuContent>
-    </ContextMenu>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

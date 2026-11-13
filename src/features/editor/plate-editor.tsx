@@ -144,7 +144,7 @@ export function CmsEditor({
                   <EditorToolbar onLink={openLinkDialog} />
                 </FixedToolbar>
               ) : null}
-              <EditorContainer className="cms-editor__canvas">
+              <EditorContainer className="cms-editor__canvas h-auto">
                 <Editor
                   id="cms-content-editor"
                   variant="none"

@@ -2,6 +2,12 @@
 
 The editor owns Plate composition and browser-side document editing. The canonical document model and public renderer belong to `content`; article fields and persistence belong to `cms`.
 
+## Block interactions
+
+Each editable block exposes separate shadcn controls for insertion, dragging, and a click/keyboard-accessible action menu. Controls remain visible on touch devices and on keyboard focus; precision pointers reveal them on hover. The canvas reserves a gutter for these controls. Duplication passes the target node entry to Plate and preserves normal undo history. Read-only blocks expose no mutation controls.
+
+`components/block-draggable.test.tsx` verifies menu activation, target duplication with undo, and read-only behavior using a real Plate editor. Browser layout checks remain necessary for clipping, nested blocks, drag/drop, and touch interactions.
+
 ## Site tools
 
 On browsers implementing `document.modelContext.registerTool`, opening the CMS article form registers page-scoped WebMCP tools. Ordinary browsers retain the existing editing interface. No model API key, AI SDK, proxy, or additional inference service is installed.

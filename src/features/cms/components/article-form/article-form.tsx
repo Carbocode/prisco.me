@@ -4,6 +4,7 @@ import {
   ArrowDown,
   ArrowUp,
   Eye,
+  MoreHorizontal,
   Plus,
   Save,
   Send,
@@ -48,6 +49,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import {
   Field,
   FieldDescription,
@@ -78,6 +80,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useArticleSiteTools } from "@/features/cms/client/use-article-site-tools";
 import { RevisionComparison } from "@/features/cms/components/article-form/revision-comparison";
@@ -181,7 +184,7 @@ export function ArticleForm(props: ArticleFormProps) {
       }}
       onChange={() => setDirty(true)}
     >
-      <header className="sticky top-0 z-20 grid gap-1 border-b bg-background px-4 py-2 xl:shrink-0">
+      <header className="grid shrink-0 gap-2 border-b bg-background px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">
             <h1 className="truncate font-heading text-lg font-semibold">
@@ -229,42 +232,52 @@ export function ArticleForm(props: ArticleFormProps) {
                     : "Pubblica ora"}
               </Button>
             ) : null}
-            {article && canPublish && ["published", "scheduled"].includes(article.status) ? (
-              <Button
-                disabled={pending}
-                type="button"
-                variant="secondary"
-                onClick={() => void changeStatus("unpublish")}
-              >
-                <Undo2 data-icon="inline-start" />
-                Ritira e torna in bozza
-              </Button>
-            ) : null}
-            {article && canArchive && article.status !== "archived" ? (
-              <Button
-                disabled={pending}
-                type="button"
-                variant="destructive"
-                onClick={() => setConfirmAction({ kind: "archive" })}
-              >
-                <Archive data-icon="inline-start" />
-                Archivia articolo
-              </Button>
-            ) : null}
-            {canRestore && article?.status === "archived" ? (
-              <Button
-                disabled={pending}
-                type="button"
-                variant="secondary"
-                onClick={() => void changeStatus("restore")}
-              >
-                <ArchiveRestore data-icon="inline-start" />
-                Ripristina articolo
-              </Button>
+            {article && (canPublish || canArchive || canRestore) ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      aria-label="Altre azioni articolo"
+                      disabled={pending}
+                    />
+                  }
+                >
+                  <MoreHorizontal />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Gestisci articolo</DropdownMenuLabel>
+                    {canPublish && ["published", "scheduled"].includes(article.status) ? (
+                      <DropdownMenuItem onClick={() => void changeStatus("unpublish")}>
+                        <Undo2 />
+                        Ritira e torna in bozza
+                      </DropdownMenuItem>
+                    ) : null}
+                    {canArchive && article.status !== "archived" ? (
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => setConfirmAction({ kind: "archive" })}
+                      >
+                        <Archive />
+                        Archivia articolo
+                      </DropdownMenuItem>
+                    ) : null}
+                    {canRestore && article.status === "archived" ? (
+                      <DropdownMenuItem onClick={() => void changeStatus("restore")}>
+                        <ArchiveRestore />
+                        Ripristina articolo
+                      </DropdownMenuItem>
+                    ) : null}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : null}
           </fieldset>
         </div>
-        <span className="text-sm text-muted-foreground">
+        <span className="truncate text-sm text-muted-foreground">
           /{publicArchiveSlug}/{effectiveSlug || "slug-articolo"}
         </span>
       </header>
@@ -287,6 +300,35 @@ export function ArticleForm(props: ArticleFormProps) {
       {(() => {
         const editorPane = (
           <div className="flex min-w-0 flex-col xl:h-full xl:min-h-0 xl:overflow-y-auto">
+            <div className="mx-auto w-full max-w-3xl px-6 pt-6 pb-4">
+              <FieldSet disabled={readOnly || pending}>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="article-title">Titolo dell’articolo</FieldLabel>
+                    <Input
+                      id="article-title"
+                      value={title}
+                      onChange={(event) => setTitle(event.target.value)}
+                      required
+                      minLength={3}
+                      maxLength={160}
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="article-excerpt">
+                      Estratto per anteprime ({excerpt.length}/320)
+                    </FieldLabel>
+                    <Textarea
+                      id="article-excerpt"
+                      value={excerpt}
+                      maxLength={320}
+                      onChange={(event) => setExcerpt(event.target.value)}
+                    />
+                  </Field>
+                </FieldGroup>
+              </FieldSet>
+            </div>
+            <Separator />
             <Suspense fallback={<Skeleton className="h-96 w-full" />}>
               <CmsEditor
                 readOnly={readOnly || pending}
@@ -301,430 +343,453 @@ export function ArticleForm(props: ArticleFormProps) {
           </div>
         );
         const sidebarPane = (
-          <aside className="flex flex-col gap-4 p-4 xl:h-full xl:min-h-0 xl:overflow-y-auto">
+          <aside
+            aria-label="Proprietà e pubblicazione"
+            className="flex flex-col gap-4 p-4 xl:h-full xl:min-h-0 xl:overflow-y-auto"
+          >
             <FieldSet disabled={readOnly || pending}>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="article-title">Titolo dell’articolo</FieldLabel>
-                  <Input
-                    id="article-title"
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)}
-                    required
-                    minLength={3}
-                    maxLength={160}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="article-excerpt">
-                    Estratto per anteprime ({excerpt.length}/320)
-                  </FieldLabel>
-                  <Textarea
-                    id="article-excerpt"
-                    value={excerpt}
-                    maxLength={320}
-                    onChange={(event) => setExcerpt(event.target.value)}
-                  />
-                </Field>
-              </FieldGroup>
-              <Separator />
-              <Accordion multiple defaultValue={["article", "taxonomy"]}>
-                <AccordionItem value="article">
-                  <AccordionTrigger>Articolo</AccordionTrigger>
-                  <AccordionContent>
-                    <FieldGroup>
-                      <Field>
-                        <FieldLabel htmlFor="article-slug">Slug</FieldLabel>
-                        <Input
-                          id="article-slug"
-                          value={effectiveSlug}
-                          pattern={slugInputPattern}
-                          title="Usa lettere, numeri e trattini; lo slug non puo contenere solo numeri"
-                          onChange={(event) => {
-                            setSlugTouched(true);
-                            setSlug(event.target.value);
-                          }}
-                          required
-                        />
-                      </Field>
-                      {article &&
-                      effectiveSlug !== article.slug &&
-                      ["published", "scheduled"].includes(article.status) ? (
-                        <Alert>
-                          <AlertTitle>Redirect automatico</AlertTitle>
-                          <AlertDescription>
-                            Il salvataggio manterrà raggiungibile il vecchio indirizzo.
-                          </AlertDescription>
-                        </Alert>
-                      ) : null}
-                      <Field>
-                        <FieldLabel>Cover</FieldLabel>
-                        <MediaPicker
-                          items={imageMedia}
-                          value={coverMediaId}
-                          label="Scegli la cover"
-                          description="Naviga la libreria immagini e seleziona la cover dell’articolo."
-                          emptyLabel="Nessuna cover"
-                          onValueChange={(value) => {
-                            setCoverMediaId(value);
-                            setDirty(true);
-                          }}
-                        />
-                      </Field>
-                      {categoryIds.includes(
-                        categories.find((item) => item.slug === "progetti")?.id ?? "",
-                      ) ? (
-                        <>
+              <Tabs defaultValue="properties">
+                <TabsList aria-label="Impostazioni articolo">
+                  <TabsTrigger value="properties">Articolo</TabsTrigger>
+                  <TabsTrigger value="visibility">Visibilità</TabsTrigger>
+                  <TabsTrigger value="history">Revisioni</TabsTrigger>
+                </TabsList>
+                <TabsContent value="properties">
+                  <Accordion multiple defaultValue={["taxonomy", "article"]}>
+                    <AccordionItem value="taxonomy">
+                      <AccordionTrigger>Tassonomie</AccordionTrigger>
+                      <AccordionContent>
+                        <FieldGroup>
                           <FieldSet>
-                            <FieldLegend>Esperienze collegate</FieldLegend>
-                            {experiences.map((experience) => (
-                              <Field key={experience.id} orientation="horizontal">
+                            <FieldLegend variant="label">Categoria (obbligatoria)</FieldLegend>
+                            <RadioGroup
+                              value={activeCategoryId}
+                              onValueChange={requestCategoryChange}
+                            >
+                              {categories.map((category) => (
+                                <Field key={category.id} orientation="horizontal">
+                                  <RadioGroupItem
+                                    id={`category-${category.id}`}
+                                    value={category.id}
+                                    required
+                                  />
+                                  <FieldLabel htmlFor={`category-${category.id}`}>
+                                    {category.name}
+                                  </FieldLabel>
+                                </Field>
+                              ))}
+                            </RadioGroup>
+                            {!categories.length ? (
+                              <FieldDescription>Nessuna categoria disponibile.</FieldDescription>
+                            ) : null}
+                          </FieldSet>
+                          <FieldSet>
+                            <FieldLegend variant="label">Tag</FieldLegend>
+                            <FieldDescription>
+                              L'ordine mostrato qui verrà salvato e usato nella pubblicazione.
+                            </FieldDescription>
+                            {selectedTags.length ? (
+                              <ItemGroup>
+                                {selectedTags.map((tag, index) => (
+                                  <Item key={tag.id} variant="outline" size="xs">
+                                    <ItemContent>
+                                      <ItemTitle>
+                                        <Badge>
+                                          <SkillGlyph skill={tag} size={14} />
+                                          {tag.name}
+                                        </Badge>
+                                      </ItemTitle>
+                                    </ItemContent>
+                                    <ItemActions>
+                                      <ButtonGroup>
+                                        <Button
+                                          type="button"
+                                          size="icon-sm"
+                                          variant="outline"
+                                          disabled={index === 0}
+                                          aria-label={`Sposta ${tag.name} in alto`}
+                                          onClick={() => moveTag(index, -1)}
+                                        >
+                                          <ArrowUp />
+                                        </Button>
+                                        <Button
+                                          type="button"
+                                          size="icon-sm"
+                                          variant="outline"
+                                          disabled={index === selectedTags.length - 1}
+                                          aria-label={`Sposta ${tag.name} in basso`}
+                                          onClick={() => moveTag(index, 1)}
+                                        >
+                                          <ArrowDown />
+                                        </Button>
+                                        <Button
+                                          type="button"
+                                          size="icon-sm"
+                                          variant="outline"
+                                          aria-label={`Rimuovi ${tag.name}`}
+                                          onClick={() => {
+                                            setTagIds((current) =>
+                                              current.filter((id) => id !== tag.id),
+                                            );
+                                            setDirty(true);
+                                          }}
+                                        >
+                                          <X />
+                                        </Button>
+                                      </ButtonGroup>
+                                    </ItemActions>
+                                  </Item>
+                                ))}
+                              </ItemGroup>
+                            ) : (
+                              <FieldDescription>Nessun tag selezionato.</FieldDescription>
+                            )}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger
+                                render={
+                                  <Button
+                                    type="button"
+                                    size="icon-sm"
+                                    variant="outline"
+                                    disabled={!activeCategoryId || !availableTags.length}
+                                    aria-label="Aggiungi tag"
+                                  />
+                                }
+                              >
+                                <Plus />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="start" className="min-w-56">
+                                <DropdownMenuGroup>
+                                  <DropdownMenuLabel>Tag disponibili</DropdownMenuLabel>
+                                  {availableTags.map((tag) => (
+                                    <DropdownMenuItem
+                                      key={tag.id}
+                                      onClick={() => {
+                                        setTagIds((current) => [...current, tag.id]);
+                                        setDirty(true);
+                                      }}
+                                    >
+                                      <SkillGlyph skill={tag} size={14} />
+                                      {tag.name}
+                                    </DropdownMenuItem>
+                                  ))}
+                                </DropdownMenuGroup>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </FieldSet>
+                        </FieldGroup>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="article">
+                      <AccordionTrigger>Articolo</AccordionTrigger>
+                      <AccordionContent>
+                        <FieldGroup>
+                          <Field>
+                            <FieldLabel htmlFor="article-slug">Slug</FieldLabel>
+                            <Input
+                              id="article-slug"
+                              value={effectiveSlug}
+                              pattern={slugInputPattern}
+                              title="Usa lettere, numeri e trattini; lo slug non puo contenere solo numeri"
+                              onChange={(event) => {
+                                setSlugTouched(true);
+                                setSlug(event.target.value);
+                              }}
+                              required
+                            />
+                          </Field>
+                          {article &&
+                          effectiveSlug !== article.slug &&
+                          ["published", "scheduled"].includes(article.status) ? (
+                            <Alert>
+                              <AlertTitle>Redirect automatico</AlertTitle>
+                              <AlertDescription>
+                                Il salvataggio manterrà raggiungibile il vecchio indirizzo.
+                              </AlertDescription>
+                            </Alert>
+                          ) : null}
+                          <Field>
+                            <FieldLabel>Cover</FieldLabel>
+                            <MediaPicker
+                              items={imageMedia}
+                              value={coverMediaId}
+                              label="Scegli la cover"
+                              description="Naviga la libreria immagini e seleziona la cover dell’articolo."
+                              emptyLabel="Nessuna cover"
+                              onValueChange={(value) => {
+                                setCoverMediaId(value);
+                                setDirty(true);
+                              }}
+                            />
+                          </Field>
+                          {categoryIds.includes(
+                            categories.find((item) => item.slug === "progetti")?.id ?? "",
+                          ) ? (
+                            <>
+                              <FieldSet>
+                                <FieldLegend>Esperienze collegate</FieldLegend>
+                                {experiences.map((experience) => (
+                                  <Field key={experience.id} orientation="horizontal">
+                                    <Checkbox
+                                      id={`experience-${experience.id}`}
+                                      checked={experienceIds.includes(experience.id)}
+                                      onCheckedChange={(checked) => {
+                                        setExperienceIds((current) =>
+                                          checked
+                                            ? [...current, experience.id]
+                                            : current.filter((id) => id !== experience.id),
+                                        );
+                                        setDirty(true);
+                                      }}
+                                    />
+                                    <FieldLabel htmlFor={`experience-${experience.id}`}>
+                                      {experience.title} · {experience.org}
+                                    </FieldLabel>
+                                  </Field>
+                                ))}
+                              </FieldSet>
+                              <Field>
+                                <FieldLabel>Organizzazione</FieldLabel>
+                                <Select
+                                  items={[
+                                    { value: "none", label: "Nessuna organizzazione" },
+                                    ...organizations.map((organization) => ({
+                                      value: organization.id,
+                                      label: `${organization.name} · ${organization.type === "education" ? "Istruzione" : "Azienda"}`,
+                                    })),
+                                  ]}
+                                  value={organizationId || "none"}
+                                  onValueChange={(value) => {
+                                    setOrganizationId(value === "none" ? "" : (value ?? ""));
+                                    setDirty(true);
+                                  }}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectItem value="none">Nessuna organizzazione</SelectItem>
+                                      {organizations.map((organization) => (
+                                        <SelectItem key={organization.id} value={organization.id}>
+                                          {organization.name} ·{" "}
+                                          {organization.type === "education"
+                                            ? "Istruzione"
+                                            : "Azienda"}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                              </Field>
+                              <Field>
+                                <FieldLabel htmlFor="project-role">Ruolo</FieldLabel>
+                                <Input
+                                  id="project-role"
+                                  value={projectRole}
+                                  maxLength={160}
+                                  onChange={(event) => setProjectRole(event.target.value)}
+                                />
+                              </Field>
+                              <Field>
+                                <FieldLabel htmlFor="project-period">Periodo</FieldLabel>
+                                <Input
+                                  id="project-period"
+                                  value={projectPeriod}
+                                  maxLength={160}
+                                  onChange={(event) => setProjectPeriod(event.target.value)}
+                                />
+                              </Field>
+                              <Field>
+                                <FieldLabel htmlFor="project-sort-order">Ordine</FieldLabel>
+                                <Input
+                                  id="project-sort-order"
+                                  type="number"
+                                  min={-10000}
+                                  max={10000}
+                                  value={projectSortOrder}
+                                  onChange={(event) =>
+                                    setProjectSortOrder(event.target.valueAsNumber)
+                                  }
+                                />
+                              </Field>
+                              <Field orientation="horizontal">
                                 <Checkbox
-                                  id={`experience-${experience.id}`}
-                                  checked={experienceIds.includes(experience.id)}
+                                  id="project-featured"
+                                  checked={projectFeatured}
                                   onCheckedChange={(checked) => {
-                                    setExperienceIds((current) =>
-                                      checked
-                                        ? [...current, experience.id]
-                                        : current.filter((id) => id !== experience.id),
-                                    );
+                                    setProjectFeatured(checked);
                                     setDirty(true);
                                   }}
                                 />
-                                <FieldLabel htmlFor={`experience-${experience.id}`}>
-                                  {experience.title} · {experience.org}
+                                <FieldLabel htmlFor="project-featured">
+                                  Progetto in evidenza
                                 </FieldLabel>
                               </Field>
-                            ))}
-                          </FieldSet>
+                            </>
+                          ) : null}
+                        </FieldGroup>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </TabsContent>
+                <TabsContent value="visibility">
+                  <Accordion multiple defaultValue={["publishing", "seo"]}>
+                    <AccordionItem value="publishing">
+                      <AccordionTrigger>Pubblicazione</AccordionTrigger>
+                      <AccordionContent>
+                        <FieldGroup>
                           <Field>
-                            <FieldLabel>Organizzazione</FieldLabel>
-                            <Select
-                              items={[
-                                { value: "none", label: "Nessuna organizzazione" },
-                                ...organizations.map((organization) => ({
-                                  value: organization.id,
-                                  label: `${organization.name} · ${organization.type === "education" ? "Istruzione" : "Azienda"}`,
-                                })),
-                              ]}
-                              value={organizationId || "none"}
-                              onValueChange={(value) => {
-                                setOrganizationId(value === "none" ? "" : (value ?? ""));
-                                setDirty(true);
+                            <FieldLabel htmlFor="published-at">Data e ora</FieldLabel>
+                            <Input
+                              id="published-at"
+                              type="datetime-local"
+                              value={publishedAt}
+                              onChange={(event) => {
+                                setPublishedAt(event.target.value);
+                                setRenderTime(Date.now());
                               }}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectItem value="none">Nessuna organizzazione</SelectItem>
-                                  {organizations.map((organization) => (
-                                    <SelectItem key={organization.id} value={organization.id}>
-                                      {organization.name} ·{" "}
-                                      {organization.type === "education" ? "Istruzione" : "Azienda"}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </Field>
-                          <Field>
-                            <FieldLabel htmlFor="project-role">Ruolo</FieldLabel>
-                            <Input
-                              id="project-role"
-                              value={projectRole}
-                              maxLength={160}
-                              onChange={(event) => setProjectRole(event.target.value)}
                             />
                           </Field>
+                        </FieldGroup>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="seo">
+                      <AccordionTrigger>SEO</AccordionTrigger>
+                      <AccordionContent>
+                        <FieldGroup>
                           <Field>
-                            <FieldLabel htmlFor="project-period">Periodo</FieldLabel>
+                            <FieldLabel htmlFor="seo-title">
+                              Titolo personalizzato ({seoTitle.length}/70)
+                            </FieldLabel>
                             <Input
-                              id="project-period"
-                              value={projectPeriod}
-                              maxLength={160}
-                              onChange={(event) => setProjectPeriod(event.target.value)}
+                              id="seo-title"
+                              value={seoTitle}
+                              maxLength={70}
+                              placeholder={
+                                title ? title.slice(0, 70) : "Usa il titolo dell’articolo"
+                              }
+                              onChange={(event) => setSeoTitle(event.target.value)}
                             />
+                            <FieldDescription>
+                              Facoltativo. Se resta vuoto, viene usato il titolo dell’articolo.
+                            </FieldDescription>
                           </Field>
                           <Field>
-                            <FieldLabel htmlFor="project-sort-order">Ordine</FieldLabel>
+                            <FieldLabel htmlFor="seo-description">
+                              Descrizione personalizzata ({seoDescription.length}/180)
+                            </FieldLabel>
+                            <Textarea
+                              id="seo-description"
+                              value={seoDescription}
+                              maxLength={180}
+                              placeholder={
+                                excerpt ? excerpt.slice(0, 180) : "Usa l’estratto dell’articolo"
+                              }
+                              onChange={(event) => setSeoDescription(event.target.value)}
+                            />
+                            <FieldDescription>
+                              Facoltativa. Se resta vuota, viene usato l’estratto; se manca anche
+                              l’estratto, la descrizione viene generata dal titolo e dall’autore.
+                            </FieldDescription>
+                          </Field>
+                          <Field>
+                            <FieldLabel htmlFor="canonical-url">URL canonico</FieldLabel>
                             <Input
-                              id="project-sort-order"
-                              type="number"
-                              min={-10000}
-                              max={10000}
-                              value={projectSortOrder}
-                              onChange={(event) => setProjectSortOrder(event.target.valueAsNumber)}
+                              id="canonical-url"
+                              type="url"
+                              value={canonicalUrl}
+                              onChange={(event) => setCanonicalUrl(event.target.value)}
                             />
                           </Field>
                           <Field orientation="horizontal">
                             <Checkbox
-                              id="project-featured"
-                              checked={projectFeatured}
+                              id="no-index"
+                              checked={noIndex}
                               onCheckedChange={(checked) => {
-                                setProjectFeatured(checked);
+                                setNoIndex(checked);
                                 setDirty(true);
                               }}
                             />
-                            <FieldLabel htmlFor="project-featured">Progetto in evidenza</FieldLabel>
+                            <FieldLabel htmlFor="no-index">
+                              Escludi dai motori di ricerca
+                            </FieldLabel>
                           </Field>
-                        </>
-                      ) : null}
-                    </FieldGroup>
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="publishing">
-                  <AccordionTrigger>Pubblicazione</AccordionTrigger>
-                  <AccordionContent>
-                    <FieldGroup>
-                      <Field>
-                        <FieldLabel htmlFor="published-at">Data e ora</FieldLabel>
-                        <Input
-                          id="published-at"
-                          type="datetime-local"
-                          value={publishedAt}
-                          onChange={(event) => {
-                            setPublishedAt(event.target.value);
-                            setRenderTime(Date.now());
-                          }}
-                        />
-                      </Field>
-                    </FieldGroup>
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="taxonomy">
-                  <AccordionTrigger>Tassonomie</AccordionTrigger>
-                  <AccordionContent>
-                    <FieldGroup>
-                      <FieldSet>
-                        <FieldLegend variant="label">Categoria (obbligatoria)</FieldLegend>
-                        <RadioGroup value={activeCategoryId} onValueChange={requestCategoryChange}>
-                          {categories.map((category) => (
-                            <Field key={category.id} orientation="horizontal">
-                              <RadioGroupItem
-                                id={`category-${category.id}`}
-                                value={category.id}
-                                required
-                              />
-                              <FieldLabel htmlFor={`category-${category.id}`}>
-                                {category.name}
-                              </FieldLabel>
-                            </Field>
-                          ))}
-                        </RadioGroup>
-                        {!categories.length ? (
-                          <FieldDescription>Nessuna categoria disponibile.</FieldDescription>
-                        ) : null}
-                      </FieldSet>
-                      <FieldSet>
-                        <FieldLegend variant="label">Tag</FieldLegend>
-                        <FieldDescription>
-                          L'ordine mostrato qui verrà salvato e usato nella pubblicazione.
-                        </FieldDescription>
-                        {selectedTags.length ? (
+                        </FieldGroup>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </TabsContent>
+                <TabsContent value="history">
+                  <Accordion multiple defaultValue={["revisions"]}>
+                    <AccordionItem value="revisions">
+                      <AccordionTrigger>Revisioni</AccordionTrigger>
+                      <AccordionContent>
+                        {article && revisions.length ? (
                           <ItemGroup>
-                            {selectedTags.map((tag, index) => (
-                              <Item key={tag.id} variant="outline" size="xs">
+                            {revisions.map((revision) => (
+                              <Item key={revision.id} variant="outline">
                                 <ItemContent>
-                                  <ItemTitle>
-                                    <Badge>
-                                      <SkillGlyph skill={tag} size={14} />
-                                      {tag.name}
-                                    </Badge>
-                                  </ItemTitle>
+                                  <ItemTitle>Revisione {revision.revision}</ItemTitle>
+                                  <ItemDescription>
+                                    {revision.createdAt.toLocaleString("it-IT")}
+                                  </ItemDescription>
                                 </ItemContent>
                                 <ItemActions>
-                                  <ButtonGroup>
-                                    <Button
-                                      type="button"
-                                      size="icon-sm"
-                                      variant="outline"
-                                      disabled={index === 0}
-                                      aria-label={`Sposta ${tag.name} in alto`}
-                                      onClick={() => moveTag(index, -1)}
-                                    >
-                                      <ArrowUp />
-                                    </Button>
-                                    <Button
-                                      type="button"
-                                      size="icon-sm"
-                                      variant="outline"
-                                      disabled={index === selectedTags.length - 1}
-                                      aria-label={`Sposta ${tag.name} in basso`}
-                                      onClick={() => moveTag(index, 1)}
-                                    >
-                                      <ArrowDown />
-                                    </Button>
-                                    <Button
-                                      type="button"
-                                      size="icon-sm"
-                                      variant="outline"
-                                      aria-label={`Rimuovi ${tag.name}`}
-                                      onClick={() => {
-                                        setTagIds((current) =>
-                                          current.filter((id) => id !== tag.id),
-                                        );
-                                        setDirty(true);
-                                      }}
-                                    >
-                                      <X />
-                                    </Button>
-                                  </ButtonGroup>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setPreviewRevision(revision)}
+                                  >
+                                    Confronta
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    disabled={pending || !canRestore}
+                                    onClick={() =>
+                                      setConfirmAction({ kind: "revision", id: revision.id })
+                                    }
+                                  >
+                                    Ripristina
+                                  </Button>
                                 </ItemActions>
                               </Item>
                             ))}
                           </ItemGroup>
                         ) : (
-                          <FieldDescription>Nessun tag selezionato.</FieldDescription>
+                          <Empty>
+                            <EmptyHeader>
+                              <EmptyTitle>Nessuna revisione</EmptyTitle>
+                              <EmptyDescription>
+                                La cronologia sarà disponibile dopo il salvataggio dell’articolo.
+                              </EmptyDescription>
+                            </EmptyHeader>
+                          </Empty>
                         )}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger
-                            render={
-                              <Button
-                                type="button"
-                                size="icon-sm"
-                                variant="outline"
-                                disabled={!activeCategoryId || !availableTags.length}
-                                aria-label="Aggiungi tag"
-                              />
-                            }
-                          >
-                            <Plus />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="min-w-56">
-                            <DropdownMenuGroup>
-                              <DropdownMenuLabel>Tag disponibili</DropdownMenuLabel>
-                              {availableTags.map((tag) => (
-                                <DropdownMenuItem
-                                  key={tag.id}
-                                  onClick={() => {
-                                    setTagIds((current) => [...current, tag.id]);
-                                    setDirty(true);
-                                  }}
-                                >
-                                  <SkillGlyph skill={tag} size={14} />
-                                  {tag.name}
-                                </DropdownMenuItem>
-                              ))}
-                            </DropdownMenuGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </FieldSet>
-                    </FieldGroup>
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="seo">
-                  <AccordionTrigger>SEO</AccordionTrigger>
-                  <AccordionContent>
-                    <FieldGroup>
-                      <Field>
-                        <FieldLabel htmlFor="seo-title">
-                          Titolo personalizzato ({seoTitle.length}/70)
-                        </FieldLabel>
-                        <Input
-                          id="seo-title"
-                          value={seoTitle}
-                          maxLength={70}
-                          placeholder={title ? title.slice(0, 70) : "Usa il titolo dell’articolo"}
-                          onChange={(event) => setSeoTitle(event.target.value)}
-                        />
-                        <FieldDescription>
-                          Facoltativo. Se resta vuoto, viene usato il titolo dell’articolo.
-                        </FieldDescription>
-                      </Field>
-                      <Field>
-                        <FieldLabel htmlFor="seo-description">
-                          Descrizione personalizzata ({seoDescription.length}/180)
-                        </FieldLabel>
-                        <Textarea
-                          id="seo-description"
-                          value={seoDescription}
-                          maxLength={180}
-                          placeholder={
-                            excerpt ? excerpt.slice(0, 180) : "Usa l’estratto dell’articolo"
-                          }
-                          onChange={(event) => setSeoDescription(event.target.value)}
-                        />
-                        <FieldDescription>
-                          Facoltativa. Se resta vuota, viene usato l’estratto; se manca anche
-                          l’estratto, la descrizione viene generata dal titolo e dall’autore.
-                        </FieldDescription>
-                      </Field>
-                      <Field>
-                        <FieldLabel htmlFor="canonical-url">URL canonico</FieldLabel>
-                        <Input
-                          id="canonical-url"
-                          type="url"
-                          value={canonicalUrl}
-                          onChange={(event) => setCanonicalUrl(event.target.value)}
-                        />
-                      </Field>
-                      <Field orientation="horizontal">
-                        <Checkbox
-                          id="no-index"
-                          checked={noIndex}
-                          onCheckedChange={(checked) => {
-                            setNoIndex(checked);
-                            setDirty(true);
-                          }}
-                        />
-                        <FieldLabel htmlFor="no-index">Escludi dai motori di ricerca</FieldLabel>
-                      </Field>
-                    </FieldGroup>
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="revisions">
-                  <AccordionTrigger>Revisioni</AccordionTrigger>
-                  <AccordionContent>
-                    {article && revisions.length ? (
-                      <ItemGroup>
-                        {revisions.map((revision) => (
-                          <Item key={revision.id} variant="outline">
-                            <ItemContent>
-                              <ItemTitle>Revisione {revision.revision}</ItemTitle>
-                              <ItemDescription>
-                                {revision.createdAt.toLocaleString("it-IT")}
-                              </ItemDescription>
-                            </ItemContent>
-                            <ItemActions>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setPreviewRevision(revision)}
-                              >
-                                Confronta
-                              </Button>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                disabled={pending || !canRestore}
-                                onClick={() =>
-                                  setConfirmAction({ kind: "revision", id: revision.id })
-                                }
-                              >
-                                Ripristina
-                              </Button>
-                            </ItemActions>
-                          </Item>
-                        ))}
-                      </ItemGroup>
-                    ) : (
-                      <p>Nessuna revisione.</p>
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </TabsContent>
+              </Tabs>
             </FieldSet>
           </aside>
         );
         if (!isDesktop) {
           return (
-            <div className="flex flex-col gap-4">
-              {editorPane}
-              {sidebarPane}
-            </div>
+            <Tabs defaultValue="write">
+              <TabsList aria-label="Area di lavoro articolo">
+                <TabsTrigger value="write">Scrittura</TabsTrigger>
+                <TabsTrigger value="settings">Proprietà e pubblicazione</TabsTrigger>
+              </TabsList>
+              <TabsContent value="write" keepMounted>
+                {editorPane}
+              </TabsContent>
+              <TabsContent value="settings" keepMounted>
+                {sidebarPane}
+              </TabsContent>
+            </Tabs>
           );
         }
         return (
@@ -732,14 +797,14 @@ export function ArticleForm(props: ArticleFormProps) {
             orientation="horizontal"
             className="min-h-0 flex-1 items-stretch overflow-hidden"
           >
-            <ResizablePanel defaultSize="55%" minSize="40%" className="h-full min-w-0">
+            <ResizablePanel defaultSize="68%" minSize="45%" className="h-full min-w-0">
               {editorPane}
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel
-              defaultSize="45%"
-              minSize="32%"
-              maxSize="55%"
+              defaultSize="32%"
+              minSize="28%"
+              maxSize="45%"
               className="h-full min-w-0"
             >
               {sidebarPane}
