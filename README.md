@@ -1,36 +1,38 @@
 # prisco.me
 
-Sito personale e CMS, realizzati con React, TanStack Start, shadcn e Cloudflare Workers, D1 e R2. Il progetto usa Bun.
+Personal website and CMS built with React, TanStack Start, shadcn, and Cloudflare Workers, D1, and R2. The project uses Bun.
 
-## Sviluppo
+## Development
 
 ```sh
 bun install
 bun run dev
 ```
 
-`bun run setup:worktree` prepara l'ambiente locale di un worktree. `bun run dev:wrangler` compila e avvia l'applicazione con il runtime Cloudflare locale.
+`bun run setup:worktree` prepares a worktree's local environment. `bun run dev:wrangler` builds and starts the application with the local Cloudflare runtime.
 
-## Struttura
+## Structure
 
-- `src/app/`: document shell e integrazione del query client.
-- `src/routes/`: route TanStack Start, loader, autorizzazione e metadati.
-- `src/features/`: pagine, componenti, modelli e operazioni server organizzati per funzionalità.
-- `src/components/`: componenti condivisi, primitive shadcn, layout, illustrazioni, media e tabelle.
-- `src/config/`, `src/lib/`, `src/hooks/`: configurazione e utilità trasversali.
-- `src/db/`: schema e accesso al database.
-- `src/styles/`: stili globali divisi per responsabilità; ingresso in `src/styles.css`.
-- `public/`: asset pubblici, compresi sorgenti SVG e cache WebP.
-- `scripts/`: strumenti per sviluppo, asset e manutenzione.
+- `src/app/`: document shell and query client integration.
+- `src/routes/`: TanStack Start routes, loaders, authorization, and metadata.
+- `src/features/`: pages, components, models, and server operations organized by feature.
+- `src/components/`: shared components, shadcn primitives, layout, artwork, media, and tables.
+- `src/config/`, `src/lib/`, `src/hooks/`: cross-feature configuration and utilities.
+- `src/db/`: database schema and infrastructure.
+- `src/styles/`: global styles divided by responsibility; entrypoint in `src/styles.css`.
+- `public/`: public assets, including SVG sources and WebP caches.
+- `scripts/`: development, asset, and maintenance tools.
 
-Le [istruzioni per gli agenti](AGENTS.md) impongono i confini e le convenzioni da rispettare nelle modifiche. La [guida all'architettura](docs/architecture.md) descrive le responsabilità delle feature e la separazione dei moduli. La home ha anche una [guida dedicata](src/features/home/README.md).
+The [agent instructions](AGENTS.md) enforce boundaries and conventions for changes. The [architecture guide](docs/architecture.md) describes feature ownership and module separation. Home also has a [dedicated guide](src/features/home/README.md).
 
-## Verifica
+Technical documentation and AI discovery resources are written in English. Public editorial content and interface copy retain their intended language.
+
+## Validation
 
 ```sh
 bun run ci
 ```
 
-Esegue controllo degli asset, formattazione, lint, TypeScript, test, verifica delle migrazioni e build. I test sono accanto ai moduli che verificano.
+Runs asset validation, formatting, lint, TypeScript, tests, migration checks, and the build. Tests live beside the modules they verify.
 
-Quando cambia uno SVG registrato in `scripts/static-artwork.json`, eseguire `bun run assets:render`; `bun run assets:check` verifica che le cache siano aggiornate.
+When an SVG registered in `scripts/static-artwork.json` changes, run `bun run assets:render`; `bun run assets:check` verifies that caches are current.

@@ -45,12 +45,15 @@ it("collega gli effetti ai nomi delle classi generati dalle costellazioni", () =
     "home-sky-burst",
   );
 });
-it("mantiene ingresso e scintillio delle stelle del prototipo", () => {
-  const animation = declarations(".home-traversata.js .star img").animation;
-  expect(animation).toContain("home-star-in 720ms");
-  expect(animation).toContain("home-twinkle var(--tw, 5s)");
-  expect(animation).toContain("calc(var(--in, 0ms) + 720ms) infinite");
+it("separa ingresso e scintillio per evitare animazioni concorrenti sullo stesso elemento", () => {
+  expect(declarations(".home-traversata.js .star-enter").animation).toContain("home-star-in 720ms");
+  expect(declarations(".home-traversata .star img").animation).toContain("home-twinkle");
+  expect(declarations(".home-traversata.js .star img").animation).toBeUndefined();
+  expect(declarations(".home-traversata.js .star img")["animation-delay"]).toBe(
+    "calc(var(--in, 0ms) + 720ms)",
+  );
 });
+
 it("lascia al pulsante primario il proprio colore di testo", () => {
   expect(declarations(".home-traversata .btn-primary").color).toBe("var(--night-0)");
   expect(declarations('.home-traversata a:not([data-slot="button"])').color).toBeUndefined();

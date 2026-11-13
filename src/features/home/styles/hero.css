@@ -67,11 +67,14 @@
   opacity: 0;
   animation: home-sky-glint var(--tw, 5s) ease-in-out calc(var(--in, 0ms) * -8) infinite;
 }
+.home-traversata .star-enter {
+  display: block;
+}
+.home-traversata.js .star-enter {
+  animation: home-star-in 720ms var(--ease-out) var(--in, 0ms) both;
+}
 .home-traversata.js .star img {
-  opacity: 0;
-  animation:
-    home-star-in 720ms var(--ease-out) var(--in, 0ms) both,
-    home-twinkle var(--tw, 5s) ease-in-out calc(var(--in, 0ms) + 720ms) infinite;
+  animation-delay: calc(var(--in, 0ms) + 720ms);
 }
 
 @keyframes home-star-in {
@@ -318,19 +321,29 @@
   color: var(--ink-muted);
 }
 .home-traversata .pulse {
+  position: relative;
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
   background: #86efac;
-  box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.6);
+}
+.home-traversata .pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(134, 239, 172, 0.6);
   animation: home-pulse 2.4s ease-out infinite;
 }
 @keyframes home-pulse {
-  70% {
-    box-shadow: 0 0 0 9px rgba(134, 239, 172, 0);
+  0% {
+    opacity: 1;
+    transform: scale(1);
   }
+  70%,
   100% {
-    box-shadow: 0 0 0 0 rgba(134, 239, 172, 0);
+    opacity: 0;
+    transform: scale(3.25);
   }
 }
 .home-traversata .now dl {

@@ -1,4 +1,8 @@
-export function attachPointerEffects(container, hero, { listen, frame, reduceMQ, finePointer }) {
+export function attachPointerEffects(
+  container,
+  hero,
+  { listen, frame, reduceMQ, finePointer, heroParallax },
+) {
   let pointerRAF = 0;
   let pointerPosition = null;
   listen(hero, "pointermove", (e) => {
@@ -9,14 +13,15 @@ export function attachPointerEffects(container, hero, { listen, frame, reduceMQ,
       pointerRAF = 0;
       if (!pointerPosition) return;
       const r = hero.getBoundingClientRect();
-      hero.style.setProperty("--px", ((pointerPosition.x - r.left) / r.width - 0.5).toFixed(3));
-      hero.style.setProperty("--py", ((pointerPosition.y - r.top) / r.height - 0.5).toFixed(3));
+      heroParallax.pointer(
+        ((pointerPosition.x - r.left) / r.width - 0.5).toFixed(3),
+        ((pointerPosition.y - r.top) / r.height - 0.5).toFixed(3),
+      );
     });
   });
   listen(hero, "pointerleave", () => {
     pointerPosition = null;
-    hero.style.setProperty("--px", 0);
-    hero.style.setProperty("--py", 0);
+    heroParallax.pointer("0", "0");
   });
 
   /* --- Bottoni magnetici --------------------------------------------- */

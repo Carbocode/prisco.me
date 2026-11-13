@@ -25,6 +25,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as Verify2faRouteImport } from './routes/verify-2fa'
 import { Route as ArchiveSlugIndexRouteImport } from './routes/$archiveSlug/index'
 import { Route as ArchiveSlugSplatRouteImport } from './routes/$archiveSlug/$'
+import { Route as DotwellKnownArdDotjsonRouteImport } from './routes/[.]well-known/ard[.]json'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardAdminRouteRouteImport } from './routes/dashboard/admin/route'
 import { Route as DashboardCmsRouteRouteImport } from './routes/dashboard/cms/route'
@@ -134,6 +135,11 @@ const ArchiveSlugSplatRoute = ArchiveSlugSplatRouteImport.update({
   id: '/$',
   path: '/$',
   getParentRoute: () => ArchiveSlugRouteRoute,
+} as any)
+const DotwellKnownArdDotjsonRoute = DotwellKnownArdDotjsonRouteImport.update({
+  id: '/.well-known/ard.json',
+  path: '/.well-known/ard.json',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/cms': typeof DashboardCmsRouteRouteWithChildren
   '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
   '/$archiveSlug/$': typeof ArchiveSlugSplatRoute
+  '/.well-known/ard.json': typeof DotwellKnownArdDotjsonRoute
   '/media/$': typeof MediaSplatRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/$archiveSlug/': typeof ArchiveSlugIndexRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/verify-2fa': typeof Verify2faRoute
   '/dashboard/admin': typeof DashboardAdminRouteRouteWithChildren
   '/$archiveSlug/$': typeof ArchiveSlugSplatRoute
+  '/.well-known/ard.json': typeof DotwellKnownArdDotjsonRoute
   '/media/$': typeof MediaSplatRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/$archiveSlug': typeof ArchiveSlugIndexRoute
@@ -399,6 +407,7 @@ export interface FileRoutesById {
   '/dashboard/cms': typeof DashboardCmsRouteRouteWithChildren
   '/dashboard/profile': typeof DashboardProfileRouteRouteWithChildren
   '/$archiveSlug/$': typeof ArchiveSlugSplatRoute
+  '/.well-known/ard.json': typeof DotwellKnownArdDotjsonRoute
   '/media/$': typeof MediaSplatRoute
   '/oauth/consent': typeof OauthConsentRoute
   '/$archiveSlug/': typeof ArchiveSlugIndexRoute
@@ -448,6 +457,7 @@ export interface FileRouteTypes {
     | '/dashboard/cms'
     | '/dashboard/profile'
     | '/$archiveSlug/$'
+    | '/.well-known/ard.json'
     | '/media/$'
     | '/oauth/consent'
     | '/$archiveSlug/'
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/verify-2fa'
     | '/dashboard/admin'
     | '/$archiveSlug/$'
+    | '/.well-known/ard.json'
     | '/media/$'
     | '/oauth/consent'
     | '/$archiveSlug'
@@ -538,6 +549,7 @@ export interface FileRouteTypes {
     | '/dashboard/cms'
     | '/dashboard/profile'
     | '/$archiveSlug/$'
+    | '/.well-known/ard.json'
     | '/media/$'
     | '/oauth/consent'
     | '/$archiveSlug/'
@@ -582,6 +594,7 @@ export interface RootRouteChildren {
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Verify2faRoute: typeof Verify2faRoute
+  DotwellKnownArdDotjsonRoute: typeof DotwellKnownArdDotjsonRoute
   MediaSplatRoute: typeof MediaSplatRoute
   OauthConsentRoute: typeof OauthConsentRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -706,6 +719,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$archiveSlug/$'
       preLoaderRoute: typeof ArchiveSlugSplatRouteImport
       parentRoute: typeof ArchiveSlugRouteRoute
+    }
+    '/.well-known/ard.json': {
+      id: '/.well-known/ard.json'
+      path: '/.well-known/ard.json'
+      fullPath: '/.well-known/ard.json'
+      preLoaderRoute: typeof DotwellKnownArdDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -1021,6 +1041,7 @@ const rootRouteChildren: RootRouteChildren = {
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   Verify2faRoute: Verify2faRoute,
+  DotwellKnownArdDotjsonRoute: DotwellKnownArdDotjsonRoute,
   MediaSplatRoute: MediaSplatRoute,
   OauthConsentRoute: OauthConsentRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
