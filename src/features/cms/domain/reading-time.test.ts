@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { CmsDocument } from "./cms-document";
+import type { CmsDocument } from "@/features/content/domain/document";
+
 import { estimateReadingTimeMinutes } from "./reading-time";
 
 describe("estimateReadingTimeMinutes", () => {

@@ -1,0 +1,214 @@
+/* Select the scene before hydration to avoid flashing the static fallback. */
+@media (prefers-reduced-motion: no-preference) {
+  /* --- Scena orizzontale condivisa tra desktop e mobile --- */
+  .home-traversata .journey {
+    background: var(--night-3);
+  }
+  .home-traversata .journey .journey-stage {
+    position: sticky;
+    top: 0;
+    height: var(--home-viewport-height, 100vh);
+    height: var(--home-viewport-height, 100svh);
+    overflow: hidden;
+    overflow: clip;
+    background: linear-gradient(180deg, var(--night-3) 0%, var(--night-4) 35%, var(--night-5) 70%);
+  }
+  .home-traversata .journey .desert-frame {
+    position: absolute;
+    inset: 0;
+  }
+  .home-traversata .journey .desert {
+    /* Keep a large scene on portrait screens and fit the peaks inside the frame. */
+    --desert-width: max(
+      var(--home-viewport-width, 100vw),
+      clamp(
+        calc(var(--home-viewport-height, 100svh) * 1.6),
+        calc(var(--home-viewport-width, 100vw) * 1.24),
+        calc(var(--home-viewport-height, 100svh) * 2)
+      )
+    );
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--desert-width) * -0.0788);
+    width: var(--desert-width);
+  }
+  .home-traversata .journey .tw {
+    --ts: clamp(58px, 6.2vw, 104px);
+  }
+  .home-traversata .journey .tw-bounce {
+    width: 100%;
+    height: 100%;
+  }
+
+  .home-traversata .journey .track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: max-content;
+    margin: 0;
+    padding: 0 12vw 0 0;
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(3rem, 6vw, 6rem);
+  }
+  .home-traversata .journey .stop::before {
+    display: none;
+  }
+  .home-traversata .journey .journey-intro {
+    flex: none;
+    width: min(44rem, 52vw);
+    padding: calc(var(--bar-h) + 10vh) 0 0 max(6vw, 4.5rem);
+  }
+  .home-traversata .journey .journey-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .home-traversata .journey .journey-hint::after {
+    content: "";
+    width: 4rem;
+    height: 1px;
+    background: currentColor;
+    animation: home-hint 2s var(--ease-io) infinite;
+    transform-origin: left;
+  }
+  @keyframes home-hint {
+    0% {
+      transform: scaleX(0.2);
+    }
+    50% {
+      transform: scaleX(1);
+    }
+    100% {
+      transform: scaleX(0.2);
+    }
+  }
+  .home-traversata .journey .stop {
+    flex: none;
+    width: clamp(18rem, 27vw, 24rem);
+    padding: 0;
+    margin-top: var(--stop-offset, calc(var(--home-viewport-height, 100svh) * 0.24));
+  }
+  .home-traversata .journey .stop:nth-of-type(even) {
+    --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.2);
+    --stem: calc(var(--home-viewport-height, 100svh) * 0.26);
+  }
+  .home-traversata .journey .stop:nth-of-type(odd) {
+    --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.3);
+    --stem: calc(var(--home-viewport-height, 100svh) * 0.16);
+  }
+  .home-traversata .journey .stop-pin {
+    left: 50%;
+    top: auto;
+    bottom: calc(-1 * var(--stem, 30vh));
+    transform: translateX(-50%);
+  }
+  .home-traversata .journey .stop::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    height: calc(var(--stem, 30vh) - 0.5rem);
+    width: 1px;
+    background: repeating-linear-gradient(
+      180deg,
+      rgba(253, 242, 228, 0.7) 0 5px,
+      transparent 5px 10px
+    );
+  }
+  @media (max-height: 800px) {
+    .home-traversata .journey .stop:nth-of-type(even) {
+      --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.16);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.2);
+    }
+    .home-traversata .journey .stop:nth-of-type(odd) {
+      --stop-offset: calc(var(--home-viewport-height, 100svh) * 0.23);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.13);
+    }
+    .home-traversata .journey .stop blockquote {
+      font-size: 0.95rem;
+    }
+  }
+  .home-traversata .journey .stop-card {
+    transform: scale(0.94);
+    opacity: 0.78;
+    transition:
+      transform 700ms var(--ease-out),
+      opacity 500ms,
+      border-color 400ms;
+  }
+  .home-traversata .journey .stop.is-current .stop-card {
+    transform: none;
+    opacity: 1;
+    border-color: rgba(253, 242, 228, 0.4);
+  }
+  .home-traversata .journey .stop-year {
+    position: absolute;
+    left: 0.2rem;
+    bottom: calc(100% - 0.12em);
+    margin: 0;
+    font-size: clamp(4rem, 2.5rem + 3vw, 6.5rem);
+    transform: translate3d(var(--yx, 0px), 0, 0);
+  }
+
+  /* The same dune scene on small screens, with one readable stop at a time. */
+  @media (max-width: 1023px) {
+    .home-traversata .journey .track {
+      gap: 2rem;
+      padding-right: 10vw;
+    }
+    .home-traversata .journey .journey-intro {
+      width: min(88vw, 26rem);
+      padding: clamp(24px, 7svh, 56px) 20px 0;
+    }
+    .home-traversata .journey .journey-intro .h2 {
+      font-size: clamp(1.8rem, 7vw, 2.7rem);
+    }
+    .home-traversata .journey .journey-intro .lead {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .home-traversata .journey .stop {
+      width: min(82vw, 22rem);
+    }
+    .home-traversata .journey .stop:nth-of-type(even) {
+      --stop-offset: clamp(64px, calc(var(--home-viewport-height, 100svh) * 0.14), 110px);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.2);
+    }
+    .home-traversata .journey .stop:nth-of-type(odd) {
+      --stop-offset: clamp(96px, calc(var(--home-viewport-height, 100svh) * 0.23), 180px);
+      --stem: calc(var(--home-viewport-height, 100svh) * 0.11);
+    }
+    .home-traversata .journey .stop-card {
+      padding: 1.1rem;
+    }
+    .home-traversata .journey .stop h3 {
+      margin-top: 0.6rem;
+      font-size: 1.25rem;
+    }
+    .home-traversata .journey .stop p:not(.stop-meta) {
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    .home-traversata .journey .stop-year {
+      font-size: 3.25rem;
+    }
+    .home-traversata .journey .tw {
+      --ts: 64px;
+    }
+  }
+  /* Keep the cards reachable in short landscape viewports as well. */
+  @media (max-height: 500px) and (prefers-reduced-motion: no-preference) {
+    .home-traversata .journey .stop {
+      margin-top: 48px;
+    }
+    .home-traversata .journey .stop-card {
+      max-height: calc(var(--home-viewport-height, 100svh) - 100px);
+      overflow-y: auto;
+    }
+    .home-traversata .journey .journey-intro {
+      padding-top: 20px;
+    }
+  }
+}

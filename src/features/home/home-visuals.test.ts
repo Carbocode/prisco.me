@@ -1,10 +1,16 @@
 import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 
 import { parse } from "postcss";
 import type { Document } from "postcss";
 import { expect, it } from "vitest";
 
-const css = parse(readFileSync("src/features/home/home.css", "utf8"));
+function readStylesheet(file: string): string {
+  return readFileSync(file, "utf8").replace(/@import "([^"]+)";/g, (_, imported: string) =>
+    readStylesheet(resolve(dirname(file), imported)),
+  );
+}
+const css = parse(readStylesheet("src/features/home/home.css"));
 function declarations(selector: string) {
   const result: Record<string, string> = {};
   css.walkRules((rule) => {

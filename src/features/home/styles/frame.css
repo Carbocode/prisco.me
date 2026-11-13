@@ -1,0 +1,206 @@
+/* The story and footer share one screen; scrolling never leaks to the document. */
+.home-site {
+  --footer-peek: clamp(88px, 12dvh, 112px);
+  --frame-x: 12px;
+  --frame-r: 18px;
+  --frame-time: 550ms;
+  --frame-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+}
+@media (max-width: 767px) {
+  .home-site {
+    --frame-x: 8px;
+    --frame-r: 12px;
+  }
+}
+.home-footer {
+  position: absolute;
+  inset: auto var(--home-scrollbar, 0px) 0 0;
+  z-index: 50;
+  height: var(--footer-peek);
+  overflow: hidden;
+  background: #000;
+  transform: translateY(0);
+  transition:
+    height var(--frame-time) var(--frame-ease),
+    transform var(--frame-time) var(--frame-ease),
+    visibility 0s;
+}
+/* Hide the peek only once it has left the screen, so no gap opens behind it. */
+.home-page:not(.is-framed) + .home-footer {
+  transform: translateY(100%);
+  visibility: hidden;
+  transition:
+    height var(--frame-time) var(--frame-ease),
+    transform var(--frame-time) var(--frame-ease),
+    visibility 0s var(--frame-time);
+}
+.home-site[data-footer-open="true"] .home-footer {
+  right: 0;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateY(0);
+  visibility: visible;
+  transition:
+    height var(--frame-time) var(--frame-ease),
+    transform var(--frame-time) var(--frame-ease),
+    visibility 0s;
+}
+.home-footer-controls {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: #000;
+  z-index: 1;
+}
+/* The scroller keeps one size: opening the frame never changes layout or the scroll range. */
+.home-page {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+.home-viewport {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  overflow-anchor: none;
+  overscroll-behavior: contain;
+  /* Focus and anchors land inside the area left visible by the open frame. */
+  scroll-padding: var(--home-header-height, 68px) 0 var(--footer-peek);
+}
+/* The frame is drawn above the content and enters with transforms only.
+ * Bars and corners share duration and easing, so reversals stay aligned. */
+.home-frame {
+  position: absolute;
+  inset: 0 var(--home-scrollbar, 0px) 0 0;
+  z-index: 35;
+  overflow: hidden;
+  pointer-events: none;
+}
+.home-frame > span {
+  position: absolute;
+  background: #000;
+  transform: none;
+  transition: transform var(--frame-time) var(--frame-ease);
+}
+.home-frame-top {
+  inset: 0 0 auto;
+  height: var(--home-header-height, 68px);
+}
+.home-frame-left,
+.home-frame-right {
+  top: 0;
+  bottom: 0;
+  width: var(--frame-x);
+}
+.home-frame-left {
+  left: 0;
+}
+.home-frame-right {
+  right: 0;
+}
+.home-frame > .home-frame-corner {
+  width: var(--frame-r);
+  height: var(--frame-r);
+  --corner-hole: transparent calc(var(--frame-r) - 0.5px), #000 var(--frame-r);
+  transform: translate(0, 0) scale(1);
+}
+.home-frame-corner[data-corner="tl"] {
+  top: var(--home-header-height, 68px);
+  left: var(--frame-x);
+  transform-origin: 0 0;
+  background: radial-gradient(circle at 100% 100%, var(--corner-hole));
+}
+.home-frame-corner[data-corner="tr"] {
+  top: var(--home-header-height, 68px);
+  right: var(--frame-x);
+  transform-origin: 100% 0;
+  background: radial-gradient(circle at 0 100%, var(--corner-hole));
+}
+.home-frame-corner[data-corner="bl"] {
+  bottom: var(--footer-peek);
+  left: var(--frame-x);
+  transform-origin: 0 100%;
+  background: radial-gradient(circle at 100% 0, var(--corner-hole));
+}
+.home-frame-corner[data-corner="br"] {
+  bottom: var(--footer-peek);
+  right: var(--frame-x);
+  transform-origin: 100% 100%;
+  background: radial-gradient(circle at 0 0, var(--corner-hole));
+}
+.home-page:not(.is-framed) .home-frame-top {
+  transform: translateY(-100%);
+}
+.home-page:not(.is-framed) .home-frame-left {
+  transform: translateX(-100%);
+}
+.home-page:not(.is-framed) .home-frame-right {
+  transform: translateX(100%);
+}
+/* Each corner travels with the two edges it joins and grows like the old border radius. */
+.home-page:not(.is-framed) .home-frame-corner[data-corner="tl"] {
+  transform: translate(calc(-1 * var(--frame-x)), calc(-1 * var(--home-header-height, 68px)))
+    scale(0);
+}
+.home-page:not(.is-framed) .home-frame-corner[data-corner="tr"] {
+  transform: translate(var(--frame-x), calc(-1 * var(--home-header-height, 68px))) scale(0);
+}
+.home-page:not(.is-framed) .home-frame-corner[data-corner="bl"] {
+  transform: translate(calc(-1 * var(--frame-x)), var(--footer-peek)) scale(0);
+}
+.home-page:not(.is-framed) .home-frame-corner[data-corner="br"] {
+  transform: translate(var(--frame-x), var(--footer-peek)) scale(0);
+}
+.home-scroll-header {
+  transform: translateY(var(--hero-header-y, 0px));
+}
+/* A hidden header stays focusable: keyboard focus reopens the frame instead of skipping the nav. */
+.home-scroll-header.is-floating {
+  position: absolute;
+  inset: 0 var(--home-scrollbar, 0px) auto 0;
+  width: auto;
+  z-index: 45;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-12px);
+  transition:
+    transform var(--frame-time) var(--frame-ease),
+    opacity 200ms;
+}
+.home-scroll-header.is-floating.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    transform var(--frame-time) var(--frame-ease),
+    opacity 250ms 100ms;
+}
+@media (max-width: 767px) {
+  .home-page .gauge {
+    width: 20px;
+    padding-inline: 8px;
+  }
+  .home-page .gauge::before {
+    width: 24px;
+  }
+  .home-page .gauge-rail {
+    height: clamp(96px, 18svh, 160px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-footer,
+  .home-frame > span,
+  .home-page .gauge,
+  .home-page .gauge.is-visible,
+  .home-scroll-header.is-floating {
+    transition: none;
+  }
+}

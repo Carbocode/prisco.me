@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/features/auth/client/auth-client";
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({

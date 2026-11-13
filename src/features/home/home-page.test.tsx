@@ -6,14 +6,16 @@ import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, expect, it, vi } from "vitest";
 
-import type { Experience, Project } from "@/lib/projects";
+import type { Experience, Project } from "@/features/portfolio/domain/portfolio";
 
 import { HomePage } from "./home-page";
 
-vi.mock("@/components/header", () => ({
+vi.mock("@/components/layout/header", () => ({
   default: (props: ComponentProps<"header">) => <header {...props}>Header originale</header>,
 }));
-vi.mock("@/components/page-shell", () => ({ SiteFooter: () => <footer>Footer originale</footer> }));
+vi.mock("@/components/layout/page-shell", () => ({
+  SiteFooter: () => <footer>Footer originale</footer>,
+}));
 const project: Project = {
   id: "project",
   slug: "progetto-cms",
@@ -81,7 +83,19 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
     unobserve() {}
     disconnect = disconnect;
   }
-  vi.stubGlobal("IntersectionObserver", Observer);
+  const revealChart: (() => void)[] = [];
+  class Intersection extends Observer {
+    constructor(
+      private callback: (entries: { target: Element; isIntersecting: boolean }[]) => void,
+    ) {
+      super();
+    }
+    observe(target?: Element) {
+      if (target?.hasAttribute("data-sky-chart"))
+        revealChart.push(() => this.callback([{ target, isIntersecting: true }]));
+    }
+  }
+  vi.stubGlobal("IntersectionObserver", Intersection);
   vi.stubGlobal("ResizeObserver", Observer);
   vi.stubGlobal(
     "matchMedia",
@@ -97,6 +111,10 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   document.body.appendChild(el);
   const root = createRoot(el);
   await act(async () => root.render(<HomePage {...props} />));
+  expect(el.querySelector("[data-sky-svg] circle")).toBeNull();
+  const reservedViewBox = el.querySelector("[data-sky-svg]")?.getAttribute("viewBox");
+  await act(async () => revealChart.forEach((reveal) => reveal()));
+  expect(el.querySelector("[data-sky-svg]")?.getAttribute("viewBox")).toBe(reservedViewBox);
   expect(el.querySelector("[data-sky-svg] circle")).not.toBeNull();
   const sky = el.querySelector<SVGSVGElement>("[data-sky-svg]");
   const viewBox = sky?.getAttribute("viewBox")?.split(" ").map(Number);
@@ -134,9 +152,16 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
     scrollport.dispatchEvent(new Event("scroll"));
   });
   expect(el.querySelector(".gauge")?.classList.contains("is-visible")).toBe(true);
+  const readScrollHeight = vi.fn(() => 2000);
+  const readClientHeight = vi.fn(() => 700);
   Object.defineProperties(scrollport, {
-    scrollHeight: { configurable: true, value: 2000 },
-    clientHeight: { configurable: true, value: 700 },
+    scrollHeight: { configurable: true, get: readScrollHeight },
+    clientHeight: { configurable: true, get: readClientHeight },
+  });
+  // A real resize/load refreshes cached geometry before subsequent scrolls.
+  await act(async () => {
+    window.dispatchEvent(new Event("load"));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
   });
   const scrollToPosition = async (position: number) => {
     await act(async () => {
@@ -147,7 +172,11 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   };
   const page = el.querySelector("[data-home-page]");
   const measureRect = vi.spyOn(Element.prototype, "getBoundingClientRect");
+  readScrollHeight.mockClear();
+  readClientHeight.mockClear();
   await scrollToPosition(300);
+  expect(readScrollHeight).not.toHaveBeenCalled();
+  expect(readClientHeight).not.toHaveBeenCalled();
   // Scrolling must not force geometry reads while SVG/CSS animations are running.
   expect(measureRect).not.toHaveBeenCalled();
   measureRect.mockRestore();
@@ -259,4 +288,38 @@ it("mantiene viewport e riferimenti locali delle illustrazioni SVG esterne", () 
   });
   expect(document.querySelector(".geode-crystals > image")).not.toBeNull();
   expect(document.querySelectorAll(".geode-glint")).toHaveLength(4);
+});
+
+it("reserves the intrinsic size of lazy desert layers so browsers can load them", () => {
+  const document = new DOMParser().parseFromString(
+    renderToStaticMarkup(<HomePage {...props} />),
+    "text/html",
+  );
+  const layers = document.querySelectorAll<HTMLImageElement>(".desert img");
+  expect(layers).toHaveLength(10);
+  layers.forEach((image) => {
+    expect(image.getAttribute("loading")).toBe("lazy");
+    expect(image.width).toBeGreaterThan(0);
+    expect(image.height).toBeGreaterThan(0);
+  });
+});
+
+it("loads static underground artwork responsively without removing interactive SVG glints", () => {
+  const document = new DOMParser().parseFromString(
+    renderToStaticMarkup(
+      <HomePage {...props} projects={[project, { ...project, id: "project-2" }]} />,
+    ),
+    "text/html",
+  );
+  const artwork = document.querySelectorAll<HTMLImageElement>(".decor > img, .find-pit img");
+  expect(artwork.length).toBe(13);
+  artwork.forEach((image) => {
+    expect(image.getAttribute("loading")).toBe("lazy");
+    expect(image.getAttribute("srcset")).toContain("384w");
+    expect(image.getAttribute("sizes")).toBeTruthy();
+    expect(image.width).toBeGreaterThan(0);
+    expect(image.height).toBeGreaterThan(0);
+  });
+  expect(document.querySelectorAll(".geode-glint")).toHaveLength(4);
+  expect(document.querySelector(".geode-crystals image")).not.toBeNull();
 });

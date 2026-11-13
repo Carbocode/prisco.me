@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { toEmbedUrl, type OpenGraphPreview } from "@/features/editor/embed-url";
+import { toEmbedUrl, type OpenGraphPreview } from "@/features/content/embeds/embed-url";
 
 import { requireCmsPermission } from "./cms-auth";
 

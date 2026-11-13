@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Riduzione del movimento: tutto statico, contenuto subito visibile.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .home-traversata *,
+  .home-traversata *::before,
+  .home-traversata *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+  .home-traversata .shooting,
+  .home-traversata .clouds .cloud {
+    display: none;
+  }
+  .home-traversata .depth,
+  .home-traversata .hero-copy {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .home-traversata.js .manifesto .w {
+    opacity: 1;
+    filter: none;
+  }
+  .home-traversata.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+  .home-traversata .journey:not(.is-horizontal) .tw {
+    animation: none;
+    transform: translateX(62vw);
+  }
+  .home-traversata .scroll-cue::after {
+    animation: none;
+    transform: none;
+  }
+}

@@ -1,0 +1,302 @@
+/* ==========================================================================
+   Home “Traversata”: stili isolati per il viaggio dal cielo al nucleo.
+   ========================================================================== */
+
+.home-traversata {
+  color-scheme: dark;
+
+  --night-0: #050c18;
+  --night-1: #0b1a31;
+  --night-2: #162743;
+  --night-3: #293c5a;
+  --night-4: #485b79;
+  --night-5: #5c6e86;
+  --haze: #92abd0;
+
+  --sand-0: #dca796;
+  --sand-1: #d09d73;
+  --sand-2: #b27159;
+  --sand-3: #8f5755;
+
+  --soil: #201710;
+  --rock: #33210f;
+  --mantle: #6e2a12;
+  --ember: #c9481a;
+  --fire: #ffd27a;
+
+  --link: #7dd3fc;
+  --link-hover: #bae6fd;
+  --ink: #f1f5f9;
+  --ink-body: #cbd5e1;
+  --ink-muted: #94a3b8;
+  --warm-ink: #fdf2e4;
+  --warm-body: #e9d6c3;
+  --warm-muted: #c9ab92;
+
+  --f-display:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", "Avenir Next",
+    "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --f-text:
+    "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --f-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.7, 0, 0.2, 1);
+  --wrap: min(100% - 2.5rem, 78rem);
+  --bar-h: 4rem;
+}
+
+.home-traversata *,
+.home-traversata *::before,
+.home-traversata *::after {
+  box-sizing: border-box;
+}
+
+.home-traversata {
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-traversata {
+    scroll-behavior: smooth;
+  }
+}
+
+.home-traversata {
+  margin: 0;
+  background: var(--night-0);
+  color: var(--ink);
+  font-family: var(--f-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+.home-traversata img {
+  display: block;
+  max-width: 100%;
+}
+.home-traversata h1,
+.home-traversata h2,
+.home-traversata h3,
+.home-traversata h4,
+.home-traversata p,
+.home-traversata ol,
+.home-traversata ul,
+.home-traversata dl,
+.home-traversata dd,
+.home-traversata figure {
+  margin: 0;
+}
+.home-traversata ol,
+.home-traversata ul {
+  padding: 0;
+  list-style: none;
+}
+
+.home-traversata :focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.home-traversata .visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.home-traversata .skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--night-0);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 200ms var(--ease-out);
+}
+.home-traversata .skip:focus {
+  transform: none;
+}
+
+.home-traversata .wrap {
+  width: var(--wrap);
+  margin-inline: auto;
+}
+
+/* --- Tipografia condivisa ------------------------------------------------ */
+
+.home-traversata .h2 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(2.2rem, 1.1rem + 3.8vw, 4.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.home-traversata .serif {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+.home-traversata .lead {
+  max-width: 38rem;
+  font-size: clamp(1rem, 0.94rem + 0.3vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ink-body);
+  text-wrap: pretty;
+}
+
+/* --- Bottoni ---------------------------------------------------------------- */
+
+.home-traversata .btn {
+  --mx: 0px;
+  --my: 0px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transform: translate3d(var(--mx), var(--my), 0);
+  transition:
+    transform 380ms var(--ease-out),
+    background-color 200ms,
+    color 200ms,
+    border-color 200ms,
+    box-shadow 300ms;
+}
+.home-traversata .btn-primary {
+  background: var(--ink);
+  color: var(--night-0);
+  box-shadow: 0 10px 30px -12px rgba(186, 230, 253, 0.6);
+}
+.home-traversata .btn-primary:hover {
+  background: #fff;
+  box-shadow: 0 16px 40px -14px rgba(186, 230, 253, 0.85);
+}
+.home-traversata .btn-ghost {
+  border: 1px solid rgba(241, 245, 249, 0.35);
+  color: var(--ink);
+  background: rgba(5, 12, 24, 0.25);
+  backdrop-filter: blur(6px);
+}
+.home-traversata .btn-ghost:hover {
+  border-color: var(--ink);
+  background: rgba(5, 12, 24, 0.5);
+}
+.home-traversata .btn .arrow {
+  display: inline-block;
+  transition: transform 300ms var(--ease-out);
+}
+.home-traversata .btn:hover .arrow {
+  transform: translateX(4px);
+}
+.home-traversata .btn:hover .arrow.down {
+  transform: translateY(3px);
+}
+
+/* ==========================================================================
+   Altimetro laterale: indice di profondità
+   ========================================================================== */
+
+.home-page .gauge {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 40;
+  display: none;
+  width: 24px;
+  padding: 18px 10px;
+  isolation: isolate;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-110%, -50%) scaleX(0.8);
+  translate: 0 0;
+  transition:
+    translate var(--frame-time) var(--frame-ease),
+    transform 400ms ease-in,
+    opacity 220ms ease-in,
+    visibility 0s 400ms;
+  transform-origin: left center;
+  pointer-events: none;
+}
+.home-page .gauge.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, -50%) scaleX(1);
+  transition:
+    translate var(--frame-time) var(--frame-ease),
+    transform 650ms cubic-bezier(0.22, 1.35, 0.36, 1),
+    opacity 180ms ease-out,
+    visibility 0s;
+}
+/* The curved shoulders join the screen edge like a tab pushing up beneath it. */
+.home-page .gauge::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -18px auto -18px 0;
+  width: 28px;
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%20240%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200C0%2020%2029%2016%2029%2045V195C29%20224%200%20220%200%20240Z%22%20fill%3D%22black%22%2F%3E%3Cpath%20d%3D%22M0%201C0%2020%2029%2016%2029%2045V195C29%20224%200%20220%200%20239%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%22.7%22%20vector-effect%3D%22non-scaling-stroke%22%2F%3E%3C%2Fsvg%3E")
+    center / 100% 100% no-repeat;
+  filter: drop-shadow(3px 0 3px #0005);
+}
+.home-page.has-home-motion .gauge {
+  display: block;
+}
+.home-page .gauge-rail {
+  position: relative;
+  width: 3px;
+  height: clamp(120px, 22vh, 200px);
+  border-radius: 999px;
+  background: #ffffff99;
+}
+.home-page .gauge-tick {
+  position: absolute;
+  left: 0;
+  width: 6px;
+  height: 2px;
+  border-radius: 999px;
+  background: #ffffff80;
+  transform: translateY(-50%);
+  transition:
+    width 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 250ms;
+}
+.home-page .gauge-tick.is-active {
+  width: 8px;
+  background: #fff;
+}
+.home-page .gauge-cursor {
+  position: absolute;
+  z-index: 1;
+  left: -3px;
+  top: calc(var(--doc-p, 0) * 100%);
+  width: 9px;
+  height: 3px;
+  border-radius: 999px;
+  background: #fff;
+  transform: translateY(-50%);
+}
+/* Follow the open frame: beside its left edge, centred between header and footer peek. */
+.home-page.is-framed .gauge {
+  translate: var(--frame-x) calc((var(--home-header-height, 68px) - var(--footer-peek)) / 2);
+}

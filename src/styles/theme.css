@@ -1,0 +1,116 @@
+/*
+ ---break---
+ */
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.92 0.004 286.32);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
+  --chart-1: oklch(0.865 0.127 207.078);
+  --chart-2: oklch(0.715 0.143 215.221);
+  --chart-3: oklch(0.609 0.126 221.723);
+  --chart-4: oklch(0.52 0.105 223.128);
+  --chart-5: oklch(0.45 0.085 224.283);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+
+/* Site palette, syntax highlighting, and display typography. */
+@theme inline {
+  --color-canvas: var(--color-slate-950);
+  --color-ink-inverse: var(--color-slate-100);
+  --color-ink-soft: var(--color-slate-200);
+  --color-ink-body: var(--color-slate-300);
+  --color-ink-subtle: var(--color-slate-400);
+  --color-ink-muted: var(--color-slate-500);
+  --color-ink-dim: var(--color-slate-600);
+  --color-link-surface: var(--color-sky-100);
+  --color-link-hover: var(--color-sky-200);
+  --color-link: var(--color-sky-300);
+  --color-glow: var(--color-sky-400);
+  --color-glow-strong: var(--color-sky-500);
+  --color-secondary-glow: var(--color-violet-300);
+  --color-secondary-glow-strong: var(--color-violet-400);
+  --color-secondary-aura: var(--color-violet-500);
+  --color-secondary-ink: var(--color-violet-950);
+  --color-highlight-soft: var(--color-fuchsia-200);
+  --color-highlight: var(--color-fuchsia-300);
+  --color-highlight-strong: var(--color-fuchsia-400);
+  --color-highlight-aura: var(--color-fuchsia-500);
+  --color-warm-ink: var(--color-amber-50);
+  --color-warm-ink-soft: var(--color-amber-100);
+  --color-warm-highlight: var(--color-amber-200);
+  --color-warm-accent: var(--color-amber-300);
+  --color-warm-accent-strong: var(--color-amber-400);
+  --color-warm-accent-deep: var(--color-amber-500);
+  --color-ember-ink: var(--color-orange-50);
+  --color-ember-ink-soft: var(--color-orange-100);
+  --color-ember-highlight: var(--color-orange-200);
+  --color-ember-surface: var(--color-orange-950);
+  --color-subsoil: #06101f;
+  --color-subsoil-panel: #071326;
+  --color-syntax-addition-bg: #f0fff4;
+  --color-syntax-addition: #22863a;
+  --color-syntax-addition-dark-bg: #3c5743;
+  --color-syntax-addition-dark: #ceead5;
+  --color-syntax-literal: #005cc5;
+  --color-syntax-literal-dark: #6596cf;
+  --color-syntax-symbol: #e36209;
+  --color-syntax-symbol-dark: #c3854e;
+  --color-syntax-bullet: #735c0f;
+  --color-syntax-comment: #6a737d;
+  --color-syntax-deletion-bg: #ffeef0;
+  --color-syntax-deletion: #b31d28;
+  --color-syntax-deletion-dark-bg: #473235;
+  --color-syntax-deletion-dark: #e7c7cb;
+  --color-syntax-keyword: #d73a49;
+  --color-syntax-keyword-dark: #ee6960;
+  --color-syntax-name-dark: #36a84f;
+  --color-syntax-string: #032f62;
+  --color-syntax-string-dark: #3593ff;
+  --color-syntax-section-dark: #61a5f2;
+  --color-syntax-title: #6f42c1;
+  --color-syntax-title-dark: #a77bfa;
+  --leading-hero: 0.94;
+  --leading-display: 0.95;
+  --leading-heading: 0.98;
+  --leading-compact: 1.02;
+  --tracking-heading: -0.025em;
+  --tracking-display: -0.045em;
+  --tracking-hero: -0.04em;
+  --tracking-display-tight: -0.055em;
+  --tracking-monogram: -0.08em;
+  --tracking-label: 0.12em;
+  --tracking-label-wide: 0.14em;
+  --tracking-eyebrow: 0.16em;
+  --tracking-eyebrow-wide: 0.18em;
+  --tracking-caption: 0.24em;
+  --tracking-caption-wide: 0.25em;
+  --tracking-overline: 0.28em;
+  --tracking-section: 0.2em;
+  --tracking-overline-wide: 0.3em;
+  --text-hero: 5.5rem;
+  --text-display: 5.75rem;
+  --font-editorial:
+    "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}

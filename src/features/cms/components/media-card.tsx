@@ -1,7 +1,7 @@
 import { AudioLines, Check, Eye, FileIcon, ImageIcon, Video } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { HoverAnimatedImage } from "@/components/hover-animated-image";
+import { HoverAnimatedImage } from "@/components/media/hover-animated-image";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {

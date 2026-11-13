@@ -15,8 +15,10 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { formString, formValues } from "@/components/auth-ui";
-import { DashboardDataTable, type DashboardColumnDef } from "@/components/dashboard-data-table";
+import {
+  DashboardDataTable,
+  type DashboardColumnDef,
+} from "@/components/data-table/dashboard-data-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,7 +59,8 @@ import {
 } from "@/components/ui/empty";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/features/auth/client/auth-client";
+import { formString, formValues } from "@/features/auth/components/auth-ui";
 
 type AdminUser = {
   id: string;

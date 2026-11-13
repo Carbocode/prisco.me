@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { getPreviewArticleFn } from "@/features/cms/server/article.functions";
-import { ArticlePageContent } from "@/features/content/content-components";
+import { ArticlePageContent } from "@/features/content/components/article-page-content";
 
 export const Route = createFileRoute("/preview/articles/$articleId")({
   loader: async ({ params }) => {

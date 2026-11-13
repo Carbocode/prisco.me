@@ -1,0 +1,264 @@
+.hero-content-contrast {
+  position: relative;
+  isolation: isolate;
+  filter: drop-shadow(0 3px 7px rgba(2, 6, 23, 0.78)) drop-shadow(0 12px 26px rgba(2, 6, 23, 0.52));
+}
+
+.hero-content-contrast::before {
+  position: absolute;
+  inset: -2.5rem -4rem;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(2, 6, 23, 0.4) 0%,
+    rgba(2, 6, 23, 0.18) 42%,
+    transparent 74%
+  );
+  filter: blur(20px);
+  content: "";
+}
+
+.star-enter {
+  opacity: 0;
+  transform: scale(0.74) rotate(-20deg);
+  transform-origin: center;
+  animation: star-enter 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes star-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.74) rotate(-20deg);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1.06) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.hero-content-enter {
+  transform: translateY(clamp(10rem, 24vh, 15rem)) scale(0.97);
+  transform-origin: center bottom;
+  animation: hero-content-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.hero-content-enter-item {
+  transform: translateY(14px);
+  animation: hero-content-item-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-content-enter-item:nth-child(1) {
+  animation-delay: 40ms;
+}
+
+.hero-content-enter-item:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.hero-content-enter-item:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.hero-content-enter-item:nth-child(4) {
+  animation-delay: 190ms;
+}
+
+.mountain-enter {
+  transform: translateY(3rem) scale(0.92);
+  transform-origin: center bottom;
+  animation: mountain-enter 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.hero-header-enter {
+  transform: translateY(-2.5rem);
+  animation: hero-header-enter 500ms 80ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes hero-content-rise {
+  from {
+    transform: translateY(clamp(10rem, 24vh, 15rem)) scale(0.97);
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mountain-enter {
+  from {
+    transform: translateY(3rem) scale(0.92);
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes hero-header-enter {
+  from {
+    transform: translateY(-2.5rem);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-content-item-in {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.horizon {
+  background: linear-gradient(180deg, #92abd0 0%, #4c5677 32%, #37425c 52%, #0a1622 100%);
+}
+
+.shooting-stars {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shooting-star-runner {
+  position: absolute;
+  width: var(--shooting-star-distance);
+  height: 2px;
+  transform: rotate(135deg) scaleX(0);
+  transform-origin: left center;
+  animation: shooting-star-flight calc(var(--shooting-star-duration) + 8s) linear
+    var(--shooting-star-delay) infinite;
+}
+
+.shooting-star-runner::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, transparent, #fff);
+}
+
+.shooting-star-runner::after {
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  width: 2px;
+  height: 2px;
+  content: "";
+  background: #fff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 4px #fff,
+    0 0 8px rgba(255, 255, 255, 0.8);
+  transform: translateY(-50%);
+}
+
+@keyframes shooting-star-flight {
+  0%,
+  2% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(0);
+  }
+  4% {
+    opacity: 1;
+  }
+  12% {
+    opacity: 1;
+    transform: rotate(135deg) scaleX(1);
+  }
+  20%,
+  100% {
+    opacity: 0;
+    transform: rotate(135deg) scaleX(1);
+  }
+}
+
+.cloud-carousel {
+  contain: layout paint;
+}
+
+.cloud-carousel-item {
+  left: 0;
+  width: var(--cloud-width);
+  transform: translate3d(calc(-100% - 24px), 0, 0);
+  animation: cloud-carousel-travel var(--cloud-duration) linear var(--cloud-delay) infinite;
+  will-change: transform;
+}
+
+@keyframes cloud-carousel-travel {
+  to {
+    transform: translate3d(calc(100vw + 24px), 0, 0);
+  }
+}
+
+.skills-marquee {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+}
+
+.skills-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: skills-marquee-scroll var(--skills-marquee-duration, 34s) linear infinite;
+  will-change: transform;
+}
+
+.skills-marquee-track-reverse {
+  animation-direction: reverse;
+}
+
+.skills-marquee-group {
+  display: flex;
+  flex: none;
+  gap: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+@keyframes skills-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shooting-star-runner {
+    animation: none;
+    opacity: 0;
+  }
+
+  .cloud-carousel-item {
+    animation-play-state: paused;
+    will-change: auto;
+  }
+
+  .hero-content-enter,
+  .hero-content-enter-item,
+  .mountain-enter,
+  .hero-header-enter,
+  .star-enter {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .skills-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .card-sheen::after {
+    transition: none;
+  }
+}

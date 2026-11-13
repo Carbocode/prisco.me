@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { ArticleForm } from "@/features/cms/components/article-form";
+import { ArticleForm } from "@/features/cms/components/article-form/article-form";
 import {
   getArticleFn,
   listArticleRevisionsFn,

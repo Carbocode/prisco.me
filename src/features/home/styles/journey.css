@@ -1,0 +1,329 @@
+/* ==========================================================================
+   03 · Percorso (traversata del deserto)
+   ========================================================================== */
+
+.home-traversata .journey {
+  position: relative;
+  background: linear-gradient(180deg, var(--night-3) 0%, var(--night-4) 50%, var(--night-5) 100%);
+}
+.home-traversata .journey-stage {
+  position: relative;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-traversata .journey .journey-stage {
+    display: flex;
+    flex-direction: column;
+  }
+  .home-traversata .journey .desert-frame {
+    order: 2;
+  }
+}
+
+.home-traversata .desert-frame {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+.home-traversata .desert {
+  position: relative;
+  left: 50%;
+  width: max(100%, 40rem);
+  aspect-ratio: 1280 / 841;
+  transform: translateX(-50%);
+}
+.home-traversata .desert img {
+  position: absolute;
+  left: 0;
+  height: auto;
+}
+.home-traversata .desert .mtn {
+  width: 100%;
+  bottom: var(--b);
+}
+.home-traversata .desert .dune {
+  left: -0.5rem;
+  width: calc(100% + 1rem);
+  max-width: none;
+  bottom: var(--b);
+}
+.home-traversata .desert-horizon {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 64.8%;
+  background: linear-gradient(
+    180deg,
+    var(--haze) 0%,
+    #4c5677 21.9%,
+    #37425c 35.6%,
+    #0a1622 68.5%,
+    #0a1622 100%
+  );
+}
+.home-traversata .tw {
+  position: absolute;
+  bottom: var(--tb, 29.2%);
+  left: 0;
+  width: var(--ts, clamp(44px, 6vw, 84px));
+  height: var(--ts, clamp(44px, 6vw, 84px));
+}
+.home-traversata .tw-bounce {
+  width: 100%;
+  height: 100%;
+}
+.home-traversata .tw-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 0 rgba(60, 28, 14, 0.35));
+}
+/* Ombra a terra: si stringe e schiarisce quando il cespuglio è in aria. */
+.home-traversata .tw-shadow {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -6%;
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(70, 30, 20, 0.45), transparent);
+  transform: scaleX(calc(1 - var(--lift, 0) * 0.45));
+  opacity: calc(1 - var(--lift, 0) * 0.6);
+}
+/* Modalità verticale: rotola da sola come nel sito attuale. */
+.home-traversata .journey:not(.is-horizontal) .tw {
+  animation: home-tw-travel 22s linear infinite;
+}
+.home-traversata .journey:not(.is-horizontal) .tw-bounce {
+  animation: home-tw-bounce 1.7s ease-in-out infinite;
+}
+.home-traversata .journey:not(.is-horizontal) .tw-art {
+  animation: home-tw-roll 1.5s linear infinite;
+}
+.home-traversata .journey:not(.is-horizontal) .tw-shadow {
+  animation: home-tw-shadow 1.7s ease-in-out infinite;
+}
+@keyframes home-tw-travel {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(calc(100vw + 120%));
+  }
+}
+@keyframes home-tw-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(-38%);
+  }
+}
+@keyframes home-tw-roll {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes home-tw-shadow {
+  0%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+  45% {
+    transform: scaleX(0.6);
+    opacity: 0.45;
+  }
+}
+
+.home-traversata .journey-intro {
+  position: relative;
+  padding: clamp(6rem, 12vw, 9rem) 0 3rem;
+}
+.home-traversata .journey-intro-copy {
+  text-shadow:
+    0 2px 10px rgba(6, 16, 30, 0.6),
+    0 0 24px rgba(6, 16, 30, 0.45);
+}
+.home-traversata .journey-intro .h2 {
+  margin-top: 1.5rem;
+  max-width: 14ch;
+}
+.home-traversata .journey-intro .lead {
+  margin-top: 1.5rem;
+  color: #e2e8f0;
+}
+.home-traversata .journey-hint {
+  display: none;
+  margin-top: 2rem;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e2e8f0;
+}
+
+.home-traversata .track {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  width: var(--wrap);
+  margin-inline: auto;
+  padding-bottom: 3rem;
+}
+.home-traversata .stop {
+  position: relative;
+  padding-left: 3rem;
+}
+.home-traversata .stop::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: -1.25rem;
+  left: 1.05rem;
+  width: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(253, 242, 228, 0.6) 0 6px,
+    transparent 6px 12px
+  );
+}
+.home-traversata .stop:last-child::before {
+  bottom: auto;
+  height: 1.6rem;
+}
+.home-traversata .stop-pin {
+  position: absolute;
+  left: 0.55rem;
+  top: 1.6rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--sand-0);
+  box-shadow: 0 0 0 4px rgba(220, 167, 150, 0.25);
+}
+.home-traversata .stop[data-kind="education"] .stop-pin {
+  background: var(--link-hover);
+  box-shadow: 0 0 0 4px rgba(186, 230, 253, 0.25);
+}
+.home-traversata .stop-card {
+  position: relative;
+  padding: 1.4rem 1.4rem 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(253, 242, 228, 0.16);
+  background: linear-gradient(165deg, rgba(10, 22, 34, 0.82), rgba(10, 22, 34, 0.68));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+  transition:
+    transform 600ms var(--ease-out),
+    border-color 400ms,
+    box-shadow 600ms;
+}
+.home-traversata .stop-year {
+  display: block;
+  margin: -0.35rem 0 0.35rem;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 3.2rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(253, 242, 228, 0.35);
+  pointer-events: none;
+}
+.home-traversata .stop-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.home-traversata .badge {
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+}
+.home-traversata .stop[data-kind="work"] .badge {
+  color: var(--sand-0);
+}
+.home-traversata .stop[data-kind="education"] .badge {
+  color: var(--link-hover);
+}
+.home-traversata .stop h3 {
+  margin-top: 1rem;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--warm-ink);
+}
+.home-traversata .stop-role {
+  margin-top: 0.25rem;
+  color: var(--warm-body);
+  font-size: 0.92rem;
+}
+.home-traversata .stop blockquote {
+  margin: 1rem 0 0;
+  padding-left: 0.9rem;
+  border-left: 2px solid rgba(220, 167, 150, 0.5);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--warm-ink);
+}
+.home-traversata .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 1.1rem;
+}
+.home-traversata .tags li,
+.home-traversata .tags > span {
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  background: rgba(253, 242, 228, 0.08);
+  border: 1px solid rgba(253, 242, 228, 0.12);
+  color: var(--warm-body);
+}
+
+.home-traversata .stop-end .stop-card {
+  background: rgba(253, 242, 228, 0.92);
+  color: var(--soil);
+  border-color: transparent;
+}
+.home-traversata .stop-end h3 {
+  color: var(--soil);
+}
+.home-traversata .stop-end p {
+  margin-top: 0.6rem;
+  color: #4a3424;
+}
+.home-traversata .stop-end .stop-pin {
+  background: var(--ink);
+}
+.home-traversata .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition:
+    text-decoration-color 200ms,
+    gap 300ms var(--ease-out);
+}
+.home-traversata .text-link:hover {
+  gap: 0.75rem;
+}

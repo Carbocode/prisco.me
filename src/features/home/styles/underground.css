@@ -1,0 +1,391 @@
+/* ==========================================================================
+   Sottosuolo: viaggio al centro della Terra (Crosta · Mantello · Nucleo)
+   ========================================================================== */
+
+.home-traversata .underground {
+  position: relative;
+  margin-top: -1px;
+  color: var(--warm-ink);
+  background: #6f4541;
+  overflow-x: clip;
+}
+
+/* Strati di carta: ogni banda ha un bordo ondulato e proietta ombra verso l'alto. */
+.home-traversata .layer {
+  position: relative;
+  isolation: isolate;
+}
+.home-traversata .layer-crust {
+  background: #6f4541;
+  padding: clamp(8rem, 13vw, 11rem) 0 clamp(6rem, 10vw, 8rem);
+}
+.home-traversata .layer-mantle {
+  background: #3d211e;
+  padding: clamp(7rem, 12vw, 10rem) 0 clamp(7rem, 11vw, 9rem);
+}
+.home-traversata .layer-core {
+  background: #7a2a12;
+  /* The footer peek covers the end of the story: reserve it so the last screen stays visible. */
+  padding: clamp(7rem, 12vw, 9rem) 0 var(--footer-peek, 0px);
+  min-height: calc(clamp(40rem, 100vh, 56rem) + var(--footer-peek, 0px));
+  text-align: center;
+}
+.home-traversata .bands {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+.home-traversata .band {
+  position: absolute;
+  inset: var(--top) 0 0;
+  background: var(--c);
+  filter: drop-shadow(0 -6px 7px rgba(22, 8, 5, 0.38));
+}
+.home-traversata .band-edge {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% - 1px);
+  width: 100%;
+  height: clamp(46px, 6vw, 90px);
+  fill: var(--c);
+}
+.home-traversata .band-lines {
+  position: absolute;
+  left: 0;
+  top: clamp(-40px, -3vw, -20px);
+  width: 100%;
+  height: clamp(120px, 14vw, 200px);
+  fill: none;
+  stroke: rgba(255, 224, 196, 0.075);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* L'indicatore delle tappe del deserto resta sopra il primo strato. */
+
+/* Decorazioni illustrate */
+.home-traversata .decor {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.home-traversata .decor > :is(svg, img) {
+  position: absolute;
+  height: auto;
+}
+.home-traversata .u-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.home-traversata .roots-a {
+  left: 4%;
+  top: clamp(-74px, -5vw, -40px);
+  width: clamp(8rem, 13vw, 12rem);
+}
+.home-traversata .roots-b {
+  right: 8%;
+  top: clamp(-66px, -4.5vw, -36px);
+  width: clamp(7rem, 11vw, 10rem);
+}
+.home-traversata .roots-c {
+  left: 54%;
+  top: clamp(-60px, -4vw, -32px);
+  width: 7.5rem;
+}
+.home-traversata .pebbles-a {
+  right: 3%;
+  top: 38%;
+  width: clamp(7rem, 10vw, 9rem);
+}
+.home-traversata .pebbles-b {
+  left: 2.5%;
+  top: 66%;
+  width: clamp(6rem, 8vw, 7.5rem);
+}
+.home-traversata .pebbles-c {
+  right: 6%;
+  top: 88%;
+  width: 7rem;
+}
+.home-traversata .bone {
+  right: 5%;
+  top: 80%;
+  width: clamp(6.5rem, 9vw, 8.5rem);
+  transform: rotate(-14deg);
+}
+.home-traversata .crystals-a {
+  left: 2.5%;
+  top: 3%;
+  width: clamp(6.5rem, 9vw, 8.5rem);
+}
+.home-traversata .crystals-b {
+  right: 3%;
+  top: 86%;
+  width: clamp(7rem, 10vw, 9.5rem);
+  transform: scaleX(-1);
+}
+@media (max-width: 760px) {
+  .home-traversata .roots-c,
+  .home-traversata .pebbles-b,
+  .home-traversata .crystals-b,
+  .home-traversata .bone {
+    display: none;
+  }
+}
+
+/* Magma che filtra dalle crepe del mantello profondo */
+.home-traversata .lava {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #ff9a3c;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px #ff6a1a);
+  opacity: 0.55;
+}
+.home-traversata .lava path {
+  animation: home-lava-flicker 3.6s ease-in-out var(--l) infinite;
+}
+.home-traversata .lava .lava-core {
+  stroke: #fff3d6;
+  stroke-width: 0.8;
+  filter: none;
+  opacity: 0.8;
+  animation: none;
+}
+@keyframes home-lava-flicker {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Testata degli strati */
+.home-traversata .layer .wrap {
+  position: relative;
+}
+.home-traversata .layer-head {
+  display: grid;
+  justify-items: center;
+  gap: 1.5rem;
+  max-width: 48rem;
+  margin-inline: auto;
+  text-align: center;
+}
+.home-traversata .layer-head .lead {
+  color: var(--warm-body);
+}
+.home-traversata .layer-more {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  text-align: center;
+}
+
+/* Content stays centered; fossils belong to the decorative background. */
+.home-traversata .finds {
+  display: grid;
+  gap: clamp(4rem, 8vw, 6.5rem);
+  max-width: 48rem;
+  margin: clamp(3.5rem, 7vw, 5.5rem) auto 0;
+}
+.home-traversata .find {
+  position: relative;
+  isolation: isolate;
+}
+.home-traversata .find-pit {
+  position: absolute;
+  z-index: 0;
+  left: clamp(-10rem, -10vw, -3rem);
+  top: 50%;
+  width: clamp(18rem, 38vw, 27rem);
+  aspect-ratio: 320 / 300;
+  transform: translateY(-50%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.home-traversata .find:nth-child(even) .find-pit {
+  left: auto;
+  right: clamp(-10rem, -10vw, -3rem);
+}
+.home-traversata .pit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.home-traversata .find-fossil {
+  position: absolute;
+  inset: 12% 15% 16%;
+  display: grid;
+  place-items: center;
+  transform: translate3d(0, var(--fy, 0px), 0);
+}
+.home-traversata .fossil-art {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  transition:
+    transform 900ms var(--ease-out),
+    filter 900ms var(--ease-out);
+}
+.home-traversata .find:hover .fossil-art,
+.home-traversata .find:focus-within .fossil-art {
+  transform: rotate(-7deg) scale(1.06);
+}
+.home-traversata .find.is-flipped:hover .fossil-art,
+.home-traversata .find.is-flipped:focus-within .fossil-art {
+  transform: rotate(6deg) scale(1.06);
+}
+
+.home-traversata .find-body,
+.home-traversata .geode-body {
+  position: relative;
+  display: flow-root;
+  z-index: 1;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: 1.4rem;
+  border: 1px solid rgba(253, 242, 228, 0.14);
+  background: linear-gradient(160deg, rgba(48, 22, 17, 0.82), rgba(28, 12, 9, 0.72));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 30px 60px -30px rgba(10, 2, 0, 0.75);
+  transition:
+    border-color 400ms,
+    transform 600ms var(--ease-out);
+}
+.home-traversata .find:hover .find-body,
+.home-traversata .find:focus-within .find-body,
+.home-traversata .geode:hover .geode-body,
+.home-traversata .geode:focus-within .geode-body {
+  border-color: rgba(253, 242, 228, 0.32);
+  transform: translateY(-4px);
+}
+.home-traversata .home-content-cover {
+  display: block;
+  float: right;
+  width: clamp(5rem, 18vw, 9rem);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 0.8rem;
+  margin: 0 0 1rem 1.25rem;
+  background: rgba(10, 2, 0, 0.2);
+}
+.home-traversata .find-meta {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm-muted);
+}
+.home-traversata .find-body h3,
+.home-traversata .geode-body h3 {
+  margin-top: 0.75rem;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.home-traversata .find-body h3 a,
+.home-traversata .geode-body h3 a {
+  text-decoration: none;
+}
+.home-traversata .find-body h3 a::after,
+.home-traversata .geode-body h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.home-traversata .find h3 a:focus-visible,
+.home-traversata .geode h3 a:focus-visible {
+  outline: none;
+}
+.home-traversata .find:focus-within .find-body,
+.home-traversata .geode:focus-within .geode-body {
+  outline: 2px solid var(--fire);
+  outline-offset: 4px;
+}
+.home-traversata .find-body > p:not(.find-meta),
+.home-traversata .geode-body > p:not(.find-meta) {
+  margin-top: 0.75rem;
+  color: var(--warm-body);
+}
+
+/* Scritti: il geode si apre e mostra i cristalli */
+.home-traversata .geodes {
+  display: grid;
+  gap: 3rem;
+  max-width: 48rem;
+  margin: clamp(3.5rem, 7vw, 5.5rem) auto 0;
+}
+.home-traversata .geode {
+  position: relative;
+  isolation: isolate;
+}
+.home-traversata .geode-visual {
+  position: absolute;
+  z-index: 0;
+  right: clamp(-10rem, -10vw, -3rem);
+  top: 50%;
+  width: clamp(20rem, 42vw, 30rem);
+  transform: translateY(-50%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.home-traversata .geode-art {
+  width: 100%;
+  height: auto;
+  transition: transform 900ms var(--ease-out);
+}
+.home-traversata .geode:hover .geode-art,
+.home-traversata .geode:focus-within .geode-art {
+  transform: rotate(-4deg) scale(1.04);
+}
+.home-traversata .geode-glint {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: home-glint 3.4s ease-in-out var(--g) infinite;
+}
+@keyframes home-glint {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+  82% {
+    opacity: 1;
+    transform: scale(1) rotate(45deg);
+  }
+}
+
+/* Scavo all'ingresso */
+.home-traversata.js .find .find-pit,
+.home-traversata.js .geode .geode-visual {
+  clip-path: circle(0% at 50% 55%);
+  transition: clip-path 1300ms var(--ease-io) 150ms;
+}
+.home-traversata.js .find.is-in .find-pit,
+.home-traversata.js .geode.is-in .geode-visual {
+  clip-path: circle(75% at 50% 55%);
+}
+.home-traversata.js .find .fossil-art,
+.home-traversata.js .geode .geode-crystals {
+  filter: blur(5px) brightness(0.35);
+}
+.home-traversata.js .find.is-in .fossil-art,
+.home-traversata.js .geode.is-in .geode-crystals {
+  filter: none;
+  transition:
+    filter 1400ms var(--ease-out) 700ms,
+    transform 900ms var(--ease-out);
+}

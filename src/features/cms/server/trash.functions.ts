@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { getDb } from "@/db";
 import { cmsCategories, cmsTags, cmsOrganizations } from "@/db/schema";
-import { roleHasPermission } from "@/lib/cms-permissions";
+import { roleHasPermission } from "@/features/auth/domain/permissions";
 
 import { requireCmsPermission, requireSession } from "./cms-auth";
 

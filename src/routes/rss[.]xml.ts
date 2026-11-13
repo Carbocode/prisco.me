@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { listPublishedArticlesByFilter } from "@/features/cms/server/article.service";
+import { listPublishedArticlesByFilter } from "@/features/cms/server/articles/queries";
 const escapeXml = (value: string) =>
   value.replace(
     /[<>&'"]/g,

@@ -5,9 +5,9 @@ import {
   categoryArticleLayouts,
   categorySchemaTypes,
   defaultCategoryConfig,
-} from "@/lib/content-category";
+} from "@/features/content/domain/content-category";
+import { cmsDocumentSchema } from "@/features/content/domain/document";
 
-import { cmsDocumentSchema } from "./cms-document";
 import { slugPattern } from "./slug";
 
 const nullableText = (max: number) => z.string().trim().max(max).nullable().optional();

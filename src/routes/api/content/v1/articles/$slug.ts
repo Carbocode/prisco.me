@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getPublishedArticleBySlug } from "@/features/cms/server/article.service";
+import { getPublishedArticleBySlug } from "@/features/cms/server/articles/queries";
 import { json, jsonError } from "@/features/cms/server/http";
 export const Route = createFileRoute("/api/content/v1/articles/$slug")({
   server: {
