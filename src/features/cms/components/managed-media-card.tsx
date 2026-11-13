@@ -13,7 +13,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { DropdownMenuGroup, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -23,6 +31,7 @@ import {
   MediaCard as MediaLibraryCard,
   mediaDisplayName,
 } from "@/features/cms/components/media-card";
+import { emptyMediaUsage, type MediaUsage } from "@/features/cms/domain/media-associations";
 import {
   deleteMediaFn,
   getMediaUsageFn,
@@ -34,18 +43,19 @@ export function ManagedMediaCard({
   item,
   refresh,
 }: {
-  item: Awaited<ReturnType<typeof listMediaFn>>[number];
+  item: Omit<Awaited<ReturnType<typeof listMediaFn>>[number], "usage"> & { usage?: MediaUsage };
   refresh: () => Promise<unknown>;
 }) {
   const { data: session } = authClient.useSession();
-  const canManage = roleHasPermission(session?.user.role, "cmsMedia", "delete");
+  const canEdit = roleHasPermission(session?.user.role, "cmsMedia", "update");
+  const canDelete = roleHasPermission(session?.user.role, "cmsMedia", "delete");
   const [name, setName] = useState(mediaDisplayName(item));
   const [altText, setAltText] = useState(item.altText ?? "");
   const [caption, setCaption] = useState(item.caption ?? "");
   const [editing, setEditing] = useState(false);
   const [pending, setPending] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [usage, setUsage] = useState(item.usage);
+  const [usage, setUsage] = useState(item.usage ?? emptyMediaUsage());
 
   async function save() {
     setPending(true);
@@ -94,14 +104,67 @@ export function ManagedMediaCard({
     }
   }
 
-  const displayName = mediaDisplayName({ ...item, name });
+  const displayName = mediaDisplayName(item);
+  function changeEditing(open: boolean) {
+    if (open) {
+      setName(mediaDisplayName(item));
+      setAltText(item.altText ?? "");
+      setCaption(item.caption ?? "");
+    }
+    setEditing(open);
+  }
 
   return (
-    <Collapsible open={editing} onOpenChange={setEditing}>
+    <>
       <MediaLibraryCard
-        item={{ ...item, name, altText, caption }}
-        details={
-          <CollapsibleContent>
+        item={item}
+        pending={pending}
+        menuItems={
+          <DropdownMenuGroup>
+            <DropdownMenuItem disabled={pending || !canEdit} onClick={() => changeEditing(true)}>
+              <Pencil />
+              Modifica
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                void navigator.clipboard
+                  .writeText(item.url)
+                  .then(() => toast.success("URL copiato"))
+                  .catch(() => toast.error("Impossibile copiare l’URL"))
+              }
+            >
+              <Clipboard />
+              Copia URL
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={pending || !canDelete}
+              onClick={() => void checkBeforeDelete()}
+            >
+              <Trash2 />
+              Sposta nel cestino
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        }
+      />
+      <Dialog
+        open={editing}
+        onOpenChange={(open) => {
+          if (!pending) changeEditing(open);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Modifica media</DialogTitle>
+            <DialogDescription>{item.filename}</DialogDescription>
+          </DialogHeader>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void save();
+            }}
+          >
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor={`name-${item.id}`}>Nome del media</FieldLabel>
@@ -131,46 +194,23 @@ export function ManagedMediaCard({
                   onChange={(event) => setCaption(event.target.value)}
                 />
               </Field>
-              <Button size="sm" disabled={pending || !name.trim()} onClick={() => void save()}>
-                {pending ? <Spinner data-icon="inline-start" /> : null}
-                Salva modifiche
-              </Button>
             </FieldGroup>
-          </CollapsibleContent>
-        }
-        actions={
-          <>
-            <CollapsibleTrigger
-              disabled={!canManage}
-              render={<Button type="button" size="sm" variant="outline" />}
-            >
-              <Pencil data-icon="inline-start" />
-              {editing ? "Chiudi" : "Modifica"}
-            </CollapsibleTrigger>
-            <Button
-              size="icon-sm"
-              variant="outline"
-              aria-label={`Copia URL di ${displayName}`}
-              onClick={() =>
-                void navigator.clipboard
-                  .writeText(item.url)
-                  .then(() => toast.success("URL copiato"))
-              }
-            >
-              <Clipboard />
-            </Button>
-            <Button
-              size="icon-sm"
-              variant="destructive"
-              disabled={pending || !canManage}
-              aria-label={`Sposta nel cestino ${displayName}`}
-              onClick={() => void checkBeforeDelete()}
-            >
-              {pending ? <Spinner /> : <Trash2 />}
-            </Button>
-          </>
-        }
-      />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={pending}
+                onClick={() => changeEditing(false)}
+              >
+                Annulla
+              </Button>
+              <Button type="submit" disabled={pending || !name.trim()}>
+                {pending ? <Spinner data-icon="inline-start" /> : null}Salva modifiche
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -194,6 +234,6 @@ export function ManagedMediaCard({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Collapsible>
+    </>
   );
 }

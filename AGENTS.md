@@ -72,6 +72,14 @@ In these sections:
 
 Only landing page, hero, and showcase sections are exempt and may use custom visual composition.
 
+## CMS management tables
+
+- Keep the dashboard main within the available width. Contain horizontal overflow inside individual tables, editors, or other components.
+- Use dedicated sibling routes for CMS creation and uploads; do not put creation forms in list-page tabs or run list loaders for creation pages.
+- Perform management-list search, filters, row sorting, and pagination in validated server queries with bounded page sizes. Keep column sizing, visibility, order, and pinning in browser state.
+- Place table filter menus on the left and search with refresh on the right. Keep column controls in the table footer and creation actions outside the table toolbar. Use a central segmented primary filter only when it adds value, such as article status. Avoid redundant headings, subtitles, and introductory cards.
+- Pinned columns must use computed offsets and opaque surfaces; contain editor stacking below portalled shadcn menus and dialogs.
+
 # TanStack Start rules
 
 ## GEO and structured data

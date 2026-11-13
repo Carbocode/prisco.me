@@ -1,13 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, count, eq, isNull, isNotNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/db";
 import { cmsCategories, cmsMedia } from "@/db/schema";
 
+import { listSearchSchema } from "../domain/list-search";
 import { createCategorySchema, updateCategorySchema } from "../domain/validation";
 import { requireCmsPermission } from "./cms-auth";
+import { listOrder, listTextFilter, listPage } from "./list-query";
 async function assertHeroImage(heroMediaId: string | null | undefined) {
   if (!heroMediaId) return;
   const media = await getDb(env).query.cmsMedia.findFirst({
@@ -57,3 +59,48 @@ export const archiveCategoryFn = createServerFn({ method: "POST" })
       .where(eq(cmsCategories.id, data.id));
     return { ok: true };
   });
+
+export const listCategoriesPageFn = createServerFn({ method: "GET" })
+  .validator(listSearchSchema)
+  .handler(async ({ data }) => {
+    await requireCmsPermission("cmsCategory", data.scope === "trash" ? "delete" : "list");
+    const database = getDb(env);
+    const where = and(
+      data.scope === "trash" ? isNotNull(cmsCategories.deletedAt) : isNull(cmsCategories.deletedAt),
+      listTextFilter(data.query, cmsCategories.name, cmsCategories.slug),
+    );
+    const [totalRow] = await database.select({ value: count() }).from(cmsCategories).where(where);
+    const total = totalRow?.value ?? 0;
+    const page = listPage(data.page, data.pageSize, total);
+    const items = await database
+      .select()
+      .from(cmsCategories)
+      .where(where)
+      .orderBy(
+        listOrder(
+          {
+            name: cmsCategories.name,
+            slug: cmsCategories.slug,
+            schemaType: cmsCategories.schemaType,
+            articleLayout: cmsCategories.articleLayout,
+            updatedAt: cmsCategories.updatedAt,
+          },
+          data.sortBy,
+          data.direction,
+          cmsCategories.name,
+        ),
+        asc(cmsCategories.id),
+      )
+      .limit(data.pageSize)
+      .offset((page - 1) * data.pageSize);
+    return { items, total, page, pageSize: data.pageSize };
+  });
+
+export const listCategoryOptionsFn = createServerFn({ method: "GET" }).handler(async () => {
+  await requireCmsPermission("cmsCategory", "list");
+  return getDb(env)
+    .select({ id: cmsCategories.id, name: cmsCategories.name })
+    .from(cmsCategories)
+    .where(isNull(cmsCategories.deletedAt))
+    .orderBy(asc(cmsCategories.name));
+});

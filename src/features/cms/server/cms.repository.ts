@@ -1,19 +1,4 @@
-import {
-  and,
-  count,
-  desc,
-  eq,
-  getTableColumns,
-  gte,
-  inArray,
-  isNull,
-  like,
-  lt,
-  lte,
-  ne,
-  or,
-  sql,
-} from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lt, lte, ne, or, sql } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 import type * as schema from "@/db/schema";
@@ -27,6 +12,8 @@ import {
 } from "@/db/schema";
 import { user } from "@/db/schema";
 
+import { listOrder, listPage, listTextFilter } from "./list-query";
+
 export type CmsDb = DrizzleD1Database<typeof schema>;
 export function articleRepository(db: CmsDb) {
   return {
@@ -36,6 +23,8 @@ export function articleRepository(db: CmsDb) {
       page: number;
       pageSize: number;
       query?: string;
+      sortBy?: string;
+      direction?: "asc" | "desc";
       status?: string;
       authorId?: string;
       categoryId?: string;
@@ -58,25 +47,42 @@ export function articleRepository(db: CmsDb) {
         );
       if (input.dateFrom) filters.push(gte(cmsArticles.updatedAt, input.dateFrom));
       if (input.dateTo) filters.push(lte(cmsArticles.updatedAt, input.dateTo));
-      if (input.query)
-        filters.push(
-          or(
-            like(cmsArticles.title, `%${input.query}%`),
-            like(cmsArticles.slug, `%${input.query}%`),
-          )!,
-        );
+      const textFilter = listTextFilter(input.query, cmsArticles.title, cmsArticles.slug);
+      if (textFilter) filters.push(textFilter);
       const where = and(...filters);
-      const [items, total] = await Promise.all([
-        db
-          .select({ ...getTableColumns(cmsArticles), authorName: user.name })
-          .from(cmsArticles)
-          .leftJoin(user, eq(cmsArticles.authorId, user.id))
-          .where(where)
-          .orderBy(desc(cmsArticles.updatedAt))
-          .limit(input.pageSize)
-          .offset((input.page - 1) * input.pageSize),
-        db.select({ value: count() }).from(cmsArticles).where(where),
-      ]);
+      const total = await db.select({ value: count() }).from(cmsArticles).where(where);
+      const page = listPage(input.page, input.pageSize, total[0]?.value ?? 0);
+      const items = await db
+        .select({
+          id: cmsArticles.id,
+          title: cmsArticles.title,
+          slug: cmsArticles.slug,
+          status: cmsArticles.status,
+          authorName: user.name,
+          updatedAt: cmsArticles.updatedAt,
+          publishedAt: cmsArticles.publishedAt,
+          projectSortOrder: cmsArticles.projectSortOrder,
+        })
+        .from(cmsArticles)
+        .leftJoin(user, eq(cmsArticles.authorId, user.id))
+        .where(where)
+        .orderBy(
+          listOrder(
+            {
+              title: cmsArticles.title,
+              status: effectiveStatus,
+              authorName: user.name,
+              updatedAt: cmsArticles.updatedAt,
+              publishedAt: cmsArticles.publishedAt,
+            },
+            input.sortBy ?? "updatedAt",
+            input.direction ?? "desc",
+            cmsArticles.updatedAt,
+          ),
+          asc(cmsArticles.id),
+        )
+        .limit(input.pageSize)
+        .offset((page - 1) * input.pageSize);
       const categoryRows = items.length
         ? await db
             .select({
@@ -94,6 +100,7 @@ export function articleRepository(db: CmsDb) {
             )
         : [];
       return {
+        page,
         items: items.map((item) => ({
           ...item,
           status:

@@ -5,13 +5,14 @@ import {
   ArrowUp,
   Eye,
   MoreHorizontal,
+  PanelRight,
   Plus,
   Save,
   Send,
   Undo2,
   X,
 } from "lucide-react";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 
 import {
   Accordion,
@@ -68,7 +69,6 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import {
   Select,
   SelectContent,
@@ -78,6 +78,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -96,6 +103,7 @@ const CmsEditor = lazy(() =>
 );
 export function ArticleForm(props: ArticleFormProps) {
   const state = useArticleForm(props);
+  const [propertiesOpen, setPropertiesOpen] = useState(false);
   useArticleSiteTools(state);
   const {
     article,
@@ -176,7 +184,7 @@ export function ArticleForm(props: ArticleFormProps) {
   } = state;
   return (
     <form
-      className="flex flex-col xl:h-(--layout-h-hero-viewport) xl:overflow-hidden"
+      className="flex h-(--layout-h-hero-viewport) min-h-0 flex-col overflow-hidden"
       noValidate
       onSubmit={(event) => {
         event.preventDefault();
@@ -201,6 +209,16 @@ export function ArticleForm(props: ArticleFormProps) {
           </div>
           <fieldset className="flex flex-wrap gap-2">
             <legend className="sr-only">Azioni articolo</legend>
+            <Button
+              type="button"
+              variant="outline"
+              aria-expanded={propertiesOpen}
+              aria-controls="article-properties"
+              onClick={() => setPropertiesOpen((open) => !open)}
+            >
+              <PanelRight data-icon="inline-start" />
+              Proprietà
+            </Button>
             {article ? (
               <Button
                 type="button"
@@ -299,8 +317,11 @@ export function ArticleForm(props: ArticleFormProps) {
       ) : null}
       {(() => {
         const editorPane = (
-          <div className="flex min-w-0 flex-col xl:h-full xl:min-h-0 xl:overflow-y-auto">
-            <div className="mx-auto w-full max-w-3xl px-6 pt-6 pb-4">
+          <section
+            aria-label="Scrittura articolo"
+            className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto"
+          >
+            <div className="mx-auto w-full max-w-4xl pt-8 pr-8 pb-6 pl-24">
               <FieldSet disabled={readOnly || pending}>
                 <FieldGroup>
                   <Field>
@@ -340,12 +361,13 @@ export function ArticleForm(props: ArticleFormProps) {
                 }}
               />
             </Suspense>
-          </div>
+          </section>
         );
         const sidebarPane = (
           <aside
+            id="article-properties"
             aria-label="Proprietà e pubblicazione"
-            className="flex flex-col gap-4 p-4 xl:h-full xl:min-h-0 xl:overflow-y-auto"
+            className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4"
           >
             <FieldSet disabled={readOnly || pending}>
               <Tabs defaultValue="properties">
@@ -776,40 +798,34 @@ export function ArticleForm(props: ArticleFormProps) {
             </FieldSet>
           </aside>
         );
-        if (!isDesktop) {
-          return (
-            <Tabs defaultValue="write">
-              <TabsList aria-label="Area di lavoro articolo">
-                <TabsTrigger value="write">Scrittura</TabsTrigger>
-                <TabsTrigger value="settings">Proprietà e pubblicazione</TabsTrigger>
-              </TabsList>
-              <TabsContent value="write" keepMounted>
-                {editorPane}
-              </TabsContent>
-              <TabsContent value="settings" keepMounted>
-                {sidebarPane}
-              </TabsContent>
-            </Tabs>
-          );
-        }
         return (
-          <ResizablePanelGroup
-            orientation="horizontal"
-            className="min-h-0 flex-1 items-stretch overflow-hidden"
-          >
-            <ResizablePanel defaultSize="68%" minSize="45%" className="h-full min-w-0">
-              {editorPane}
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel
-              defaultSize="32%"
-              minSize="28%"
-              maxSize="45%"
-              className="h-full min-w-0"
-            >
-              {sidebarPane}
-            </ResizablePanel>
-          </ResizablePanelGroup>
+          <div className="flex min-h-0 flex-1 overflow-hidden">
+            {editorPane}
+            {isDesktop ? (
+              propertiesOpen ? (
+                <div className="flex w-96 shrink-0 flex-col border-l">
+                  <div className="p-4">
+                    <h2 className="font-heading font-semibold">Proprietà articolo</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Organizzazione, visibilità e cronologia.
+                    </p>
+                  </div>
+                  <Separator />
+                  {sidebarPane}
+                </div>
+              ) : null
+            ) : (
+              <Sheet open={propertiesOpen} onOpenChange={setPropertiesOpen}>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Proprietà articolo</SheetTitle>
+                    <SheetDescription>Organizzazione, visibilità e cronologia.</SheetDescription>
+                  </SheetHeader>
+                  {sidebarPane}
+                </SheetContent>
+              </Sheet>
+            )}
+          </div>
         );
       })()}
       <AlertDialog

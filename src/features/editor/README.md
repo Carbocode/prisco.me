@@ -4,9 +4,11 @@ The editor owns Plate composition and browser-side document editing. The canonic
 
 ## Block interactions
 
-Each editable block exposes separate shadcn controls for insertion, dragging, and a click/keyboard-accessible action menu. Controls remain visible on touch devices and on keyboard focus; precision pointers reveal them on hover. The canvas reserves a gutter for these controls. Duplication passes the target node entry to Plate and preserves normal undo history. Read-only blocks expose no mutation controls.
+Each editable block exposes separate shadcn controls for insertion, dragging, and a click/keyboard-accessible action menu. Controls remain visible on touch devices and on keyboard focus; precision pointers reveal them on hover. The canvas and nested columns reserve a gutter for these controls. Block spacing belongs to the draggable wrapper so heading margins do not move text away from its controls. Ordered list numbering skips deeper list items and resumes at the parent depth. Duplication passes the target node entry to Plate and preserves normal undo history. Read-only blocks expose no mutation controls.
 
 `components/block-draggable.test.tsx` verifies menu activation, target duplication with undo, and read-only behavior using a real Plate editor. Browser layout checks remain necessary for clipping, nested blocks, drag/drop, and touch interactions.
+
+The editor and canvas isolate their stacking contexts. Block controls and drop indicators stay below the opaque sticky toolbar; portalled shadcn menus and dialogs keep their own default stacking. Table cells use opaque theme surfaces, with selection tint contained inside each cell.
 
 ## Site tools
 

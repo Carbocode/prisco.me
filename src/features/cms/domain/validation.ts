@@ -70,6 +70,10 @@ export const listArticlesSchema = z.object({
   status: z.enum(["draft", "scheduled", "published", "archived"]).optional(),
   categoryId: z.string().uuid().optional(),
   authorId: z.string().uuid().optional(),
+  sortBy: z
+    .enum(["title", "status", "authorName", "updatedAt", "publishedAt"])
+    .default("updatedAt"),
+  direction: z.enum(["asc", "desc"]).default("desc"),
   dateFrom: z.coerce.date().optional(),
   dateTo: z.coerce.date().optional(),
 });

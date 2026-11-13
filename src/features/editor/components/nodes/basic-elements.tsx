@@ -1,12 +1,19 @@
 import { isOrderedList } from "@platejs/list";
 import { useTocElement, useTocElementState } from "@platejs/toc/react";
-import { type TElement } from "platejs";
-import { PlateElement, useEditorRef, useNodePath, type PlateElementProps } from "platejs/react";
+import { ElementApi, type TElement } from "platejs";
+import {
+  PlateElement,
+  useEditorRef,
+  useEditorSelector,
+  useReadOnly,
+  useNodePath,
+  type PlateElementProps,
+} from "platejs/react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { orderedListNumber } from "@/features/editor/domain/ordered-list-number";
 
 export function ParagraphElement(props: PlateElementProps) {
   const element = props.element as TElement & {
@@ -17,6 +24,17 @@ export function ParagraphElement(props: PlateElementProps) {
   };
   const editor = useEditorRef();
   const path = useNodePath(element);
+  const readOnly = useReadOnly();
+  const listNumber = useEditorSelector(
+    (currentEditor) => {
+      if (!path?.length) return 1;
+      if (path.length === 1) return orderedListNumber(currentEditor.children, path[0]);
+      const parent = currentEditor.api.node(path.slice(0, -1))?.[0];
+      if (!parent || !ElementApi.isElement(parent)) return 1;
+      return orderedListNumber(parent.children, path[path.length - 1]);
+    },
+    [path],
+  );
   if (element.listStyleType === "todo") {
     return (
       <PlateElement
@@ -29,6 +47,7 @@ export function ParagraphElement(props: PlateElementProps) {
           <Checkbox
             checked={element.checked === true}
             aria-label="Completa attività"
+            disabled={readOnly}
             onCheckedChange={(checked) => {
               if (path) editor.tf.setNodes({ checked }, { at: path });
             }}
@@ -40,22 +59,11 @@ export function ParagraphElement(props: PlateElementProps) {
   }
   if (element.listStyleType) {
     const ordered = isOrderedList(element);
-    let listNumber = 1;
-    if (ordered && path?.length === 1) {
-      for (let index = path[0] - 1; index >= 0; index -= 1) {
-        const previous = editor.children[index];
-        if (!isOrderedList(previous) || previous.indent !== element.indent) break;
-        listNumber += 1;
-      }
-    }
     return (
       <PlateElement
         {...props}
         as="div"
-        className={cn(
-          cn("cms-plate-list-item", ordered && ""),
-          "dynamic-margin-left dynamic-text-align",
-        )}
+        className="cms-plate-list-item dynamic-margin-left dynamic-text-align"
         data-list-type={element.listStyleType}
         style={{
           "--dynamic-margin-left": `${Math.max(0, (element.indent ?? 1) - 1) * 1.5}rem`,

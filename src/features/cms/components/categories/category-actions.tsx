@@ -34,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TableCell, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/features/auth/client/auth-client";
 import { roleHasPermission } from "@/features/auth/domain/permissions";
@@ -57,7 +56,7 @@ import {
   isCategorySchemaType,
 } from "@/features/content/domain/content-category";
 
-export function CategoryRow({
+export function CategoryActions({
   category,
   media,
   refresh,
@@ -118,73 +117,50 @@ export function CategoryRow({
 
   return (
     <>
-      <TableRow>
-        <TableCell>
-          <div className="flex flex-col gap-1">
-            <span className="font-medium">{category.name}</span>
-            <span className="text-sm text-muted-foreground">/{category.slug}</span>
-          </div>
-        </TableCell>
-        <TableCell>{categorySchemaTypeLabel[category.schemaType]}</TableCell>
-        <TableCell>
-          <div className="flex flex-col gap-1">
-            <span>{categoryArticleLayoutLabel[category.articleLayout]}</span>
-            <span className="text-sm text-muted-foreground">
-              {categoryArchiveSortLabel[category.archiveSort]}
-            </span>
-          </div>
-        </TableCell>
-        <TableCell>
-          <ButtonGroup>
-            <Button
-              size="icon-sm"
-              variant="outline"
-              aria-label={`Modifica ${category.name}`}
-              disabled={!canManage}
-              onClick={() => {
-                setName(category.name);
-                setSlug(category.slug);
-                setDescription(category.description ?? "");
-                setSchemaType(category.schemaType);
-                setArchiveSort(category.archiveSort);
-                setArticleLayout(category.articleLayout);
-                setHeroMediaId(category.heroMediaId ?? "");
-                setEditing(true);
-              }}
-            >
-              <Pencil />
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger
-                disabled={!canManage || pending}
-                render={
-                  <Button
-                    size="icon-sm"
-                    variant="outline"
-                    aria-label={`Archivia ${category.name}`}
-                  />
-                }
-              >
-                <Trash2 />
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Archiviare “{category.name}”?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    La categoria non sarà più disponibile per i nuovi articoli.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Annulla</AlertDialogCancel>
-                  <AlertDialogAction variant="destructive" onClick={() => void archive()}>
-                    Archivia
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
+      <ButtonGroup>
+        <Button
+          size="icon-sm"
+          variant="outline"
+          aria-label={`Modifica ${category.name}`}
+          disabled={!canManage}
+          onClick={() => {
+            setName(category.name);
+            setSlug(category.slug);
+            setDescription(category.description ?? "");
+            setSchemaType(category.schemaType);
+            setArchiveSort(category.archiveSort);
+            setArticleLayout(category.articleLayout);
+            setHeroMediaId(category.heroMediaId ?? "");
+            setEditing(true);
+          }}
+        >
+          <Pencil />
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger
+            disabled={!canManage || pending}
+            render={
+              <Button size="icon-sm" variant="outline" aria-label={`Archivia ${category.name}`} />
+            }
+          >
+            <Trash2 />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Archiviare “{category.name}”?</AlertDialogTitle>
+              <AlertDialogDescription>
+                La categoria non sarà più disponibile per i nuovi articoli.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annulla</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={() => void archive()}>
+                Archivia
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </ButtonGroup>
       <Dialog
         open={editing}
         onOpenChange={(open) => {
@@ -311,6 +287,7 @@ export function CategoryRow({
                 <Field>
                   <FieldLabel>Immagine hero</FieldLabel>
                   <MediaPicker
+                    remote
                     items={media}
                     value={heroMediaId}
                     label="Scegli l’immagine hero"

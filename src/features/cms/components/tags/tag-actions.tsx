@@ -17,6 +17,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TableCell, TableRow } from "@/components/ui/table";
 import { authClient } from "@/features/auth/client/auth-client";
 import { roleHasPermission } from "@/features/auth/domain/permissions";
 import { type Tag, type Category } from "@/features/cms/components/tags/tag.types";
@@ -35,7 +41,7 @@ import { slugInputPattern } from "@/features/cms/domain/slug";
 import { archiveTagFn, updateTagFn } from "@/features/cms/server/tag.functions";
 import { SkillGlyph } from "@/features/portfolio/components/tech-icon";
 
-export function TagRow({
+export function TagActions({
   tag,
   categories,
   refresh,
@@ -85,12 +91,21 @@ export function TagRow({
     }
   }
 
-  if (editing) {
-    return (
-      <TableRow>
-        <TableCell colSpan={6}>
+  return (
+    <>
+      <Dialog
+        open={editing}
+        onOpenChange={(open) => {
+          if (!pending) setEditing(open);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Modifica tag</DialogTitle>
+            <DialogDescription>{tag.name}</DialogDescription>
+          </DialogHeader>{" "}
           <form onSubmit={(event) => void save(event)}>
-            <FieldGroup className="grid items-end md:grid-cols-2 xl:grid-cols-(--layout-grid-cols-cms-search)">
+            <FieldGroup className="grid max-h-viewport-panel overflow-y-auto md:grid-cols-2">
               <Field>
                 <FieldLabel htmlFor={`tag-${tag.id}-name`}>Nome</FieldLabel>
                 <Input
@@ -194,69 +209,43 @@ export function TagRow({
               </Field>
             </FieldGroup>
           </form>
-        </TableCell>
-      </TableRow>
-    );
-  }
-
-  return (
-    <TableRow>
-      <TableCell>
-        <span className="font-medium">{tag.name}</span>
-      </TableCell>
-      <TableCell>
-        <span className="text-muted-foreground">/{tag.slug}</span>
-      </TableCell>
-      <TableCell>{tag.categoryName}</TableCell>
-      <TableCell>
-        <Badge variant="outline">
-          <SkillGlyph skill={tag} size={12} />
-          {tag.icon || "Fallback"}
-        </Badge>
-      </TableCell>
-      <TableCell>
-        <Badge>
-          <SkillGlyph skill={tag} size={12} />
-          {tag.name}
-        </Badge>
-      </TableCell>
-      <TableCell className="text-right">
-        <ButtonGroup>
-          <Button
-            size="icon-sm"
-            variant="outline"
-            aria-label={`Modifica ${tag.name}`}
+        </DialogContent>
+      </Dialog>{" "}
+      <ButtonGroup>
+        <Button
+          size="icon-sm"
+          variant="outline"
+          aria-label={`Modifica ${tag.name}`}
+          disabled={!canManage}
+          onClick={() => setEditing(true)}
+        >
+          <Pencil />
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger
             disabled={!canManage}
-            onClick={() => setEditing(true)}
+            render={
+              <Button size="icon-sm" variant="destructive" aria-label={`Archivia ${tag.name}`} />
+            }
           >
-            <Pencil />
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger
-              disabled={!canManage}
-              render={
-                <Button size="icon-sm" variant="destructive" aria-label={`Archivia ${tag.name}`} />
-              }
-            >
-              <Trash2 />
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Archiviare “{tag.name}”?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Il tag non sarà più disponibile per i nuovi contenuti.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Annulla</AlertDialogCancel>
-                <AlertDialogAction variant="destructive" onClick={() => void archive()}>
-                  Archivia
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </ButtonGroup>
-      </TableCell>
-    </TableRow>
+            <Trash2 />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Archiviare “{tag.name}”?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Il tag non sarà più disponibile per i nuovi contenuti.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annulla</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={() => void archive()}>
+                Archivia
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </ButtonGroup>
+    </>
   );
 }
