@@ -49,6 +49,11 @@ These rules apply throughout the repository and to every new implementation or r
 
 # Interface rules
 
+## ui-sdk
+
+- Before using ui-sdk, follow the `ui-sdk` skill if it is installed, and read `node_modules/@ui-sdk/react/docs/llms.txt`.
+- To build a new component, also search `node_modules/@ui-sdk/react/docs/core.md` by heading and read `node_modules/@ui-sdk/react/docs/rendering.md`.
+
 ## Static SVG artwork and WebP caches
 
 - For complex static artwork or artwork with filters, prefer a prerendered lossless WebP that looks the same in all browsers. Always retain the original SVG as an editable source.
