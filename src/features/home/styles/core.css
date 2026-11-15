@@ -17,9 +17,17 @@
   transition: transform 300ms linear;
 }
 .home-traversata .core-ring {
-  transform-box: view-box;
-  transform-origin: 600px 720px;
+  position: absolute;
+  left: -3.333333%;
+  top: 11.111111%;
+  width: 106.666667%;
+  max-width: none;
+  height: auto;
+  transform-origin: center;
   animation: home-core-spin var(--spin) linear infinite;
+}
+.home-traversata .is-motion-visible .core-ring {
+  will-change: transform;
 }
 .home-traversata .core-ring.is-rev {
   animation-direction: reverse;

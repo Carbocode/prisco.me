@@ -856,5 +856,47 @@
         "outputHash": "0676fac928f80f4e5863a99b47032a38bc9d344d1ab2318b460b2c76e71b4c2f"
       }
     ]
+  },
+  {
+    "source": "home/core-ring-1.svg",
+    "width": 1920,
+    "sourceHash": "b6088dec91e8743cab8417d5d489c920d6ad73d38ddb2795d35610ee7618e271",
+    "outputHash": "7303a10ca5481586b91aec4cf5fe2ab044c1d76ca5a089deb7ed52914d3b689e"
+  },
+  {
+    "source": "home/core-ring-2.svg",
+    "width": 1920,
+    "sourceHash": "364c34dd410fd8c1b230388b2f6ce04aca43a30b7cdc61423ddb00d2420e52a0",
+    "outputHash": "7e09b36412e3a4eeeec0d9f36fe82f62f6d37d4c443fc62166f1916c0d3e517c"
+  },
+  {
+    "source": "home/core-ring-3.svg",
+    "width": 1920,
+    "sourceHash": "d446365192b7e5d9a5ce87e1529b2dfa794f7f0d95c7db32a9211a229b9f3235",
+    "outputHash": "a64b9b21d1b0d36381ead6631675b02541049916a0c5e41087ebc945471d61c5"
+  },
+  {
+    "source": "home/core-ring-4.svg",
+    "width": 1920,
+    "sourceHash": "8aa025d1889b5166249a17b399712f975954dbeb73446b4224ae7dcededf0fc7",
+    "outputHash": "06ff7787fc4c8c38e301ea65815a1a50d4257678544e97cbf21cbf6e3e8ac805"
+  },
+  {
+    "source": "home/core-ring-5.svg",
+    "width": 1920,
+    "sourceHash": "92f29d91cea320030e3a8d0b936e193969862058f53cb269b92384a8ecab6f65",
+    "outputHash": "dc56dcd09e1bcfd7e0239f64a51cb4af272e579a4c3839e7d5015e0ed0ff12e7"
+  },
+  {
+    "source": "home/core-ring-6.svg",
+    "width": 1920,
+    "sourceHash": "89c38b983e4835557968d746dbaa92bef54e6703687ecf0ad5a241d5f4e7093e",
+    "outputHash": "4f29acfe9125e185328488b5dfb4f63562c41347842adad340f94d39d792b3ca"
+  },
+  {
+    "source": "home/core-ring-7.svg",
+    "width": 1920,
+    "sourceHash": "e4faa46b3f29bb5ff401ea9d50dc5d0e819db7166bb5fcf8a2433af0508db4de",
+    "outputHash": "be5da513ab45b90c005642a5f93f438f538ae2ac4e73da8a367974fdc8255093"
   }
 ]
