@@ -12,3 +12,5 @@ Sections compose artwork; artwork must not import sections or the page. Animatio
 `motion/hero-parallax.js` applies parallax variables only to `.depth` layers to avoid invalidating styles throughout the hero subtree during scrolling and pointer movement. Star entrance belongs to `.star-enter`, while twinkling belongs to the inner image: do not assign competing `transform` and `opacity` animations to the same element. Also keep parallax and CSS animation layers separate.
 
 Page tests verify SSR rendering and story behavior. Visual tests recursively read CSS imports. Pure functions keep tests beside their implementation.
+
+The core scene rotates seven independently cached WebP layers with CSS transforms, rather than filtering an animated SVG group on every frame. Editable sources are `public/home/core-ring-*.svg`; their lossless renders are tracked in the static artwork manifest. Each square layer is centered on the original (600, 720) rotation pivot and includes transparent margins for the glow. Keep the halo and embers independent, and reserve compositor layers only while the section is near the viewport.

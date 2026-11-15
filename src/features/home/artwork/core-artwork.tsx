@@ -1,19 +1,75 @@
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
-import CoreRings from "@/components/artwork/core-rings";
 
 export function CoreArtwork() {
   return (
     <div className="core-stage" aria-hidden="true">
       <div className="core-halo" />
-      <svg
-        className="core-art"
-        viewBox="0 0 1200 720"
-        preserveAspectRatio="xMidYMax slice"
-        aria-hidden="true"
-      >
-        <CoreRings rimGradientId="u-rim-warm" heatFilterId="u-heat" />
-      </svg>
+      <div className="core-art">
+        <img
+          className="core-ring"
+          src="/home/core-ring-1.webp"
+          alt=""
+          width="1920"
+          height="1920"
+          decoding="async"
+          style={{ "--spin": "80s" }}
+        />
+        <img
+          className="core-ring is-rev"
+          src="/home/core-ring-2.webp"
+          alt=""
+          width="1920"
+          height="1920"
+          decoding="async"
+          style={{ "--spin": "98s" }}
+        />
+        <img
+          className="core-ring"
+          src="/home/core-ring-3.webp"
+          alt=""
+          width="1920"
+          height="1920"
+          decoding="async"
+          style={{ "--spin": "116s" }}
+        />
+        <img
+          className="core-ring is-rev"
+          src="/home/core-ring-4.webp"
+          alt=""
+          width="1920"
+          height="1920"
+          decoding="async"
+          style={{ "--spin": "134s" }}
+        />
+        <img
+          className="core-ring"
+          src="/home/core-ring-5.webp"
+          alt=""
+          width="1920"
+          height="1920"
+          decoding="async"
+          style={{ "--spin": "152s" }}
+        />
+        <img
+          className="core-ring is-rev"
+          src="/home/core-ring-6.webp"
+          alt=""
+          width="1920"
+          height="1920"
+          decoding="async"
+          style={{ "--spin": "170s" }}
+        />
+        <img
+          className="core-ring"
+          src="/home/core-ring-7.webp"
+          alt=""
+          width="1920"
+          height="1920"
+          decoding="async"
+          style={{ "--spin": "188s" }}
+        />
+      </div>
       <div className="embers">
         <span
           style={{
