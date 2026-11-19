@@ -9,11 +9,17 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/features/auth/client/auth-client";
 import { AuthPage, formString, formValues } from "@/features/auth/components/auth-ui";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 export const Route = createFileRoute("/verify-2fa")({
-  head: () => ({
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) => ({
     meta: [
-      { title: "Verifica in due passaggi | Prisco.me" },
+      { title: m.twofactor_seo_title({}, { locale }) },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -21,6 +27,7 @@ export const Route = createFileRoute("/verify-2fa")({
 });
 
 function TwoFactorChallenge() {
+  const locale = useSiteLocale();
   const navigate = useNavigate();
   const [backup, setBackup] = useState(false);
   const [error, setError] = useState("");
@@ -33,13 +40,13 @@ function TwoFactorChallenge() {
           trustDevice: Boolean(values.get("trust")),
         })
       : await authClient.twoFactor.verifyTotp({ code, trustDevice: Boolean(values.get("trust")) });
-    if (result.error) setError(result.error.message ?? "Codice non valido.");
+    if (result.error) setError(result.error.message ?? m.twofactor_invalid({}, { locale }));
     else void navigate({ to: "/dashboard/profile" });
   }
   return (
     <AuthPage
-      title="Conferma che sei tu."
-      description="Inserisci il codice dell’app di autenticazione oppure usa uno dei codici di recupero."
+      title={m.twofactor_confirm_that_it_s_you({}, { locale })}
+      description={m.twofactor_enter_the_code_from_your_authenticator({}, { locale })}
     >
       <Card>
         <CardContent>
@@ -47,21 +54,26 @@ function TwoFactorChallenge() {
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="two-factor-code">
-                  {backup ? "Codice di recupero" : "Codice a 6 cifre"}
+                  {backup
+                    ? m.twofactor_recovery_code({}, { locale })
+                    : m.twofactor_six_digit_code({}, { locale })}
                 </FieldLabel>
                 <Input id="two-factor-code" name="code" autoComplete="one-time-code" required />
               </Field>
               <Field orientation="horizontal">
                 <Checkbox id="trust-device" name="trust" />
                 <FieldLabel htmlFor="trust-device">
-                  Considera attendibile questo dispositivo
+                  {m.twofactor_trust_this_device({}, { locale })}{" "}
                 </FieldLabel>
               </Field>
-              <Button type="submit">Verifica</Button>
+              <Button type="submit">{m.twofactor_verify({}, { locale })}</Button>
             </FieldGroup>
           </form>
           <Button variant="outline" onClick={() => setBackup(!backup)}>
-            Usa {backup ? "l’app di autenticazione" : "un codice di recupero"}
+            {m.twofactor_use({}, { locale })}{" "}
+            {backup
+              ? m.twofactor_app({}, { locale })
+              : m.twofactor_use_recovery_code({}, { locale })}
           </Button>
           {error && (
             <Alert variant="destructive">

@@ -179,9 +179,6 @@
   margin-inline: auto;
   text-align: center;
 }
-.home-traversata .layer-head .lead {
-  color: var(--warm-body);
-}
 .home-traversata .layer-more {
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
   text-align: center;

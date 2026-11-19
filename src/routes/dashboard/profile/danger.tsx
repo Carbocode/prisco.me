@@ -16,17 +16,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { localizedPath } from "@/config/site";
 import { authClient } from "@/features/auth/client/auth-client";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 export const Route = createFileRoute("/dashboard/profile/danger")({
-  head: () => ({ meta: [{ title: "Elimina account | Prisco.me" }] }),
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) => ({ meta: [{ title: m.danger_seo({}, { locale }) }] }),
   component: DangerPage,
 });
 
 function DangerPage() {
+  const locale = useSiteLocale();
   const navigate = useNavigate();
   async function deleteAccount() {
-    const result = await authClient.deleteUser({ callbackURL: "/" });
+    const result = await authClient.deleteUser({ callbackURL: localizedPath("/", locale) });
     if (result.error) toast.error(result.error.message ?? "Eliminazione non riuscita.");
     else {
       toast.success("Account eliminato.");
@@ -37,40 +45,44 @@ function DangerPage() {
   return (
     <div className="flex max-w-3xl flex-col gap-4">
       <header>
-        <p className="text-sm font-medium text-destructive">Zona pericolosa</p>
-        <h1 className="font-heading text-2xl font-semibold tracking-tight">Elimina account</h1>
+        <p className="text-sm font-medium text-destructive">
+          {m.danger_danger_zone({}, { locale })}
+        </p>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">
+          {m.danger_delete_account({}, { locale })}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Rimuovi definitivamente account, credenziali e accessi associati.
+          {m.danger_permanently_remove_the_account_credentials_and({}, { locale })}{" "}
         </p>
       </header>
       <Card size="sm">
         <CardHeader>
-          <CardTitle>Elimina account</CardTitle>
+          <CardTitle>{m.danger_delete_account({}, { locale })}</CardTitle>
           <CardDescription>
-            Vengono rimossi utente, credenziali, sessioni, passkey e dati OAuth. L’operazione non
-            può essere annullata.
+            {m.danger_this_removes_the_user_credentials_sessions({}, { locale })}{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <AlertDialog>
             <AlertDialogTrigger render={<Button variant="destructive" />}>
-              Elimina account
+              {m.danger_delete_account({}, { locale })}{" "}
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogMedia>
                   <TriangleAlert />
                 </AlertDialogMedia>
-                <AlertDialogTitle>Eliminare definitivamente l’account?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  {m.danger_permanently_delete_your_account({}, { locale })}
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  Questa azione non può essere annullata. Tutti i dati di autenticazione verranno
-                  rimossi.
+                  {m.danger_this_cannot_be_undone_all_authentication({}, { locale })}{" "}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Annulla</AlertDialogCancel>
+                <AlertDialogCancel>{m.danger_cancel({}, { locale })}</AlertDialogCancel>
                 <AlertDialogAction variant="destructive" onClick={() => void deleteAccount()}>
-                  Elimina account
+                  {m.danger_delete_account({}, { locale })}{" "}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import Header from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
+import * as m from "@/paraglide/messages.js";
 
 import { UndergroundDefs } from "./artwork/underground-defs";
 import type { HomePageProps } from "./home.types";
@@ -20,7 +21,7 @@ import { JourneySection } from "./sections/journey-section";
 import { ProjectsSection } from "./sections/projects-section";
 import { WritingsSection } from "./sections/writings-section";
 
-export function HomePage({ projects, experiences, articles }: HomePageProps) {
+export function HomePage({ projects, articles, locale }: HomePageProps) {
   const [footerOpen, setFooterOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => (ref.current ? animateHome(ref.current) : undefined), []);
@@ -36,23 +37,23 @@ export function HomePage({ projects, experiences, articles }: HomePageProps) {
         <div className="home-viewport" data-home-scroll="" data-scroll-restoration-id="home-page">
           <div className="home-traversata" ref={ref}>
             <a className="skip" href="#contenuto">
-              {"Salta al contenuto"}
+              {m.home_skip({}, { locale })}
             </a>
 
             <main id="contenuto">
-              <HeroSection experiences={experiences} />
+              <HeroSection locale={locale} />
 
-              <ApproachSection />
+              <ApproachSection locale={locale} />
 
-              <JourneySection experiences={experiences} />
+              <JourneySection locale={locale} />
 
               <div className="underground" data-underground="">
                 <UndergroundDefs />
-                <ProjectsSection projects={projects} />
+                <ProjectsSection locale={locale} projects={projects} />
 
-                <WritingsSection articles={articles} />
+                <WritingsSection locale={locale} articles={articles} />
 
-                <ContactSection />
+                <ContactSection locale={locale} />
               </div>
             </main>
           </div>
@@ -75,11 +76,11 @@ export function HomePage({ projects, experiences, articles }: HomePageProps) {
             aria-controls="home-footer-content"
             onClick={() => setFooterOpen((open) => !open)}
           >
-            {footerOpen ? "Torna alla storia ↑" : "Apri footer ↓"}
+            {footerOpen ? m.home_footer_close({}, { locale }) : m.home_footer_open({}, { locale })}
           </Button>
         </div>
         <div id="home-footer-content" inert={!footerOpen}>
-          <SiteFooter />
+          <SiteFooter locale={locale} />
         </div>
       </div>
     </div>

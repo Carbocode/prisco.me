@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, expect, it, vi } from "vitest";
 
-import type { Experience, Project } from "@/features/portfolio/domain/portfolio";
+import type { Project } from "@/features/portfolio/domain/portfolio";
 
 import { HomePage } from "./home-page";
 
@@ -29,22 +29,9 @@ const project: Project = {
   skills: [],
   content: "",
 };
-const experience: Experience = {
-  id: "career",
-  kind: "work",
-  org: "Organizzazione aggiornata",
-  title: "Ruolo aggiornato",
-  period: "2025 – oggi",
-  startDate: "2025-01",
-  endDate: "",
-  current: true,
-  narrative: "Percorso dal database",
-  skills: [],
-  projects: [],
-};
 const props = {
+  locale: "it" as const,
   projects: [project],
-  experiences: [experience],
   articles: [
     {
       id: "blog",
@@ -59,20 +46,23 @@ afterEach(() => {
   vi.unstubAllGlobals();
   document.body.replaceChildren();
 });
-it("rende i contenuti pubblicati e il percorso dal database anche senza JavaScript", () => {
+it("rende i contenuti pubblicati e il percorso statico anche senza JavaScript", () => {
   const markup = renderToStaticMarkup(<HomePage {...props} />);
   expect(markup).toContain('href="/progetti/progetto-cms"');
   expect(markup).toContain('href="/blog/articolo-cms"');
   expect(markup).toContain('src="/media/project-cover.webp"');
   expect(markup).toContain('src="/media/article-cover.webp"');
   expect(markup).toContain('alt="Copertina articolo"');
-  expect(markup).toContain("Organizzazione aggiornata");
-  expect(markup).toContain("Percorso dal database");
-  expect(markup).toContain('href="/career#experience-career"');
-  expect(markup).toContain("line-clamp-4");
+  expect(markup).toContain("Alle superiori");
+  expect(markup).toContain("codice legacy");
+  expect(markup).toContain("https://github.com/Carbocode");
+  expect(markup).toContain("Fitness");
+  expect(markup).toContain("preparatore atletico");
+  expect(markup).toContain("Gaming");
+  expect(markup).toContain('href="/career"');
   const title = markup.match(/<h1[^>]*>(.*?)<\/h1>/)?.[1].replace(/<[^>]+>/g, "");
   expect(title).toContain("Ciao, sono Vincenzo.");
-  expect(title).toContain("Costruisco prodotti digitali.");
+  expect(title).toContain("Sviluppo app e servizi.");
   expect(markup).not.toContain("Proposta di design statica");
   expect(markup).toContain('class="home-page is-framed relative"');
 });
@@ -119,7 +109,7 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   const sky = el.querySelector<SVGSVGElement>("[data-sky-svg]");
   const viewBox = sky?.getAttribute("viewBox")?.split(" ").map(Number);
   expect(viewBox?.[2]).toBe(480);
-  expect(viewBox?.[3]).toBeLessThan(2300);
+  expect(viewBox?.[3]).toBeLessThan(1500);
   expect(sky?.style.width).toBe("100%");
   expect(sky?.querySelectorAll(".sky-group")).toHaveLength(5);
   for (const title of sky?.querySelectorAll(".sky-name") ?? []) {
@@ -128,19 +118,29 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   }
   const placements = [...(sky?.querySelectorAll(".sky-group") ?? [])].map((group) => {
     const transform = group.getAttribute("transform") ?? "";
-    const scale = Number(transform.match(/scale\(([\d.]+)\)/)?.[1]);
+    const [x, y, scale] = transform
+      .match(/translate\((-?[\d.]+) (-?[\d.]+)\) scale\(([\d.]+)\)/)!
+      .slice(1)
+      .map(Number);
+    const [labelX, labelY] = group
+      .querySelector(".sky-name")!
+      .getAttribute("transform")!
+      .match(/translate\((-?[\d.]+) (-?[\d.]+)\)/)!
+      .slice(1)
+      .map(Number);
     expect(scale).toBeGreaterThan(0);
     expect(scale).toBeLessThanOrEqual(1);
-    return transform
-      .match(/translate\((-?[\d.]+) (-?[\d.]+)\)/)
-      ?.slice(1)
-      .map(Number);
+    return { x: Math.round(x + labelX * scale), y: Math.round(y + labelY * scale), scale };
   });
-  expect(
-    placements.every(
-      (position, index) => index === 0 || (position?.[1] ?? 0) > (placements[index - 1]?.[1] ?? 0),
-    ),
-  ).toBe(true);
+  expect(placements.map(({ x }) => x)).toEqual([123, 357, 240, 123, 357]);
+  const [, , center] = placements;
+  expect(center.scale).toBeLessThanOrEqual(
+    Math.max(...placements.filter((item) => item !== center).map(({ scale }) => scale)),
+  );
+  const rows = [...new Set(placements.map(({ y }) => y))];
+  expect(rows).toHaveLength(3);
+  expect(placements.map(({ y }) => rows.indexOf(y))).toEqual([0, 0, 1, 2, 2]);
+  expect(rows).toEqual([...rows].sort((a, b) => a - b));
   const scrollport = el.querySelector<HTMLElement>("[data-home-scroll]");
   expect(scrollport?.querySelector("footer")).toBeNull();
   expect(el.querySelector("[data-home-page] footer")).toBeNull();
@@ -324,4 +324,15 @@ it("loads static underground artwork responsively without removing interactive S
   });
   expect(document.querySelectorAll(".geode-glint")).toHaveLength(4);
   expect(document.querySelector(".geode-crystals image")).not.toBeNull();
+});
+
+it("renders the English Home and links to localized URLs", () => {
+  const markup = renderToStaticMarkup(<HomePage locale="en" projects={[]} articles={[]} />);
+  const page = new DOMParser().parseFromString(markup, "text/html");
+
+  expect(page.querySelector("h1")?.textContent).toContain("I build apps and services.");
+  expect(page.querySelector("#percorso")?.textContent).toContain("At university");
+  expect(page.querySelector('a[href="/en/career"]')).not.toBeNull();
+  expect(page.querySelector('a[href="/en/blog"]')?.textContent).toBe("Explore the blog");
+  expect(page.querySelectorAll("#percorso .stop")).toHaveLength(5);
 });

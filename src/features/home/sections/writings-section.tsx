@@ -1,16 +1,25 @@
 import { Fragment } from "react";
 
+import { localizedPath, type SiteLocale } from "@/config/site";
+import * as m from "@/paraglide/messages.js";
+
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
 import { GeodeArtwork } from "../artwork/geode-artwork";
 import type { HomeArticle } from "../home.types";
 
-export function WritingsSection({ articles }: { articles: HomeArticle[] }) {
+export function WritingsSection({
+  articles,
+  locale,
+}: {
+  articles: HomeArticle[];
+  locale: SiteLocale;
+}) {
   return (
     <section
       id="sedimenti"
       className="layer layer-mantle"
-      data-section="Scritti"
+      data-section={m.home_writings_section({}, { locale })}
       aria-labelledby="sedimenti-title"
     >
       <div className="bands" aria-hidden="true">
@@ -127,14 +136,9 @@ export function WritingsSection({ articles }: { articles: HomeArticle[] }) {
       <div className="wrap">
         <header className="layer-head">
           <h2 className="h2" id="sedimenti-title" data-reveal="">
-            {"Notizie e opinioni "}
-            <span className="serif">{"sulla tecnologia."}</span>
+            {m.home_writings_title({}, { locale })}
+            <span className="serif">{m.home_writings_technology({}, { locale })}</span>
           </h2>
-          <p className="lead" data-reveal="" style={{ "--i": "1" }}>
-            {
-              "Quello che si deposita lavorando: riflessioni sul software, esperienze personali e commenti su ciò che succede intorno."
-            }
-          </p>
         </header>
         <div className="geodes">
           <article className="geode" data-reveal="">
@@ -157,22 +161,24 @@ export function WritingsSection({ articles }: { articles: HomeArticle[] }) {
                       />
                     ) : null}
                     <h3>
-                      <a href={`/blog/${article.slug}`}>{article.title}</a>
+                      <a href={localizedPath(`/blog/${article.slug}`, locale)}>{article.title}</a>
                     </h3>
                     <p>{article.excerpt}</p>
                   </Fragment>
                 ))
               ) : (
                 <h3>
-                  <a href="/blog">Esplora gli scritti</a>
+                  <a href={localizedPath("/blog", locale)}>
+                    {m.home_writings_explore({}, { locale })}
+                  </a>
                 </h3>
               )}
             </div>
           </article>
         </div>
         <p className="layer-more" data-reveal="">
-          <a className="text-link" href="/blog">
-            {"Leggi tutti gli scritti "}
+          <a className="text-link" href={localizedPath("/blog", locale)}>
+            {m.home_writings_all({}, { locale })}
             <span aria-hidden="true">{"→"}</span>
           </a>
         </p>

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { HOME_PATHS, localizedPath } from "@/config/site";
 import { listPublishedArticlesByFilter } from "@/features/cms/server/articles/queries";
 
 const escapeXml = (value: string) =>
@@ -13,7 +14,13 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const articles = await listPublishedArticlesByFilter({});
-        const staticPaths = ["", "/about", "/career", "/contact"];
+        const pages = ["/about", "/career", "/contact", "/privacy", "/cookie"];
+        const staticPaths = [
+          "",
+          HOME_PATHS.en,
+          ...pages,
+          ...pages.map((path) => localizedPath(path, "en")),
+        ];
         const archivePaths = new Set<string>();
         for (const article of articles) {
           if (article.publishedAt) {

@@ -1,17 +1,57 @@
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
-import { Button } from "@/components/ui/button";
-import type { Experience } from "@/features/portfolio/domain/portfolio";
+import { BriefcaseBusiness, CodeXml, Dumbbell, Gamepad2, GraduationCap } from "lucide-react";
+
+import { localizedPath, type SiteLocale } from "@/config/site";
+import * as m from "@/paraglide/messages.js";
 
 import { DesertArtwork } from "../artwork/desert-artwork";
-import { careerExcerpt } from "./career-excerpt";
 
-export function JourneySection({ experiences }: { experiences: Experience[] }) {
+const profileCards = [
+  {
+    id: "education",
+    icon: GraduationCap,
+    title: m.home_profile_education_title,
+    paragraphs: [m.home_profile_education_body, m.home_profile_education_details],
+    link: { href: "/career", label: m.home_profile_education_link },
+  },
+  {
+    id: "work",
+    icon: BriefcaseBusiness,
+    title: m.home_profile_work_title,
+    paragraphs: [m.home_profile_work_body, m.home_profile_work_details],
+    link: { href: "/progetti", label: m.home_profile_work_link },
+  },
+  {
+    id: "open-source",
+    icon: CodeXml,
+    title: m.home_profile_open_source_title,
+    paragraphs: [m.home_profile_open_source_body, m.home_profile_open_source_details],
+    link: {
+      href: "https://github.com/Carbocode",
+      label: m.home_profile_open_source_link,
+    },
+  },
+  {
+    id: "fitness",
+    icon: Dumbbell,
+    title: m.home_profile_fitness_title,
+    paragraphs: [m.home_profile_fitness_body, m.home_profile_fitness_training],
+  },
+  {
+    id: "gaming",
+    icon: Gamepad2,
+    title: m.home_profile_gaming_title,
+    paragraphs: [m.home_profile_gaming_body, m.home_profile_gaming_details],
+  },
+];
+
+export function JourneySection({ locale }: { locale: SiteLocale }) {
   return (
     <section
       id="percorso"
       className="journey"
-      data-section="Percorso"
+      data-section={m.home_journey_section({}, { locale })}
       aria-labelledby="percorso-title"
       data-journey=""
     >
@@ -20,72 +60,39 @@ export function JourneySection({ experiences }: { experiences: Experience[] }) {
         <ol className="track" data-track="">
           <li className="journey-intro">
             <div className="journey-intro-copy">
-              <h2 className="h2" id="percorso-title">
-                {"Una traversata, "}
-                <span className="serif">{"tappa per tappa."}</span>
+              <h2 className="h2 serif" id="percorso-title">
+                {m.home_journey_title({}, { locale })}
               </h2>
-              <p className="lead">
-                {
-                  "Dalla prima riga di C# a quindici anni fino al ruolo attuale: scuola, università e due aziende, raccontate con le parole di chi le ha attraversate."
-                }
-              </p>
               <p className="journey-hint" aria-hidden="true">
-                {"Continua a scorrere"}
+                {m.home_journey_scroll({}, { locale })}
               </p>
             </div>
           </li>
 
-          {experiences.map((experience) => (
-            <li
-              className="stop"
-              data-kind={experience.kind}
-              data-year={experience.startDate.slice(0, 4)}
-              key={experience.id}
-            >
+          {profileCards.map(({ id, icon: Icon, title, paragraphs, link }) => (
+            <li className="stop" key={id}>
               <span className="stop-pin" aria-hidden="true" />
-              <span className="stop-year">{experience.startDate.slice(0, 4)}</span>
+              <span className="stop-marker" aria-hidden="true">
+                <Icon size="1em" strokeWidth={1.25} />
+              </span>
               <article className="stop-card">
-                <p className="stop-meta">{experience.period}</p>
-                <h3>{experience.org}</h3>
-                <p className="stop-role">{experience.title}</p>
-                <p className="line-clamp-4 max-w-prose">{careerExcerpt(experience.narrative)}</p>
-                <Button
-                  className="mt-4"
-                  variant="secondary"
-                  nativeButton={false}
-                  render={
-                    <a
-                      href={`/career#experience-${encodeURIComponent(experience.id)}`}
-                      aria-label={`Leggi l’esperienza completa: ${experience.org}`}
-                    />
-                  }
-                  aria-label={`Leggi l’esperienza completa: ${experience.org}`}
-                >
-                  Leggi tutto
-                </Button>
+                <h3>{title({}, { locale })}</h3>
+                {paragraphs.map((paragraph) => {
+                  const text = paragraph({}, { locale });
+                  return (
+                    <p className="stop-role" key={text}>
+                      {text}
+                    </p>
+                  );
+                })}
+                {link && (
+                  <a className="text-link" href={localizedPath(link.href, locale)}>
+                    {link.label({}, { locale })} <span aria-hidden="true">→</span>
+                  </a>
+                )}
               </article>
             </li>
           ))}
-          <li className="stop stop-end" data-year="→">
-            <span className="stop-pin" aria-hidden="true" />
-            <article className="stop-card">
-              <p className="stop-meta">
-                <span className="badge" style={{ color: "var(--soil)" }}>
-                  {"Prossima tappa"}
-                </span>
-              </p>
-              <h3>{"Il resto del viaggio"}</h3>
-              <p>
-                {
-                  "Ruoli, tecnologie e progetti collegati a ogni esperienza, con il contesto dietro ogni passaggio."
-                }
-              </p>
-              <a className="text-link" href="/career">
-                {"Esplora la carriera "}
-                <span aria-hidden="true">{"→"}</span>
-              </a>
-            </article>
-          </li>
         </ol>
       </div>
     </section>

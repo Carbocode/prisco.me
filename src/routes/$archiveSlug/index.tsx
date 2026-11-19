@@ -22,12 +22,12 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/$archiveSlug/")({
   validateSearch: searchSchema,
-  loader: async ({ params }) => {
+  loader: async ({ params, context }) => {
     const [articles, categories] = await Promise.all([
       listPublishedArticlesByFilterFn({ data: {} }),
       listPublicCategoriesFn(),
     ]);
-    const archive = resolveArchive(params.archiveSlug, articles, categories);
+    const archive = resolveArchive(params.archiveSlug, articles, categories, context.locale);
     if (!archive) throw notFound();
     return archive;
   },

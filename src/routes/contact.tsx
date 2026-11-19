@@ -1,19 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { SITE, siteUrl } from "@/config/site";
+import { SITE, localizedPath, siteUrl } from "@/config/site";
 import { ContactPage } from "@/features/contact/pages/contact-page";
-import { pageHead } from "@/features/site/seo/page-head";
-
-const contactPageDescription =
-  "Racconta a Vincenzo Prisco cosa stai costruendo: prodotto, collaborazione tecnica o nuova opportunità.";
+import { localizedPageHead } from "@/features/site/seo/page-head";
+import * as m from "@/paraglide/messages.js";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    ...pageHead({
-      title: "Contatti | Vincenzo Prisco",
-      description: contactPageDescription,
-      socialDescription:
-        "Parliamo del tuo prossimo prodotto, di una sfida tecnica o di una nuova idea.",
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) => ({
+    ...localizedPageHead(locale, {
+      title: m.contact_seo_title({}, { locale }),
+      description: m.contact_seo_description({}, { locale }),
+      socialDescription: m.contact_seo_social({}, { locale }),
       path: "/contact",
     }),
     scripts: [
@@ -22,10 +23,10 @@ export const Route = createFileRoute("/contact")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "ContactPage",
-          name: "Contatti | Vincenzo Prisco",
-          description: contactPageDescription,
-          url: siteUrl("/contact"),
-          inLanguage: SITE.language,
+          name: m.contact_seo_title({}, { locale }),
+          description: m.contact_seo_description({}, { locale }),
+          url: siteUrl(localizedPath("/contact", locale)),
+          inLanguage: locale === "it" ? SITE.language : "en",
           mainEntity: { "@id": SITE.personId },
           isPartOf: { "@id": SITE.websiteId },
         }),

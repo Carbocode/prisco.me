@@ -1,3 +1,4 @@
+import type { SiteLocale } from "@/config/site";
 import type { Experience } from "@/features/portfolio/domain/portfolio";
 import { siteDateParts } from "@/lib/dates";
 
@@ -131,13 +132,18 @@ export function buildGantt(experiences: Experience[]) {
   return { columns, segments: sortedSegments };
 }
 
-export function formatGanttDuration(startIndex: number, endIndex: number) {
+export function formatGanttDuration(
+  startIndex: number,
+  endIndex: number,
+  locale: SiteLocale = "it",
+) {
   const months = Math.max(1, endIndex - startIndex);
   const years = Math.floor(months / 12);
   const rest = months % 12;
   if (years === 0) return `${months}m`;
-  if (rest === 0) return `${years}a`;
-  return `${years}a ${rest}m`;
+  const yearUnit = locale === "en" ? "y" : "a";
+  if (rest === 0) return `${years}${yearUnit}`;
+  return `${years}${yearUnit} ${rest}m`;
 }
 
 export function getGanttMonthIndex(value: string) {

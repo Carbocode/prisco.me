@@ -52,8 +52,7 @@ import {
   type StepListener,
   type Sent,
   firstName,
-  interestChoices,
-  flows,
+  getQuestionnaireCopy,
   emptyAnswers,
   type Answers,
   type ItemName,
@@ -65,8 +64,12 @@ import {
   isItemName,
 } from "@/features/contact/domain/questionnaire-model";
 import { createContactRequest } from "@/features/contact/server/contact-requests.functions";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 export default function ContactQuestionnaire({ onStepChange }: { onStepChange?: StepListener }) {
+  const locale = useSiteLocale();
+  const { interestChoices, flows } = getQuestionnaireCopy(locale);
   const [attempt, setAttempt] = useState(0);
   const [sent, setSent] = useState<Sent | null>(null);
 
@@ -85,23 +88,25 @@ export default function ContactQuestionnaire({ onStepChange }: { onStepChange?: 
               <PartyPopper />
             </EmptyMedia>
             <EmptyTitle>
-              {name ? `Grazie ${name}, messaggio ricevuto!` : "Grazie, messaggio ricevuto!"}
+              {name
+                ? m.question_thanks_by_name({ name }, { locale })
+                : m.question_thanks({}, { locale })}
             </EmptyTitle>
             <EmptyDescription>
-              La tua richiesta su «{interest}» è arrivata. La leggo io, Vincenzo, e ti scrivo a{" "}
-              <strong>{sent.email}</strong> {flows[sent.interest].reply}.
+              {m.question_your_request_about({}, { locale })}
+              {interest}
+              {m.question_came_through_i_ll_read_it({}, { locale })} <strong>{sent.email}</strong>{" "}
+              {flows[sent.interest].reply}.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Alert>
               <MailCheck />
-              <AlertDescription>
-                Se non trovi la risposta, dai un’occhiata alla cartella spam.
-              </AlertDescription>
+              <AlertDescription>{m.question_if_you_don_t_see_a({}, { locale })} </AlertDescription>
             </Alert>
             <Link className={buttonVariants()} to="/">
               <ArrowLeft data-icon="inline-start" />
-              Torna alla home
+              {m.question_back_to_the_homepage({}, { locale })}{" "}
             </Link>
             <Button
               variant="ghost"
@@ -111,7 +116,7 @@ export default function ContactQuestionnaire({ onStepChange }: { onStepChange?: 
               }}
             >
               <RotateCcw data-icon="inline-start" />
-              Invia un’altra richiesta
+              {m.question_send_another_request({}, { locale })}{" "}
             </Button>
           </EmptyContent>
         </Empty>
@@ -129,6 +134,8 @@ function ContactQuestionnaireForm({
   onSent: (sent: Sent) => void;
   onStepChange?: StepListener;
 }) {
+  const locale = useSiteLocale();
+  const { interestChoices, flows } = getQuestionnaireCopy(locale);
   const formRef = useRef<HTMLFormElement>(null);
   const started = useRef(false);
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
@@ -147,7 +154,7 @@ function ContactQuestionnaireForm({
       { name: "details", required: false, choices: flow.focus?.choices ?? [] },
       { name: "contact", required: true, choices: [] },
     ],
-    [flow],
+    [flow, interestChoices],
   );
 
   const current = Math.max(
@@ -155,9 +162,9 @@ function ContactQuestionnaireForm({
     0,
   );
   const stepLabel = {
-    interest: "Come posso aiutarti",
+    interest: m.question_step_interest({}, { locale }),
     details: flow.stepLabel,
-    contact: "Dove ti rispondo",
+    contact: m.question_step_contact({}, { locale }),
   }[activeItem];
 
   useEffect(() => {
@@ -178,7 +185,7 @@ function ContactQuestionnaireForm({
   };
 
   const validateStep = () => {
-    const stepErrors = collectErrors(answers, activeItem);
+    const stepErrors = collectErrors(answers, activeItem, locale);
     if (Object.keys(stepErrors).length > 0) {
       setErrors({ ...errors, ...stepErrors });
       return false;
@@ -210,7 +217,7 @@ function ContactQuestionnaireForm({
 
     const parsed = contactRequestSchema.safeParse(answers);
     if (!parsed.success) {
-      const nextErrors = collectErrors(answers);
+      const nextErrors = collectErrors(answers, undefined, locale);
       setErrors(nextErrors);
       const firstInvalid = items.find((item) =>
         Object.keys(nextErrors).some(
@@ -246,9 +253,7 @@ function ContactQuestionnaireForm({
       onSent({ name: parsed.data.name, email: parsed.data.email, interest: parsed.data.interest });
     } catch {
       trackContactForm("submit_failed", analytics);
-      setSubmitError(
-        "L’invio non è riuscito, ma le tue risposte sono ancora qui: riprova tra qualche istante.",
-      );
+      setSubmitError(m.question_submit_error({}, { locale }));
     } finally {
       setSubmitting(false);
     }
@@ -300,19 +305,22 @@ function ContactQuestionnaireForm({
       }}
       shortcuts="letters"
       onSubmit={(event) => void handleSubmit(event)}
-      aria-label="Richiesta di contatto"
+      aria-label={m.question_contact_request({}, { locale })}
     >
       <Progress value={((current + 1) / items.length) * 100} aria-hidden="true" />
       <QuestionnaireProgress>
-        Passo {current + 1} di {items.length} · {stepLabel}
+        {m.question_step({}, { locale })} {current + 1} {m.question_of({}, { locale })}{" "}
+        {items.length} · {stepLabel}
       </QuestionnaireProgress>
 
       {/* Margine negativo e padding: l’anello di focus dei campi non viene tagliato dallo scroll. */}
       <div className="-m-1 flex min-h-0 flex-1 flex-col overflow-y-auto p-1">
         <QuestionnaireItem name="interest" required invalid={Boolean(errors.interest)}>
-          <QuestionnaireTitle>Partiamo dalla scintilla. Come posso aiutarti?</QuestionnaireTitle>
+          <QuestionnaireTitle>
+            {m.question_let_s_start_with_the_idea({}, { locale })}
+          </QuestionnaireTitle>
           <QuestionnaireDescription>
-            Non devi incastrare tutto in una categoria: scegli la più vicina.
+            {m.question_choose_the_closest_option_it_doesn({}, { locale })}{" "}
           </QuestionnaireDescription>
           <QuestionnaireChoices>
             {interestChoices.map((choice) => (
@@ -332,18 +340,20 @@ function ContactQuestionnaireForm({
             ))}
           </QuestionnaireChoices>
           <QuestionnaireError>
-            {errors.interest ?? "Scegli l’opzione più vicina a quello che ti serve."}
+            {errors.interest ?? m.question_interest_required({}, { locale })}
           </QuestionnaireError>
         </QuestionnaireItem>
 
         <QuestionnaireItem name="details" invalid={detailsInvalid}>
           <QuestionnaireTitle>{flow.title}</QuestionnaireTitle>
           <QuestionnaireDescription>
-            Tutto facoltativo: anche una sola risposta mi aiuta a risponderti meglio.
+            {m.question_everything_here_is_optional_even_one({}, { locale })}{" "}
           </QuestionnaireDescription>
           {flow.focus && (
             <FieldSet>
-              <FieldLegend variant="label">{flow.focus.legend} (facoltativo)</FieldLegend>
+              <FieldLegend variant="label">
+                {flow.focus.legend} {m.question_optional({}, { locale })}
+              </FieldLegend>
               <QuestionnaireChoices>
                 {flow.focus.choices.map((choice) => (
                   <QuestionnaireChoice
@@ -358,7 +368,9 @@ function ContactQuestionnaireForm({
             </FieldSet>
           )}
           <Field data-invalid={Boolean(errors.message)}>
-            <FieldLabel htmlFor="contact-message">Messaggio (facoltativo)</FieldLabel>
+            <FieldLabel htmlFor="contact-message">
+              {m.question_message_optional({}, { locale })}
+            </FieldLabel>
             <QuestionnairePrimitive.Input
               id="contact-message"
               render={<Textarea rows={3} />}
@@ -375,7 +387,9 @@ function ContactQuestionnaireForm({
           </Field>
           {flow.company && (
             <Field data-invalid={Boolean(errors.company)}>
-              <FieldLabel htmlFor="contact-company">{flow.company.label} (facoltativo)</FieldLabel>
+              <FieldLabel htmlFor="contact-company">
+                {flow.company.label} {m.question_optional({}, { locale })}
+              </FieldLabel>
               <QuestionnaireInput
                 id="contact-company"
                 autoComplete="organization"
@@ -389,18 +403,18 @@ function ContactQuestionnaireForm({
           )}
           <QuestionnaireError>
             {detailsInvalid
-              ? "Controlla i campi evidenziati qui sopra."
-              : "Rispondi oppure vai avanti: è tutto facoltativo."}
+              ? m.question_check_fields({}, { locale })
+              : m.question_optional_step_hint({}, { locale })}
           </QuestionnaireError>
         </QuestionnaireItem>
 
         <QuestionnaireItem name="contact" required multiple invalid={contactInvalid}>
           <QuestionnaireTitle>{flow.contactTitle}</QuestionnaireTitle>
           <QuestionnaireDescription>
-            Ti scrivo io, personalmente. Niente newsletter, niente spam.
+            {m.question_i_ll_write_back_personally_no({}, { locale })}{" "}
           </QuestionnaireDescription>
           <Field data-invalid={Boolean(errors.name)}>
-            <FieldLabel htmlFor="contact-name">Nome</FieldLabel>
+            <FieldLabel htmlFor="contact-name">{m.question_name({}, { locale })}</FieldLabel>
             <QuestionnaireInput
               id="contact-name"
               autoComplete="name"
@@ -425,11 +439,15 @@ function ContactQuestionnaireForm({
             {errors.email ? (
               <FieldError>{errors.email}</FieldError>
             ) : (
-              <FieldDescription>La uso solo per risponderti.</FieldDescription>
+              <FieldDescription>
+                {m.question_i_ll_only_use_this_to({}, { locale })}
+              </FieldDescription>
             )}
           </Field>
           <Field data-invalid={Boolean(errors.phone)}>
-            <FieldLabel htmlFor="contact-phone">Telefono (facoltativo)</FieldLabel>
+            <FieldLabel htmlFor="contact-phone">
+              {m.question_phone_optional({}, { locale })}
+            </FieldLabel>
             <QuestionnaireInput
               id="contact-phone"
               type="tel"
@@ -455,15 +473,19 @@ function ContactQuestionnaireForm({
               aria-invalid={Boolean(errors.consentToContact)}
             />
             <FieldContent>
-              <FieldLabel htmlFor="contact-consent">Acconsento a essere ricontattato</FieldLabel>
-              <FieldDescription>Solo per rispondere a questa richiesta.</FieldDescription>
+              <FieldLabel htmlFor="contact-consent">
+                {m.question_i_agree_to_be_contacted({}, { locale })}
+              </FieldLabel>
+              <FieldDescription>
+                {m.question_only_to_respond_to_this_request({}, { locale })}
+              </FieldDescription>
               {errors.consentToContact && <FieldError>{errors.consentToContact}</FieldError>}
             </FieldContent>
           </Field>
           <QuestionnaireError>
             {contactInvalid
-              ? "Controlla i campi evidenziati qui sopra."
-              : "Scrivi nome ed email per inviare la richiesta."}
+              ? m.question_check_fields({}, { locale })
+              : m.question_contact_step_hint({}, { locale })}
           </QuestionnaireError>
         </QuestionnaireItem>
       </div>
@@ -476,25 +498,23 @@ function ContactQuestionnaireForm({
 
       <QuestionnaireActions className="shrink-0">
         <QuestionnairePrevious size="lg" variant="ghost">
-          Indietro
+          {m.question_back({}, { locale })}{" "}
         </QuestionnairePrevious>
         <QuestionnaireSkip size="lg" variant="ghost">
-          Salta
+          {m.question_skip({}, { locale })}{" "}
         </QuestionnaireSkip>
         <QuestionnaireNext size="lg">
-          Avanti
-          <ArrowRight data-icon="inline-end" />
+          {m.question_next({}, { locale })} <ArrowRight data-icon="inline-end" />
         </QuestionnaireNext>
         <QuestionnaireSubmit size="lg" disabled={submitting}>
           {submitting ? (
             <>
               <Spinner data-icon="inline-start" />
-              Invio in corso
+              {m.question_sending({}, { locale })}{" "}
             </>
           ) : (
             <>
-              Invia la richiesta
-              <SendIcon data-icon="inline-end" />
+              {m.question_send_request({}, { locale })} <SendIcon data-icon="inline-end" />
             </>
           )}
         </QuestionnaireSubmit>

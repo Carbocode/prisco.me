@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
+
 import { toTwitterPostUrl } from "./embed-url";
 
 const SCRIPT_ID = "twitter-widgets-script";
@@ -12,6 +15,7 @@ type TwitterWindow = Window & {
 };
 
 export function TwitterEmbed({ url }: { url?: string }) {
+  const locale = useSiteLocale();
   const postUrl = toTwitterPostUrl(url);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -43,8 +47,8 @@ export function TwitterEmbed({ url }: { url?: string }) {
   return (
     <div ref={containerRef} className="cms-twitter-embed">
       <blockquote className="twitter-tweet" data-dnt="true">
-        <a href={postUrl} target="_blank" rel="noreferrer">
-          Visualizza il post su X
+        <a lang={locale} href={postUrl} target="_blank" rel="noreferrer">
+          {m.article_view_on_x({}, { locale })}
         </a>
       </blockquote>
     </div>

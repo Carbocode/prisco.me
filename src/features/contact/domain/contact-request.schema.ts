@@ -1,39 +1,46 @@
 import { z } from "zod";
 
+import type { SiteLocale } from "@/config/site";
+import * as m from "@/paraglide/messages.js";
+
 // Tolerant validation: only block what prevents a reply, and say how to fix it.
-export const contactRequestSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Scrivi come ti chiami: basta il nome di battesimo.")
-    .max(120, "Il nome è troppo lungo: massimo 120 caratteri."),
-  email: z
-    .string()
-    .trim()
-    .min(1, "Scrivi l’email a cui vuoi ricevere la risposta.")
-    .pipe(z.email("Controlla l’email: deve avere la forma nome@dominio.it."))
-    .pipe(z.string().max(255, "L’email è troppo lunga: massimo 255 caratteri.")),
-  phone: z
-    .string()
-    .trim()
-    .max(40, "Il numero è troppo lungo: massimo 40 caratteri.")
-    .refine(
-      (value) => value.length === 0 || value.replace(/\D/g, "").length >= 6,
-      "Il numero sembra incompleto: controlla le cifre oppure lascia il campo vuoto.",
-    )
-    .transform((value) => value || undefined),
-  company: z
-    .string()
-    .trim()
-    .max(160, "Il nome dell’azienda è troppo lungo: massimo 160 caratteri.")
-    .transform((value) => value || undefined),
-  message: z.string().trim().max(4000, "Il messaggio è troppo lungo: massimo 4000 caratteri."),
-  interest: z.enum(["product", "technical", "consulting", "opportunity", "other"], {
-    message: "Scegli l’opzione più vicina a quello che ti serve.",
-  }),
-  consentToContact: z.boolean().refine((value) => value, {
-    message: "Spunta la casella: mi serve il tuo ok per risponderti.",
-  }),
-});
+export function createContactRequestSchema(locale: SiteLocale) {
+  return z.object({
+    name: z
+      .string()
+      .trim()
+      .min(1, m.question_name_required({}, { locale }))
+      .max(120, m.question_name_long({}, { locale })),
+    email: z
+      .string()
+      .trim()
+      .min(1, m.question_email_required({}, { locale }))
+      .pipe(z.email(m.question_email_invalid({}, { locale })))
+      .pipe(z.string().max(255, m.question_email_long({}, { locale }))),
+    phone: z
+      .string()
+      .trim()
+      .max(40, m.question_phone_long({}, { locale }))
+      .refine(
+        (value) => value.length === 0 || value.replace(/\D/g, "").length >= 6,
+        m.question_phone_short({}, { locale }),
+      )
+      .transform((value) => value || undefined),
+    company: z
+      .string()
+      .trim()
+      .max(160, m.question_company_long({}, { locale }))
+      .transform((value) => value || undefined),
+    message: z.string().trim().max(4000, m.question_message_long({}, { locale })),
+    interest: z.enum(["product", "technical", "consulting", "opportunity", "other"], {
+      message: m.question_interest_required({}, { locale }),
+    }),
+    consentToContact: z.boolean().refine((value) => value, {
+      message: m.question_consent_required({}, { locale }),
+    }),
+  });
+}
+
+export const contactRequestSchema = createContactRequestSchema("it");
 
 export type ContactRequestValues = z.input<typeof contactRequestSchema>;

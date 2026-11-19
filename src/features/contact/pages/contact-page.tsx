@@ -8,6 +8,8 @@ import Moon from "@/components/artwork/moon";
 import Star from "@/components/artwork/star";
 import { PageShell } from "@/components/layout/page-shell";
 import ContactQuestionnaire from "@/features/contact/components/contact-questionnaire";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 type ContactStarConfig = { top: number; left: number; size: "sm" | "md" | "lg"; opacity: number };
 
@@ -33,10 +35,11 @@ const embers = [
 ];
 
 export function ContactPage() {
+  const locale = useSiteLocale();
   const [depth, setDepth] = useState(0);
 
   return (
-    <PageShell hero={false} title="Contatti">
+    <PageShell hero={false} title={m.contact_contact({}, { locale })}>
       <div className="relative isolate overflow-hidden bg-contact-core">
         <ContactScene depth={depth} />
 
@@ -44,9 +47,13 @@ export function ContactPage() {
           <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
             <div className="flex shrink-0 flex-col items-start gap-2 pb-2 lg:max-h-full lg:gap-6 lg:overflow-y-auto lg:pb-0">
               <h1 className="display-font text-3xl leading-tight font-semibold tracking-display-tight text-white text-shadow-core sm:text-4xl lg:text-6xl">
-                Quel{" "}
-                <span className="font-editorial font-normal italic tracking-normal">«e se…»</span>{" "}
-                <span className="block lg:inline">merita due parole.</span>
+                {m.contact_that({}, { locale })}{" "}
+                <span className="font-editorial font-normal italic tracking-normal">
+                  {m.contact_what_if({}, { locale })}
+                </span>{" "}
+                <span className="block lg:inline">
+                  {m.contact_is_worth_talking_about({}, { locale })}
+                </span>
               </h1>
               <div className="hidden items-center gap-3 lg:flex">
                 <span className="h-10 w-px bg-warm-accent/60" aria-hidden="true" />
@@ -55,7 +62,7 @@ export function ContactPage() {
                     Vincenzo
                   </span>
                   <br />
-                  Dall’altra parte ci sono io.
+                  {m.contact_i_m_the_person_on_the({}, { locale })}{" "}
                 </p>
               </div>
               <a
@@ -64,7 +71,7 @@ export function ContactPage() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Preferisci LinkedIn? Scrivimi lì
+                {m.contact_prefer_linkedin_message_me_there({}, { locale })}{" "}
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
             </div>

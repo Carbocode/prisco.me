@@ -12,7 +12,7 @@ export function createJourneyMotion(container, scroller, { listen, reduceMQ, loc
     element,
     speed: parseFloat(element.dataset.par),
   }));
-  const stopYears = stops.map((stop) => stop.querySelector(".stop-year"));
+  const stopMarkers = stops.map((stop) => stop.querySelector(".stop-marker"));
   const tw = $("[data-tw]");
   const twBounce = $("[data-tw-bounce]");
   const twRoll = $("[data-tw-roll]");
@@ -107,9 +107,9 @@ export function createJourneyMotion(container, scroller, { listen, reduceMQ, loc
         bestD = d;
         best = i;
       }
-      const year = stopYears[i];
-      if (year)
-        year.style.setProperty("--yx", ((screenX - sceneWidth * 0.5) * -0.08).toFixed(1) + "px");
+      const marker = stopMarkers[i];
+      if (marker)
+        marker.style.setProperty("--yx", ((screenX - sceneWidth * 0.5) * -0.08).toFixed(1) + "px");
     });
     if (p < 0.04) best = -1;
     if (best !== currentStop) {

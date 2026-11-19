@@ -1,16 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { CookiePage } from "@/features/privacy/pages/cookie-page";
-import { pageHead } from "@/features/site/seo/page-head";
+import { localizedPageHead } from "@/features/site/seo/page-head";
+import * as m from "@/paraglide/messages.js";
 
 export const Route = createFileRoute("/cookie")({
-  head: () =>
-    pageHead({
-      title: "Cookie | Prisco.me",
-      description:
-        "Informativa completa sui cookie e sugli strumenti di tracciamento utilizzati da Prisco.me",
-      socialDescription:
-        "Categorie, finalità, consenso e gestione degli strumenti di tracciamento.",
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) =>
+    localizedPageHead(locale, {
+      title: m.cookie_seo_title({}, { locale }),
+      description: m.cookie_seo_description({}, { locale }),
+      socialDescription: m.cookie_seo_social({}, { locale }),
       path: "/cookie",
     }),
   component: CookiePage,

@@ -1,24 +1,27 @@
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
 
-export function ApproachSection() {
+import { localizedPath, type SiteLocale } from "@/config/site";
+import * as m from "@/paraglide/messages.js";
+
+export function ApproachSection({ locale }: { locale: SiteLocale }) {
   return (
     <section
       id="orizzonte"
       className="horizon-sky"
-      data-section="Mestiere"
+      data-section={m.home_approach_section({}, { locale })}
       aria-labelledby="mestiere-title"
     >
       <div className="wrap">
         <h2 className="approach-label" id="mestiere-title">
-          {"Come lavoro?"}
+          {m.home_approach_title({}, { locale })}
         </h2>
         <p className="manifesto" data-manifesto="">
-          {"Affronto la "}
-          <em>{"complessità"}</em>
-          {" con metodo e cerco la "}
-          <em>{"semplicità"}</em>
-          {" con cura."}
+          {m.home_approach_start({}, { locale })}
+          <em>{m.home_approach_complexity({}, { locale })}</em>
+          {m.home_approach_method({}, { locale })}
+          <em>{m.home_approach_simplicity({}, { locale })}</em>
+          {m.home_approach_care({}, { locale })}
         </p>
         <div className="crafts">
           <article className="craft" data-reveal="" style={{ "--i": "0" }}>
@@ -38,15 +41,15 @@ export function ApproachSection() {
               {"i."}
             </p>
             <h3>
-              <a className="craft-link" href="/progetti">
-                {"Startup e nuovi prodotti"}
+              <a className="craft-link" href={localizedPath("/progetti", locale)}>
+                {m.home_approach_startups({}, { locale })}
               </a>
             </h3>
             <ul>
-              <li style={{ "--i": "0" }}>{"Analisi dell’idea"}</li>
-              <li style={{ "--i": "1" }}>{"MVP e primi rilasci"}</li>
-              <li style={{ "--i": "2" }}>{"Sviluppo iterativo"}</li>
-              <li style={{ "--i": "3" }}>{"Evoluzione del prodotto"}</li>
+              <li style={{ "--i": "0" }}>{m.home_approach_idea({}, { locale })}</li>
+              <li style={{ "--i": "1" }}>{m.home_approach_mvp({}, { locale })}</li>
+              <li style={{ "--i": "2" }}>{m.home_approach_iteration({}, { locale })}</li>
+              <li style={{ "--i": "3" }}>{m.home_approach_evolution({}, { locale })}</li>
             </ul>
           </article>
           <article className="craft" data-reveal="" style={{ "--i": "1" }}>
@@ -66,15 +69,15 @@ export function ApproachSection() {
               {"ii."}
             </p>
             <h3>
-              <a className="craft-link" href="/progetti">
-                {"Sviluppo applicativi"}
+              <a className="craft-link" href={localizedPath("/progetti", locale)}>
+                {m.home_approach_applications({}, { locale })}
               </a>
             </h3>
             <ul>
-              <li style={{ "--i": "0" }}>{"Frontend e backend"}</li>
-              <li style={{ "--i": "1" }}>{"Architettura software"}</li>
-              <li style={{ "--i": "2" }}>{"Integrazione di servizi"}</li>
-              <li style={{ "--i": "3" }}>{"Manutenzione ed evoluzione"}</li>
+              <li style={{ "--i": "0" }}>{m.home_approach_stack({}, { locale })}</li>
+              <li style={{ "--i": "1" }}>{m.home_approach_architecture({}, { locale })}</li>
+              <li style={{ "--i": "2" }}>{m.home_approach_integration({}, { locale })}</li>
+              <li style={{ "--i": "3" }}>{m.home_approach_maintenance({}, { locale })}</li>
             </ul>
           </article>
           <article className="craft" data-reveal="" style={{ "--i": "2" }}>
@@ -94,22 +97,30 @@ export function ApproachSection() {
               {"iii."}
             </p>
             <h3>
-              <a className="craft-link" href="/progetti">
-                {"Soluzioni AI"}
+              <a className="craft-link" href={localizedPath("/progetti", locale)}>
+                {m.home_approach_ai({}, { locale })}
               </a>
             </h3>
             <ul>
-              <li style={{ "--i": "0" }}>{"Assistenti e agenti AI"}</li>
-              <li style={{ "--i": "1" }}>{"Automazione dei processi"}</li>
-              <li style={{ "--i": "2" }}>{"Integrazione di modelli AI"}</li>
+              <li style={{ "--i": "0" }}>{m.home_approach_agents({}, { locale })}</li>
+              <li style={{ "--i": "1" }}>{m.home_approach_automation({}, { locale })}</li>
+              <li style={{ "--i": "2" }}>{m.home_approach_models({}, { locale })}</li>
             </ul>
           </article>
         </div>
         <div className="sky-map">
-          <div className="sky-chart" data-reveal="" style={{ "--i": "1" }} data-sky-chart="">
+          <div
+            className="sky-chart"
+            data-reveal=""
+            style={{ "--i": "1" }}
+            data-sky-chart=""
+            data-sky-backend={m.home_sky_backend({}, { locale })}
+            data-sky-ai={m.home_sky_ai({}, { locale })}
+            data-sky-platform={m.home_sky_platform({}, { locale })}
+          >
             <h3 className="sky-chart-title">
-              {"Gli strumenti"}
-              <span>{"che mi accompagnano."}</span>
+              {m.home_approach_tools({}, { locale })}
+              <span>{m.home_approach_tools_end({}, { locale })}</span>
             </h3>
             <svg className="sky-chart-svg" data-sky-svg="" aria-hidden="true" focusable="false" />
             <ul className="visually-hidden">
@@ -119,17 +130,9 @@ export function ApproachSection() {
                 }
               </li>
               <li>{"Mobile: Ionic, Capacitor, React Native, Swift / SwiftUI, MVVM."}</li>
-              <li>
-                {
-                  "Backend e dati: .NET / C#, Java, Python, MongoDB, MySQL, PHP, Rust, Bash, PostgreSQL, Elasticsearch, Docker, Kubernetes, Linux."
-                }
-              </li>
-              <li>{"AI e Agenti: Codex, Claude Code, T3Code, Hermes, OpenClaw, MCP, n8n."}</li>
-              <li>
-                {
-                  "Piattaforma: Sentry, JWT, Grafana, Supabase, EXPO Services, Cloudflare, PostHog, Stripe."
-                }
-              </li>
+              <li>{m.home_approach_backend({}, { locale })}</li>
+              <li>{m.home_approach_ai_tools({}, { locale })}</li>
+              <li>{m.home_approach_platform({}, { locale })}</li>
             </ul>
           </div>
         </div>

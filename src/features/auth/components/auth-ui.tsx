@@ -2,6 +2,9 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import type { FormEvent, PropsWithChildren } from "react";
 import { useEffect } from "react";
 
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
+
 import { authClient } from "../client/auth-client";
 
 export function AuthPage({
@@ -9,11 +12,12 @@ export function AuthPage({
   description,
   children,
 }: PropsWithChildren<{ title: string; description: string }>) {
+  const locale = useSiteLocale();
   return (
     <div className="min-h-dvh bg-canvas px-6 py-12 text-ink-inverse">
       <div className="mx-auto w-full max-w-5xl">
         <Link to="/" className="text-sm text-link hover:text-link-hover">
-          ← Torna alla home
+          {m.authui_back_to_the_homepage({}, { locale })}{" "}
         </Link>
         <div className="mt-10">
           <p className="text-xs font-semibold uppercase tracking-overline-wide text-link">
@@ -43,6 +47,7 @@ export function RequireAuth({
   cms = false,
   children,
 }: PropsWithChildren<{ admin?: boolean; cms?: boolean }>) {
+  const locale = useSiteLocale();
   const session = authClient.useSession();
   const navigate = useNavigate();
   const role = session.data?.user.role;
@@ -60,6 +65,6 @@ export function RequireAuth({
     (admin && role !== "admin") ||
     (cms && !["admin", "editor", "author"].includes(role ?? ""))
   )
-    return <p className="text-ink-subtle">Verifica della sessione…</p>;
+    return <p className="text-ink-subtle">{m.authui_checking_your_session({}, { locale })}</p>;
   return children;
 }

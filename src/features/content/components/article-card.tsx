@@ -9,11 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { localizedPath, type SiteLocale } from "@/config/site";
 import type { PublicArticle } from "@/features/content/domain/public-content";
 import { SkillGlyph } from "@/features/portfolio/components/tech-icon";
+import { useSiteLocale } from "@/features/site/client/site-location";
 import { cn } from "@/lib/utils";
+import * as m from "@/paraglide/messages.js";
 
-import { formatDate } from "../domain/presentation";
+import { formatDate, formatReadingTime } from "../domain/presentation";
 
 export function ArticleCard({
   article,
@@ -24,25 +27,28 @@ export function ArticleCard({
   archiveSlug: string;
   variant?: "card" | "list";
 }) {
-  const href = `/${archiveSlug}/${article.slug}`;
+  const locale = useSiteLocale();
+  const href = localizedPath(`/${archiveSlug}/${article.slug}`, locale);
 
   if (variant === "list") {
     return (
       <a
         href={href}
-        aria-label={`Leggi ${article.title}`}
+        aria-label={m.article_read_title({ title: article.title }, { locale })}
         className="group block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-link focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
       >
         <article className="grid gap-5 py-5 sm:grid-cols-(--layout-grid-cols-auth) sm:items-start sm:gap-7">
           <ArticleCover article={article} variant="list" />
           <div className="flex min-w-0 flex-col gap-3 sm:py-2">
-            <CardDescription>{articleMetadata(article)}</CardDescription>
+            <CardDescription>{articleMetadata(article, locale)}</CardDescription>
             <CardTitle>{article.title}</CardTitle>
             {article.tags.length ? <ArticleTags article={article} /> : null}
             {article.excerpt ? (
               <CardDescription className="max-w-3xl">{article.excerpt}</CardDescription>
             ) : null}
-            <span className="mt-auto pt-1 text-sm font-semibold text-link">Leggi l’articolo →</span>
+            <span className="mt-auto pt-1 text-sm font-semibold text-link">
+              {m.article_read({}, { locale })}
+            </span>
           </div>
         </article>
       </a>
@@ -52,7 +58,7 @@ export function ArticleCard({
   return (
     <a
       href={href}
-      aria-label={`Leggi ${article.title}`}
+      aria-label={m.article_read_title({ title: article.title }, { locale })}
       className="group block h-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-link focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
     >
       <Card className="relative h-full min-w-0">
@@ -60,7 +66,7 @@ export function ArticleCard({
         {article.tags[0] ? <CardEdgeTag tag={article.tags[0]} /> : null}
         <CardHeader>
           <CardTitle>{article.title}</CardTitle>
-          <CardDescription>{articleMetadata(article)}</CardDescription>
+          <CardDescription>{articleMetadata(article, locale)}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col">
           {article.tags.length ? <ArticleTags article={article} /> : null}
@@ -137,12 +143,12 @@ function CardEdgeTag({ tag }: { tag: PublicArticle["tags"][number] }) {
   );
 }
 
-function articleMetadata(article: PublicArticle) {
-  const date = article.publishedAt ? formatDate(article.publishedAt) : "Pubblicazione";
+function articleMetadata(article: PublicArticle, locale: SiteLocale) {
+  const date = formatDate(article.publishedAt, locale);
 
   return [
     date,
-    `${article.readingTimeMinutes} min di lettura`,
+    formatReadingTime(article.readingTimeMinutes, locale),
     article.author.name,
     article.organization?.name,
   ]

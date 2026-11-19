@@ -1,22 +1,24 @@
 import bricolageGrotesqueFont from "@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 
+import type { SiteLocale } from "@/config/site";
+import * as m from "@/paraglide/messages.js";
+
 import { ardPath } from "../domain/ard";
 
-export const rootHead = () => ({
+export const rootHead = (locale: SiteLocale = "it") => ({
   meta: [
     { charSet: "utf-8" },
     { name: "viewport", content: "width=device-width, initial-scale=1" },
     { title: "Vincenzo Prisco | Software Engineer" },
     {
       name: "description",
-      content:
-        "Portfolio personale di Vincenzo Prisco, software engineer. Progetti, architettura software e appunti dal percorso.",
+      content: m.site_seo_description({}, { locale }),
     },
     { property: "og:title", content: "Vincenzo Prisco | Software Engineer" },
     {
       property: "og:description",
-      content: "Scopri progetti, idee e appunti di Vincenzo Prisco.",
+      content: m.site_social_description({}, { locale }),
     },
     { property: "og:type", content: "website" },
     { property: "og:image", content: "https://prisco.me/og/home-hero.png" },
@@ -25,13 +27,13 @@ export const rootHead = () => ({
     { property: "og:image:height", content: "630" },
     {
       property: "og:image:alt",
-      content: "Hero del portfolio di Vincenzo Prisco con cielo stellato, pianeti e nuvole.",
+      content: m.home_social_image({}, { locale }),
     },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: "https://prisco.me/og/home-hero.png" },
     {
       name: "twitter:image:alt",
-      content: "Hero del portfolio di Vincenzo Prisco con cielo stellato, pianeti e nuvole.",
+      content: m.home_social_image({}, { locale }),
     },
     { "apple-mobile-web-app-title": "Prisco.me" },
   ],

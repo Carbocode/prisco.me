@@ -1,16 +1,16 @@
-import type { Experience } from "@/features/portfolio/domain/portfolio";
+import { localizedPath, type SiteLocale } from "@/config/site";
+import * as m from "@/paraglide/messages.js";
 
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
 import { HeroArtwork } from "../artwork/hero-artwork";
 
-export function HeroSection({ experiences }: { experiences: Experience[] }) {
-  const currentStudy = experiences.find((item) => item.current && item.kind === "education");
+export function HeroSection({ locale }: { locale: SiteLocale }) {
   return (
     <section
       id="cielo"
       className="hero"
-      data-section="Cielo"
+      data-section={m.home_hero_section({}, { locale })}
       aria-labelledby="hero-title"
       data-hero=""
     >
@@ -19,30 +19,32 @@ export function HeroSection({ experiences }: { experiences: Experience[] }) {
         <div className="hero-copy">
           <h1 className="hero-title" id="hero-title">
             <span className="line">
-              <span style={{ "--i": "0" }}>{"Ciao,"}</span>{" "}
-              <span style={{ "--i": "1" }}>{"sono"}</span>{" "}
-              <span style={{ "--i": "2" }}>{"Vincenzo."}</span>
+              <span style={{ "--i": "0" }}>{m.home_hero_hello({}, { locale })}</span>{" "}
+              <span style={{ "--i": "1" }}>{m.home_hero_intro({}, { locale })}</span>{" "}
+              <span style={{ "--i": "2" }}>{m.home_hero_name({}, { locale })}</span>
             </span>
             <span className="line serif">
-              <span style={{ "--i": "3" }}>{"Costruisco"}</span>{" "}
-              <span style={{ "--i": "4" }}>{"prodotti"}</span>{" "}
-              <span style={{ "--i": "5" }}>{"digitali."}</span>
+              <span style={{ "--i": "3" }}>{m.home_hero_build({}, { locale })}</span>{" "}
+              <span style={{ "--i": "4" }}>{m.home_hero_apps({}, { locale })}</span>{" "}
+              <span style={{ "--i": "5" }}>{m.home_hero_services({}, { locale })}</span>
             </span>
           </h1>
           <p className="hero-lede" style={{ "--delay": "800ms" }}>
-            {
-              "Sono un software engineer: trasformo idee e problemi concreti in applicazioni web, dall’interfaccia ai sistemi che le fanno funzionare."
-            }
+            {m.home_hero_lede({}, { locale })}
           </p>
           <div className="hero-actions" style={{ "--delay": "950ms" }}>
-            <a className="btn btn-primary" data-magnetic="" href="/contact">
-              {"Parliamo del tuo prodotto "}
+            <a
+              className="btn btn-primary"
+              data-magnetic=""
+              href={localizedPath("/contact", locale)}
+            >
+              {m.home_hero_contact({}, { locale })}
               <span className="arrow" aria-hidden="true">
                 {"→"}
               </span>
             </a>
             <a className="btn btn-ghost" href="#reperti">
-              {"Scopri i progetti "}
+              {m.home_hero_projects({}, { locale })}
               <span className="arrow down" aria-hidden="true">
                 {"↓"}
               </span>
@@ -52,25 +54,22 @@ export function HeroSection({ experiences }: { experiences: Experience[] }) {
         <aside className="now" aria-labelledby="now-title" style={{ "--delay": "1150ms" }}>
           <p className="now-title" id="now-title">
             <span className="pulse" aria-hidden="true" />
-            {" In questo momento"}
+            {m.home_hero_now({}, { locale })}
           </p>
           <dl>
             <div>
-              <dt>{"Lavoro"}</dt>
-              <dd>{"Alla ricerca di nuove opportunità"}</dd>
+              <dt>{m.home_hero_work({}, { locale })}</dt>
+              <dd>{m.home_hero_opportunities({}, { locale })}</dd>
             </div>
             <div>
-              <dt>{"Studio"}</dt>
-              <dd>
-                {currentStudy?.title ?? "Formazione e crescita continua"}
-                <small>{currentStudy?.org}</small>
-              </dd>
+              <dt>{m.home_hero_study({}, { locale })}</dt>
+              <dd>{m.home_hero_study_fallback({}, { locale })}</dd>
             </div>
           </dl>
         </aside>
       </div>
       <a className="scroll-cue" href="#orizzonte">
-        {"Scorri per iniziare"}
+        {m.home_hero_scroll({}, { locale })}
       </a>
     </section>
   );

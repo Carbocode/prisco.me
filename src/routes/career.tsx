@@ -2,13 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { CareerPage } from "@/features/career/pages/career-page";
 import { getPortfolioQueryOptions } from "@/features/portfolio/server/portfolio.functions";
-import { pageHead } from "@/features/site/seo/page-head";
+import { localizedPageHead } from "@/features/site/seo/page-head";
+import * as m from "@/paraglide/messages.js";
 
 export const Route = createFileRoute("/career")({
-  head: () =>
-    pageHead({
-      title: "Carriera | Vincenzo Prisco",
-      description: "Il percorso formativo e professionale di Vincenzo Prisco",
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) =>
+    localizedPageHead(locale, {
+      title: m.career_seo_title({}, { locale }),
+      description: m.career_seo_description({}, { locale }),
       path: "/career",
     }),
   loader: ({ context }) => context.queryClient.ensureQueryData(getPortfolioQueryOptions()),

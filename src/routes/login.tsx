@@ -3,6 +3,7 @@ import { z } from "zod/mini";
 
 import { AccessPage } from "@/features/auth/pages/login-page";
 import { getTurnstileSiteKey } from "@/features/auth/server/turnstile.functions";
+import * as m from "@/paraglide/messages.js";
 
 const searchSchema = z.object({
   mode: z.catch(z.enum(["login", "register"]), "login"),
@@ -12,8 +13,12 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
   loader: () => getTurnstileSiteKey(),
-  head: () => ({
-    meta: [{ title: "Accedi o registrati | Prisco.me" }, { name: "robots", content: "noindex" }],
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) => ({
+    meta: [{ title: m.login_seo_title({}, { locale }) }, { name: "robots", content: "noindex" }],
   }),
   component: AccessPage,
 });

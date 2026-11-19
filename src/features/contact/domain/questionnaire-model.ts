@@ -1,37 +1,41 @@
+import type { SiteLocale } from "@/config/site";
 import {
-  contactRequestSchema,
+  createContactRequestSchema,
   type ContactRequestValues,
 } from "@/features/contact/domain/contact-request.schema";
+import * as m from "@/paraglide/messages.js";
 
 type Interest = ContactRequestValues["interest"];
 
-export const interestChoices = [
-  {
-    value: "product",
-    label: "Un prodotto da costruire",
-    description: "Da “secondo me funzionerebbe” alla prima versione online.",
-  },
-  {
-    value: "technical",
-    label: "Una mano tecnica",
-    description: "Un nodo da sciogliere nel codice, o due mani in più nel team.",
-  },
-  {
-    value: "consulting",
-    label: "Un confronto",
-    description: "Hai più strade davanti. Ragioniamoci insieme.",
-  },
-  {
-    value: "opportunity",
-    label: "Un’opportunità professionale",
-    description: "Un team, un ruolo, una collaborazione. Sono qui.",
-  },
-  {
-    value: "other",
-    label: "Qualcos’altro",
-    description: "Non rientra nelle altre voci? Mi hai già incuriosito.",
-  },
-] as const satisfies ReadonlyArray<{ value: Interest; label: string; description: string }>;
+function makeInterestChoices(locale: SiteLocale) {
+  return [
+    {
+      value: "product",
+      label: m.flow_a_product_to_build({}, { locale }),
+      description: m.flow_from_i_think_this_could_work({}, { locale }),
+    },
+    {
+      value: "technical",
+      label: m.flow_technical_help({}, { locale }),
+      description: m.flow_a_problem_to_untangle_in_the({}, { locale }),
+    },
+    {
+      value: "consulting",
+      label: m.flow_a_second_opinion({}, { locale }),
+      description: m.flow_if_you_have_several_paths_ahead({}, { locale }),
+    },
+    {
+      value: "opportunity",
+      label: m.flow_a_career_opportunity({}, { locale }),
+      description: m.flow_a_team_a_role_or_a({}, { locale }),
+    },
+    {
+      value: "other",
+      label: m.flow_something_else({}, { locale }),
+      description: m.flow_if_none_of_the_other_options({}, { locale }),
+    },
+  ] as const satisfies ReadonlyArray<{ value: Interest; label: string; description: string }>;
+}
 
 type Choice = { value: string; label: string };
 
@@ -46,107 +50,130 @@ type Flow = {
   reply: string;
 };
 
-export const flows: Record<Interest, Flow> = {
-  product: {
-    stepLabel: "L’idea",
-    title: "Che prodotto hai in mente?",
-    focus: {
-      legend: "A che punto sei?",
-      summary: "Fase",
-      choices: [
-        { value: "idea", label: "È ancora un’intuizione" },
-        { value: "prototype", label: "C’è già un prototipo" },
-        { value: "live", label: "È online e va migliorato" },
-        { value: "unsure", label: "Lo scopriamo insieme" },
-      ],
+function makeFlows(locale: SiteLocale): Record<Interest, Flow> {
+  return {
+    product: {
+      stepLabel: m.flow_the_idea({}, { locale }),
+      title: m.flow_what_product_do_you_have_in({}, { locale }),
+      focus: {
+        legend: m.flow_what_stage_are_you_at({}, { locale }),
+        summary: m.flow_stage({}, { locale }),
+        choices: [
+          { value: "idea", label: m.flow_it_s_still_an_idea({}, { locale }) },
+          { value: "prototype", label: m.flow_there_s_already_a_prototype({}, { locale }) },
+          { value: "live", label: m.flow_it_s_live_and_needs_improvements({}, { locale }) },
+          { value: "unsure", label: m.flow_let_s_figure_it_out_together({}, { locale }) },
+        ],
+      },
+      message: {
+        placeholder: m.flow_e_g_an_app_to_book({}, { locale }),
+        hint: m.flow_who_needs_it_and_what_problem({}, { locale }),
+      },
+      company: {
+        label: m.flow_project_or_company_name({}, { locale }),
+        placeholder: m.flow_e_g_surfbook({}, { locale }),
+      },
+      contactTitle: m.flow_sounds_good_where_should_i_reply({}, { locale }),
+      phoneHint: m.flow_if_you_d_rather_talk_it({}, { locale }),
+      reply: m.flow_with_a_few_questions_about_the({}, { locale }),
     },
-    message: {
-      placeholder: "Es. un’app per prenotare lezioni di surf, da lanciare in primavera",
-      hint: "A chi serve e che problema risolve: bastano due righe.",
+    technical: {
+      stepLabel: m.flow_the_problem({}, { locale }),
+      title: m.flow_what_do_you_need_help_with({}, { locale }),
+      focus: {
+        legend: m.flow_what_kind_of_help_do_you({}, { locale }),
+        summary: m.flow_type_of_help({}, { locale }),
+        choices: [
+          { value: "fix", label: m.flow_fix_existing_code({}, { locale }) },
+          { value: "build", label: m.flow_design_something_new({}, { locale }) },
+          { value: "team", label: m.flow_support_the_team_for_a_while({}, { locale }) },
+          { value: "review", label: m.flow_get_a_review_or_an_outside({}, { locale }) },
+        ],
+      },
+      message: {
+        placeholder: m.flow_e_g_move_the_backend_to({}, { locale }),
+        hint: m.flow_share_your_stack_and_what_isn({}, { locale }),
+      },
+      company: {
+        label: m.flow_company_or_team({}, { locale }),
+        placeholder: m.flow_e_g_acme_ltd({}, { locale }),
+      },
+      contactTitle: m.flow_let_s_take_a_look_together({}, { locale }),
+      phoneHint: m.flow_helpful_if_it_s_urgent({}, { locale }),
+      reply: m.flow_with_a_few_technical_questions_to({}, { locale }),
     },
-    company: { label: "Nome del progetto o dell’azienda", placeholder: "Es. SurfBook" },
-    contactTitle: "Bella idea. Dove ti rispondo?",
-    phoneHint: "Se preferisci raccontarla a voce.",
-    reply: "con qualche domanda sull’idea e una proposta per sentirci",
-  },
-  technical: {
-    stepLabel: "Il problema",
-    title: "Su cosa ti serve una mano?",
-    focus: {
-      legend: "Di che tipo di aiuto si tratta?",
-      summary: "Tipo di aiuto",
-      choices: [
-        { value: "fix", label: "Sistemare codice che esiste già" },
-        { value: "build", label: "Progettare qualcosa di nuovo" },
-        { value: "team", label: "Rinforzare il team per un periodo" },
-        { value: "review", label: "Una revisione o un parere esterno" },
-      ],
+    consulting: {
+      stepLabel: m.flow_the_decision({}, { locale }),
+      title: m.flow_what_decision_are_you_trying_to({}, { locale }),
+      focus: {
+        legend: m.flow_what_would_you_like_to_talk({}, { locale }),
+        summary: m.flow_topic({}, { locale }),
+        choices: [
+          { value: "stack", label: m.flow_technologies_and_architecture({}, { locale }) },
+          { value: "product", label: m.flow_product_and_priorities({}, { locale }) },
+          { value: "process", label: m.flow_processes_and_ways_of_working({}, { locale }) },
+          { value: "unsure", label: m.flow_a_bit_of_everything({}, { locale }) },
+        ],
+      },
+      message: {
+        placeholder: m.flow_e_g_react_native_or_a({}, { locale }),
+        hint: m.flow_what_are_your_options_and_what({}, { locale }),
+      },
+      company: {
+        label: m.flow_company_or_team({}, { locale }),
+        placeholder: m.flow_e_g_acme_ltd({}, { locale }),
+      },
+      contactTitle: m.flow_let_s_think_it_through_where({}, { locale }),
+      phoneHint: m.flow_if_you_d_rather_have_a({}, { locale }),
+      reply: m.flow_with_a_few_questions_to_prepare({}, { locale }),
     },
-    message: {
-      placeholder: "Es. migrare il backend su Cloudflare senza fermare il servizio",
-      hint: "Lo stack e cosa non funziona come vorresti.",
+    opportunity: {
+      stepLabel: m.flow_the_opportunity({}, { locale }),
+      title: m.flow_what_kind_of_opportunity_is_it({}, { locale }),
+      focus: {
+        legend: m.flow_how_would_we_work_together({}, { locale }),
+        summary: m.flow_type_of_collaboration({}, { locale }),
+        choices: [
+          { value: "hire", label: m.flow_a_permanent_role({}, { locale }) },
+          { value: "freelance", label: m.flow_a_freelance_project({}, { locale }) },
+          { value: "partner", label: m.flow_a_partnership_or_side_project({}, { locale }) },
+          { value: "talk", label: m.flow_let_s_talk_first({}, { locale }) },
+        ],
+      },
+      message: {
+        placeholder: m.flow_e_g_senior_engineer_on_a({}, { locale }),
+        hint: m.flow_share_the_role_team_and_timeline({}, { locale }),
+      },
+      company: {
+        label: m.flow_company({}, { locale }),
+        placeholder: m.flow_e_g_acme_ltd({}, { locale }),
+      },
+      contactTitle: m.flow_i_m_interested_where_should_i({}, { locale }),
+      phoneHint: m.flow_if_you_d_prefer_a_quick({}, { locale }),
+      reply: m.flow_to_learn_more_about_the_role({}, { locale }),
     },
-    company: { label: "Azienda o team", placeholder: "Es. Acme S.r.l." },
-    contactTitle: "Ci diamo un’occhiata insieme. Dove ti rispondo?",
-    phoneHint: "Utile se la questione è urgente.",
-    reply: "con le prime domande tecniche per inquadrare il problema",
-  },
-  consulting: {
-    stepLabel: "La scelta",
-    title: "Qual è la scelta da mettere a fuoco?",
-    focus: {
-      legend: "Su cosa vuoi confrontarti?",
-      summary: "Tema",
-      choices: [
-        { value: "stack", label: "Tecnologie e architettura" },
-        { value: "product", label: "Prodotto e priorità" },
-        { value: "process", label: "Processi e modo di lavorare" },
-        { value: "unsure", label: "Un po’ di tutto" },
-      ],
+    other: {
+      stepLabel: m.flow_the_context({}, { locale }),
+      title: m.flow_tell_me_a_bit_more_what({}, { locale }),
+      message: {
+        placeholder: m.flow_write_whatever_comes_to_mind({}, { locale }),
+        hint: m.flow_explain_it_the_way_you_would({}, { locale }),
+      },
+      contactTitle: m.flow_i_m_curious_where_should_i({}, { locale }),
+      phoneHint: m.flow_if_you_d_rather_have_a({}, { locale }),
+      reply: m.flow_after_i_ve_read_it({}, { locale }),
     },
-    message: {
-      placeholder: "Es. React Native o PWA per il nostro MVP?",
-      hint: "Le opzioni sul tavolo e cosa ti frena.",
-    },
-    company: { label: "Azienda o team", placeholder: "Es. Acme S.r.l." },
-    contactTitle: "Ragioniamoci. Dove ti rispondo?",
-    phoneHint: "Se preferisci una chiamata.",
-    reply: "con qualche domanda per preparare il confronto",
-  },
-  opportunity: {
-    stepLabel: "L’opportunità",
-    title: "Di che opportunità si tratta?",
-    focus: {
-      legend: "Che tipo di collaborazione?",
-      summary: "Collaborazione",
-      choices: [
-        { value: "hire", label: "Un’assunzione" },
-        { value: "freelance", label: "Un progetto freelance" },
-        { value: "partner", label: "Una partnership o un side project" },
-        { value: "talk", label: "Prima ne parliamo" },
-      ],
-    },
-    message: {
-      placeholder: "Es. senior engineer in un team prodotto, full remote",
-      hint: "Ruolo, team e tempistiche, se le conosci già.",
-    },
-    company: { label: "Azienda", placeholder: "Es. Acme S.r.l." },
-    contactTitle: "Mi fa piacere. Dove ti rispondo?",
-    phoneHint: "Se preferisci una prima chiacchierata al telefono.",
-    reply: "per capire meglio ruolo e tempistiche",
-  },
-  other: {
-    stepLabel: "Il contesto",
-    title: "Dimmi pure, di cosa si tratta?",
-    message: {
-      placeholder: "Scrivi liberamente",
-      hint: "Scrivilo come lo racconteresti a un caffè.",
-    },
-    contactTitle: "Mi hai incuriosito. Dove ti rispondo?",
-    phoneHint: "Se preferisci una chiamata.",
-    reply: "appena l’ho letta",
-  },
+  };
+}
+
+const questionnaireCopy = {
+  it: { interestChoices: makeInterestChoices("it"), flows: makeFlows("it") },
+  en: { interestChoices: makeInterestChoices("en"), flows: makeFlows("en") },
 };
+
+export function getQuestionnaireCopy(locale: SiteLocale) {
+  return questionnaireCopy[locale];
+}
 
 export type Answers = {
   interest?: Interest;
@@ -193,8 +220,12 @@ export type Sent = { name: string; email: string; interest: Interest };
 
 export const firstName = (name: string) => name.trim().split(/\s+/)[0] ?? "";
 
-export function collectErrors(answers: Answers, item?: ItemName): Errors {
-  const parsed = contactRequestSchema.safeParse(answers);
+export function collectErrors(
+  answers: Answers,
+  item?: ItemName,
+  locale: SiteLocale = "it",
+): Errors {
+  const parsed = createContactRequestSchema(locale).safeParse(answers);
   if (parsed.success) return {};
   const errors: Errors = {};
   for (const issue of parsed.error.issues) {

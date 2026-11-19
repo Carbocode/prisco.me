@@ -10,21 +10,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { localizedPath } from "@/config/site";
 import { type ContentCrumb } from "@/features/content/domain/public-content";
+import { useSiteLocale } from "@/features/site/client/site-location";
 import { cn } from "@/lib/utils";
+import * as m from "@/paraglide/messages.js";
 
-export function ContentBreadcrumb({
-  items,
-  className,
-}: {
-  items: ContentCrumb[];
-  className?: string;
-}) {
+export function ContentBreadcrumb({ items }: { items: ContentCrumb[] }) {
+  const locale = useSiteLocale();
   return (
-    <Breadcrumb className={cn("min-w-0 overflow-hidden", className)}>
+    <Breadcrumb className="w-full min-w-0 overflow-hidden">
       <BreadcrumbList className="min-w-0 flex-nowrap overflow-hidden">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<Link to="/" aria-label="Torna alla home" />}>
+          <BreadcrumbLink render={<Link to="/" aria-label={m.nav_home({}, { locale })} />}>
             <House />
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -43,7 +41,9 @@ export function ContentBreadcrumb({
                 {isCurrentPage ? (
                   <BreadcrumbPage className="block min-w-0">{item.name}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink render={<a href={item.url} aria-label={item.name} />}>
+                  <BreadcrumbLink
+                    render={<a href={localizedPath(item.url, locale)} aria-label={item.name} />}
+                  >
                     {item.name}
                   </BreadcrumbLink>
                 )}

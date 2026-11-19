@@ -1,23 +1,27 @@
 import { ActionLink, PageShell, Section } from "@/components/layout/page-shell";
+import { localizedPath } from "@/config/site";
 import { ShowcaseCard } from "@/features/content/components/showcase-card";
 import { TechIcon } from "@/features/portfolio/components/tech-icon";
+import { useSiteLocale } from "@/features/site/client/site-location";
 import { technologyGroups } from "@/features/site/data/technology-groups";
+import * as m from "@/paraglide/messages.js";
 
 export function SiteInformationPage() {
+  const locale = useSiteLocale();
   return (
     <PageShell
       title={
         <>
-          Un portfolio costruito come un prodotto, come lo farei{" "}
-          <span className="text-link">per te</span>
+          {m.about_a_portfolio_built_like_a_product({}, { locale })}{" "}
+          <span className="text-link">{m.about_for_you({}, { locale })}</span>
         </>
       }
       titleClassName="tracking-heading"
-      description="Prisco.me è progettato, sviluppato e mantenuto da Vincenzo Prisco. Questa pagina raccoglie le scelte tecniche che lo fanno funzionare."
+      description={m.about_vincenzo_prisco_designs_develops_and_maintains({}, { locale })}
     >
       <Section>
         <div className="grid gap-5 md:grid-cols-2">
-          {technologyGroups.map((group) => (
+          {technologyGroups(locale).map((group) => (
             <TechnologyGroupCard key={group.title} group={group} />
           ))}
         </div>
@@ -27,18 +31,18 @@ export function SiteInformationPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           <DetailCard
             number="01"
-            title="Accessibilità"
-            body="Contrasto, focus visibili, struttura semantica e supporto a prefers-reduced-motion fanno parte dell'interfaccia, non sono un'aggiunta finale."
+            title={m.about_accessibility({}, { locale })}
+            body={m.about_contrast_visible_focus_semantic_structure_and({}, { locale })}
           />
           <DetailCard
             number="02"
             title="Performance"
-            body="Le pagine sono pensate per caricare il contenuto in fretta, con animazioni concentrate nella hero e immagini decorative non essenziali."
+            body={m.about_pages_load_their_content_quickly_with({}, { locale })}
           />
           <DetailCard
             number="03"
-            title="Evoluzione"
-            body="I progetti sono contenuti tipizzati e il layout condiviso mantiene coerenti tutte le route."
+            title={m.about_evolution({}, { locale })}
+            body={m.about_project_content_is_typed_and_the({}, { locale })}
           />
         </div>
       </Section>
@@ -46,13 +50,15 @@ export function SiteInformationPage() {
       <section className="bg-gradient-to-r from-glow/10 to-secondary-glow-strong/10 px-6 py-20 text-center">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-5">
           <h2 className="display-font text-3xl font-semibold sm:text-4xl">
-            Hai trovato qualcosa che vuoi approfondire?
+            {m.about_found_something_you_want_to_explore({}, { locale })}{" "}
           </h2>
           <p className="leading-7 text-ink-body">
-            Scrivimi oppure esplora direttamente il codice del progetto.
+            {m.about_get_in_touch_or_browse_the({}, { locale })}{" "}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <ActionLink href="/contact">Parliamone</ActionLink>
+            <ActionLink href={localizedPath("/contact", locale)}>
+              {m.about_let_s_talk({}, { locale })}
+            </ActionLink>
             <a
               className="inline-flex h-10 items-center justify-center rounded-md border border-white/20 bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-link"
               href="https://github.com/Carbocode/prisco-website"
@@ -71,7 +77,7 @@ export function SiteInformationPage() {
   );
 }
 
-function TechnologyGroupCard({ group }: { group: (typeof technologyGroups)[number] }) {
+function TechnologyGroupCard({ group }: { group: ReturnType<typeof technologyGroups>[number] }) {
   return (
     <ShowcaseCard>
       <h2 className="display-font text-2xl leading-tight font-semibold text-white">

@@ -10,6 +10,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { dashboardSection } from "@/features/dashboard/navigation";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 export function DashboardBreadcrumb({
   pathname,
@@ -18,13 +20,14 @@ export function DashboardBreadcrumb({
   pathname: string;
   pageTitle: string;
 }) {
-  const section = dashboardSection(pathname);
+  const locale = useSiteLocale();
+  const section = dashboardSection(pathname, locale);
 
   return (
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap">
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link to="/" aria-label="Torna alla home" />}>
+          <BreadcrumbLink render={<Link to="/" aria-label={m.nav_home({}, { locale })} />}>
             <House />
           </BreadcrumbLink>
         </BreadcrumbItem>

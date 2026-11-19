@@ -8,6 +8,8 @@
   "ignorePatterns": [
     ".agents",
     "src/routeTree.gen.ts",
+    "src/paraglide/**",
+    "project.inlang/cache/**",
     "src/styles.css",
     "worker-configuration.d.ts",
     "bun.lock"

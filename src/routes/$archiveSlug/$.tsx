@@ -2,6 +2,7 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 
+import { localizedPath, type SiteLocale } from "@/config/site";
 import {
   getPublishedArticleFn,
   getCmsRedirectFn,
@@ -39,21 +40,25 @@ function resolveDatedPath(
   year: string,
   segments: string[],
   articles: PublicArticle[],
+  locale: SiteLocale,
 ): RouteData | null {
   if (segments.length === 1) {
     if (/^\d+$/.test(segments[0])) {
-      const archive = resolveDateArchive(year, articles, segments[0]);
+      const archive = resolveDateArchive(year, articles, segments[0], undefined, locale);
       return archive ? { type: "archive", archive } : null;
     }
-    return articleIn(resolveDateArchive(year, articles), segments[0]);
+    return articleIn(resolveDateArchive(year, articles, undefined, undefined, locale), segments[0]);
   }
 
   if (segments.length === 2 && /^\d+$/.test(segments[0])) {
     if (/^\d+$/.test(segments[1])) {
-      const archive = resolveDateArchive(year, articles, segments[0], segments[1]);
+      const archive = resolveDateArchive(year, articles, segments[0], segments[1], locale);
       return archive ? { type: "archive", archive } : null;
     }
-    return articleIn(resolveDateArchive(year, articles, segments[0]), segments[1]);
+    return articleIn(
+      resolveDateArchive(year, articles, segments[0], undefined, locale),
+      segments[1],
+    );
   }
 
   if (
@@ -62,7 +67,10 @@ function resolveDatedPath(
     /^\d+$/.test(segments[1]) &&
     !/^\d+$/.test(segments[2])
   ) {
-    return articleIn(resolveDateArchive(year, articles, segments[0], segments[1]), segments[2]);
+    return articleIn(
+      resolveDateArchive(year, articles, segments[0], segments[1], locale),
+      segments[2],
+    );
   }
 
   return null;
@@ -86,7 +94,7 @@ function canonicalArchiveSlug(article: { categories: Array<{ slug: string }> }) 
 
 export const Route = createFileRoute("/$archiveSlug/$")({
   validateSearch: searchSchema,
-  loader: async ({ params }): Promise<RouteData> => {
+  loader: async ({ params, context }): Promise<RouteData> => {
     const path = `/${params.archiveSlug}/${params._splat ?? ""}`.replace(/\/$/, "");
     const visited = new Set<string>();
     let destination = path;
@@ -98,18 +106,19 @@ export const Route = createFileRoute("/$archiveSlug/$")({
     }
     if (destination !== path) {
       const next = await getCmsRedirectFn({ data: { path: destination } });
-      if (!next) throw redirect({ href: destination, statusCode: 301 });
+      if (!next)
+        throw redirect({ href: localizedPath(destination, context.locale), statusCode: 301 });
     }
     const [articles, categories] = await Promise.all([
       listPublishedArticlesByFilterFn({ data: {} }),
       listPublicCategoriesFn(),
     ]);
-    const rootArchive = resolveArchive(params.archiveSlug, articles, categories);
+    const rootArchive = resolveArchive(params.archiveSlug, articles, categories, context.locale);
     if (!rootArchive) throw notFound();
 
     const segments = (params._splat ?? "").split("/").filter(Boolean);
     const data = /^\d+$/.test(params.archiveSlug)
-      ? resolveDatedPath(params.archiveSlug, segments, articles)
+      ? resolveDatedPath(params.archiveSlug, segments, articles, context.locale)
       : resolveRegularPath(rootArchive, segments);
     if (!data) throw notFound();
     if (data.type === "article") {

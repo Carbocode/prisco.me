@@ -26,26 +26,32 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Separator } from "@/components/ui/separator";
+import type { SiteLocale } from "@/config/site";
 import type { ContactRequest } from "@/db/schema";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 const routeApi = getRouteApi("/dashboard/admin/contacts");
 
-const interestLabels: Record<string, string> = {
-  product: "Prodotto",
-  technical: "Supporto tecnico",
-  consulting: "Consulenza",
-  opportunity: "Opportunità",
-  other: "Altro",
-};
+function interestLabels(locale: SiteLocale): Record<string, string> {
+  return {
+    product: m.contacts_product({}, { locale }),
+    technical: m.contacts_technical({}, { locale }),
+    consulting: m.contacts_consulting({}, { locale }),
+    opportunity: m.contacts_opportunity({}, { locale }),
+    other: m.contacts_other({}, { locale }),
+  };
+}
 
 export function ContactRequestsPage() {
+  const locale = useSiteLocale();
   const requests = routeApi.useLoaderData();
   const [selectedRequest, setSelectedRequest] = useState<ContactRequest | null>(null);
 
   const columns: DashboardColumnDef<ContactRequest>[] = [
     {
       accessorKey: "name",
-      header: "Contatto",
+      header: m.contacts_contact({}, { locale }),
       size: 280,
       minSize: 220,
       cell: ({ row }) => (
@@ -57,17 +63,18 @@ export function ContactRequestsPage() {
     },
     {
       accessorKey: "interest",
-      header: "Interesse",
+      header: m.contacts_interest({}, { locale }),
       size: 180,
       cell: ({ row }) => (
         <Badge variant="secondary">
-          {interestLabels[row.original.interest ?? ""] ?? "Non specificato"}
+          {interestLabels(locale)[row.original.interest ?? ""] ??
+            m.contacts_unspecified({}, { locale })}
         </Badge>
       ),
     },
     {
       accessorKey: "company",
-      header: "Azienda",
+      header: m.contacts_company({}, { locale }),
       size: 200,
       cell: ({ row }) => (
         <span className="text-muted-foreground">{row.original.company || "—"}</span>
@@ -75,7 +82,7 @@ export function ContactRequestsPage() {
     },
     {
       accessorKey: "createdAt",
-      header: "Ricevuta",
+      header: m.contacts_received({}, { locale }),
       size: 180,
       cell: ({ row }) => (
         <time
@@ -88,7 +95,7 @@ export function ContactRequestsPage() {
     },
     {
       id: "actions",
-      header: () => <span className="sr-only">Azioni</span>,
+      header: () => <span className="sr-only">{m.contacts_actions({}, { locale })}</span>,
       size: 80,
       minSize: 80,
       maxSize: 80,
@@ -110,9 +117,9 @@ export function ContactRequestsPage() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Richieste di contatto</CardTitle>
+          <CardTitle>{m.contacts_contact_requests({}, { locale })}</CardTitle>
           <CardDescription>
-            Messaggi inviati dal modulo di contatto, dal più recente al meno recente.
+            {m.contacts_messages_sent_through_the_contact_form({}, { locale })}{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -128,9 +135,9 @@ export function ContactRequestsPage() {
                 <EmptyMedia variant="icon">
                   <Inbox />
                 </EmptyMedia>
-                <EmptyTitle>Nessuna richiesta</EmptyTitle>
+                <EmptyTitle>{m.contacts_no_requests({}, { locale })}</EmptyTitle>
                 <EmptyDescription>
-                  Le richieste inviate dal modulo di contatto compariranno qui.
+                  {m.contacts_requests_from_the_contact_form_will({}, { locale })}{" "}
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
@@ -155,6 +162,7 @@ function ContactRequestDialog({
   request: ContactRequest | null;
   onOpenChange: (open: boolean) => void;
 }) {
+  const locale = useSiteLocale();
   return (
     <Dialog open={Boolean(request)} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-(--layout-max-h-dialog-viewport) overflow-y-auto sm:max-w-xl">
@@ -163,8 +171,9 @@ function ContactRequestDialog({
             <DialogHeader>
               <DialogTitle>{request.name}</DialogTitle>
               <DialogDescription>
-                Ricevuta il {formatDate(request.createdAt)} ·{" "}
-                {interestLabels[request.interest ?? ""] ?? "Interesse non specificato"}
+                {m.contacts_received_on({}, { locale })} {formatDate(request.createdAt)} ·{" "}
+                {interestLabels(locale)[request.interest ?? ""] ??
+                  m.contacts_interest_unspecified({}, { locale })}
               </DialogDescription>
             </DialogHeader>
 
@@ -172,27 +181,33 @@ function ContactRequestDialog({
               <dl className="grid gap-3 sm:grid-cols-2">
                 <ContactDetail label="Email" value={request.email} icon={Mail} />
                 <ContactDetail
-                  label="Telefono"
-                  value={request.phone || "Non indicato"}
+                  label={m.contacts_phone({}, { locale })}
+                  value={request.phone || m.contacts_phone_unspecified({}, { locale })}
                   icon={Phone}
                 />
                 <ContactDetail
-                  label="Azienda"
-                  value={request.company || "Non indicata"}
+                  label={m.contacts_company({}, { locale })}
+                  value={request.company || m.contacts_company_unspecified({}, { locale })}
                   icon={Building2}
                 />
                 <div className="flex flex-col gap-1">
-                  <dt className="text-xs text-muted-foreground">Consenso al contatto</dt>
+                  <dt className="text-xs text-muted-foreground">
+                    {m.contacts_consent_to_be_contacted({}, { locale })}
+                  </dt>
                   <dd>
                     <Badge variant={request.consentToContact ? "outline" : "destructive"}>
-                      {request.consentToContact ? "Confermato" : "Non confermato"}
+                      {request.consentToContact
+                        ? m.contacts_confirmed({}, { locale })
+                        : m.contacts_not_confirmed({}, { locale })}
                     </Badge>
                   </dd>
                 </div>
               </dl>
               <Separator />
               <div className="flex flex-col gap-2">
-                <p className="text-xs text-muted-foreground">Messaggio</p>
+                <p className="text-xs text-muted-foreground">
+                  {m.contacts_message({}, { locale })}
+                </p>
                 <p className="whitespace-pre-wrap leading-relaxed">{request.message}</p>
               </div>
             </div>
@@ -204,7 +219,7 @@ function ContactRequestDialog({
                   render={<a href={`tel:${request.phone}`} aria-label={`Chiama ${request.name}`} />}
                 >
                   <Phone data-icon="inline-start" />
-                  Chiama
+                  {m.contacts_call({}, { locale })}{" "}
                 </Button>
               ) : null}
               <Button
@@ -216,7 +231,7 @@ function ContactRequestDialog({
                 }
               >
                 <Mail data-icon="inline-start" />
-                Rispondi via email
+                {m.contacts_reply_by_email({}, { locale })}{" "}
               </Button>
             </DialogFooter>
           </>
