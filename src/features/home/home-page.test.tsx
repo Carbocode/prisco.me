@@ -161,7 +161,9 @@ it("inizializza e smonta le animazioni senza lasciare observer o eventi scroll",
   // A real resize/load refreshes cached geometry before subsequent scrolls.
   await act(async () => {
     window.dispatchEvent(new Event("load"));
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    // Viewport writes, journey measurement, then downstream geometry each get a frame.
+    for (let i = 0; i < 7; i++)
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
   });
   const scrollToPosition = async (position: number) => {
     await act(async () => {
@@ -313,7 +315,9 @@ it("loads static underground artwork responsively without removing interactive S
     ),
     "text/html",
   );
-  const artwork = document.querySelectorAll<HTMLImageElement>(".decor > img, .find-pit img");
+  const artwork = document.querySelectorAll<HTMLImageElement>(
+    ".decor > img, .find-pit img:not(.fossil-veil)",
+  );
   expect(artwork.length).toBe(13);
   artwork.forEach((image) => {
     expect(image.getAttribute("loading")).toBe("lazy");

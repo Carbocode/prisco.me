@@ -12,6 +12,8 @@ export function CoreArtwork() {
           alt=""
           width="1920"
           height="1920"
+          loading="lazy"
+          fetchPriority="low"
           decoding="async"
           style={{ "--spin": "80s" }}
         />
@@ -21,6 +23,8 @@ export function CoreArtwork() {
           alt=""
           width="1920"
           height="1920"
+          loading="lazy"
+          fetchPriority="low"
           decoding="async"
           style={{ "--spin": "98s" }}
         />
@@ -30,6 +34,8 @@ export function CoreArtwork() {
           alt=""
           width="1920"
           height="1920"
+          loading="lazy"
+          fetchPriority="low"
           decoding="async"
           style={{ "--spin": "116s" }}
         />
@@ -39,6 +45,8 @@ export function CoreArtwork() {
           alt=""
           width="1920"
           height="1920"
+          loading="lazy"
+          fetchPriority="low"
           decoding="async"
           style={{ "--spin": "134s" }}
         />
@@ -48,6 +56,8 @@ export function CoreArtwork() {
           alt=""
           width="1920"
           height="1920"
+          loading="lazy"
+          fetchPriority="low"
           decoding="async"
           style={{ "--spin": "152s" }}
         />
@@ -57,6 +67,8 @@ export function CoreArtwork() {
           alt=""
           width="1920"
           height="1920"
+          loading="lazy"
+          fetchPriority="low"
           decoding="async"
           style={{ "--spin": "170s" }}
         />
@@ -66,6 +78,8 @@ export function CoreArtwork() {
           alt=""
           width="1920"
           height="1920"
+          loading="lazy"
+          fetchPriority="low"
           decoding="async"
           style={{ "--spin": "188s" }}
         />

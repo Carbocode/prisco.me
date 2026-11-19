@@ -9,7 +9,6 @@ Disallow: /oauth/
 Disallow: /verify-2fa
 
 Sitemap: https://prisco.me/sitemap.xml
-Agentmap: https://prisco.me/.well-known/ard.json
 `;
 
 export const Route = createFileRoute("/robots.txt")({

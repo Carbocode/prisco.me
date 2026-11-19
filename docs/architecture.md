@@ -71,7 +71,7 @@ Home composes localized profile cards in its Journey section. The education card
 
 ### ARD discovery
 
-`site/domain/ard.ts` describes only the public content API; the `/.well-known/ard.json` route serves the manifest with public CORS. The HTML document links it through `rel="ard"`; `robots.txt` exposes `Agentmap` and allows crawling the public content API. Do not list authenticated endpoints, drafts, private data, or nonexistent capabilities.
+`site/domain/ard.ts` describes only the public content API; the `/.well-known/ard.json` route serves the manifest with public CORS. The HTML document links it through `rel="ard"`, and `llms.txt` links to it. Keep `robots.txt` limited to recognized crawler directives; it allows crawling the public content API. Do not list authenticated endpoints, drafts, private data, or nonexistent capabilities.
 
 The implementation follows the publisher role in the [ARD v0.91 proposal](https://agenticresourcediscovery.org/spec/), rather than the registry role: it does not expose a federated `POST /search` service or claim MCP/A2A support. `application/json` describes the actual resource format. Keep the manifest and parameter descriptions synchronized with the API; publication does not guarantee indexing by external registries.
 

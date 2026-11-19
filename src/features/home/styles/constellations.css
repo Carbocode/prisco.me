@@ -54,10 +54,13 @@
   height: auto;
   overflow: visible;
 }
-/* Keep offscreen SVG loops from continuously repainting the long story. */
-.home-traversata.js [data-section]:not(.is-motion-visible) *,
-.home-traversata.js [data-section]:not(.is-motion-visible) *::before,
-.home-traversata.js [data-section]:not(.is-motion-visible) *::after,
+/* Pause below-the-fold loops even before hydration; the hero starts immediately. */
+.home-traversata [data-section]:not([data-hero]):not(.is-motion-visible) *,
+.home-traversata [data-section]:not([data-hero]):not(.is-motion-visible) *::before,
+.home-traversata [data-section]:not([data-hero]):not(.is-motion-visible) *::after,
+.home-traversata.js [data-hero]:not(.is-motion-visible) *,
+.home-traversata.js [data-hero]:not(.is-motion-visible) *::before,
+.home-traversata.js [data-hero]:not(.is-motion-visible) *::after,
 .home-site[data-footer-open="true"] .home-traversata *,
 .home-site[data-footer-open="true"] .home-traversata *::before,
 .home-site[data-footer-open="true"] .home-traversata *::after {

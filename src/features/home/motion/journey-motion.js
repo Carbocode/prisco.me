@@ -29,7 +29,19 @@ export function createJourneyMotion(container, scroller, { listen, reduceMQ, loc
     lastJourneyProgress = -1,
     lastJourneyExit = -1;
 
-  const configure = ({ width: viewportWidth, height: viewportHeight }) => {
+  let viewportWidth = 0,
+    viewportHeight = 0;
+  const prepare = ({ width, height }) => {
+    viewportWidth = width;
+    viewportHeight = height;
+    // Only this scene consumes these dimensions; do not invalidate the full story.
+    for (const [property, value] of [
+      ["--home-viewport-width", `${viewportWidth}px`],
+      ["--home-viewport-height", `${viewportHeight}px`],
+    ]) {
+      if (journey.style.getPropertyValue(property) !== value)
+        journey.style.setProperty(property, value);
+    }
     currentStop = -2;
     sceneWidth = viewportWidth;
     lastJourneyProgress = -1;
@@ -53,6 +65,10 @@ export function createJourneyMotion(container, scroller, { listen, reduceMQ, loc
       journey.style.height = "";
       return;
     }
+  };
+
+  const measure = () => {
+    if (!horizontal) return;
     trackDistance = Math.max(0, track.scrollWidth - viewportWidth);
     // The exit continues during the natural scroll into the next section.
     // It adds no distance to the pinned horizontal journey.
@@ -131,8 +147,13 @@ export function createJourneyMotion(container, scroller, { listen, reduceMQ, loc
   });
 
   return {
-    configure,
+    prepare,
+    measure,
     update: updateJourney,
+    dispose() {
+      journey.style.removeProperty("--home-viewport-width");
+      journey.style.removeProperty("--home-viewport-height");
+    },
     get position() {
       return { start: jTop, distance: jDist, horizontal };
     },

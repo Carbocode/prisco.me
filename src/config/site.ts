@@ -5,6 +5,7 @@ export const SITE = {
   name: "Prisco.me",
   origin: "https://prisco.me",
   owner: "Vincenzo Prisco",
+  githubUrl: "https://github.com/Carbocode",
   personId: "https://prisco.me/#person",
   websiteId: "https://prisco.me/#website",
 } as const;

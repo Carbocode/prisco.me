@@ -3,7 +3,7 @@ import { LockKeyhole } from "lucide-react";
 import { useState, type PropsWithChildren, type ReactNode } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
-import { localizablePath, originalPath, type SiteLocale } from "@/config/site";
+import { localizablePath, originalPath, SITE, type SiteLocale } from "@/config/site";
 import { useSiteHref, useSiteLocale } from "@/features/site/client/site-location";
 import { languageSwitchPath } from "@/features/site/domain/language-preference";
 import { cn } from "@/lib/utils";
@@ -179,6 +179,15 @@ export function SiteFooter({ locale = "it" }: { locale?: SiteLocale } = {}) {
               aria-label="LinkedIn"
             >
               LinkedIn
+            </a>
+            <a
+              className={buttonVariants({ variant: "link" })}
+              href={SITE.githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+            >
+              GitHub
             </a>
           </nav>
         </div>
