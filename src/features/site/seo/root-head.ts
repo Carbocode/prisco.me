@@ -1,7 +1,7 @@
 import bricolageGrotesqueFont from "@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 
-import type { SiteLocale } from "@/config/site";
+import { SITE, type SiteLocale } from "@/config/site";
 import * as m from "@/paraglide/messages.js";
 
 import { ardPath } from "../domain/ard";
@@ -84,7 +84,7 @@ export const rootHead = (locale: SiteLocale = "it") => ({
             name: "Vincenzo Prisco",
             jobTitle: "Software Engineer",
             url: "https://prisco.me/",
-            sameAs: ["https://www.linkedin.com/in/vincenzoprisco/"],
+            sameAs: ["https://www.linkedin.com/in/vincenzoprisco/", SITE.githubUrl],
           },
           {
             "@type": "WebSite",

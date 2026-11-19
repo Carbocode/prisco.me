@@ -4,6 +4,7 @@
   inset: 0;
   z-index: -1;
   overflow: hidden;
+  content-visibility: auto;
   pointer-events: none;
 }
 .home-traversata .core-art {
@@ -119,9 +120,15 @@
   .home-traversata.js .geode .geode-visual {
     clip-path: none;
   }
-  .home-traversata.js .find .fossil-art,
   .home-traversata.js .geode .geode-crystals {
     filter: none;
+  }
+  .home-traversata.js .find .fossil-art {
+    opacity: 1;
+    transition: none;
+  }
+  .home-traversata.js .find .fossil-veil {
+    display: none;
   }
   .home-traversata .core-art {
     transform: none;

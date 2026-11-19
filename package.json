@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "setup:worktree": "bun scripts/setup-worktree.js",
-    "dev": "vite",
+    "dev": "bun run i18n:compile && vite",
     "dev:wrangler": "bun run build && wrangler dev --config dist/server/wrangler.json --persist-to .wrangler/state",
     "build": "vite build",
     "preview": "vite preview",

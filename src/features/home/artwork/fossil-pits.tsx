@@ -15,17 +15,20 @@ export function AmmonitePit() {
         decoding="async"
       />
       <div className="find-fossil" data-fy="0.04">
-        <img
-          className="fossil-art"
-          src="/home/ammonite-fossil-art.webp"
-          srcSet="/home/ammonite-fossil-art-256.webp 256w, /home/ammonite-fossil-art-320.webp 320w, /home/ammonite-fossil-art-384.webp 384w, /home/ammonite-fossil-art-640.webp 640w, /home/ammonite-fossil-art-768.webp 768w, /home/ammonite-fossil-art.webp 1280w"
-          sizes="clamp(201.6px,26.6vw,302.4px)"
-          width="240"
-          height="240"
-          alt=""
-          loading="lazy"
-          decoding="async"
-        />
+        {["fossil-art", "fossil-art fossil-veil"].map((className) => (
+          <img
+            key={className}
+            className={className}
+            src="/home/ammonite-fossil-art.webp"
+            srcSet="/home/ammonite-fossil-art-256.webp 256w, /home/ammonite-fossil-art-320.webp 320w, /home/ammonite-fossil-art-384.webp 384w, /home/ammonite-fossil-art-640.webp 640w, /home/ammonite-fossil-art-768.webp 768w, /home/ammonite-fossil-art.webp 1280w"
+            sizes="clamp(201.6px,26.6vw,302.4px)"
+            width="240"
+            height="240"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ))}
       </div>
     </>
   );
@@ -46,17 +49,20 @@ export function TrilobitePit() {
         decoding="async"
       />
       <div className="find-fossil" data-fy="0.04">
-        <img
-          className="fossil-art"
-          src="/home/trilobite-fossil-art.webp"
-          srcSet="/home/trilobite-fossil-art-256.webp 256w, /home/trilobite-fossil-art-320.webp 320w, /home/trilobite-fossil-art-384.webp 384w, /home/trilobite-fossil-art-640.webp 640w, /home/trilobite-fossil-art-768.webp 768w, /home/trilobite-fossil-art.webp 1280w"
-          sizes="clamp(201.6px,26.6vw,302.4px)"
-          width="220"
-          height="260"
-          alt=""
-          loading="lazy"
-          decoding="async"
-        />
+        {["fossil-art", "fossil-art fossil-veil"].map((className) => (
+          <img
+            key={className}
+            className={className}
+            src="/home/trilobite-fossil-art.webp"
+            srcSet="/home/trilobite-fossil-art-256.webp 256w, /home/trilobite-fossil-art-320.webp 320w, /home/trilobite-fossil-art-384.webp 384w, /home/trilobite-fossil-art-640.webp 640w, /home/trilobite-fossil-art-768.webp 768w, /home/trilobite-fossil-art.webp 1280w"
+            sizes="clamp(201.6px,26.6vw,302.4px)"
+            width="220"
+            height="260"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ))}
       </div>
     </>
   );

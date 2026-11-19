@@ -11,6 +11,8 @@ bun run dev
 
 `bun run setup:worktree` prepares a worktree's local environment. `bun run dev:wrangler` builds and starts the application with the local Cloudflare runtime.
 
+`bun run dev` compiles Paraglide before starting Vite so dependency scanning can resolve generated message imports on a fresh checkout. Vite and Vitest both use physical message modules to keep generated imports consistent across development, tests, and CLI compilation.
+
 ## Structure
 
 - `src/app/`: document shell and query client integration.

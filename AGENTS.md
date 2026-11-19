@@ -49,6 +49,14 @@ These rules apply throughout the repository and to every new implementation or r
 
 # Interface rules
 
+## Performance is mandatory
+
+- Treat performance as an implementation requirement for every change, including landing pages and decorative artwork. Preserve the intended visual effects while avoiding unnecessary downloads, decoding, layout, and rendering work.
+- Load offscreen images with `loading="lazy"`, reserve their dimensions or aspect ratio, and provide responsive sources where appropriate. Below-the-fold artwork must not compete with the initial viewport; use low fetch priority for nonessential decorative assets. Do not lazy-load the actual LCP image or essential first-viewport content. Reserve eager loading, high priority, and preloads for resources that need them.
+- Defer nonessential JavaScript and third-party integrations; keep editor and administration dependencies out of public reading flows. Pause decorative animation work outside the viewport and release listeners, observers, and frames on unmount.
+- Batch layout reads before DOM and style writes. Reuse measured geometry during scroll and animation updates; avoid repeated synchronous layout measurements after invalidating styles.
+- For changes affecting loading, artwork, animations, layout, fonts, or scripts, verify the affected mobile flow and measure a production build under comparable conditions. Inspect LCP, CLS, blocking work, network payloads, and forced layout where relevant. Do not use development-server timings as production evidence or claim an improvement from tests alone. Report any regression, missing baseline, or verification limitation.
+
 ## ui-sdk
 
 - Before using ui-sdk, follow the `ui-sdk` skill if it is installed, and read `node_modules/@ui-sdk/react/docs/llms.txt`.

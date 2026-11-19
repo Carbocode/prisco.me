@@ -116,7 +116,7 @@ export function animateHome(container) {
   let headerKeyboardFocus = false;
   let storyStarting = false;
   let storyStartTimer;
-  const updateHeader = (y, maxScroll = scroller.scrollHeight - scroller.clientHeight) => {
+  const updateHeader = (y, maxScroll = scrollRange) => {
     if (!header) return;
     if (storyStarting) {
       headerVisible = false;
@@ -216,6 +216,7 @@ export function animateHome(container) {
   }
   const onFrame = () => {
     ticking = false;
+    if (layoutPending || !geometry) return;
     // Layout measurements are cached: scrolling must not flush animated SVG layout.
     const y = scroller.scrollTop;
     const vh = viewportHeight;
@@ -272,44 +273,55 @@ export function animateHome(container) {
   let viewportHeight = 0;
   let scrollRange = 1;
   let layoutPending = false;
+  let layoutAgain = false;
   const requestLayout = () => {
-    if (layoutPending) return;
+    if (layoutPending) {
+      layoutAgain = true;
+      return;
+    }
     layoutPending = true;
-    frame(() => {
-      layoutPending = false;
-      layout();
-    });
+    frame(layout);
   };
   const layout = () => {
     viewportWidth = scroller.clientWidth;
     viewportHeight = scroller.clientHeight;
     viewportSize = `${viewportWidth}x${viewportHeight}`;
-    // Classic scrollbars stay outside the overlay frame, header and footer peek.
-    setScrollValue(site, "--home-scrollbar", `${scroller.offsetWidth - viewportWidth}px`);
+    const scrollbarWidth = scroller.offsetWidth - viewportWidth;
     scrollOrigin = scroller.getBoundingClientRect().top;
     const previous = journeyMotion.position;
-    const previousScroll = scroller.scrollTop;
-    const wasHorizontal = previous.horizontal;
-    setScrollValue(root, "--home-viewport-height", `${viewportHeight}px`);
-    setScrollValue(root, "--home-viewport-width", `${viewportWidth}px`);
-    journeyMotion.configure({ width: viewportWidth, height: viewportHeight });
-    if (wasHorizontal && journeyMotion.position.horizontal) {
-      const adjusted = remapJourneyScroll(previousScroll, previous, journeyMotion.position);
-      if (Math.abs(adjusted - scroller.scrollTop) > 0.5) {
-        scroller.scrollTop = adjusted;
-        // Layout compensation is not a user change of scroll direction.
-        headerAnchor = scroller.scrollTop;
-      }
-    }
-    scrollRange = measureSections();
-    measureGeometry();
-    // Paint markers only after every scene measurement is complete.
-    ticks.forEach((tick, index) => {
-      tick.style.top = clamp(sectionTops[index] / scrollRange) * 100 + "%";
+    setScrollValue(site, "--home-scrollbar", `${scrollbarWidth}px`);
+    setScrollValue(hero, "--home-viewport-height", `${viewportHeight}px`);
+    journeyMotion.prepare({ width: viewportWidth, height: viewportHeight });
+    // Let the browser lay out the new mode and viewport before measuring it.
+    frame(() => {
+      journeyMotion.measure();
+      // The journey height changes downstream positions. Read those next frame.
+      frame(() => {
+        scrollOrigin = scroller.getBoundingClientRect().top;
+        scrollRange = measureSections();
+        measureGeometry();
+        let scrollY = scroller.scrollTop;
+        if (previous.horizontal && journeyMotion.position.horizontal) {
+          // Compensate only for layout; retain input received during these frames.
+          const adjusted = remapJourneyScroll(scrollY, previous, journeyMotion.position);
+          if (Math.abs(adjusted - scrollY) > 0.5) {
+            scrollY = Math.min(scrollRange, Math.max(0, adjusted));
+            scroller.scrollTop = scrollY;
+            headerAnchor = scrollY;
+          }
+        }
+        ticks.forEach((tick, index) => {
+          tick.style.top = clamp(sectionTops[index] / scrollRange) * 100 + "%";
+        });
+        updateJourney(scrollY);
+        layoutPending = false;
+        requestFrame();
+        if (layoutAgain) {
+          layoutAgain = false;
+          requestLayout();
+        }
+      });
     });
-    // Paint the new geometry immediately, with no intermediate reset frame.
-    updateJourney();
-    requestFrame();
   };
 
   listen(
@@ -348,7 +360,7 @@ export function animateHome(container) {
     }
   }
   listen(reduceMQ, "change", () => {
-    layout();
+    requestLayout();
     if (reduceMQ.matches) {
       heroParallax.scroll("0.0000");
       heroParallax.pointer("0", "0");
@@ -370,11 +382,13 @@ export function animateHome(container) {
     void document.fonts.ready.then(() => {
       if (!scope.disposed) requestLayout();
     });
-  layout();
+  requestLayout();
 
   return () => {
     scope.dispose();
     heroParallax.dispose();
+    journeyMotion.dispose();
+    hero.style.removeProperty("--home-viewport-height");
     clearTimeout(gaugeTimer);
     clearTimeout(storyStartTimer);
     root.classList.remove("js");

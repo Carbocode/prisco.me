@@ -224,12 +224,13 @@
   transform: translate3d(0, var(--fy, 0px), 0);
 }
 .home-traversata .fossil-art {
+  grid-area: 1 / 1;
   object-fit: contain;
   width: 100%;
   height: 100%;
   transition:
     transform 900ms var(--ease-out),
-    filter 900ms var(--ease-out);
+    opacity 1400ms var(--ease-out);
 }
 .home-traversata .find:hover .fossil-art,
 .home-traversata .find:focus-within .fossil-art {
@@ -375,14 +376,33 @@
 .home-traversata.js .geode.is-in .geode-visual {
   clip-path: circle(75% at 50% 55%);
 }
-.home-traversata.js .find .fossil-art,
 .home-traversata.js .geode .geode-crystals {
   filter: blur(5px) brightness(0.35);
 }
-.home-traversata.js .find.is-in .fossil-art,
 .home-traversata.js .geode.is-in .geode-crystals {
   filter: none;
   transition:
     filter 1400ms var(--ease-out) 700ms,
     transform 900ms var(--ease-out);
+}
+
+/* Crossfade fixed appearances; never interpolate a pixel-moving filter. */
+.home-traversata .fossil-veil {
+  display: none;
+  pointer-events: none;
+  filter: blur(5px) brightness(0.35);
+}
+.home-traversata.js .find .fossil-art {
+  opacity: 0;
+}
+.home-traversata.js .find .fossil-veil {
+  display: block;
+  opacity: 1;
+}
+.home-traversata.js .find.is-in .fossil-art {
+  opacity: 1;
+  transition-delay: 0ms, 700ms;
+}
+.home-traversata.js .find.is-in .fossil-veil {
+  opacity: 0;
 }

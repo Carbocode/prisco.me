@@ -70,10 +70,10 @@
 .home-traversata .star-enter {
   display: block;
 }
-.home-traversata.js .star-enter {
+.home-traversata .star-enter {
   animation: home-star-in 720ms var(--ease-out) var(--in, 0ms) both;
 }
-.home-traversata.js .star img {
+.home-traversata .star img {
   animation-delay: calc(var(--in, 0ms) + 720ms);
 }
 
@@ -121,11 +121,11 @@
   width: 100%;
   rotate: 0deg;
 }
-.home-traversata.js .moon img,
-.home-traversata.js .jupiter img {
+.home-traversata .moon img,
+.home-traversata .jupiter img {
   animation: home-planet-in 1400ms var(--ease-out) 150ms both;
 }
-.home-traversata.js .jupiter img {
+.home-traversata .jupiter img {
   animation: home-planet-in 1400ms var(--ease-out) 300ms both;
 }
 @keyframes home-planet-in {
@@ -260,7 +260,7 @@
   letter-spacing: -0.035em;
   color: #e5eefc;
 }
-.home-traversata.js .hero-title .line > span {
+.home-traversata .hero-title .line > span {
   transform: translateY(105%);
   animation: home-rise 1000ms var(--ease-out) calc(220ms + var(--i, 0) * 110ms) both;
 }
@@ -283,9 +283,9 @@
   gap: 0.75rem;
   margin-top: 2rem;
 }
-.home-traversata.js .hero-lede,
-.home-traversata.js .hero-actions,
-.home-traversata.js .now {
+.home-traversata .hero-lede,
+.home-traversata .hero-actions,
+.home-traversata .now {
   opacity: 0;
   animation: home-fade-up 900ms var(--ease-out) var(--delay, 700ms) both;
 }

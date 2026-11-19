@@ -26,6 +26,21 @@ function declarations(selector: string) {
   });
   return result;
 }
+it("pauses underground animations before hydration without pausing the first-viewport hero", () => {
+  expect(
+    declarations(".home-traversata [data-section]:not([data-hero]):not(.is-motion-visible) *")[
+      "animation-play-state"
+    ],
+  ).toBe("paused");
+  expect(declarations(".home-traversata [data-hero] *")["animation-play-state"]).toBeUndefined();
+  expect(declarations(".home-traversata .core-stage")["content-visibility"]).toBe("auto");
+});
+it("reveals fossils through opacity while keeping the blur static", () => {
+  expect(declarations(".home-traversata .fossil-art").transition).not.toContain("filter");
+  expect(declarations(".home-traversata .fossil-veil").filter).toContain("blur(5px)");
+  expect(declarations(".home-traversata.js .find.is-in .fossil-art").opacity).toBe("1");
+  expect(declarations(".home-traversata.js .find.is-in .fossil-veil").opacity).toBe("0");
+});
 it("collega gli effetti ai nomi delle classi generati dalle costellazioni", () => {
   for (const name of [
     "sky-glint",
@@ -46,10 +61,9 @@ it("collega gli effetti ai nomi delle classi generati dalle costellazioni", () =
   );
 });
 it("separa ingresso e scintillio per evitare animazioni concorrenti sullo stesso elemento", () => {
-  expect(declarations(".home-traversata.js .star-enter").animation).toContain("home-star-in 720ms");
+  expect(declarations(".home-traversata .star-enter").animation).toContain("home-star-in 720ms");
   expect(declarations(".home-traversata .star img").animation).toContain("home-twinkle");
-  expect(declarations(".home-traversata.js .star img").animation).toBeUndefined();
-  expect(declarations(".home-traversata.js .star img")["animation-delay"]).toBe(
+  expect(declarations(".home-traversata .star img")["animation-delay"]).toBe(
     "calc(var(--in, 0ms) + 720ms)",
   );
 });
