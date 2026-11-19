@@ -36,9 +36,11 @@ import {
   uniqueAuthors,
   uniqueYears,
 } from "@/features/content/domain/presentation";
-import { type PublicArticle } from "@/features/content/domain/public-content";
+import type { ContentCrumb, PublicArticle } from "@/features/content/domain/public-content";
+import { useSiteLocale } from "@/features/site/client/site-location";
 import { siteDateParts } from "@/lib/dates";
 import { cn } from "@/lib/utils";
+import * as m from "@/paraglide/messages.js";
 
 export function ContentArchivePage({
   eyebrow,
@@ -83,6 +85,7 @@ export function ContentArchivePage({
   onPageChange: (value: number) => void;
   onReset: () => void;
 }) {
+  const locale = useSiteLocale();
   const tags = uniqueTags(articles);
   const organizations = uniqueOrganizations(articles);
   const authors = uniqueAuthors(articles);
@@ -123,23 +126,25 @@ export function ContentArchivePage({
   const renderFilterFields = (idSuffix: "mobile" | "desktop", includeReset: boolean) => (
     <FieldGroup className="grid items-end sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       <Field>
-        <FieldLabel htmlFor={`content-search-${idSuffix}`}>Cerca</FieldLabel>
+        <FieldLabel htmlFor={`content-search-${idSuffix}`}>
+          {m.archive_search({}, { locale })}
+        </FieldLabel>
         <Input
           id={`content-search-${idSuffix}`}
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
-          placeholder="Titolo o descrizione"
+          placeholder={m.archive_title_or_description({}, { locale })}
         />
       </Field>
       <Field>
         <FieldLabel htmlFor={`content-tag-${idSuffix}`}>Tag</FieldLabel>
         <Select value={tag} onValueChange={(value) => onTagChange(value ?? "all")}>
           <SelectTrigger id={`content-tag-${idSuffix}`} className="w-full">
-            <SelectValue placeholder="Tutti i tag" />
+            <SelectValue placeholder={m.archive_all_tags({}, { locale })} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Tutti</SelectItem>
+              <SelectItem value="all">{m.archive_all({}, { locale })}</SelectItem>
               {tags.map((item) => (
                 <SelectItem key={item.slug} value={item.slug}>
                   {item.name}
@@ -150,17 +155,19 @@ export function ContentArchivePage({
         </Select>
       </Field>
       <Field>
-        <FieldLabel htmlFor={`content-organization-${idSuffix}`}>Organizzazione</FieldLabel>
+        <FieldLabel htmlFor={`content-organization-${idSuffix}`}>
+          {m.archive_organization({}, { locale })}
+        </FieldLabel>
         <Select
           value={organization}
           onValueChange={(value) => onOrganizationChange(value ?? "all")}
         >
           <SelectTrigger id={`content-organization-${idSuffix}`} className="w-full">
-            <SelectValue placeholder="Tutte" />
+            <SelectValue placeholder={m.archive_all_6({}, { locale })} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Tutte</SelectItem>
+              <SelectItem value="all">{m.archive_all_7({}, { locale })}</SelectItem>
               {organizations.map((item) => (
                 <SelectItem key={item.slug} value={item.slug}>
                   {item.name}
@@ -171,14 +178,16 @@ export function ContentArchivePage({
         </Select>
       </Field>
       <Field>
-        <FieldLabel htmlFor={`content-author-${idSuffix}`}>Autore</FieldLabel>
+        <FieldLabel htmlFor={`content-author-${idSuffix}`}>
+          {m.archive_author({}, { locale })}
+        </FieldLabel>
         <Select value={author} onValueChange={(value) => onAuthorChange(value ?? "all")}>
           <SelectTrigger id={`content-author-${idSuffix}`} className="w-full">
-            <SelectValue placeholder="Tutti" />
+            <SelectValue placeholder={m.archive_all({}, { locale })} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Tutti</SelectItem>
+              <SelectItem value="all">{m.archive_all({}, { locale })}</SelectItem>
               {authors.map((item) => (
                 <SelectItem key={item.slug} value={item.slug}>
                   {item.name}
@@ -189,14 +198,16 @@ export function ContentArchivePage({
         </Select>
       </Field>
       <Field>
-        <FieldLabel htmlFor={`content-year-${idSuffix}`}>Data</FieldLabel>
+        <FieldLabel htmlFor={`content-year-${idSuffix}`}>
+          {m.archive_date({}, { locale })}
+        </FieldLabel>
         <Select value={year} onValueChange={(value) => onYearChange(value ?? "all")}>
           <SelectTrigger id={`content-year-${idSuffix}`} className="w-full">
-            <SelectValue placeholder="Tutte le date" />
+            <SelectValue placeholder={m.archive_all_dates({}, { locale })} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Tutte le date</SelectItem>
+              <SelectItem value="all">{m.archive_all_dates({}, { locale })}</SelectItem>
               {years.map((item) => (
                 <SelectItem key={item} value={item}>
                   {item}
@@ -208,9 +219,9 @@ export function ContentArchivePage({
       </Field>
       {includeReset ? (
         <Field>
-          <FieldLabel className="sr-only">Azioni filtri</FieldLabel>
+          <FieldLabel className="sr-only">{m.archive_filter_actions({}, { locale })}</FieldLabel>
           <Button type="button" variant="outline" onClick={onReset} disabled={!hasFilters}>
-            Azzera filtri
+            {m.archive_reset_filters({}, { locale })}{" "}
           </Button>
         </Field>
       ) : null}
@@ -219,10 +230,12 @@ export function ContentArchivePage({
 
   return (
     <PageShell title={title} description={description} hero={false}>
-      <ArchiveHero eyebrow={eyebrow} title={title} description={description} hero={hero} />
-      <ContentBreadcrumb
-        className="mx-auto w-full max-w-6xl"
-        items={[{ name: title, url: `/${archiveSlug}` }]}
+      <ArchiveHero
+        breadcrumb={{ name: title, url: `/${archiveSlug}` }}
+        eyebrow={eyebrow}
+        title={title}
+        description={description}
+        hero={hero}
       />
       <Section className="pt-4 sm:pt-6">
         <div className="sm:hidden">
@@ -233,7 +246,7 @@ export function ContentArchivePage({
               }
             >
               <SlidersHorizontal data-icon="inline-start" />
-              Filtri
+              {m.archive_filters({}, { locale })}{" "}
               {activeFilterCount ? (
                 <Badge variant="secondary" aria-label={`${activeFilterCount} filtri attivi`}>
                   {activeFilterCount}
@@ -242,23 +255,26 @@ export function ContentArchivePage({
             </DrawerTrigger>
             <DrawerContent>
               <DrawerHeader>
-                <DrawerTitle>Filtra contenuti</DrawerTitle>
+                <DrawerTitle>{m.archive_filter_content({}, { locale })}</DrawerTitle>
                 <DrawerDescription>
-                  Scegli uno o più criteri. I risultati si aggiornano subito.
+                  {m.archive_choose_one_or_more_filters_results({}, { locale })}{" "}
                 </DrawerDescription>
               </DrawerHeader>
               <div className="flex-1 overflow-y-auto p-4">
                 <FieldSet>
-                  <FieldLegend className="sr-only">Filtra contenuti</FieldLegend>
+                  <FieldLegend className="sr-only">
+                    {m.archive_filter_content({}, { locale })}
+                  </FieldLegend>
                   {renderFilterFields("mobile", false)}
                 </FieldSet>
               </div>
               <DrawerFooter>
                 <Button type="button" variant="outline" onClick={onReset} disabled={!hasFilters}>
-                  Azzera filtri
+                  {m.archive_reset_filters({}, { locale })}{" "}
                 </Button>
                 <DrawerClose render={<Button type="button" size="lg" />}>
-                  Mostra {filtered.length} {filtered.length === 1 ? "risultato" : "risultati"}
+                  {m.archive_show({}, { locale })} {filtered.length}{" "}
+                  {filtered.length === 1 ? "risultato" : "risultati"}
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>
@@ -266,7 +282,7 @@ export function ContentArchivePage({
         </div>
 
         <FieldSet className="hidden sm:block">
-          <FieldLegend variant="label">Filtra contenuti</FieldLegend>
+          <FieldLegend variant="label">{m.archive_filter_content({}, { locale })}</FieldLegend>
           {renderFilterFields("desktop", true)}
         </FieldSet>
 
@@ -291,8 +307,8 @@ export function ContentArchivePage({
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm tabular-nums text-muted-foreground">
-                {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)} di{" "}
-                {filtered.length}
+                {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, filtered.length)}{" "}
+                {m.archive_of({}, { locale })} {filtered.length}
               </p>
               <Pagination className="mx-0 w-auto">
                 <PaginationContent>
@@ -302,7 +318,7 @@ export function ContentArchivePage({
                       size="icon-sm"
                       variant="outline"
                       disabled={safePage === 1}
-                      aria-label="Pagina precedente"
+                      aria-label={m.archive_previous_page({}, { locale })}
                       onClick={() => onPageChange(Math.max(1, safePage - 1))}
                     >
                       <ChevronLeft />
@@ -310,7 +326,8 @@ export function ContentArchivePage({
                   </PaginationItem>
                   <PaginationItem>
                     <span className="px-2 text-sm tabular-nums" aria-live="polite">
-                      Pagina {safePage} di {pages}
+                      {m.archive_page({}, { locale })} {safePage} {m.archive_of({}, { locale })}{" "}
+                      {pages}
                     </span>
                   </PaginationItem>
                   <PaginationItem>
@@ -319,7 +336,7 @@ export function ContentArchivePage({
                       size="icon-sm"
                       variant="outline"
                       disabled={safePage === pages}
-                      aria-label="Pagina successiva"
+                      aria-label={m.archive_next_page({}, { locale })}
                       onClick={() => onPageChange(Math.min(pages, safePage + 1))}
                     >
                       <ChevronRight />
@@ -332,9 +349,9 @@ export function ContentArchivePage({
         ) : (
           <Empty className="mt-8">
             <EmptyHeader>
-              <EmptyTitle>Nessun contenuto trovato</EmptyTitle>
+              <EmptyTitle>{m.archive_no_content_found({}, { locale })}</EmptyTitle>
               <EmptyDescription>
-                Modifica o azzera i filtri per vedere altri risultati.
+                {m.archive_change_or_reset_your_filters_to({}, { locale })}{" "}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -345,11 +362,13 @@ export function ContentArchivePage({
 }
 
 function ArchiveHero({
+  breadcrumb,
   eyebrow,
   title,
   description,
   hero,
 }: {
+  breadcrumb: ContentCrumb;
   eyebrow: string;
   title: string;
   description: string;
@@ -359,7 +378,8 @@ function ArchiveHero({
     <>
       <section className="bg-black px-6 pb-6 pt-24 sm:pb-8 sm:pt-28">
         <div className="mx-auto grid w-full min-w-0 max-w-384 gap-8 lg:grid-cols-(--layout-grid-cols-feature-reverse) lg:items-center lg:gap-12 xl:gap-16">
-          <div className="flex flex-col items-start justify-center gap-5 py-6 lg:py-12">
+          <div className="flex min-w-0 flex-col items-start justify-center gap-5 py-6 lg:py-12">
+            <ContentBreadcrumb items={[breadcrumb]} />
             <p className="text-xs font-semibold uppercase tracking-caption text-link">{eyebrow}</p>
             <h1 className="display-font text-4xl leading-compact font-semibold tracking-hero text-balance sm:text-5xl lg:text-6xl">
               {title}

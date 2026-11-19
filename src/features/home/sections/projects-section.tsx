@@ -1,15 +1,17 @@
+import { localizedPath, type SiteLocale } from "@/config/site";
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
 import type { Project } from "@/features/portfolio/domain/portfolio";
+import * as m from "@/paraglide/messages.js";
 
 import { AmmonitePit, TrilobitePit } from "../artwork/fossil-pits";
 
-export function ProjectsSection({ projects }: { projects: Project[] }) {
+export function ProjectsSection({ projects, locale }: { projects: Project[]; locale: SiteLocale }) {
   return (
     <section
       id="reperti"
       className="layer layer-crust"
-      data-section="Progetti"
+      data-section={m.home_projects_section({}, { locale })}
       aria-labelledby="reperti-title"
     >
       <div className="bands" aria-hidden="true">
@@ -121,12 +123,9 @@ export function ProjectsSection({ projects }: { projects: Project[] }) {
       <div className="wrap">
         <header className="layer-head">
           <h2 className="h2" id="reperti-title" data-reveal="">
-            {"Il valore di un’idea. "}
-            <span className="serif">{"È ciò che rende possibile."}</span>
+            {m.home_projects_title({}, { locale })}
+            <span className="serif">{m.home_projects_possible({}, { locale })}</span>
           </h2>
-          <p className="lead" data-reveal="" style={{ "--i": "1" }}>
-            {"La cura conta quando rende più semplice ciò che prima non lo era."}
-          </p>
         </header>
         <div className="finds">
           {projects.map((project, index) => (
@@ -150,7 +149,7 @@ export function ProjectsSection({ projects }: { projects: Project[] }) {
                   {project.company} · {project.role}
                 </p>
                 <h3>
-                  <a href={`/progetti/${project.slug}`}>{project.title}</a>
+                  <a href={localizedPath(`/progetti/${project.slug}`, locale)}>{project.title}</a>
                 </h3>
                 <p>{project.summary}</p>
                 <div className="tags">
@@ -163,8 +162,8 @@ export function ProjectsSection({ projects }: { projects: Project[] }) {
           ))}
         </div>
         <p className="layer-more" data-reveal="">
-          <a className="text-link" href="/progetti">
-            {"Tutti i progetti consegnati "}
+          <a className="text-link" href={localizedPath("/progetti", locale)}>
+            {m.home_projects_all({}, { locale })}
             <span aria-hidden="true">{"→"}</span>
           </a>
         </p>

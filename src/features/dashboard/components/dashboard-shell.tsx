@@ -35,18 +35,22 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { localizedPath } from "@/config/site";
 import { authClient } from "@/features/auth/client/auth-client";
 import { DashboardBreadcrumb } from "@/features/dashboard/components/dashboard-breadcrumb";
 import { dashboardTitle, profileNavigation } from "@/features/dashboard/navigation";
+import { useSiteLocale } from "@/features/site/client/site-location";
 import { cn } from "@/lib/utils";
+import * as m from "@/paraglide/messages.js";
 
 export function DashboardShell() {
+  const locale = useSiteLocale();
   const session = authClient.useSession();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { setOpenMobile } = useSidebar();
   const user = session.data!.user;
-  const pageTitle = dashboardTitle(pathname);
+  const pageTitle = dashboardTitle(pathname, locale);
   const isArticleEditor = /^\/dashboard\/cms\/articles\/[^/]+\/?$/.test(pathname);
   const initials = user.name
     .split(" ")
@@ -74,7 +78,7 @@ export function DashboardShell() {
             <SidebarGroupLabel>Account</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {profileNavigation.map((item) => (
+                {profileNavigation(locale).map((item) => (
                   <SidebarMenuItem key={item.to}>
                     <SidebarMenuButton
                       title={item.label}
@@ -94,12 +98,12 @@ export function DashboardShell() {
           </SidebarGroup>
           {user.role === "admin" && (
             <SidebarGroup>
-              <SidebarGroupLabel>Amministrazione</SidebarGroupLabel>
+              <SidebarGroupLabel>{m.dash_administration({}, { locale })}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      title="Crea utente"
+                      title={m.dash_create_user({}, { locale })}
                       isActive={pathname === "/dashboard/admin/users/new"}
                       render={
                         <Link
@@ -109,12 +113,12 @@ export function DashboardShell() {
                       }
                     >
                       <UserPlus />
-                      <span>Crea utente</span>
+                      <span>{m.dash_create_user({}, { locale })}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      title="Lista utenti"
+                      title={m.dash_user_list({}, { locale })}
                       isActive={
                         pathname === "/dashboard/admin/users" ||
                         pathname === "/dashboard/admin/users/"
@@ -124,12 +128,12 @@ export function DashboardShell() {
                       }
                     >
                       <Users />
-                      <span>Lista utenti</span>
+                      <span>{m.dash_user_list({}, { locale })}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton
-                      title="Richieste di contatto"
+                      title={m.dash_contact_requests({}, { locale })}
                       isActive={
                         pathname === "/dashboard/admin/contacts" ||
                         pathname === "/dashboard/admin/contacts/"
@@ -139,7 +143,7 @@ export function DashboardShell() {
                       }
                     >
                       <Mail />
-                      <span>Richieste di contatto</span>
+                      <span>{m.dash_contact_requests({}, { locale })}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -239,33 +243,33 @@ export function DashboardShell() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                title="Elimina account"
+                title={m.dash_delete_account({}, { locale })}
                 isActive={pathname === "/dashboard/profile/danger"}
                 render={
                   <Link to="/dashboard/profile/danger" onClick={() => setOpenMobile(false)} />
                 }
               >
                 <TriangleAlert className="text-destructive" />
-                <span className="text-destructive">Elimina account</span>
+                <span className="text-destructive">{m.dash_delete_account({}, { locale })}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             {session.data?.session.impersonatedBy && (
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  tooltip="Termina impersonificazione"
+                  tooltip={m.dash_end_impersonation({}, { locale })}
                   onClick={async () => {
                     await authClient.admin.stopImpersonating();
-                    window.location.assign("/dashboard/admin/users");
+                    window.location.assign(localizedPath("/dashboard/admin/users", locale));
                   }}
                 >
                   <UserCog />
-                  <span>Termina impersonificazione</span>
+                  <span>{m.dash_end_impersonation({}, { locale })}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             )}
             <SidebarMenuItem>
               <SidebarMenuButton
-                tooltip="Esci"
+                tooltip={m.dash_sign_out({}, { locale })}
                 onClick={() =>
                   void authClient.signOut({
                     fetchOptions: { onSuccess: () => void navigate({ to: "/" }) },
@@ -273,7 +277,7 @@ export function DashboardShell() {
                 }
               >
                 <LogOut />
-                <span>Esci</span>
+                <span>{m.dash_sign_out({}, { locale })}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

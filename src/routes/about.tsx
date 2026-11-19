@@ -1,14 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { SiteInformationPage } from "@/features/site/pages/about-page";
-import { pageHead } from "@/features/site/seo/page-head";
+import { localizedPageHead } from "@/features/site/seo/page-head";
+import * as m from "@/paraglide/messages.js";
 
 export const Route = createFileRoute("/about")({
-  head: () =>
-    pageHead({
-      title: "Informazioni sul sito | Prisco.me",
-      description: "Tecnologie, strumenti e repository del sito personale di Vincenzo Prisco.",
-      socialDescription: "Scopri come è costruito Prisco.me",
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) =>
+    localizedPageHead(locale, {
+      title: m.about_seo_title({}, { locale }),
+      description: m.about_seo_description({}, { locale }),
+      socialDescription: m.about_seo_social({}, { locale }),
       path: "/about",
     }),
   component: SiteInformationPage,

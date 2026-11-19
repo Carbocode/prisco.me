@@ -15,13 +15,17 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { localizedPath } from "@/config/site";
 import { authClient } from "@/features/auth/client/auth-client";
 import { AuthPage, formString, formValues } from "@/features/auth/components/auth-ui";
 import { TurnstileWidget } from "@/features/auth/components/turnstile-widget";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 const routeApi = getRouteApi("/login");
 
 export function AccessPage() {
+  const locale = useSiteLocale();
   const search = routeApi.useSearch();
   const turnstileSiteKey = routeApi.useLoaderData();
   const captchaEnabled = Boolean(turnstileSiteKey);
@@ -32,7 +36,7 @@ export function AccessPage() {
   const [message, setMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileRevision, setTurnstileRevision] = useState(0);
-  const callbackURL = search.callbackURL ?? "/dashboard/profile";
+  const callbackURL = search.callbackURL ?? localizedPath("/dashboard/profile", locale);
 
   useEffect(() => {
     if (session.data) void navigate({ href: callbackURL });
@@ -48,14 +52,14 @@ export function AccessPage() {
   }, []);
 
   const handleTurnstileExpire = useCallback(() => {
-    setMessage("La verifica anti-bot è scaduta. Attendi la nuova verifica e riprova.");
+    setMessage(m.login_expired({}, { locale }));
     resetTurnstile();
-  }, [resetTurnstile]);
+  }, [locale, resetTurnstile]);
 
   const handleTurnstileError = useCallback(() => {
     setTurnstileToken(null);
-    setMessage("Il servizio di verifica anti-bot non è disponibile. Riprova tra poco.");
-  }, []);
+    setMessage(m.login_unavailable({}, { locale }));
+  }, [locale]);
 
   function captchaFetchOptions(token: string, onRetryAfter: (value: string | null) => void) {
     return {
@@ -73,23 +77,22 @@ export function AccessPage() {
   ) {
     if (error.status === 429) {
       return retryAfter
-        ? `Troppi tentativi. Riprova tra ${retryAfter} secondi.`
-        : "Troppi tentativi. Attendi qualche istante e riprova.";
+        ? m.login_wait_seconds({ seconds: retryAfter }, { locale })
+        : m.login_rate_limit({}, { locale });
     }
-    if (error.code === "MISSING_RESPONSE") return "Completa la verifica anti-bot.";
-    if (error.code === "INVALID_USERNAME")
-      return "Lo username può contenere solo lettere senza accenti, numeri, punti e underscore (_). Puoi anche accedere con l’email dell’account.";
+    if (error.code === "MISSING_RESPONSE") return m.login_check_required({}, { locale });
+    if (error.code === "INVALID_USERNAME") return m.login_username_invalid({}, { locale });
     if (error.code === "VERIFICATION_FAILED" || error.status === 403)
-      return "Verifica anti-bot non valida o scaduta. Riprova.";
+      return m.login_check_failed({}, { locale });
     if (error.code === "UNKNOWN_ERROR" || (error.status ?? 0) >= 500)
-      return "Il servizio di verifica anti-bot non è disponibile. Riprova tra poco.";
+      return m.login_unavailable({}, { locale });
     return error.message ?? fallback;
   }
 
   async function signIn(event: React.FormEvent<HTMLFormElement>) {
     const data = formValues(event);
     if (captchaEnabled && !turnstileToken) {
-      setMessage("Completa la verifica anti-bot prima di accedere.");
+      setMessage(m.login_check_sign_in({}, { locale }));
       return;
     }
     setPending(true);
@@ -116,7 +119,9 @@ export function AccessPage() {
         });
     setPending(false);
     if (result.error) {
-      setMessage(authErrorMessage(result.error, retryAfter, "Accesso non riuscito."));
+      setMessage(
+        authErrorMessage(result.error, retryAfter, m.login_sign_in_failed({}, { locale })),
+      );
       resetTurnstile();
     }
   }
@@ -124,7 +129,7 @@ export function AccessPage() {
   async function signUp(event: React.FormEvent<HTMLFormElement>) {
     const data = formValues(event);
     if (captchaEnabled && !turnstileToken) {
-      setMessage("Completa la verifica anti-bot prima di registrarti.");
+      setMessage(m.login_check_register({}, { locale }));
       return;
     }
     setPending(true);
@@ -142,7 +147,9 @@ export function AccessPage() {
     });
     setPending(false);
     if (result.error) {
-      setMessage(authErrorMessage(result.error, retryAfter, "Registrazione non riuscita."));
+      setMessage(
+        authErrorMessage(result.error, retryAfter, m.login_register_failed({}, { locale })),
+      );
       resetTurnstile();
     } else void navigate({ href: callbackURL });
   }
@@ -152,14 +159,14 @@ export function AccessPage() {
     setMessage("");
     const result = await authClient.signIn.passkey({ autoFill: false });
     setPending(false);
-    if (result?.error) setMessage(result.error.message ?? "Passkey non riconosciuta.");
+    if (result?.error) setMessage(result.error.message ?? m.login_passkey_failed({}, { locale }));
     else void navigate({ href: callbackURL });
   }
 
   return (
     <AuthPage
-      title={mode === "login" ? "Bentornato." : "Crea il tuo account."}
-      description="Gestisci identità, sicurezza, passkey, sessioni e autorizzazioni OAuth da un unico profilo."
+      title={mode === "login" ? m.login_welcome({}, { locale }) : m.login_register({}, { locale })}
+      description={m.login_manage_your_identity_security_passkeys_sessions({}, { locale })}
     >
       <Card className="mx-auto w-full max-w-md">
         <CardContent>
@@ -167,7 +174,9 @@ export function AccessPage() {
             <form onSubmit={(event) => void signIn(event)}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="login-identifier">Email o username</FieldLabel>
+                  <FieldLabel htmlFor="login-identifier">
+                    {m.login_email_or_username({}, { locale })}
+                  </FieldLabel>
                   <Input
                     id="login-identifier"
                     name="identifier"
@@ -195,7 +204,10 @@ export function AccessPage() {
                       onError={handleTurnstileError}
                     />
                     <FieldDescription>
-                      La verifica protegge l’account dai tentativi di accesso automatici.
+                      {m.login_verification_protects_your_account_from_automated(
+                        {},
+                        { locale },
+                      )}{" "}
                     </FieldDescription>
                   </Field>
                 ) : null}
@@ -205,10 +217,10 @@ export function AccessPage() {
                   ) : (
                     <KeyRound data-icon="inline-start" />
                   )}
-                  {pending ? "Accesso…" : "Accedi"}
+                  {pending ? m.login_signing_in({}, { locale }) : m.login_sign_in({}, { locale })}
                 </Button>
                 <p>
-                  Non hai ancora un account?{" "}
+                  {m.login_don_t_have_an_account({}, { locale })}{" "}
                   <Link
                     className={buttonVariants({ variant: "link" })}
                     to="/login"
@@ -219,10 +231,10 @@ export function AccessPage() {
                       resetTurnstile();
                     }}
                   >
-                    Registrati
+                    {m.login_sign_up({}, { locale })}{" "}
                   </Link>
                 </p>
-                <FieldSeparator>oppure</FieldSeparator>
+                <FieldSeparator>{m.login_or({}, { locale })}</FieldSeparator>
                 <Button
                   type="button"
                   disabled={pending}
@@ -230,7 +242,7 @@ export function AccessPage() {
                   variant="outline"
                 >
                   <ScanFace data-icon="inline-start" />
-                  Accedi con passkey
+                  {m.login_sign_in_with_a_passkey({}, { locale })}{" "}
                 </Button>
               </FieldGroup>
             </form>
@@ -238,7 +250,7 @@ export function AccessPage() {
             <form onSubmit={(event) => void signUp(event)}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="register-name">Nome</FieldLabel>
+                  <FieldLabel htmlFor="register-name">{m.login_name({}, { locale })}</FieldLabel>
                   <Input id="register-name" name="name" autoComplete="name" required />
                 </Field>
                 <Field>
@@ -271,7 +283,7 @@ export function AccessPage() {
                     required
                   />
                   <FieldDescription>
-                    Almeno 8 caratteri. Il ruolo iniziale è sempre Utente.
+                    {m.login_at_least_characters_new_accounts_start({}, { locale })}{" "}
                   </FieldDescription>
                 </Field>
                 {turnstileSiteKey ? (
@@ -284,16 +296,18 @@ export function AccessPage() {
                       onError={handleTurnstileError}
                     />
                     <FieldDescription>
-                      La verifica protegge la registrazione dagli account automatici.
+                      {m.login_verification_protects_sign_ups_from_automated({}, { locale })}{" "}
                     </FieldDescription>
                   </Field>
                 ) : null}
                 <Button disabled={pending || (captchaEnabled && !turnstileToken)} type="submit">
                   {pending && <Spinner data-icon="inline-start" />}
-                  {pending ? "Creazione…" : "Crea account"}
+                  {pending
+                    ? m.login_creating_account({}, { locale })
+                    : m.login_create_account({}, { locale })}
                 </Button>
                 <p>
-                  Hai già un account?{" "}
+                  {m.login_already_have_an_account({}, { locale })}{" "}
                   <Link
                     className={buttonVariants({ variant: "link" })}
                     to="/login"
@@ -304,7 +318,7 @@ export function AccessPage() {
                       resetTurnstile();
                     }}
                   >
-                    Accedi
+                    {m.login_sign_in({}, { locale })}{" "}
                   </Link>
                 </p>
               </FieldGroup>

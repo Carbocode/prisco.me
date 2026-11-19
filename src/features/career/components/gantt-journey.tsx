@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { localizedPath } from "@/config/site";
 import { CareerCta } from "@/features/career/components/career-cta";
 import {
   buildGantt,
@@ -19,9 +20,13 @@ import {
 } from "@/features/career/domain/gantt";
 import { SkillChip } from "@/features/portfolio/components/tech-icon";
 import type { Experience, Skill } from "@/features/portfolio/domain/portfolio";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import { formatSiteMonth } from "@/lib/dates";
 import { cn } from "@/lib/utils";
+import * as m from "@/paraglide/messages.js";
 
 export function GanttJourney({ experiences }: { experiences: Experience[] }) {
+  const locale = useSiteLocale();
   const { columns, segments } = useMemo(
     () => buildGantt([...experiences, careerCtaExperience]),
     [experiences],
@@ -132,7 +137,7 @@ export function GanttJourney({ experiences }: { experiences: Experience[] }) {
               type="button"
               onClick={() => scrollToSegment(currentIndex - 1)}
               disabled={currentIndex <= 0}
-              aria-label="Periodo precedente"
+              aria-label={m.career_previous_period({}, { locale })}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-ink-soft transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
             >
               ↑
@@ -141,7 +146,7 @@ export function GanttJourney({ experiences }: { experiences: Experience[] }) {
               type="button"
               onClick={() => scrollToSegment(currentIndex + 1)}
               disabled={currentIndex >= segments.length - 1}
-              aria-label="Periodo successivo"
+              aria-label={m.career_next_period({}, { locale })}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-ink-soft transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
             >
               ↓
@@ -167,6 +172,7 @@ export function GanttJourney({ experiences }: { experiences: Experience[] }) {
 }
 
 function GanttPanel({ seg }: { seg: GanttSegment }) {
+  const locale = useSiteLocale();
   const tone = ganttCategoryTone[seg.category];
   const { experience } = seg;
   if (seg.experience.id === careerCtaExperience.id) return <CareerCta />;
@@ -179,7 +185,9 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
           className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-eyebrow ${tone.chip}`}
         >
           <span className={`h-1.5 w-1.5 rounded-full ${tone.dot}`} aria-hidden="true" />
-          {seg.groupLabel}
+          {seg.category === "work"
+            ? m.career_work({}, { locale })
+            : m.career_education({}, { locale })}
         </span>
         <span className="text-xs font-medium uppercase tracking-eyebrow text-ink-muted">
           {experience.period}
@@ -190,7 +198,7 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
               className="h-1.5 w-1.5 animate-pulse rounded-full bg-warm-accent-strong"
               aria-hidden="true"
             />
-            Attuale
+            {m.career_current({}, { locale })}{" "}
           </span>
         ) : null}
       </div>
@@ -200,13 +208,18 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
       <p className="mt-1 text-sm font-medium text-ink-subtle">{experience.title}</p>
       <p className="mt-4 max-w-xl text-base leading-7 text-ink-body">{experience.narrative}</p>
       <p className="mt-4 text-xs font-medium uppercase tracking-label-wide text-ink-dim">
-        {ongoing ? "In corso" : `Durata · ${formatGanttDuration(seg.startIndex, seg.endIndex)}`}
+        {ongoing
+          ? m.career_ongoing({}, { locale })
+          : m.career_duration(
+              { duration: formatGanttDuration(seg.startIndex, seg.endIndex, locale) },
+              { locale },
+            )}
       </p>
 
       {experience.skills.length > 0 ? (
         <div className="mt-6">
           <p className="text-xs font-semibold uppercase tracking-section text-ink-muted">
-            COMPETENZE APPRESE O APLIATE
+            {m.career_skills_learned_or_applied({}, { locale })}{" "}
           </p>
           <SkillsRow skills={experience.skills} />
         </div>
@@ -215,13 +228,13 @@ function GanttPanel({ seg }: { seg: GanttSegment }) {
       {experience.projects.length > 0 ? (
         <div className="mt-6">
           <p className="text-xs font-semibold uppercase tracking-section text-ink-muted">
-            Progetti collegati
+            {m.career_related_projects({}, { locale })}{" "}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {experience.projects.map((project) => (
               <a
                 key={project.slug}
-                href={`/progetti/${project.slug}`}
+                href={localizedPath(`/progetti/${project.slug}`, locale)}
                 className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-canvas/60 px-3 py-2 text-sm text-ink-soft transition hover:border-link/35 hover:bg-link/10 hover:text-link-hover"
               >
                 {project.title}
@@ -255,6 +268,7 @@ function VerticalGantt({
   plotRef: RefObject<HTMLDivElement | null>;
 }) {
   const horizontalScrollRef = useRef<HTMLDivElement>(null);
+  const locale = useSiteLocale();
 
   useEffect(() => {
     const scroller = horizontalScrollRef.current;
@@ -303,7 +317,11 @@ function VerticalGantt({
                 )}
                 style={{ "--dynamic-top": `${ganttY(index)}px` }}
               >
-                {isYear ? month.year : month.label}
+                {isYear
+                  ? month.year
+                  : locale === "it"
+                    ? month.label
+                    : formatSiteMonth(month.key, locale)}
               </span>
             );
           })}
@@ -336,7 +354,7 @@ function VerticalGantt({
                 aria-hidden="true"
               >
                 <span className="absolute -top-2 left-full ml-2 rounded-full border border-warm-accent/40 bg-warm-accent/20 px-1.5 py-0.5 text-xs font-bold uppercase tracking-label text-warm-ink-soft">
-                  Oggi
+                  {m.career_today({}, { locale })}{" "}
                 </span>
               </span>
             ) : null}
@@ -357,10 +375,19 @@ function VerticalGantt({
                       const bottom = ganttY(Math.min(ganttTotalMonths, endIndex));
                       const height = Math.max(ganttMonthHeight, bottom - top);
                       const active = activeId === bar.id;
-                      const barTone =
-                        bar.id === careerCtaExperience.id
-                          ? "border-highlight-soft/60 bg-gradient-to-b from-secondary-glow/95 to-highlight-strong/85 text-secondary-ink"
-                          : tone.bar;
+                      const isNextChapter = bar.id === careerCtaExperience.id;
+                      const title = isNextChapter
+                        ? m.career_next_chapter_title({}, { locale })
+                        : bar.title;
+                      const period = isNextChapter
+                        ? m.career_next_chapter_period({}, { locale })
+                        : bar.period;
+                      const detail = isNextChapter
+                        ? m.career_next_chapter_detail({}, { locale })
+                        : bar.detail;
+                      const barTone = isNextChapter
+                        ? "border-highlight-soft/60 bg-gradient-to-b from-secondary-glow/95 to-highlight-strong/85 text-secondary-ink"
+                        : tone.bar;
                       const focusBlock = () => {
                         const el = plotRef.current;
                         if (!el) return;
@@ -385,13 +412,13 @@ function VerticalGantt({
                             "dynamic-top h-(--dynamic-height)",
                           )}
                           style={{ "--dynamic-top": `${top}px`, "--dynamic-height": `${height}px` }}
-                          title={`${bar.detail ?? bar.title} (${bar.period})`}
+                          title={`${detail ?? title} (${period})`}
                         >
                           {/* Transparent overlay handles clicks without breaking the sticky label */}
                           <button
                             type="button"
                             onClick={focusBlock}
-                            aria-label={`${bar.title} — ${bar.period}`}
+                            aria-label={`${title} — ${period}`}
                             className="absolute inset-0 z-10 cursor-pointer rounded-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm-accent/70"
                           />
                           <div className="sticky top-2 flex flex-col items-center gap-1 px-1 pb-1 pt-2 text-center">
@@ -401,7 +428,7 @@ function VerticalGantt({
                                 aria-hidden="true"
                               />
                             ) : null}
-                            <span className="text-xs font-semibold leading-tight">{bar.title}</span>
+                            <span className="text-xs font-semibold leading-tight">{title}</span>
                           </div>
                         </div>
                       );

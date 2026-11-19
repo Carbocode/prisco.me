@@ -7,6 +7,7 @@ import {
   type PropsWithChildren,
 } from "react";
 
+import type { SiteLocale } from "@/config/site";
 import { useHydrated } from "@/hooks/use-hydrated";
 
 const COOKIE_CONSENT_STORAGE_KEY = "prisco-cookie-consent";
@@ -68,7 +69,10 @@ export function hasAnalyticsConsent() {
   return typeof window !== "undefined" && readConsent() === "accepted";
 }
 
-export function CookieConsentProvider({ children }: PropsWithChildren) {
+export function CookieConsentProvider({
+  children,
+  locale = "it",
+}: PropsWithChildren<{ locale?: SiteLocale }>) {
   const consent = useSyncExternalStore(subscribeConsent, readConsent, serverConsent);
   const hydrated = useHydrated();
   const analyticsReady = useAnalyticsReady();
@@ -87,7 +91,7 @@ export function CookieConsentProvider({ children }: PropsWithChildren) {
       )}
       {consent === null && hydrated && (
         <Suspense fallback={null}>
-          <CookieBanner onChoose={chooseConsent} />
+          <CookieBanner locale={locale} onChoose={chooseConsent} />
         </Suspense>
       )}
     </>

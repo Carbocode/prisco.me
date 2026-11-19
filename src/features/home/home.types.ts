@@ -1,4 +1,5 @@
-import type { Experience, Project } from "@/features/portfolio/domain/portfolio";
+import type { SiteLocale } from "@/config/site";
+import type { Project } from "@/features/portfolio/domain/portfolio";
 
 export type HomeArticle = {
   id: string;
@@ -9,7 +10,7 @@ export type HomeArticle = {
 };
 
 export type HomePageProps = {
+  locale: SiteLocale;
   projects: Project[];
-  experiences: Experience[];
   articles: HomeArticle[];
 };

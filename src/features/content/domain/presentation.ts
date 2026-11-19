@@ -1,12 +1,14 @@
+import type { SiteLocale } from "@/config/site";
 import { type PublicArticle } from "@/features/content/domain/public-content";
 import { formatSiteDate, siteDateParts } from "@/lib/dates";
+import * as m from "@/paraglide/messages.js";
 
-export function formatDate(date: Date | null) {
-  return date ? formatSiteDate(new Date(date)) : "Pubblicazione";
+export function formatDate(date: Date | null, locale: SiteLocale = "it") {
+  return date ? formatSiteDate(new Date(date), locale) : m.article_publication({}, { locale });
 }
 
-export function formatReadingTime(minutes: number) {
-  return `${minutes} min di lettura`;
+export function formatReadingTime(minutes: number, locale: SiteLocale = "it") {
+  return m.article_reading_time({ minutes }, { locale });
 }
 
 export function uniqueTags(articles: PublicArticle[]) {

@@ -1,4 +1,6 @@
+import { SITE, type SiteLocale } from "@/config/site";
 import type { PublicArticle } from "@/features/content/domain/public-content";
+import * as m from "@/paraglide/messages.js";
 
 import {
   CATEGORY_ARCHIVE_SORT,
@@ -33,13 +35,14 @@ export function resolveArchive(
   slug: string,
   articles: PublicArticle[],
   categories: PublicCategory[],
+  locale: SiteLocale = "it",
 ): ContentArchive | null {
   if (/^\d+$/.test(slug)) {
-    return resolveDateArchive(slug, articles);
+    return resolveDateArchive(slug, articles, undefined, undefined, locale);
   }
 
   const category = categories.find((item) => item.slug === slug);
-  if (category) return categoryArchive(slug, category, articles);
+  if (category) return categoryArchive(slug, category, articles, locale);
 
   const byAuthor = articles.filter((article) => article.author.slug === slug);
   const author = byAuthor[0];
@@ -48,8 +51,8 @@ export function resolveArchive(
       kind: "author",
       slug,
       title: author.author.name,
-      description: `Contenuti pubblicati da ${author.author.name}.`,
-      eyebrow: "Autore",
+      description: m.archive_by_author({ name: author.author.name }, { locale }),
+      eyebrow: m.archive_eyebrow_author({}, { locale }),
       articles: byAuthor,
       articleLayout: "card",
     };
@@ -62,8 +65,8 @@ export function resolveArchive(
       kind: "organization",
       slug,
       title: organization.name,
-      description: `Contenuti collegati a ${organization.name}.`,
-      eyebrow: "Organizzazione",
+      description: m.archive_for_organization({ name: organization.name }, { locale }),
+      eyebrow: m.archive_eyebrow_organization({}, { locale }),
       articles: byOrganization,
       articleLayout: "card",
     };
@@ -75,7 +78,7 @@ export function resolveArchive(
       kind: "tag",
       slug,
       title: tag.name,
-      description: `Contenuti associati al tag ${tag.name}.`,
+      description: m.archive_with_tag({ name: tag.name }, { locale }),
       eyebrow: "Tag",
       articles: articles.filter((article) => article.tags.some((item) => item.slug === slug)),
       articleLayout: "card",
@@ -90,6 +93,7 @@ export function resolveDateArchive(
   articles: PublicArticle[],
   monthSlug?: string,
   daySlug?: string,
+  locale: SiteLocale = "it",
 ): ContentArchive | null {
   if (!/^\d+$/.test(yearSlug) || !/^\d{4}$/.test(yearSlug)) return null;
   if (monthSlug && !/^(0[1-9]|1[0-2])$/.test(monthSlug)) return null;
@@ -105,7 +109,7 @@ export function resolveDateArchive(
 
   const slug = [yearSlug, monthSlug, daySlug].filter(Boolean).join("/");
   const monthName = month
-    ? new Intl.DateTimeFormat("it-IT", { month: "long", timeZone: "Europe/Rome" }).format(
+    ? new Intl.DateTimeFormat(locale, { month: "long", timeZone: SITE.timeZone }).format(
         new Date(Date.UTC(year, month - 1, 1)),
       )
     : null;
@@ -118,9 +122,11 @@ export function resolveDateArchive(
   return {
     kind: "year",
     slug,
-    title: `Pubblicazioni del ${period}`,
-    description: `Contenuti pubblicati ${day ? "il" : "nel"} ${period}.`,
-    eyebrow: "Archivio",
+    title: m.archive_publications_period({ period }, { locale }),
+    description: day
+      ? m.archive_on_date({ period }, { locale })
+      : m.archive_in_period({ period }, { locale }),
+    eyebrow: m.archive_eyebrow_heading({}, { locale }),
     articles: matching,
     articleLayout: "card",
   };
@@ -151,6 +157,7 @@ function categoryArchive(
   slug: string,
   category: PublicCategory | undefined,
   articles: PublicArticle[],
+  locale: SiteLocale,
 ): ContentArchive | null {
   if (!category) return null;
   const matching = articles.filter((article) =>
@@ -167,7 +174,7 @@ function categoryArchive(
     kind: "category",
     slug,
     title: category.name,
-    description: category.description ?? `Contenuti nella categoria ${category.name}.`,
+    description: category.description ?? m.archive_in_category({ name: category.name }, { locale }),
     eyebrow: category.archiveEyebrow,
     hero: category.hero,
     articles: matching,

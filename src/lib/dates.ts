@@ -1,4 +1,4 @@
-import { SITE } from "@/config/site";
+import { SITE, type SiteLocale } from "@/config/site";
 
 export function siteDateParts(value: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -12,6 +12,14 @@ export function siteDateParts(value: Date) {
   return { year: read("year"), month: read("month"), day: read("day") };
 }
 
-export function formatSiteDate(value: Date) {
-  return new Intl.DateTimeFormat(SITE.language, { timeZone: SITE.timeZone }).format(value);
+export function formatSiteDate(value: Date, locale: SiteLocale = "it") {
+  return new Intl.DateTimeFormat(locale === "it" ? SITE.language : "en-GB", {
+    timeZone: SITE.timeZone,
+  }).format(value);
+}
+
+export function formatSiteMonth(yearMonth: string, locale: SiteLocale) {
+  return new Intl.DateTimeFormat(locale, { month: "short", timeZone: SITE.timeZone }).format(
+    new Date(`${yearMonth}-01T12:00:00Z`),
+  );
 }

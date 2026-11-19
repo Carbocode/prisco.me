@@ -33,6 +33,14 @@ Views read router data through `getRouteApi` without importing the route module.
 | `privacy`   | Cookie consent and information pages                                               |
 | `site`      | General pages, not-found page, and shared metadata                                 |
 
+## Public localization
+
+The locale comes from the public URL. The router rewrites `/en` page paths to their existing route IDs and restores the prefix when building links on English pages. The site location context supplies the public URL to document markup and shared views. CMS management and preview routes, APIs, media, and machine-readable endpoints use their original paths.
+
+The footer language link sends an explicit choice with the destination URL, and the server stores it in a cookie. On `/`, the explicit choice takes precedence over the cookie and `Accept-Language`. The response is private and uncacheable. It redirects English visitors to `/en` with a temporary redirect.
+
+Paraglide compiles the versioned `messages/` catalogs. Call messages with an explicit locale for server rendering and browser navigation. Static page heads advertise their language alternates. Published editorial text and database-backed portfolio fields retain their source language, and article variants share their existing editorial canonical URL. The Vite and Vitest integrations generate message modules. Run `bun run i18n:compile` for standalone tooling.
+
 ## Boundaries and dependencies
 
 `src/config/site.ts` contains site identity and common settings. `src/lib` contains only cross-feature utilities; feature-specific logic stays in its `domain` directory or beside its consumer.
@@ -56,6 +64,8 @@ Split modules by responsibility and dependencies. A view may remain large when c
 ### Agent-assisted article writing
 
 The editor's `domain/agent-document.ts` validates bounded block edits and stale-document revisions; `domain/agent-widgets.ts` describes widget examples. `client/use-editor-site-tools.ts` registers live Plate operations. CMS `client/use-article-site-tools.ts` exposes editorial fields and draft-only persistence through the existing article form save operation. Shared browser registration belongs to `src/lib/webmcp.ts`; it contains no model calls or server dependencies. Tools are scoped to the mounted form and released using AbortSignal. Public discovery manifests do not advertise authenticated editorial tools. See the [editor guide](../src/features/editor/README.md) for client requirements and verification.
+
+Home composes localized profile cards in its Journey section. The education card links to Career, which loads full experience records from the portfolio repository.
 
 ## Styles, assets, and dates
 

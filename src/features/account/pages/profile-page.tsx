@@ -34,12 +34,16 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import { localizedPath } from "@/config/site";
 import { authClient } from "@/features/auth/client/auth-client";
 import { formString, formValues } from "@/features/auth/components/auth-ui";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 type AccountItem = { id: string; accountId: string; providerId: string };
 
 export function ProfilePage() {
+  const locale = useSiteLocale();
   const session = authClient.useSession();
   const user = session.data!.user;
   const [accounts, setAccounts] = useState<AccountItem[]>([]);
@@ -47,8 +51,8 @@ export function ProfilePage() {
   const refreshAccounts = useCallback(async () => {
     const result = await authClient.listAccounts();
     if (result.data) setAccounts(result.data);
-    else toast.error(result.error?.message ?? "Impossibile caricare gli account collegati.");
-  }, []);
+    else toast.error(result.error?.message ?? m.profile_accounts_failed({}, { locale }));
+  }, [locale]);
 
   useEffect(() => {
     // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
@@ -61,8 +65,8 @@ export function ProfilePage() {
       name: formString(values, "name"),
       username: formString(values, "username"),
     });
-    if (result.error) toast.error(result.error.message ?? "Aggiornamento non riuscito.");
-    else toast.success("Profilo aggiornato.");
+    if (result.error) toast.error(result.error.message ?? m.profile_update_failed({}, { locale }));
+    else toast.success(m.profile_updated({}, { locale }));
     await session.refetch();
   }
 
@@ -70,10 +74,10 @@ export function ProfilePage() {
     const values = formValues(event);
     const result = await authClient.changeEmail({
       newEmail: formString(values, "email"),
-      callbackURL: "/dashboard/profile",
+      callbackURL: localizedPath("/dashboard/profile", locale),
     });
-    if (result.error) toast.error(result.error.message ?? "Aggiornamento non riuscito.");
-    else toast.success("Indirizzo email aggiornato o verifica inviata.");
+    if (result.error) toast.error(result.error.message ?? m.profile_update_failed({}, { locale }));
+    else toast.success(m.profile_email_updated({}, { locale }));
     await session.refetch();
   }
 
@@ -81,8 +85,9 @@ export function ProfilePage() {
     const result = await authClient.unlinkAccount({
       accountId: item.id,
     });
-    if (result.error) toast.error(result.error.message ?? "Scollegamento non riuscito.");
-    else toast.success("Account scollegato.");
+    if (result.error)
+      toast.error(result.error.message ?? m.profile_disconnect_failed({}, { locale }));
+    else toast.success(m.profile_disconnected({}, { locale }));
     await refreshAccounts();
   }
 
@@ -90,27 +95,29 @@ export function ProfilePage() {
     <div className="flex max-w-5xl flex-col gap-4">
       <header>
         <div className="flex items-center gap-2">
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">Profilo</h1>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight">
+            {m.profile_profile({}, { locale })}
+          </h1>
           <Badge variant="outline">{user.role ?? "user"}</Badge>
         </div>
         <p className="text-sm text-muted-foreground">
-          Identità pubblica, recapito di accesso e provider collegati.
+          {m.profile_public_identity_sign_in_address_and({}, { locale })}{" "}
         </p>
       </header>
 
       <div className="grid items-start gap-4 lg:grid-cols-2">
         <Card size="sm">
           <CardHeader>
-            <CardTitle>Identità</CardTitle>
+            <CardTitle>{m.profile_identity({}, { locale })}</CardTitle>
             <CardDescription>
-              Nome e username mostrati nelle aree associate al tuo account.
+              {m.profile_name_and_username_displayed_in_areas({}, { locale })}{" "}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={(event) => void updateIdentity(event)}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="profile-name">Nome</FieldLabel>
+                  <FieldLabel htmlFor="profile-name">{m.profile_name({}, { locale })}</FieldLabel>
                   <Input
                     id="profile-name"
                     name="name"
@@ -131,7 +138,7 @@ export function ProfilePage() {
                 </Field>
                 <Button size="sm" type="submit">
                   <Save data-icon="inline-start" />
-                  Salva identità
+                  {m.profile_save_identity({}, { locale })}{" "}
                 </Button>
               </FieldGroup>
             </form>
@@ -142,14 +149,16 @@ export function ProfilePage() {
           <CardHeader>
             <CardTitle>Email</CardTitle>
             <CardDescription>
-              Usata per accesso, verifiche e comunicazioni relative alla sicurezza.
+              {m.profile_used_for_sign_in_verification_and({}, { locale })}{" "}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={(event) => void changeEmail(event)}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="profile-email">Indirizzo email</FieldLabel>
+                  <FieldLabel htmlFor="profile-email">
+                    {m.profile_email_address({}, { locale })}
+                  </FieldLabel>
                   <Input
                     id="profile-email"
                     name="email"
@@ -160,7 +169,7 @@ export function ProfilePage() {
                   />
                 </Field>
                 <Button size="sm" type="submit" variant="outline">
-                  Aggiorna email
+                  {m.profile_update_email({}, { locale })}{" "}
                 </Button>
               </FieldGroup>
             </form>
@@ -170,8 +179,10 @@ export function ProfilePage() {
 
       <Card size="sm">
         <CardHeader>
-          <CardTitle>Account collegati</CardTitle>
-          <CardDescription>Metodi esterni che possono essere usati per accedere.</CardDescription>
+          <CardTitle>{m.profile_connected_accounts({}, { locale })}</CardTitle>
+          <CardDescription>
+            {m.profile_external_methods_you_can_use_to({}, { locale })}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {accounts.length ? (
@@ -190,22 +201,26 @@ export function ProfilePage() {
                       <AlertDialog>
                         <AlertDialogTrigger render={<Button size="sm" variant="outline" />}>
                           <Unlink data-icon="inline-start" />
-                          Scollega
+                          {m.profile_disconnect({}, { locale })}{" "}
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Scollegare {item.providerId}?</AlertDialogTitle>
+                            <AlertDialogTitle>
+                              {m.profile_disconnect_14({}, { locale })} {item.providerId}?
+                            </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Verifica di avere un altro metodo di accesso prima di continuare.
+                              {m.profile_make_sure_you_have_another_way({}, { locale })}{" "}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Annulla</AlertDialogCancel>
+                            <AlertDialogCancel>
+                              {m.profile_cancel({}, { locale })}
+                            </AlertDialogCancel>
                             <AlertDialogAction
                               variant="destructive"
                               onClick={() => void unlinkAccount(item)}
                             >
-                              Scollega
+                              {m.profile_disconnect({}, { locale })}{" "}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -221,9 +236,9 @@ export function ProfilePage() {
                 <EmptyMedia variant="icon">
                   <UserRound />
                 </EmptyMedia>
-                <EmptyTitle>Nessun provider collegato</EmptyTitle>
+                <EmptyTitle>{m.profile_no_connected_providers({}, { locale })}</EmptyTitle>
                 <EmptyDescription>
-                  Il tuo account usa soltanto le credenziali principali.
+                  {m.profile_your_account_uses_only_its_primary({}, { locale })}{" "}
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>

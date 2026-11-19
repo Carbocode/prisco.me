@@ -2,6 +2,7 @@
 .home-site {
   --footer-peek: clamp(88px, 12dvh, 112px);
   --frame-x: 12px;
+  --home-gauge-tab-width: 22px;
   --frame-r: 18px;
   --frame-time: 550ms;
   --frame-ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -13,6 +14,7 @@
 @media (max-width: 767px) {
   .home-site {
     --frame-x: 8px;
+    --home-gauge-tab-width: 18px;
     --frame-r: 12px;
   }
 }
@@ -185,11 +187,8 @@
 }
 @media (max-width: 767px) {
   .home-page .gauge {
-    width: 20px;
-    padding-inline: 8px;
-  }
-  .home-page .gauge::before {
-    width: 24px;
+    width: 15px;
+    padding-inline: 5px;
   }
   .home-page .gauge-rail {
     height: clamp(96px, 18svh, 160px);

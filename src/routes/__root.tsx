@@ -2,6 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 
 import { RootDocument } from "@/app/root-document";
+import { siteLocale } from "@/config/site";
 
 // oxlint-disable-next-line import/no-unassigned-import -- Start manages the global stylesheet for every route.
 import "@/styles.css";
@@ -13,7 +14,8 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  head: rootHead,
+  beforeLoad: ({ location }) => ({ locale: siteLocale(location.publicHref) }),
+  head: ({ match }) => rootHead(match.context.locale),
   notFoundComponent: NotFoundComponent,
   shellComponent: RootDocument,
   component: App,

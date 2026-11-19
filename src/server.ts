@@ -3,18 +3,20 @@ import { env as cloudflareEnv } from "cloudflare:workers";
 
 import { createAuth, isLocalRequest } from "@/features/auth/server/auth";
 import { ardPath } from "@/features/site/domain/ard";
+import { serveSiteByLanguage } from "@/features/site/server/site-language";
 
 export default createServerEntry({
   async fetch(request: Request) {
     try {
-      const path = new URL(request.url).pathname;
+      const url = new URL(request.url);
+      const path = url.pathname;
       // Site discovery is served by its route; preserve Better Auth's other well-known endpoints.
       if (path.startsWith("/.well-known/") && path !== ardPath) {
         return createAuth(cloudflareEnv, {
           captchaEnabled: !isLocalRequest(request),
         }).handler(request);
       }
-      return handler.fetch(request);
+      return serveSiteByLanguage(request, url, () => handler.fetch(request));
     } catch (error) {
       console.error("Errore non gestito durante la richiesta", {
         action: "request_unhandled_error",

@@ -8,10 +8,16 @@ const consentSearch = z.object({
   scope: z.catch(z.string(), "openid profile email"),
 });
 
+import * as m from "@/paraglide/messages.js";
+
 export const Route = createFileRoute("/oauth/consent")({
   validateSearch: consentSearch,
-  head: () => ({
-    meta: [{ title: "Autorizza applicazione | Prisco.me" }, { name: "robots", content: "noindex" }],
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) => ({
+    meta: [{ title: m.oauth_seo_title({}, { locale }) }, { name: "robots", content: "noindex" }],
   }),
   component: ConsentRoute,
 });

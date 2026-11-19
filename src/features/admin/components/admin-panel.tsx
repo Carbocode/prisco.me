@@ -61,6 +61,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/features/auth/client/auth-client";
 import { formString, formValues } from "@/features/auth/components/auth-ui";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 type AdminUser = {
   id: string;
@@ -76,6 +78,7 @@ type AdminUser = {
 type AdminPanelSection = "overview" | "create-user" | "users";
 
 export function AdminPanel({ section = "overview" }: { section?: AdminPanelSection } = {}) {
+  const locale = useSiteLocale();
   const navigate = useNavigate();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [total, setTotal] = useState(0);
@@ -97,8 +100,8 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
     if (result.data) {
       setUsers(result.data.users);
       setTotal(result.data.total);
-    } else toast.error(result.error?.message ?? "Utenti non disponibili.");
-  }, [search]);
+    } else toast.error(result.error?.message ?? m.admin_users_unavailable({}, { locale }));
+  }, [locale, search]);
 
   useEffect(() => {
     // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
@@ -114,9 +117,9 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
       role: values.get("admin") ? "admin" : "user",
       data: { username: formString(values, "username") },
     });
-    if (result.error) toast.error(result.error.message ?? "Creazione non riuscita.");
+    if (result.error) toast.error(result.error.message ?? m.admin_create_failed({}, { locale }));
     else {
-      toast.success("Utente creato.");
+      toast.success(m.admin_user_created({}, { locale }));
       event.currentTarget.reset();
       void navigate({ to: "/dashboard/admin/users" });
     }
@@ -126,7 +129,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
   async function setRole(item: AdminUser) {
     const role = item.role === "admin" ? "user" : "admin";
     const result = await authClient.admin.setRole({ userId: item.id, role });
-    if (result.error) toast.error(result.error.message ?? "Aggiornamento non riuscito.");
+    if (result.error) toast.error(result.error.message ?? m.admin_update_failed({}, { locale }));
     else toast.success(`Ruolo aggiornato a ${role}.`);
     await loadUsers();
   }
@@ -138,7 +141,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
           userId: item.id,
           banReason: reason || "Bloccato da un amministratore",
         });
-    if (result.error) toast.error(result.error.message ?? "Operazione non riuscita.");
+    if (result.error) toast.error(result.error.message ?? m.admin_action_failed({}, { locale }));
     else toast.success(item.banned ? "Utente riabilitato." : "Utente bloccato.");
     setDialog(null);
     setSelectedUser(null);
@@ -152,7 +155,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
       userId: selectedUser.id,
       newPassword: password,
     });
-    if (result.error) toast.error(result.error.message ?? "Aggiornamento non riuscito.");
+    if (result.error) toast.error(result.error.message ?? m.admin_update_failed({}, { locale }));
     else toast.success("Password impostata.");
     setDialog(null);
     setSelectedUser(null);
@@ -161,21 +164,21 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
 
   async function impersonate(item: AdminUser) {
     const result = await authClient.admin.impersonateUser({ userId: item.id });
-    if (result.error) toast.error(result.error.message ?? "Operazione non riuscita.");
+    if (result.error) toast.error(result.error.message ?? m.admin_action_failed({}, { locale }));
     else void navigate({ to: "/dashboard/profile" });
   }
 
   async function remove(item: AdminUser) {
     const result = await authClient.admin.removeUser({ userId: item.id });
-    if (result.error) toast.error(result.error.message ?? "Eliminazione non riuscita.");
-    else toast.success("Utente eliminato.");
+    if (result.error) toast.error(result.error.message ?? m.admin_remove_failed({}, { locale }));
+    else toast.success(m.admin_user_deleted({}, { locale }));
     await loadUsers();
   }
 
   const columns: DashboardColumnDef<AdminUser>[] = [
     {
       accessorKey: "name",
-      header: "Utente",
+      header: m.admin_user({}, { locale }),
       size: 320,
       minSize: 220,
       cell: ({ row }) => (
@@ -190,17 +193,17 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
     },
     {
       accessorKey: "role",
-      header: "Ruolo",
+      header: m.admin_role({}, { locale }),
       size: 140,
       cell: ({ row }) => <Badge variant="secondary">{row.original.role ?? "user"}</Badge>,
     },
     {
       accessorKey: "banned",
-      header: "Stato",
+      header: m.admin_status({}, { locale }),
       size: 140,
       cell: ({ row }) => (
         <Badge variant={row.original.banned ? "destructive" : "outline"}>
-          {row.original.banned ? "Bloccato" : "Attivo"}
+          {row.original.banned ? m.admin_banned({}, { locale }) : m.admin_active({}, { locale })}
         </Badge>
       ),
     },
@@ -216,7 +219,7 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
     },
     {
       id: "actions",
-      header: () => <span className="sr-only">Azioni</span>,
+      header: () => <span className="sr-only">{m.admin_actions({}, { locale })}</span>,
       size: 80,
       minSize: 80,
       maxSize: 100,
@@ -257,20 +260,20 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
                   }}
                 >
                   <KeyRound />
-                  Imposta password
+                  {m.admin_set_password({}, { locale })}{" "}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={async () => {
                     await authClient.admin.revokeUserSessions({ userId: item.id });
-                    toast.success("Sessioni revocate.");
+                    toast.success(m.admin_sessions_revoked({}, { locale }));
                   }}
                 >
                   <RotateCcw />
-                  Revoca sessioni
+                  {m.admin_revoke_sessions({}, { locale })}{" "}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => void impersonate(item)}>
                   <LogIn />
-                  Impersona
+                  {m.admin_impersonate({}, { locale })}{" "}
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
@@ -285,19 +288,21 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
                     }
                   >
                     <Trash2 />
-                    Elimina utente
+                    {m.admin_delete_user({}, { locale })}{" "}
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Eliminare {item.email}?</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        {m.admin_delete_5({}, { locale })} {item.email}?
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        Account, credenziali e sessioni verranno rimossi definitivamente.
+                        {m.admin_the_account_credentials_and_sessions_will({}, { locale })}{" "}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Annulla</AlertDialogCancel>
+                      <AlertDialogCancel>{m.admin_cancel({}, { locale })}</AlertDialogCancel>
                       <AlertDialogAction variant="destructive" onClick={() => void remove(item)}>
-                        Elimina
+                        {m.admin_delete({}, { locale })}{" "}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -314,22 +319,26 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
     return (
       <div className="flex max-w-4xl flex-col gap-4">
         <header>
-          <p className="text-sm font-medium text-muted-foreground">Amministrazione</p>
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">Crea utente</h1>
+          <p className="text-sm font-medium text-muted-foreground">
+            {m.admin_administration({}, { locale })}
+          </p>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight">
+            {m.admin_create_user({}, { locale })}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Crea credenziali iniziali e assegna soltanto i privilegi necessari.
+            {m.admin_create_initial_credentials_and_assign_only({}, { locale })}{" "}
           </p>
         </header>
         <Card size="sm">
           <CardHeader>
-            <CardTitle>Dati del nuovo account</CardTitle>
-            <CardDescription>Il ruolo predefinito è Utente.</CardDescription>
+            <CardTitle>{m.admin_new_account_details({}, { locale })}</CardTitle>
+            <CardDescription>{m.admin_the_default_role_is_user({}, { locale })}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={(event) => void createUser(event)}>
               <FieldGroup className="grid md:grid-cols-2">
                 <Field>
-                  <FieldLabel htmlFor="admin-name">Nome</FieldLabel>
+                  <FieldLabel htmlFor="admin-name">{m.admin_name({}, { locale })}</FieldLabel>
                   <Input id="admin-name" name="name" autoComplete="name" required />
                 </Field>
                 <Field>
@@ -341,7 +350,9 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
                   <Input id="admin-email" name="email" type="email" autoComplete="email" required />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="admin-password">Password iniziale</FieldLabel>
+                  <FieldLabel htmlFor="admin-password">
+                    {m.admin_initial_password({}, { locale })}
+                  </FieldLabel>
                   <Input
                     id="admin-password"
                     name="password"
@@ -352,11 +363,13 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
                 </Field>
                 <Field orientation="horizontal">
                   <Checkbox id="admin-role" name="admin" />
-                  <FieldLabel htmlFor="admin-role">Assegna ruolo Admin</FieldLabel>
+                  <FieldLabel htmlFor="admin-role">
+                    {m.admin_grant_the_admin_role({}, { locale })}
+                  </FieldLabel>
                 </Field>
                 <Button size="sm" type="submit">
                   <UserPlus data-icon="inline-start" />
-                  Crea utente
+                  {m.admin_create_user({}, { locale })}{" "}
                 </Button>
               </FieldGroup>
             </form>
@@ -373,8 +386,10 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
           <EmptyMedia variant="icon">
             <Users />
           </EmptyMedia>
-          <EmptyTitle>Seleziona una sezione</EmptyTitle>
-          <EmptyDescription>Apri la lista utenti o crea un nuovo account.</EmptyDescription>
+          <EmptyTitle>{m.admin_choose_a_section({}, { locale })}</EmptyTitle>
+          <EmptyDescription>
+            {m.admin_open_the_user_list_or_create({}, { locale })}
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -385,14 +400,16 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{total} account</p>
-          <h1 className="font-heading text-2xl font-semibold tracking-tight">Utenti</h1>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight">
+            {m.admin_users({}, { locale })}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Ruoli, accessi, blocchi e credenziali degli account.
+            {m.admin_account_roles_access_bans_and_credentials({}, { locale })}{" "}
           </p>
         </div>
         <Link className={buttonVariants({ size: "sm" })} to="/dashboard/admin/users/new">
           <UserPlus data-icon="inline-start" />
-          Nuovo utente
+          {m.admin_new_user({}, { locale })}{" "}
         </Link>
       </header>
 
@@ -412,13 +429,13 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
                 id="user-search"
                 type="search"
                 value={search}
-                placeholder="Cerca per email"
+                placeholder={m.admin_search_by_email({}, { locale })}
                 onChange={(event) => setSearch(event.target.value)}
               />
             </Field>
             <Button size="sm" type="submit" variant="outline">
               <Search data-icon="inline-start" />
-              Cerca
+              {m.admin_search({}, { locale })}{" "}
             </Button>
           </form>
         </CardContent>
@@ -436,8 +453,10 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
             <EmptyMedia variant="icon">
               <Users />
             </EmptyMedia>
-            <EmptyTitle>Nessun utente trovato</EmptyTitle>
-            <EmptyDescription>Modifica la ricerca o crea un nuovo account.</EmptyDescription>
+            <EmptyTitle>{m.admin_no_users_found({}, { locale })}</EmptyTitle>
+            <EmptyDescription>
+              {m.admin_change_the_search_or_create_an({}, { locale })}
+            </EmptyDescription>
           </EmptyHeader>
         </Empty>
       )}
@@ -445,11 +464,15 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
       <Dialog open={dialog === "ban"} onOpenChange={(open) => !open && setDialog(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Blocca {selectedUser?.email}</DialogTitle>
-            <DialogDescription>Indica un motivo utile agli altri amministratori.</DialogDescription>
+            <DialogTitle>
+              {m.admin_ban_user({}, { locale })} {selectedUser?.email}
+            </DialogTitle>
+            <DialogDescription>
+              {m.admin_give_a_reason_that_will_help({}, { locale })}
+            </DialogDescription>
           </DialogHeader>
           <Field>
-            <FieldLabel htmlFor="ban-reason">Motivo</FieldLabel>
+            <FieldLabel htmlFor="ban-reason">{m.admin_reason({}, { locale })}</FieldLabel>
             <Input
               id="ban-reason"
               value={banReason}
@@ -458,14 +481,14 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
           </Field>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialog(null)}>
-              Annulla
+              {m.admin_cancel({}, { locale })}{" "}
             </Button>
             <Button
               variant="destructive"
               disabled={!selectedUser}
               onClick={() => selectedUser && void toggleBan(selectedUser, banReason)}
             >
-              Blocca
+              {m.admin_ban({}, { locale })}{" "}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -474,11 +497,13 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
       <Dialog open={dialog === "password"} onOpenChange={(open) => !open && setDialog(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Imposta nuova password</DialogTitle>
+            <DialogTitle>{m.admin_set_a_new_password({}, { locale })}</DialogTitle>
             <DialogDescription>{selectedUser?.email}</DialogDescription>
           </DialogHeader>
           <Field>
-            <FieldLabel htmlFor="admin-new-password">Nuova password</FieldLabel>
+            <FieldLabel htmlFor="admin-new-password">
+              {m.admin_new_password({}, { locale })}
+            </FieldLabel>
             <Input
               id="admin-new-password"
               type="password"
@@ -489,10 +514,10 @@ export function AdminPanel({ section = "overview" }: { section?: AdminPanelSecti
           </Field>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialog(null)}>
-              Annulla
+              {m.admin_cancel({}, { locale })}{" "}
             </Button>
             <Button disabled={!password} onClick={() => void resetPassword()}>
-              Salva password
+              {m.admin_save_password({}, { locale })}{" "}
             </Button>
           </DialogFooter>
         </DialogContent>

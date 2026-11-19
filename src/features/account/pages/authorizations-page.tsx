@@ -36,6 +36,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/features/auth/client/auth-client";
 import { formString, formValues } from "@/features/auth/components/auth-ui";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 type OAuthClientItem = { clientId: string; name: string | null; redirectUris: string[] };
 
@@ -50,6 +52,7 @@ type SessionItem = {
 };
 
 export function AuthorizationsPage() {
+  const locale = useSiteLocale();
   const [clients, setClients] = useState<OAuthClientItem[]>([]);
   const [consents, setConsents] = useState<OAuthConsentItem[]>([]);
   const [sessions, setSessions] = useState<SessionItem[]>([]);
@@ -64,7 +67,8 @@ export function AuthorizationsPage() {
       authClient.oauth2.getConsents(),
     ]);
     if (sessionResult.data) setSessions(sessionResult.data);
-    else toast.error(sessionResult.error?.message ?? "Impossibile caricare le sessioni.");
+    else
+      toast.error(sessionResult.error?.message ?? m.authorizations_sessions_failed({}, { locale }));
     if (clientResult.data) {
       setClients(
         clientResult.data.map((item) => ({
@@ -75,7 +79,10 @@ export function AuthorizationsPage() {
             : [],
         })),
       );
-    } else toast.error(clientResult.error?.message ?? "Impossibile caricare i client OAuth.");
+    } else
+      toast.error(
+        clientResult.error?.message ?? m.authorizations_load_clients_failed({}, { locale }),
+      );
 
     if (consentResult.data) {
       setConsents(
@@ -87,8 +94,11 @@ export function AuthorizationsPage() {
             : [],
         })),
       );
-    } else toast.error(consentResult.error?.message ?? "Impossibile caricare i consensi OAuth.");
-  }, []);
+    } else
+      toast.error(
+        consentResult.error?.message ?? m.authorizations_load_consents_failed({}, { locale }),
+      );
+  }, [locale]);
 
   useEffect(() => {
     // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
@@ -109,11 +119,11 @@ export function AuthorizationsPage() {
     if (result.data) {
       setNewClientSecret({
         id: result.data.client_id,
-        secret: result.data.client_secret ?? "Client pubblico: nessun secret",
+        secret: result.data.client_secret ?? m.authorizations_no_secret({}, { locale }),
       });
       toast.success("Applicazione OAuth creata. Salva ora il secret.");
       await refreshApplications();
-    } else toast.error(result.error?.message ?? "Creazione non riuscita.");
+    } else toast.error(result.error?.message ?? m.authorizations_create_failed({}, { locale }));
   }
 
   async function updateClient(event: React.FormEvent<HTMLFormElement>, client: OAuthClientItem) {
@@ -128,24 +138,31 @@ export function AuthorizationsPage() {
           .filter(Boolean),
       },
     });
-    if (result.error) toast.error(result.error.message ?? "Aggiornamento non riuscito.");
-    else toast.success("Applicazione aggiornata.");
+    if (result.error)
+      toast.error(result.error.message ?? m.authorizations_update_failed({}, { locale }));
+    else toast.success(m.authorizations_app_updated({}, { locale }));
     await refreshApplications();
   }
 
   return (
     <div className="flex max-w-6xl flex-col gap-4">
       <header>
-        <p className="text-sm font-medium text-muted-foreground">Accessi e integrazioni</p>
-        <h1 className="font-heading text-2xl font-semibold tracking-tight">Autorizzazioni</h1>
+        <p className="text-sm font-medium text-muted-foreground">
+          {m.authorizations_access_and_integrations({}, { locale })}
+        </p>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">
+          {m.authorizations_authorizations({}, { locale })}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Sessioni attive, client OAuth 2.1/OIDC e autorizzazioni concesse.
+          {m.authorizations_active_sessions_oauth_oidc_clients_and({}, { locale })}{" "}
         </p>
       </header>
       <Card size="sm">
         <CardHeader>
-          <CardTitle>Sessioni attive</CardTitle>
-          <CardDescription>Controlla e revoca gli accessi al tuo account.</CardDescription>
+          <CardTitle>{m.authorizations_active_sessions({}, { locale })}</CardTitle>
+          <CardDescription>
+            {m.authorizations_review_and_revoke_access_to_your({}, { locale })}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ItemGroup>
@@ -155,8 +172,10 @@ export function AuthorizationsPage() {
                   <EmptyMedia variant="icon">
                     <MonitorSmartphone />
                   </EmptyMedia>
-                  <EmptyTitle>Nessuna sessione</EmptyTitle>
-                  <EmptyDescription>Non risultano sessioni attive.</EmptyDescription>
+                  <EmptyTitle>{m.authorizations_no_sessions({}, { locale })}</EmptyTitle>
+                  <EmptyDescription>
+                    {m.authorizations_there_are_no_active_sessions({}, { locale })}
+                  </EmptyDescription>
                 </EmptyHeader>
               </Empty>
             ) : (
@@ -168,7 +187,8 @@ export function AuthorizationsPage() {
                   <ItemContent>
                     <ItemTitle>{item.userAgent ?? "Dispositivo sconosciuto"}</ItemTitle>
                     <ItemDescription>
-                      {item.ipAddress ?? "IP non disponibile"} · scade{" "}
+                      {item.ipAddress ?? "IP non disponibile"}{" "}
+                      {m.authorizations_expires({}, { locale })}{" "}
                       {new Date(item.expiresAt).toLocaleDateString("it-IT")}
                     </ItemDescription>
                   </ItemContent>
@@ -178,12 +198,14 @@ export function AuthorizationsPage() {
                       onClick={async () => {
                         const result = await authClient.revokeSession({ token: item.token });
                         if (result.error)
-                          toast.error(result.error.message ?? "Revoca non riuscita.");
-                        else toast.success("Sessione revocata.");
+                          toast.error(
+                            result.error.message ?? m.authorizations_revoke_failed({}, { locale }),
+                          );
+                        else toast.success(m.authorizations_session_revoked({}, { locale }));
                         await refreshApplications();
                       }}
                     >
-                      Revoca
+                      {m.authorizations_revoke({}, { locale })}{" "}
                     </Button>
                   </ItemActions>
                 </Item>
@@ -194,12 +216,13 @@ export function AuthorizationsPage() {
             variant="outline"
             onClick={async () => {
               const result = await authClient.revokeOtherSessions();
-              if (result.error) toast.error(result.error.message ?? "Revoca non riuscita.");
-              else toast.success("Le altre sessioni sono state revocate.");
+              if (result.error)
+                toast.error(result.error.message ?? m.authorizations_revoke_failed({}, { locale }));
+              else toast.success(m.authorizations_sessions_revoked({}, { locale }));
               await refreshApplications();
             }}
           >
-            Revoca tutte le altre
+            {m.authorizations_revoke_all_others({}, { locale })}{" "}
           </Button>
         </CardContent>
       </Card>
@@ -207,7 +230,7 @@ export function AuthorizationsPage() {
         <CardHeader>
           <CardTitle>OAuth Provider</CardTitle>
           <CardDescription>
-            Crea applicazioni, aggiorna redirect URI, ruota secret e revoca consensi.
+            {m.authorizations_create_apps_update_redirect_uris_rotate({}, { locale })}{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -215,11 +238,15 @@ export function AuthorizationsPage() {
             <form onSubmit={(event) => void createClient(event)}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="oauth-name">Nome applicazione</FieldLabel>
+                  <FieldLabel htmlFor="oauth-name">
+                    {m.authorizations_application_name({}, { locale })}
+                  </FieldLabel>
                   <Input id="oauth-name" name="name" required />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="redirect-uris">Redirect URI, uno per riga</FieldLabel>
+                  <FieldLabel htmlFor="redirect-uris">
+                    {m.authorizations_redirect_uris_one_per_line({}, { locale })}
+                  </FieldLabel>
                   <Textarea
                     id="redirect-uris"
                     name="redirectUris"
@@ -230,10 +257,12 @@ export function AuthorizationsPage() {
                 <Field orientation="horizontal">
                   <Checkbox id="oauth-public" name="public" />
                   <FieldLabel htmlFor="oauth-public">
-                    Client pubblico (PKCE, senza secret)
+                    {m.authorizations_public_client_pkce_no_secret({}, { locale })}{" "}
                   </FieldLabel>
                 </Field>
-                <Button type="submit">Crea client OAuth</Button>
+                <Button type="submit">
+                  {m.authorizations_create_oauth_client({}, { locale })}
+                </Button>
               </FieldGroup>
             </form>
             {newClientSecret && (
@@ -246,7 +275,7 @@ export function AuthorizationsPage() {
                 </AlertDescription>
               </Alert>
             )}
-            <FieldSeparator>Client registrati</FieldSeparator>
+            <FieldSeparator>{m.authorizations_registered_clients({}, { locale })}</FieldSeparator>
             <ItemGroup>
               {clients.length === 0 ? (
                 <Empty>
@@ -254,15 +283,19 @@ export function AuthorizationsPage() {
                     <EmptyMedia variant="icon">
                       <AppWindow />
                     </EmptyMedia>
-                    <EmptyTitle>Nessun client OAuth</EmptyTitle>
-                    <EmptyDescription>Non hai ancora registrato applicazioni.</EmptyDescription>
+                    <EmptyTitle>{m.authorizations_no_oauth_clients({}, { locale })}</EmptyTitle>
+                    <EmptyDescription>
+                      {m.authorizations_you_haven_t_registered_any_applications({}, { locale })}
+                    </EmptyDescription>
                   </EmptyHeader>
                 </Empty>
               ) : (
                 clients.map((client) => (
                   <Item key={client.clientId}>
                     <ItemContent>
-                      <ItemTitle>{client.name ?? "Applicazione senza nome"}</ItemTitle>
+                      <ItemTitle>
+                        {client.name ?? m.authorizations_unnamed_app({}, { locale })}
+                      </ItemTitle>
                       <ItemDescription>
                         {client.clientId} · {client.redirectUris.join(", ")}
                       </ItemDescription>
@@ -270,20 +303,25 @@ export function AuthorizationsPage() {
                     <ItemActions>
                       <Dialog>
                         <DialogTrigger render={<Button variant="outline" />}>
-                          Modifica
+                          {m.authorizations_edit({}, { locale })}{" "}
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Modifica applicazione</DialogTitle>
+                            <DialogTitle>
+                              {m.authorizations_edit_application({}, { locale })}
+                            </DialogTitle>
                             <DialogDescription>
-                              Aggiorna il nome e gli URI di reindirizzamento autorizzati.
+                              {m.authorizations_update_the_name_and_authorized_redirect(
+                                {},
+                                { locale },
+                              )}{" "}
                             </DialogDescription>
                           </DialogHeader>
                           <form onSubmit={(event) => void updateClient(event, client)}>
                             <FieldGroup>
                               <Field>
                                 <FieldLabel htmlFor={`client-name-${client.clientId}`}>
-                                  Nome applicazione
+                                  {m.authorizations_application_name({}, { locale })}{" "}
                                 </FieldLabel>
                                 <Input
                                   id={`client-name-${client.clientId}`}
@@ -294,7 +332,7 @@ export function AuthorizationsPage() {
                               </Field>
                               <Field>
                                 <FieldLabel htmlFor={`client-uris-${client.clientId}`}>
-                                  Redirect URI, uno per riga
+                                  {m.authorizations_redirect_uris_one_per_line({}, { locale })}{" "}
                                 </FieldLabel>
                                 <Textarea
                                   id={`client-uris-${client.clientId}`}
@@ -304,7 +342,9 @@ export function AuthorizationsPage() {
                                 />
                               </Field>
                               <DialogFooter>
-                                <Button type="submit">Salva modifiche</Button>
+                                <Button type="submit">
+                                  {m.authorizations_save_changes({}, { locale })}
+                                </Button>
                               </DialogFooter>
                             </FieldGroup>
                           </form>
@@ -321,11 +361,15 @@ export function AuthorizationsPage() {
                               id: client.clientId,
                               secret: result.data.client_secret ?? "",
                             });
-                            toast.success("Secret ruotato. Salvalo ora.");
-                          } else toast.error(result.error?.message ?? "Rotazione non riuscita.");
+                            toast.success(m.authorizations_secret_rotated({}, { locale }));
+                          } else
+                            toast.error(
+                              result.error?.message ??
+                                m.authorizations_rotation_failed({}, { locale }),
+                            );
                         }}
                       >
-                        Ruota secret
+                        {m.authorizations_rotate_secret({}, { locale })}{" "}
                       </Button>
                       <Button
                         variant="destructive"
@@ -334,19 +378,22 @@ export function AuthorizationsPage() {
                             client_id: client.clientId,
                           });
                           if (result.error)
-                            toast.error(result.error.message ?? "Eliminazione non riuscita.");
-                          else toast.success("Applicazione eliminata.");
+                            toast.error(
+                              result.error.message ??
+                                m.authorizations_remove_failed({}, { locale }),
+                            );
+                          else toast.success(m.authorizations_app_deleted({}, { locale }));
                           await refreshApplications();
                         }}
                       >
-                        Elimina
+                        {m.authorizations_delete({}, { locale })}{" "}
                       </Button>
                     </ItemActions>
                   </Item>
                 ))
               )}
             </ItemGroup>
-            <FieldSeparator>Consensi concessi</FieldSeparator>
+            <FieldSeparator>{m.authorizations_granted_permissions({}, { locale })}</FieldSeparator>
             <ItemGroup>
               {consents.length === 0 ? (
                 <Empty>
@@ -354,8 +401,12 @@ export function AuthorizationsPage() {
                     <EmptyMedia variant="icon">
                       <AppWindow />
                     </EmptyMedia>
-                    <EmptyTitle>Nessun consenso</EmptyTitle>
-                    <EmptyDescription>Non hai autorizzato applicazioni esterne.</EmptyDescription>
+                    <EmptyTitle>
+                      {m.authorizations_no_granted_permissions({}, { locale })}
+                    </EmptyTitle>
+                    <EmptyDescription>
+                      {m.authorizations_you_haven_t_authorized_any_external({}, { locale })}
+                    </EmptyDescription>
                   </EmptyHeader>
                 </Empty>
               ) : (
@@ -371,12 +422,15 @@ export function AuthorizationsPage() {
                         onClick={async () => {
                           const result = await authClient.oauth2.deleteConsent({ id: consent.id });
                           if (result.error)
-                            toast.error(result.error.message ?? "Revoca non riuscita.");
-                          else toast.success("Consenso revocato.");
+                            toast.error(
+                              result.error.message ??
+                                m.authorizations_revoke_failed({}, { locale }),
+                            );
+                          else toast.success(m.authorizations_consent_revoked({}, { locale }));
                           await refreshApplications();
                         }}
                       >
-                        Revoca
+                        {m.authorizations_revoke({}, { locale })}{" "}
                       </Button>
                     </ItemActions>
                   </Item>

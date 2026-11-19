@@ -1,14 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { PrivacyPage } from "@/features/privacy/pages/privacy-page";
-import { pageHead } from "@/features/site/seo/page-head";
+import { localizedPageHead } from "@/features/site/seo/page-head";
+import * as m from "@/paraglide/messages.js";
 
 export const Route = createFileRoute("/privacy")({
-  head: () =>
-    pageHead({
-      title: "Privacy | Prisco.me",
-      description: "Informativa completa sul trattamento dei dati personali.",
-      socialDescription: "Spazio personale di Vincenzo Prisco.",
+  head: ({
+    match: {
+      context: { locale },
+    },
+  }) =>
+    localizedPageHead(locale, {
+      title: m.privacy_seo_title({}, { locale }),
+      description: m.privacy_seo_description({}, { locale }),
+      socialDescription: m.privacy_seo_social({}, { locale }),
       path: "/privacy",
     }),
   component: PrivacyPage,

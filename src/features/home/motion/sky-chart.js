@@ -7,6 +7,11 @@ export function createSkyChart(
   if (!chartRoot) return null;
   const svg = chartRoot.querySelector("[data-sky-svg]");
   const NS = "http://www.w3.org/2000/svg";
+  const labels = new Map([
+    ["dati", chartRoot.dataset.skyBackend],
+    ["ai-agenti", chartRoot.dataset.skyAi],
+    ["piattaforma", chartRoot.dataset.skyPlatform],
+  ]);
 
   // Coordinate locali di ogni costellazione; "wide" è la posizione nella carta desktop.
   // Etichette: n/s/e/w rispetto alla stella. m:1 = stella principale.
@@ -50,8 +55,7 @@ export function createSkyChart(
 
     // Measure the whole drawing and its labels, so mobile preserves proportions.
     const W = mode === "wide" ? 1320 : 480;
-    let y = 16;
-    const placed = groups.map((g) => {
+    const measured = groups.map((g) => {
       const [artLeft, artTop, artRight, artBottom] = g.bounds;
       const labelBounds = g.stars.map(([label, x, sy, side]) => {
         const width = label.length * 8.4 + 20;
@@ -68,20 +72,41 @@ export function createSkyChart(
       const bottom = Math.max(artBottom, ...labelBounds.map((b) => b[3]));
       const titleY = top - 20;
       const titleX = (artLeft + artRight) / 2;
-      if (mode === "wide")
-        return {
-          g,
-          k: 1,
-          ox: g.wide[0],
-          oy: g.wide[1],
-          titleX,
-          titleY,
-        };
-      const scale = Math.min(1, (W - 40) / (right - left));
-      const transform = `translate(${(W - (right - left) * scale) / 2 - left * scale} ${y - titleY * scale}) scale(${scale})`;
-      y += (bottom - titleY + 48) * scale;
-      return { g, k: 1, ox: 0, oy: 0, titleX, titleY, transform };
+      return { g, left, right, bottom, titleX, titleY };
     });
+
+    let y = 26;
+    const placed = [];
+    if (mode === "wide") {
+      measured.forEach(({ g, titleX, titleY }) => {
+        placed.push({ g, ox: g.wide[0], oy: g.wide[1], titleX, titleY });
+      });
+    } else {
+      const margin = 16;
+      const gap = 20;
+      const columnWidth = (W - 2 * margin - gap) / 2;
+      const rows = [measured.slice(0, 2), measured.slice(2, 3), measured.slice(3)];
+      for (const row of rows) {
+        const rowLeft = row.length === 1 ? (W - columnWidth) / 2 : margin;
+        let rowHeight = 0;
+        row.forEach(({ g, left, right, bottom, titleY }, column) => {
+          const cellLeft = rowLeft + column * (columnWidth + gap);
+          const scale = Math.min(1, columnWidth / (right - left));
+          const x = cellLeft + (columnWidth - (right - left) * scale) / 2 - left * scale;
+          placed.push({
+            g,
+            ox: 0,
+            oy: 0,
+            titleX: (cellLeft + columnWidth / 2 - x) / scale,
+            titleY,
+            scale,
+            transform: `translate(${x} ${y - titleY * scale}) scale(${scale})`,
+          });
+          rowHeight = Math.max(rowHeight, (bottom - titleY) * scale);
+        });
+        y += rowHeight + 40;
+      }
+    }
     const H = mode === "wide" ? 940 : Math.ceil(y);
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.style.width = "100%";
@@ -128,8 +153,8 @@ export function createSkyChart(
     }
 
     let delay = 0;
-    placed.forEach(({ g, k, ox, oy, titleX, titleY, transform }) => {
-      const pos = g.stars.map(([, x, sy]) => [ox + x * k, oy + sy * k]);
+    placed.forEach(({ g, ox, oy, titleX, titleY, scale, transform }) => {
+      const pos = g.stars.map(([, x, sy]) => [ox + x, oy + sy]);
       const grp = el("g", { class: "sky-group", "data-group": g.id, style: `--c:${g.c}` }, svg);
       if (transform) grp.setAttribute("transform", transform);
 
@@ -151,20 +176,23 @@ export function createSkyChart(
       // Nome della costellazione, come sulle carte antiche.
       const tx = ox + titleX;
       const nameY = oy + titleY;
-      const anchor = "middle";
+      // Keep group titles readable even when the artwork is scaled into a column.
+      const namePosition = scale
+        ? { x: 0, y: 0, transform: `translate(${tx} ${nameY}) scale(${1 / scale})` }
+        : { x: tx, y: nameY };
       el(
         "text",
-        { class: "sky-name", x: tx, y: nameY, "text-anchor": anchor, style: `--d:${delay}ms` },
+        { class: "sky-name", ...namePosition, "text-anchor": "middle", style: `--d:${delay}ms` },
         grp,
-      ).textContent = g.name;
+      ).textContent = labels.get(g.id) ?? g.name;
 
       // Illustrazione: invisibile a riposo, si disegna quando la costellazione si accende.
       const art = el(
         "g",
         {
           class: "sky-art",
-          transform: `translate(${ox} ${oy}) scale(${k})`,
-          style: `--sw:${(1.2 / k).toFixed(2)}`,
+          transform: `translate(${ox} ${oy})`,
+          style: `--sw:1.20`,
         },
         grp,
       );

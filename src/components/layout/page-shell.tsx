@@ -3,7 +3,11 @@ import { LockKeyhole } from "lucide-react";
 import { useState, type PropsWithChildren, type ReactNode } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
+import { localizablePath, originalPath, type SiteLocale } from "@/config/site";
+import { useSiteHref, useSiteLocale } from "@/features/site/client/site-location";
+import { languageSwitchPath } from "@/features/site/domain/language-preference";
 import { cn } from "@/lib/utils";
+import * as m from "@/paraglide/messages.js";
 
 import Header from "./header";
 
@@ -55,7 +59,7 @@ export function PageShell({
         )}
         {children}
       </main>
-      <SiteFooter />
+      <PageFooter />
     </div>
   );
 }
@@ -86,58 +90,80 @@ function PageHeading({
   );
 }
 
-export function SiteFooter() {
+function PageFooter() {
+  return <SiteFooter locale={useSiteLocale()} />;
+}
+
+export function SiteFooter({ locale = "it" }: { locale?: SiteLocale } = {}) {
   // Workers initialize modules before a request, when their clock can be at the epoch.
   const [copyrightYear] = useState(() => new Date().getUTCFullYear());
+  const path = originalPath(useSiteHref());
+  const alternate = locale === "it" ? "en" : "it";
+  const alternateName = alternate === "en" ? "English" : "Italiano";
+  const alternateFlag = alternate === "en" ? "🇬🇧" : "🇮🇹";
   return (
     <footer className="border-t border-white/10 bg-black px-6 py-12 text-sm text-ink-subtle">
       <div className="mx-auto grid w-full max-w-6xl gap-10 md:grid-cols-2 lg:grid-cols-(--layout-grid-cols-footer)">
         <div className="max-w-sm">
           <p className="display-font text-lg font-semibold text-white">Vincenzo Prisco</p>
-          <p className="mt-3 leading-6">
-            Software engineer e product builder. Un sito personale per raccontare progetti,
-            competenze e idee.
-          </p>
+          <p className="mt-3 leading-6">{m.footer_bio({}, { locale })}</p>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-caption text-ink-muted">
-            Navigazione
+            {m.nav_title({}, { locale })}
           </p>
-          <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Navigazione footer">
+          <nav
+            className="mt-4 flex flex-col items-start gap-3"
+            aria-label={m.footer_nav({}, { locale })}
+          >
             <Link
               className={buttonVariants({ variant: "link" })}
               to="/$archiveSlug"
               params={{ archiveSlug: "progetti" }}
             >
-              Progetti
+              {m.nav_projects({}, { locale })}
             </Link>
             <Link
               className={buttonVariants({ variant: "link" })}
               to="/$archiveSlug"
               params={{ archiveSlug: "blog" }}
             >
-              Blog
+              {m.nav_blog({}, { locale })}
             </Link>
             <Link className={buttonVariants({ variant: "link" })} to="/contact">
-              Contatti
+              {m.nav_contact({}, { locale })}
             </Link>
             <a
               className={buttonVariants({ variant: "link" })}
               href="/rss.xml"
-              aria-label="Feed RSS"
+              aria-label={m.footer_rss({}, { locale })}
             >
-              Feed RSS
+              {m.footer_rss({}, { locale })}
             </a>
           </nav>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-caption text-ink-muted">
-            Informazioni
+            {m.footer_info({}, { locale })}
           </p>
-          <nav className="mt-4 flex flex-col items-start gap-3" aria-label="Informazioni">
+          <nav
+            className="mt-4 flex flex-col items-start gap-3"
+            aria-label={m.footer_info({}, { locale })}
+          >
             <Link className={buttonVariants({ variant: "link" })} to="/about">
-              Informazioni sul sito
+              {m.footer_about({}, { locale })}
             </Link>
+            {localizablePath(path.split(/[?#]/, 1)[0]) && (
+              <a
+                className={buttonVariants({ variant: "link" })}
+                href={languageSwitchPath(path, alternate)}
+                hrefLang={alternate}
+                lang={alternate}
+              >
+                <span aria-hidden="true">{alternateFlag}</span>
+                {alternateName}
+              </a>
+            )}
           </nav>
         </div>
         <div>
@@ -159,14 +185,17 @@ export function SiteFooter() {
       </div>
       <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col gap-4 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs font-semibold uppercase tracking-caption text-ink-muted">
-          Privacy e accesso
+          {m.footer_privacy_access({}, { locale })}
         </p>
-        <nav className="flex flex-wrap items-center gap-3" aria-label="Privacy e accesso">
+        <nav
+          className="flex flex-wrap items-center gap-3"
+          aria-label={m.footer_privacy_access({}, { locale })}
+        >
           <Link className={buttonVariants({ variant: "link" })} to="/privacy">
-            Privacy
+            {m.footer_privacy({}, { locale })}
           </Link>
           <Link className={buttonVariants({ variant: "link" })} to="/cookie">
-            Cookie
+            {m.footer_cookie({}, { locale })}
           </Link>
           <Link className={buttonVariants({ variant: "outline" })} to="/dashboard">
             <LockKeyhole data-icon="inline-start" />
@@ -175,8 +204,8 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className="mx-auto mt-10 flex w-full max-w-6xl flex-col gap-2 border-t border-white/10 pt-5 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between">
-        <p>© {copyrightYear} Vincenzo Prisco. Tutti i diritti riservati.</p>
-        <p>Ultimo aggiornamento: luglio 2026</p>
+        <p>{m.footer_copyright({ year: copyrightYear }, { locale })}</p>
+        <p>{m.footer_updated({}, { locale })}</p>
       </div>
     </footer>
   );

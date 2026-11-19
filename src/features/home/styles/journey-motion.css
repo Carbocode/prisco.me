@@ -143,7 +143,7 @@
     opacity: 1;
     border-color: rgba(253, 242, 228, 0.4);
   }
-  .home-traversata .journey .stop-year {
+  .home-traversata .journey .stop-marker {
     position: absolute;
     left: 0.2rem;
     bottom: calc(100% - 0.12em);
@@ -160,14 +160,10 @@
     }
     .home-traversata .journey .journey-intro {
       width: min(88vw, 26rem);
-      padding: clamp(24px, 7svh, 56px) 20px 0;
+      padding: clamp(24px, 7svh, 56px) 20px 0 var(--home-content-gutter);
     }
     .home-traversata .journey .journey-intro .h2 {
-      font-size: clamp(1.8rem, 7vw, 2.7rem);
-    }
-    .home-traversata .journey .journey-intro .lead {
-      font-size: 0.9rem;
-      line-height: 1.6;
+      font-size: clamp(2.45rem, 10.5vw, 3.65rem);
     }
     .home-traversata .journey .stop {
       width: min(82vw, 22rem);
@@ -184,14 +180,13 @@
       padding: 1.1rem;
     }
     .home-traversata .journey .stop h3 {
-      margin-top: 0.6rem;
       font-size: 1.25rem;
     }
-    .home-traversata .journey .stop p:not(.stop-meta) {
+    .home-traversata .journey .stop .stop-role {
       font-size: 0.875rem;
       line-height: 1.5;
     }
-    .home-traversata .journey .stop-year {
+    .home-traversata .journey .stop-marker {
       font-size: 3.25rem;
     }
     .home-traversata .journey .tw {
@@ -209,6 +204,26 @@
     }
     .home-traversata .journey .journey-intro {
       padding-top: 20px;
+    }
+  }
+  @media (orientation: portrait) {
+    .home-traversata .journey .track {
+      /* Anchor the cards to a shared baseline above the waterline. */
+      --journey-card-bottom: calc(var(--home-viewport-height, 100svh) * 0.36);
+      align-items: flex-end;
+      padding-bottom: var(--journey-card-bottom);
+    }
+    .home-traversata .journey .journey-intro {
+      padding-top: 0;
+      padding-left: var(--home-content-gutter);
+    }
+    .home-traversata .journey .stop:nth-of-type(n) {
+      margin-top: 0;
+      --stem: clamp(1.5rem, calc(var(--home-viewport-height, 100svh) * 0.09), 4rem);
+    }
+    .home-traversata .journey .stop-card {
+      max-height: calc(var(--home-viewport-height, 100svh) - var(--journey-card-bottom) - 4rem);
+      overflow-y: auto;
     }
   }
 }

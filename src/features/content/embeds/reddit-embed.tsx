@@ -1,12 +1,15 @@
 "use client";
 
-/* oxlint-disable react/iframe-missing-sandbox -- Reddit's official embed requires allow-scripts and allow-same-origin together. */
-
 import { useEffect, useRef, useState } from "react";
+
+import { useSiteLocale } from "@/features/site/client/site-location";
+/* oxlint-disable react/iframe-missing-sandbox -- Reddit's official embed requires allow-scripts and allow-same-origin together. */
+import * as m from "@/paraglide/messages.js";
 
 import { toRedditEmbedUrl } from "./embed-url";
 
 export function RedditEmbed({ url }: { url?: string }) {
+  const locale = useSiteLocale();
   const embedUrl = toRedditEmbedUrl(url);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(500);
@@ -38,7 +41,8 @@ export function RedditEmbed({ url }: { url?: string }) {
       <iframe
         ref={iframeRef}
         src={embedUrl}
-        title="Contenuto Reddit incorporato"
+        lang={locale}
+        title={m.article_reddit_embed({}, { locale })}
         height={height}
         scrolling="no"
         sandbox="allow-scripts allow-same-origin allow-popups"

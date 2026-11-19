@@ -1,7 +1,9 @@
-// oxlint-disable-next-line import/no-unassigned-import -- Public equations require the KaTeX stylesheet.
-import "katex/dist/katex.min.css";
 import type { ReactNode } from "react";
 
+import type { SiteLocale } from "@/config/site";
+
+// oxlint-disable-next-line import/no-unassigned-import -- Public equations require the KaTeX stylesheet.
+import "katex/dist/katex.min.css";
 import { toPlateValue, type CmsDocument } from "@/features/content/domain/document";
 import { EmbedPreview } from "@/features/content/embeds/embed-preview";
 import {
@@ -31,12 +33,14 @@ import {
   type TocHeading,
 } from "@/features/content/rendering/render-types";
 import { cn } from "@/lib/utils";
+import * as m from "@/paraglide/messages.js";
 
 export function children(
   node: Node,
   media: Map<string, CmsMediaView>,
   key: string,
   headings: TocHeading[] = [],
+  locale: SiteLocale = "it",
 ): ReactNode {
   if (typeof node.text === "string") {
     let value: ReactNode = node.text ?? "";
@@ -89,7 +93,7 @@ export function children(
     return value;
   }
   const nested = (node.children ?? node.content)?.map((item, index) =>
-    children(item, media, `${key}-${index}`, headings),
+    children(item, media, `${key}-${index}`, headings, locale),
   );
   switch (node.type) {
     case "a": {
@@ -116,7 +120,13 @@ export function children(
         const checked = node.checked === true;
         return (
           <div key={key} className="cms-task-list-item" data-checked={checked}>
-            <input type="checkbox" checked={checked} readOnly aria-label="Attività" />
+            <input
+              type="checkbox"
+              checked={checked}
+              readOnly
+              lang={locale}
+              aria-label={m.article_task({}, { locale })}
+            />
             {content}
           </div>
         );
@@ -214,7 +224,12 @@ export function children(
       return <hr key={key} />;
     case "toc":
       return (
-        <nav key={key} aria-label="Indice del contenuto" className="cms-content-toc">
+        <nav
+          key={key}
+          lang={locale}
+          aria-label={m.article_table_of_contents({}, { locale })}
+          className="cms-content-toc"
+        >
           <strong>In questa pagina</strong>
           <ul>
             {headings.map((heading) => (
@@ -295,7 +310,12 @@ export function children(
             type="checkbox"
             checked={checked}
             readOnly
-            aria-label={checked ? "Attività completata" : "Attività da completare"}
+            lang={locale}
+            aria-label={
+              checked
+                ? m.article_task_complete({}, { locale })
+                : m.article_task_incomplete({}, { locale })
+            }
           />
           <div>{nested}</div>
         </li>
@@ -418,7 +438,8 @@ export function children(
           {/* oxlint-disable-next-line react/iframe-missing-sandbox -- URLs are restricted to trusted providers; social widgets do not work in a sandbox. */}
           <iframe
             src={embedUrl}
-            title="Contenuto incorporato"
+            lang={locale}
+            title={m.article_embed({}, { locale })}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
@@ -471,7 +492,11 @@ export function children(
               <track kind="captions" />
             </audio>
           ) : null}
-          {mediaType === "file" ? <a href={item.url}>Apri allegato</a> : null}
+          {mediaType === "file" ? (
+            <a href={item.url} lang={locale}>
+              {m.article_attachment({}, { locale })}
+            </a>
+          ) : null}
           {(stringAttr(node.caption) ?? stringAttr(node.attrs?.caption) ?? item.caption) ? (
             <figcaption>
               {stringAttr(node.caption) ?? stringAttr(node.attrs?.caption) ?? item.caption}
@@ -485,7 +510,11 @@ export function children(
   }
 }
 
-export function renderCmsDocument(document: CmsDocument, media = new Map<string, CmsMediaView>()) {
+export function renderCmsDocument(
+  document: CmsDocument,
+  media = new Map<string, CmsMediaView>(),
+  locale: SiteLocale = "it",
+) {
   const value = toPlateValue(document).map((node, index) => {
     if (!["h1", "h2", "h3", "h4"].includes(node.type ?? "") || typeof node.id === "string")
       return node;
@@ -498,5 +527,5 @@ export function renderCmsDocument(document: CmsDocument, media = new Map<string,
       id: String(node.id),
       title: nodeText(node),
     }));
-  return value.map((node, index) => children(node, media, `cms-${index}`, headings));
+  return value.map((node, index) => children(node, media, `cms-${index}`, headings, locale));
 }

@@ -149,10 +149,7 @@
 .home-traversata .journey-intro .h2 {
   margin-top: 1.5rem;
   max-width: 14ch;
-}
-.home-traversata .journey-intro .lead {
-  margin-top: 1.5rem;
-  color: #e2e8f0;
+  font-size: clamp(3rem, 1.4rem + 4.5vw, 5.75rem);
 }
 .home-traversata .journey-hint {
   display: none;
@@ -203,10 +200,6 @@
   background: var(--sand-0);
   box-shadow: 0 0 0 4px rgba(220, 167, 150, 0.25);
 }
-.home-traversata .stop[data-kind="education"] .stop-pin {
-  background: var(--link-hover);
-  box-shadow: 0 0 0 4px rgba(186, 230, 253, 0.25);
-}
 .home-traversata .stop-card {
   position: relative;
   padding: 1.4rem 1.4rem 1.5rem;
@@ -221,43 +214,14 @@
     border-color 400ms,
     box-shadow 600ms;
 }
-.home-traversata .stop-year {
+.home-traversata .stop-marker {
   display: block;
   margin: -0.35rem 0 0.35rem;
-  font-family: var(--f-serif);
-  font-style: italic;
   font-size: 3.2rem;
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(253, 242, 228, 0.35);
+  color: var(--warm-muted);
   pointer-events: none;
 }
-.home-traversata .stop-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--f-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--warm-muted);
-}
-.home-traversata .badge {
-  padding: 0.18rem 0.55rem;
-  border-radius: 999px;
-  border: 1px solid currentColor;
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-}
-.home-traversata .stop[data-kind="work"] .badge {
-  color: var(--sand-0);
-}
-.home-traversata .stop[data-kind="education"] .badge {
-  color: var(--link-hover);
-}
 .home-traversata .stop h3 {
-  margin-top: 1rem;
   font-family: var(--f-display);
   font-weight: 600;
   font-size: 1.5rem;
@@ -266,7 +230,7 @@
   color: var(--warm-ink);
 }
 .home-traversata .stop-role {
-  margin-top: 0.25rem;
+  margin-top: 0.6rem;
   color: var(--warm-body);
   font-size: 0.92rem;
 }
@@ -296,21 +260,6 @@
   color: var(--warm-body);
 }
 
-.home-traversata .stop-end .stop-card {
-  background: rgba(253, 242, 228, 0.92);
-  color: var(--soil);
-  border-color: transparent;
-}
-.home-traversata .stop-end h3 {
-  color: var(--soil);
-}
-.home-traversata .stop-end p {
-  margin-top: 0.6rem;
-  color: #4a3424;
-}
-.home-traversata .stop-end .stop-pin {
-  background: var(--ink);
-}
 .home-traversata .text-link {
   display: inline-flex;
   align-items: center;

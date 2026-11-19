@@ -213,6 +213,9 @@
   fill: currentColor;
   font: italic 400 25px var(--f-serif);
 }
+.home-traversata .sky-chart[data-sky-layout="tall"] .sky-name {
+  font-size: 23px;
+}
 .home-traversata .sky-hit {
   fill: transparent;
   cursor: pointer;

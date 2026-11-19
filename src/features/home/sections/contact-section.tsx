@@ -1,13 +1,16 @@
+import { localizedPath, type SiteLocale } from "@/config/site";
+import * as m from "@/paraglide/messages.js";
+
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
 import { CoreArtwork } from "../artwork/core-artwork";
 
-export function ContactSection() {
+export function ContactSection({ locale }: { locale: SiteLocale }) {
   return (
     <section
       id="nucleo"
       className="layer layer-core"
-      data-section="Contatto"
+      data-section={m.home_contact_section({}, { locale })}
       aria-labelledby="nucleo-title"
       data-core-zone=""
     >
@@ -24,15 +27,15 @@ export function ContactSection() {
       <CoreArtwork />
       <div className="wrap">
         <h2 className="h2" id="nucleo-title" data-reveal="">
-          {"Hai un’idea da trasformare "}
-          <span className="serif">{"in prodotto?"}</span>
+          {m.home_contact_idea({}, { locale })}
+          <span className="serif">{m.home_contact_product({}, { locale })}</span>
         </h2>
         <p className="lead" data-reveal="" style={{ "--i": "1" }}>
-          {"Raccontami cosa stai costruendo e vediamo insieme da dove partire."}
+          {m.home_contact_lede({}, { locale })}
         </p>
         <div className="core-actions" data-reveal="" style={{ "--i": "2" }}>
-          <a className="btn btn-primary" data-magnetic="" href="/contact">
-            {"Scrivimi "}
+          <a className="btn btn-primary" data-magnetic="" href={localizedPath("/contact", locale)}>
+            {m.home_contact_write({}, { locale })}
             <span className="arrow" aria-hidden="true">
               {"→"}
             </span>

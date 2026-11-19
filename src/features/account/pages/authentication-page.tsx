@@ -27,10 +27,13 @@ import {
 } from "@/components/ui/item";
 import { authClient } from "@/features/auth/client/auth-client";
 import { formString, formValues } from "@/features/auth/components/auth-ui";
+import { useSiteLocale } from "@/features/site/client/site-location";
+import * as m from "@/paraglide/messages.js";
 
 type TwoFactorSetup = { uri: string; qr: string; backupCodes: string[] };
 
 export function AuthenticationPage() {
+  const locale = useSiteLocale();
   const session = authClient.useSession();
   const user = session.data!.user;
   const [setup, setSetup] = useState<TwoFactorSetup | null>(null);
@@ -39,8 +42,8 @@ export function AuthenticationPage() {
   const refreshPasskeys = useCallback(async () => {
     const result = await authClient.passkey.listUserPasskeys();
     if (result.data) setPasskeys(result.data);
-    else toast.error(result.error?.message ?? "Impossibile caricare le passkey.");
-  }, []);
+    else toast.error(result.error?.message ?? m.security_load_passkeys_failed({}, { locale }));
+  }, [locale]);
 
   useEffect(() => {
     // oxlint-disable-next-line react/set-state-in-effect -- State updates happen after the awaited network response.
@@ -54,15 +57,15 @@ export function AuthenticationPage() {
       newPassword: formString(values, "newPassword"),
       revokeOtherSessions: true,
     });
-    if (result.error) toast.error(result.error.message ?? "Aggiornamento non riuscito.");
-    else toast.success("Password aggiornata e altre sessioni revocate.");
+    if (result.error) toast.error(result.error.message ?? m.security_update_failed({}, { locale }));
+    else toast.success(m.security_password_updated({}, { locale }));
   }
 
   async function enableTwoFactor(event: React.FormEvent<HTMLFormElement>) {
     const values = formValues(event);
     const result = await authClient.twoFactor.enable({ password: formString(values, "password") });
     if (result.error || !result.data || result.data.method !== "totp") {
-      toast.error(result.error?.message ?? "Impossibile attivare la 2FA.");
+      toast.error(result.error?.message ?? m.security_enable_failed({}, { locale }));
       return;
     }
     const qr = await QRCode.toDataURL(result.data.totpURI, { width: 240, margin: 1 });
@@ -72,9 +75,9 @@ export function AuthenticationPage() {
   async function confirmTwoFactor(event: React.FormEvent<HTMLFormElement>) {
     const values = formValues(event);
     const result = await authClient.twoFactor.verifyTotp({ code: formString(values, "code") });
-    if (result.error) toast.error(result.error.message ?? "Codice non valido.");
+    if (result.error) toast.error(result.error.message ?? m.security_invalid_code({}, { locale }));
     else {
-      toast.success("Autenticazione a due fattori attivata.");
+      toast.success(m.security_enabled({}, { locale }));
       setSetup(null);
       await session.refetch();
     }
@@ -83,8 +86,9 @@ export function AuthenticationPage() {
   async function disableTwoFactor(event: React.FormEvent<HTMLFormElement>) {
     const values = formValues(event);
     const result = await authClient.twoFactor.disable({ password: formString(values, "password") });
-    if (result.error) toast.error(result.error.message ?? "Disattivazione non riuscita.");
-    else toast.success("Autenticazione a due fattori disattivata.");
+    if (result.error)
+      toast.error(result.error.message ?? m.security_disable_failed({}, { locale }));
+    else toast.success(m.security_disabled({}, { locale }));
     await session.refetch();
   }
 
@@ -95,8 +99,8 @@ export function AuthenticationPage() {
     });
     if (result.data) {
       setSetup({ uri: "", qr: "", backupCodes: result.data.backupCodes });
-      toast.success("Codici di recupero rigenerati.");
-    } else toast.error(result.error?.message ?? "Impossibile generare i codici.");
+      toast.success(m.security_codes_regenerated({}, { locale }));
+    } else toast.error(result.error?.message ?? m.security_codes_failed({}, { locale }));
   }
 
   async function addPasskey(event: React.FormEvent<HTMLFormElement>) {
@@ -104,32 +108,38 @@ export function AuthenticationPage() {
     const result = await authClient.passkey.addPasskey({
       name: formString(values, "name") || undefined,
     });
-    if (result?.error) toast.error(result.error.message ?? "Aggiunta non riuscita.");
-    else toast.success("Passkey aggiunta.");
+    if (result?.error) toast.error(result.error.message ?? m.security_add_failed({}, { locale }));
+    else toast.success(m.security_passkey_added({}, { locale }));
     await refreshPasskeys();
   }
 
   return (
     <div className="flex max-w-5xl flex-col gap-4">
       <header>
-        <p className="text-sm font-medium text-muted-foreground">Sicurezza account</p>
-        <h1 className="font-heading text-2xl font-semibold tracking-tight">Autenticazione</h1>
+        <p className="text-sm font-medium text-muted-foreground">
+          {m.security_account_security({}, { locale })}
+        </p>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">
+          {m.security_authentication({}, { locale })}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Password, verifica in due passaggi e accesso senza password.
+          {m.security_passwords_two_factor_authentication_and_passwordless({}, { locale })}{" "}
         </p>
       </header>
       <Card size="sm">
         <CardHeader>
           <CardTitle>Password</CardTitle>
           <CardDescription>
-            La modifica revoca automaticamente tutte le altre sessioni.
+            {m.security_changing_your_password_automatically_revokes_all({}, { locale })}{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={(event) => void changePassword(event)}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="current-password">Password attuale</FieldLabel>
+                <FieldLabel htmlFor="current-password">
+                  {m.security_current_password({}, { locale })}
+                </FieldLabel>
                 <Input
                   id="current-password"
                   name="currentPassword"
@@ -139,7 +149,9 @@ export function AuthenticationPage() {
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="new-password">Nuova password</FieldLabel>
+                <FieldLabel htmlFor="new-password">
+                  {m.security_new_password({}, { locale })}
+                </FieldLabel>
                 <Input
                   id="new-password"
                   name="newPassword"
@@ -150,7 +162,7 @@ export function AuthenticationPage() {
               </Field>
               <Button type="submit">
                 <KeyRound />
-                Aggiorna password
+                {m.security_update_password({}, { locale })}{" "}
               </Button>
             </FieldGroup>
           </form>
@@ -158,8 +170,10 @@ export function AuthenticationPage() {
       </Card>
       <Card size="sm">
         <CardHeader>
-          <CardTitle>Autenticazione a due fattori</CardTitle>
-          <CardDescription>TOTP, dispositivi attendibili e codici di recupero.</CardDescription>
+          <CardTitle>{m.security_two_factor_authentication({}, { locale })}</CardTitle>
+          <CardDescription>
+            {m.security_totp_trusted_devices_and_recovery_codes({}, { locale })}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <FieldGroup>
@@ -167,12 +181,14 @@ export function AuthenticationPage() {
               <form onSubmit={(event) => void enableTwoFactor(event)}>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel htmlFor="enable-2fa-password">Conferma la password</FieldLabel>
+                    <FieldLabel htmlFor="enable-2fa-password">
+                      {m.security_confirm_your_password({}, { locale })}
+                    </FieldLabel>
                     <Input id="enable-2fa-password" name="password" type="password" required />
                   </Field>
                   <Button type="submit">
                     <ShieldCheck />
-                    Configura 2FA
+                    {m.security_set_up_fa({}, { locale })}{" "}
                   </Button>
                 </FieldGroup>
               </form>
@@ -185,7 +201,7 @@ export function AuthenticationPage() {
                       <Input id="backup-password" name="password" type="password" required />
                     </Field>
                     <Button type="submit" variant="outline">
-                      Rigenera codici di recupero
+                      {m.security_regenerate_recovery_codes({}, { locale })}{" "}
                     </Button>
                   </FieldGroup>
                 </form>
@@ -196,7 +212,7 @@ export function AuthenticationPage() {
                       <Input id="disable-2fa-password" name="password" type="password" required />
                     </Field>
                     <Button type="submit" variant="destructive">
-                      Disattiva 2FA
+                      {m.security_disable_fa({}, { locale })}{" "}
                     </Button>
                   </FieldGroup>
                 </form>
@@ -204,18 +220,20 @@ export function AuthenticationPage() {
             )}
             {setup && (
               <>
-                <FieldSeparator>Configurazione</FieldSeparator>
+                <FieldSeparator>{m.security_setup({}, { locale })}</FieldSeparator>
                 <Alert>
                   <AlertDescription>
                     {setup.qr && (
                       <img
                         src={setup.qr}
                         className="mb-4 size-52 rounded-lg"
-                        alt="QR code per configurare l’app di autenticazione"
+                        alt={m.security_qr_code_for_setting_up_your({}, { locale })}
                       />
                     )}
                     {setup.uri && <code className="block break-all text-xs">{setup.uri}</code>}
-                    <p className="mt-4 text-sm font-semibold">Salva i codici di recupero:</p>
+                    <p className="mt-4 text-sm font-semibold">
+                      {m.security_save_your_recovery_codes({}, { locale })}
+                    </p>
                     <div className="mt-2 grid grid-cols-2 gap-2 font-mono text-sm">
                       {setup.backupCodes.map((code) => (
                         <span key={code}>{code}</span>
@@ -225,10 +243,12 @@ export function AuthenticationPage() {
                       <form className="mt-5" onSubmit={(event) => void confirmTwoFactor(event)}>
                         <FieldGroup>
                           <Field>
-                            <FieldLabel htmlFor="totp-code">Codice di verifica</FieldLabel>
+                            <FieldLabel htmlFor="totp-code">
+                              {m.security_verification_code({}, { locale })}
+                            </FieldLabel>
                             <Input id="totp-code" name="code" inputMode="numeric" required />
                           </Field>
-                          <Button type="submit">Conferma</Button>
+                          <Button type="submit">{m.security_confirm({}, { locale })}</Button>
                         </FieldGroup>
                       </form>
                     )}
@@ -243,18 +263,23 @@ export function AuthenticationPage() {
         <CardHeader>
           <CardTitle>Passkey</CardTitle>
           <CardDescription>
-            Usa biometria, PIN del dispositivo o una chiave di sicurezza per accedere senza
-            password.
+            {m.security_use_biometrics_your_device_pin_or({}, { locale })}{" "}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={(event) => void addPasskey(event)}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="passkey-name">Nome passkey</FieldLabel>
-                <Input id="passkey-name" name="name" placeholder="es. MacBook personale" />
+                <FieldLabel htmlFor="passkey-name">
+                  {m.security_passkey_name({}, { locale })}
+                </FieldLabel>
+                <Input
+                  id="passkey-name"
+                  name="name"
+                  placeholder={m.security_e_g_personal_macbook({}, { locale })}
+                />
               </Field>
-              <Button type="submit">Aggiungi passkey</Button>
+              <Button type="submit">{m.security_add_passkey({}, { locale })}</Button>
             </FieldGroup>
           </form>
           <ItemGroup className="mt-4">
@@ -264,8 +289,10 @@ export function AuthenticationPage() {
                   <EmptyMedia variant="icon">
                     <Fingerprint />
                   </EmptyMedia>
-                  <EmptyTitle>Nessuna passkey</EmptyTitle>
-                  <EmptyDescription>Non hai ancora registrato una passkey.</EmptyDescription>
+                  <EmptyTitle>{m.security_no_passkeys({}, { locale })}</EmptyTitle>
+                  <EmptyDescription>
+                    {m.security_you_haven_t_registered_a_passkey({}, { locale })}
+                  </EmptyDescription>
                 </EmptyHeader>
               </Empty>
             ) : (
@@ -291,25 +318,29 @@ export function AuthenticationPage() {
                             name,
                           });
                           if (result.error)
-                            toast.error(result.error.message ?? "Rinomina non riuscita.");
-                          else toast.success("Passkey rinominata.");
+                            toast.error(
+                              result.error.message ?? m.security_rename_failed({}, { locale }),
+                            );
+                          else toast.success(m.security_passkey_renamed({}, { locale }));
                           await refreshPasskeys();
                         }
                       }}
                     >
-                      Rinomina
+                      {m.security_rename({}, { locale })}{" "}
                     </Button>
                     <Button
                       variant="destructive"
                       onClick={async () => {
                         const result = await authClient.passkey.deletePasskey({ id: item.id });
                         if (result.error)
-                          toast.error(result.error.message ?? "Rimozione non riuscita.");
-                        else toast.success("Passkey rimossa.");
+                          toast.error(
+                            result.error.message ?? m.security_remove_failed({}, { locale }),
+                          );
+                        else toast.success(m.security_passkey_removed({}, { locale }));
                         await refreshPasskeys();
                       }}
                     >
-                      Rimuovi
+                      {m.security_remove({}, { locale })}{" "}
                     </Button>
                   </ItemActions>
                 </Item>
