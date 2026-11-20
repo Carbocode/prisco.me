@@ -65,6 +65,8 @@ Split modules by responsibility and dependencies. A view may remain large when c
 
 The editor's `domain/agent-document.ts` validates bounded block edits and stale-document revisions; `domain/agent-widgets.ts` describes widget examples. `client/use-editor-site-tools.ts` registers live Plate operations. CMS `client/use-article-site-tools.ts` exposes editorial fields and draft-only persistence through the existing article form save operation. Shared browser registration belongs to `src/lib/webmcp.ts`; it contains no model calls or server dependencies. Tools are scoped to the mounted form and released using AbortSignal. Public discovery manifests do not advertise authenticated editorial tools. See the [editor guide](../src/features/editor/README.md) for client requirements and verification.
 
+CMS owns Home highlight selection and eligibility. Home queries the selected public cards through its own loader without loading document bodies or the career portfolio.
+
 Home composes localized profile cards in its Journey section. The education card links to Career, which loads full experience records from the portfolio repository.
 
 ## Styles, assets, and dates

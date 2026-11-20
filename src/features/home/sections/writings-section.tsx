@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-
 import { localizedPath, type SiteLocale } from "@/config/site";
 import * as m from "@/paraglide/messages.js";
 
@@ -141,40 +139,30 @@ export function WritingsSection({
           </h2>
         </header>
         <div className="geodes">
-          <article className="geode" data-reveal="">
-            <div className="geode-visual" data-dig="" aria-hidden="true">
-              <GeodeArtwork />
-            </div>
-            <div className="geode-body">
-              {articles.length ? (
-                articles.map((article) => (
-                  <Fragment key={article.id}>
-                    {article.cover ? (
-                      <img
-                        className="home-content-cover"
-                        src={article.cover.url}
-                        alt={article.cover.altText ?? ""}
-                        loading="lazy"
-                        decoding="async"
-                        width="768"
-                        height="432"
-                      />
-                    ) : null}
-                    <h3>
-                      <a href={localizedPath(`/blog/${article.slug}`, locale)}>{article.title}</a>
-                    </h3>
-                    <p>{article.excerpt}</p>
-                  </Fragment>
-                ))
-              ) : (
+          {articles.map((article) => (
+            <article className="geode" data-reveal="" key={article.id}>
+              <div className="geode-visual" data-dig="" aria-hidden="true">
+                <GeodeArtwork />
+              </div>
+              <div className="geode-body">
+                {article.cover ? (
+                  <img
+                    className="home-content-cover"
+                    src={article.cover.url}
+                    alt={article.cover.altText ?? ""}
+                    loading="lazy"
+                    decoding="async"
+                    width="768"
+                    height="432"
+                  />
+                ) : null}
                 <h3>
-                  <a href={localizedPath("/blog", locale)}>
-                    {m.home_writings_explore({}, { locale })}
-                  </a>
+                  <a href={localizedPath(`/blog/${article.slug}`, locale)}>{article.title}</a>
                 </h3>
-              )}
-            </div>
-          </article>
+                <p>{article.excerpt}</p>
+              </div>
+            </article>
+          ))}
         </div>
         <p className="layer-more" data-reveal="">
           <a className="text-link" href={localizedPath("/blog", locale)}>

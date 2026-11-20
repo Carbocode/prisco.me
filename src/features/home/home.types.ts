@@ -9,8 +9,15 @@ export type HomeArticle = {
   cover?: { url: string; altText?: string | null } | null;
 };
 
+export type HomeProject = Pick<
+  Project,
+  "id" | "slug" | "title" | "summary" | "image" | "company" | "role"
+> & {
+  skills: Pick<Project["skills"][number], "id" | "name">[];
+};
+
 export type HomePageProps = {
   locale: SiteLocale;
-  projects: Project[];
+  projects: HomeProject[];
   articles: HomeArticle[];
 };

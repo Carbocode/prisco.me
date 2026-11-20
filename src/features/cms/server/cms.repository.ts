@@ -32,7 +32,8 @@ export function articleRepository(db: CmsDb) {
       dateTo?: Date;
     }) {
       const filters = [isNull(cmsArticles.deletedAt)];
-      const effectiveStatus = sql<string>`case when ${cmsArticles.status} = 'scheduled' and ${cmsArticles.publishedAt} <= ${Date.now()} then 'published' else ${cmsArticles.status} end`;
+      const now = new Date();
+      const effectiveStatus = sql<string>`case when ${cmsArticles.status} = 'scheduled' and ${cmsArticles.publishedAt} <= ${now.getTime()} then 'published' else ${cmsArticles.status} end`;
       if (input.status) filters.push(eq(effectiveStatus, input.status));
       if (input.authorId) filters.push(eq(cmsArticles.authorId, input.authorId));
       if (input.categoryId)
@@ -88,14 +89,18 @@ export function articleRepository(db: CmsDb) {
             .select({
               articleId: cmsArticleCategories.articleId,
               name: cmsCategories.name,
+              slug: cmsCategories.slug,
               archiveSort: cmsCategories.archiveSort,
             })
             .from(cmsArticleCategories)
             .innerJoin(cmsCategories, eq(cmsArticleCategories.categoryId, cmsCategories.id))
             .where(
-              inArray(
-                cmsArticleCategories.articleId,
-                items.map((item) => item.id),
+              and(
+                isNull(cmsCategories.deletedAt),
+                inArray(
+                  cmsArticleCategories.articleId,
+                  items.map((item) => item.id),
+                ),
               ),
             )
         : [];
@@ -104,12 +109,18 @@ export function articleRepository(db: CmsDb) {
         items: items.map((item) => ({
           ...item,
           status:
-            item.status === "scheduled" && item.publishedAt && item.publishedAt <= new Date()
+            item.status === "scheduled" && item.publishedAt && item.publishedAt <= now
               ? "published"
               : item.status,
           categories: categoryRows
             .filter((category) => category.articleId === item.id)
             .map((category) => category.name),
+          categorySlugs: categoryRows
+            .filter((category) => category.articleId === item.id)
+            .map((category) => category.slug),
+          isPublic:
+            ["published", "scheduled"].includes(item.status) &&
+            Boolean(item.publishedAt && item.publishedAt <= now),
           archiveSort: categoryRows.find((category) => category.articleId === item.id)?.archiveSort,
         })),
         total: total[0]?.value ?? 0,

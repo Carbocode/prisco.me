@@ -331,12 +331,30 @@ it("loads static underground artwork responsively without removing interactive S
 });
 
 it("renders the English Home and links to localized URLs", () => {
-  const markup = renderToStaticMarkup(<HomePage locale="en" projects={[]} articles={[]} />);
+  const markup = renderToStaticMarkup(<HomePage {...props} locale="en" />);
   const page = new DOMParser().parseFromString(markup, "text/html");
 
   expect(page.querySelector("h1")?.textContent).toContain("I build apps and services.");
   expect(page.querySelector("#percorso")?.textContent).toContain("At university");
   expect(page.querySelector('a[href="/en/career"]')).not.toBeNull();
-  expect(page.querySelector('a[href="/en/blog"]')?.textContent).toBe("Explore the blog");
+  expect(page.querySelector('a[href="/en/blog/articolo-cms"]')).not.toBeNull();
   expect(page.querySelectorAll("#percorso .stop")).toHaveLength(5);
 });
+
+it.each([0, 1, 2])(
+  "renders %i featured articles and independently hides empty sections",
+  (count) => {
+    const articles = Array.from({ length: count }, (_, index) => ({
+      ...props.articles[0],
+      id: `article-${index}`,
+      slug: `article-${index}`,
+    }));
+    const page = new DOMParser().parseFromString(
+      renderToStaticMarkup(<HomePage {...props} projects={[]} articles={articles} />),
+      "text/html",
+    );
+    expect(page.querySelector("#reperti")).toBeNull();
+    expect(Boolean(page.querySelector("#sedimenti"))).toBe(count > 0);
+    expect(page.querySelectorAll("#sedimenti article")).toHaveLength(count);
+  },
+);

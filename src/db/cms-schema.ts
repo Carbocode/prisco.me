@@ -297,3 +297,20 @@ export type CmsArticleRow = InferSelectModel<typeof cmsArticles>;
 export type NewCmsArticleRow = InferInsertModel<typeof cmsArticles>;
 export type CmsMediaRow = InferSelectModel<typeof cmsMedia>;
 export type CmsOrganizationRow = InferSelectModel<typeof cmsOrganizations>;
+
+export const cmsHomeFeatured = sqliteTable(
+  "cms_home_featured",
+  {
+    category: text("category", { enum: ["blog", "progetti"] }).notNull(),
+    position: integer("position").notNull(),
+    articleId: text("article_id")
+      .notNull()
+      .references(() => cmsArticles.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.category, table.position] }),
+    uniqueIndex("cms_home_featured_category_article_idx").on(table.category, table.articleId),
+    check("cms_home_featured_category_check", sql`${table.category} IN ('blog', 'progetti')`),
+    check("cms_home_featured_position_check", sql`${table.position} IN (1, 2)`),
+  ],
+);

@@ -30,3 +30,5 @@ The Italian and English routes share the Home view. UI strings are compiled from
 The server negotiates language on requests to `/`. It uses the language switch cookie before inspecting `Accept-Language`, and temporarily redirects to `/en` when English is preferred. Localized paths and links to other pages follow their URL.
 
 The footer language link sends the explicit choice in the destination URL. The server honors it on that request and stores a language cookie for later Home visits.
+
+Home reads only the public card fields for the entries selected in the CMS. Projects and writings each render up to two cards in selection order and are omitted independently when empty. Publication and category eligibility are checked again on every Home load.
