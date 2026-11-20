@@ -1,8 +1,10 @@
 /* oxlint-disable react/no-unstable-nested-components -- TanStack Table usa callback di rendering nelle definizioni di colonna. */
+import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { getRouteApi } from "@tanstack/react-router";
-import { Eye, FilePlus2, Pencil } from "lucide-react";
+import { Eye, FilePlus2, Pencil, Star } from "lucide-react";
 import { useMemo } from "react";
+import { toast } from "sonner";
 
 import {
   DashboardDataTable,
@@ -15,17 +17,22 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useListSearch } from "@/features/cms/client/use-list-search";
+import { HOME_FEATURED_CATEGORIES } from "@/features/cms/domain/home-featured";
+import { setHomeFeaturedFn } from "@/features/cms/server/home-featured.functions";
 import { formatSiteDate } from "@/lib/dates";
+
+const featuredLabels = { blog: "Articoli", progetti: "Progetti" };
 
 const routeApi = getRouteApi("/dashboard/cms/articles");
 
 export function ArticlesContent() {
-  const { articles, categories } = routeApi.useLoaderData();
+  const { articles, categories, featured } = routeApi.useLoaderData();
   const search = routeApi.useSearch();
   const router = useRouter();
   const navigate = useNavigate({ from: "/dashboard/cms/articles" });
@@ -36,6 +43,15 @@ export function ArticlesContent() {
   const query = useListSearch(search.query, (nextQuery) =>
     updateSearch({ query: nextQuery || undefined, page: 1 }),
   );
+  const { mutate: setFeatured, isPending: updatingFeatured } = useMutation({
+    mutationFn: setHomeFeaturedFn,
+    onSuccess: async (saved) => {
+      await router.invalidate({ sync: true });
+      if (!saved)
+        toast.error("Selezione non aggiornata. Verifica la pubblicazione e i posti disponibili.");
+    },
+    onError: () => toast.error("Impossibile aggiornare i contenuti in evidenza"),
+  });
   const columns = useMemo<DashboardColumnDef<(typeof articles.items)[number]>[]>(
     () => [
       {
@@ -86,9 +102,8 @@ export function ArticlesContent() {
         id: "actions",
         header: "Azioni",
         enableSorting: false,
-        size: 90,
-        minSize: 90,
-        maxSize: 120,
+        size: featured ? 125 : 90,
+        minSize: featured ? 125 : 90,
         enableResizing: false,
         cell: ({ row }) => (
           <ButtonGroup>
@@ -109,11 +124,52 @@ export function ArticlesContent() {
             >
               <Eye />
             </Link>
+            {featured &&
+            row.original.isPublic &&
+            HOME_FEATURED_CATEGORIES.some((category) =>
+              row.original.categorySlugs.includes(category),
+            ) ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={<Button size="icon-sm" variant="outline" />}
+                  aria-label={`Metti in evidenza ${row.original.title}`}
+                  disabled={updatingFeatured}
+                >
+                  <Star />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {HOME_FEATURED_CATEGORIES.filter((category) =>
+                    row.original.categorySlugs.includes(category),
+                  ).map((category) => {
+                    const selections = featured.filter((item) => item.category === category);
+                    const selected = selections.some((item) => item.articleId === row.original.id);
+                    return (
+                      <DropdownMenuItem
+                        key={category}
+                        disabled={!selected && selections.length >= 2}
+                        onClick={() =>
+                          setFeatured({
+                            data: { category, articleId: row.original.id, featured: !selected },
+                          })
+                        }
+                      >
+                        {featuredLabels[category]} in home ·{" "}
+                        {selected
+                          ? "Rimuovi"
+                          : selections.length >= 2
+                            ? "2 posti occupati"
+                            : "Aggiungi"}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
           </ButtonGroup>
         ),
       },
     ],
-    [],
+    [featured, setFeatured, updatingFeatured],
   );
 
   const statuses = ["draft", "scheduled", "published", "archived"] as const;
@@ -127,6 +183,43 @@ export function ArticlesContent() {
           Nuovo articolo
         </Link>
       </div>
+      {featured ? (
+        <section aria-labelledby="home-featured-title" className="flex flex-col gap-2">
+          <h2 id="home-featured-title">In evidenza in home</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {HOME_FEATURED_CATEGORIES.map((category) => {
+              const selections = featured.filter((item) => item.category === category);
+              return (
+                <div key={category} className="flex min-w-0 flex-col gap-2">
+                  <h3>
+                    {featuredLabels[category]} · {selections.length}/2
+                  </h3>
+                  {selections.length === 0 && <p>Sezione nascosta</p>}
+                  {selections.map((item) => (
+                    <div key={item.articleId} className="flex flex-wrap items-center gap-2">
+                      <span className="wrap-anywhere">{item.title}</span>
+                      {!item.visible && <Badge variant="secondary">Non visibile in home</Badge>}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={updatingFeatured}
+                        aria-label={`Rimuovi ${item.title} da ${featuredLabels[category].toLowerCase()} in home`}
+                        onClick={() =>
+                          setFeatured({
+                            data: { category, articleId: item.articleId, featured: false },
+                          })
+                        }
+                      >
+                        Rimuovi
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
       <DashboardDataTable
         columns={columns}
         data={articles.items}

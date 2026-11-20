@@ -49,9 +49,9 @@ export function HomePage({ projects, articles, locale }: HomePageProps) {
 
               <div className="underground" data-underground="">
                 <UndergroundDefs />
-                <ProjectsSection locale={locale} projects={projects} />
+                {projects.length > 0 && <ProjectsSection locale={locale} projects={projects} />}
 
-                <WritingsSection locale={locale} articles={articles} />
+                {articles.length > 0 && <WritingsSection locale={locale} articles={articles} />}
 
                 <ContactSection locale={locale} />
               </div>

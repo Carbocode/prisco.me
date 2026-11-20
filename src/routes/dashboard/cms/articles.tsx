@@ -5,6 +5,7 @@ import { z } from "zod";
 import { ArticlesContent } from "@/features/cms/pages/articles-page";
 import { listArticlesFn } from "@/features/cms/server/article.functions";
 import { listCategoryOptionsFn } from "@/features/cms/server/category.functions";
+import { listHomeFeaturedFn } from "@/features/cms/server/home-featured.functions";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().positive().default(1).catch(1),
@@ -27,11 +28,12 @@ export const Route = createFileRoute("/dashboard/cms/articles")({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => search,
   loader: async ({ deps }) => {
-    const [articles, categories] = await Promise.all([
+    const [articles, categories, featured] = await Promise.all([
       listArticlesFn({ data: { ...deps, pageSize: deps.pageSize ?? 20 } }),
       listCategoryOptionsFn(),
+      listHomeFeaturedFn(),
     ]);
-    return { articles, categories };
+    return { articles, categories, featured };
   },
   component: ArticlesContent,
 });

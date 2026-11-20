@@ -1,12 +1,18 @@
 import { localizedPath, type SiteLocale } from "@/config/site";
 /* Landing/showcase artwork: scoped visual styles are permitted by AGENTS.md. */
 /* oxlint-disable shadcn/no-unknown-classes, shadcn/no-raw-colors, shadcn/no-inline-styles */
-import type { Project } from "@/features/portfolio/domain/portfolio";
 import * as m from "@/paraglide/messages.js";
 
 import { AmmonitePit, TrilobitePit } from "../artwork/fossil-pits";
+import type { HomeProject } from "../home.types";
 
-export function ProjectsSection({ projects, locale }: { projects: Project[]; locale: SiteLocale }) {
+export function ProjectsSection({
+  projects,
+  locale,
+}: {
+  projects: HomeProject[];
+  locale: SiteLocale;
+}) {
   return (
     <section
       id="reperti"

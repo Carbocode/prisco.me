@@ -31,3 +31,9 @@ The article writing form still uses its existing complete editorial option datas
 ## Verification
 
 Run `bun run check`, table interaction tests, SQL query tests, and debounced search tests. For broad changes run `bun run ci`. Browser checks should include desktop sidebar close/reopen, media previews, all lists and creation routes, sorting across multiple pages, filters, visibility/reorder/pinning/resize, and containment of overflow. Use an isolated local database for write checks; never use production content as a fixture.
+
+## Home highlights
+
+The Articles list shows the Home selections to users with article publication permission. Use the star menu on a public entry in `blog` or `progetti` to add it. The selection panel shows occupied positions and can remove entries even after they lose public visibility. Clear both positions in a category to hide its Home section.
+
+`cms_home_featured` stores two ordered positions per category. Adding an entry claims the first free position in one statement and preserves existing selections when full. The migration initializes the table from the previous Home selection criteria. The legacy project flag remains separate from Home selection.
