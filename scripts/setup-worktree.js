@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { constants, copyFileSync, cpSync, existsSync, readdirSync, realpathSync } from "node:fs";
+import { constants, copyFileSync, existsSync, readdirSync, realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const worktreeRoot = realpathSync(process.cwd());
@@ -11,12 +11,7 @@ const commonGitDirectory = execFileSync(
 const primaryRoot = dirname(commonGitDirectory);
 
 const isLocalRootFile = (name) =>
-  name === ".env" ||
-  name.startsWith(".env.") ||
-  name.startsWith(".dev.vars") ||
-  name.endsWith(".local") ||
-  name === "count.txt" ||
-  name === "todos.json";
+  name === ".env" || name === ".env.local" || name === ".dev.vars" || name.startsWith(".dev.vars.");
 
 const copyLocalRootFiles = () => {
   for (const entry of readdirSync(primaryRoot, { withFileTypes: true })) {
@@ -29,31 +24,20 @@ const copyLocalRootFiles = () => {
   }
 };
 
-const copyWranglerState = () => {
-  const source = join(primaryRoot, ".wrangler", "state");
-  if (!existsSync(source)) return;
-
-  cpSync(source, join(worktreeRoot, ".wrangler", "state"), {
-    recursive: true,
-    force: false,
-    errorOnExist: false,
-    preserveTimestamps: true,
-    filter: (path) => !path.endsWith(".DS_Store"),
-  });
-};
-
 if (worktreeRoot !== primaryRoot) {
   copyLocalRootFiles();
-  copyWranglerState();
-  console.log("Configurazione locale e stato Wrangler copiati dal worktree principale.");
+  console.log("Local environment files copied from the primary worktree.");
 }
 
-const install = spawnSync("bun", ["install"], { cwd: worktreeRoot, stdio: "inherit" });
+const install = spawnSync("bun", ["install", "--frozen-lockfile"], {
+  cwd: worktreeRoot,
+  stdio: "inherit",
+});
 
 if (install.error) throw install.error;
 if (install.status !== 0) process.exit(install.status ?? 1);
 
-// The copied database may predate migrations included in this worktree.
+// Apply migrations to this worktree’s own local D1 database.
 const migrate = spawnSync("bun", ["run", "db:migrate"], {
   cwd: worktreeRoot,
   stdio: "inherit",
