@@ -3,6 +3,10 @@ INSERT INTO user (id, name, email, role, created_at, updated_at)
 VALUES ('test-fixture-author', 'Autrice di esempio', 'autrice@example.invalid', 'user', 1704067200000, 1704067200000)
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO cms_categories (id, name, slug, description)
+VALUES ('test-fixture-blog', 'Blog', 'blog', 'Articoli fittizi per l’ambiente di test.')
+ON CONFLICT (slug) DO NOTHING;
+
 INSERT INTO cms_articles
   (id, title, slug, excerpt, content, content_version, status, published_at, author_id, last_edited_by_id, no_index)
 VALUES
