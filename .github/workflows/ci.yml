@@ -1,0 +1,68 @@
+name: CI and deploy
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Apply D1 migrations to a fresh local database
+        run: bun run db:migrate --persist-to "$RUNNER_TEMP/prisco-d1"
+      - run: bun run ci
+
+  deploy:
+    name: Deploy production
+    if: github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: prisco-production
+      queue: max
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Build the Worker
+        run: bun run build
+        env:
+          VITE_FARO_URL: ${{ vars.VITE_FARO_URL }}
+          VITE_MODE: ${{ vars.VITE_MODE }}
+          VITE_PUBLIC_POSTHOG_HOST: ${{ vars.VITE_PUBLIC_POSTHOG_HOST }}
+          VITE_PUBLIC_POSTHOG_KEY: ${{ vars.VITE_PUBLIC_POSTHOG_KEY }}
+      - name: Check that this commit is still the tip of main
+        id: main
+        run: |
+          current="$(git ls-remote --exit-code origin refs/heads/main)"
+          if [[ "${current%%$'\t'*}" == "$GITHUB_SHA" ]]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Migrate D1 and deploy the Worker
+        if: steps.main.outputs.deploy == 'true'
+        run: bun run deploy:built
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verify public home pages
+        if: steps.main.outputs.deploy == 'true'
+        run: |
+          for url in https://prisco.me/ https://prisco.me/en; do
+            status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+              --retry 5 --retry-delay 3 --max-time 15 --header 'Accept-Language: it' "$url")"
+            if [[ "$status" != 200 ]]; then
+              echo "$url returned HTTP $status"
+              exit 1
+            fi
+          done

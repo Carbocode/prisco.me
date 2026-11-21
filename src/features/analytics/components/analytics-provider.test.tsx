@@ -17,12 +17,14 @@ vi.mock("posthog-js/lib/src/entrypoints/web-vitals-with-attribution", () => ({})
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
+  vi.unstubAllEnvs();
 });
 
 it("keeps diagnostics enabled while recording and behavioral analytics follow consent", () => {
+  vi.stubEnv("VITE_PUBLIC_POSTHOG_KEY", "test-posthog-key");
   const { rerender } = render(<AnalyticsProvider analyticsConsent={false} />);
   expect(sdk.init).toHaveBeenCalledWith(
-    expect.anything(),
+    "test-posthog-key",
     expect.objectContaining({
       capture_performance: { web_vitals: true, network_timing: false },
       capture_exceptions: {
