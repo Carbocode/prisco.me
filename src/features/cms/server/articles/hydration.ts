@@ -26,7 +26,7 @@ export async function hydratePublicArticles<
 >(items: T[]) {
   if (!items.length) return [];
   // Bind the archive IDs as one JSON value to stay within D1's parameter limit.
-  const articleIds = sql`select value from json_each(${JSON.stringify(items.map((item) => item.id))})`;
+  const articleIds = sql`(select value from json_each(${JSON.stringify(items.map((item) => item.id))}))`;
   const categoryRows = await db()
     .select({
       articleId: cmsArticleCategories.articleId,
