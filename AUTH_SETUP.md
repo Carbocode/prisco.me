@@ -16,7 +16,7 @@ In production, register the same binding as a Cloudflare secret:
 bunx wrangler secret put BETTER_AUTH_SECRET
 ```
 
-Do not put the secret in `wrangler.json` or the repository.
+Do not put the secret in `wrangler.json` or the repository. The test Worker has its own values for `BETTER_AUTH_SECRET` and `TURNSTILE_SECRET`, installed with `wrangler secret put --env test`. Its auth origin and managed Turnstile widget are scoped to `test.prisco.me`. Test accounts are stored in the test D1 database.
 
 ## Turnstile and bot protection
 

@@ -4,6 +4,7 @@ export const SITE = {
   timeZone: "Europe/Rome",
   name: "Prisco.me",
   origin: "https://prisco.me",
+  testOrigin: "https://test.prisco.me",
   owner: "Vincenzo Prisco",
   githubUrl: "https://github.com/Carbocode",
   personId: "https://prisco.me/#person",

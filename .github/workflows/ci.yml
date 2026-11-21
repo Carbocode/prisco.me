@@ -5,7 +5,8 @@ on:
     branches: [main]
   push:
     branches: [main]
-  workflow_dispatch:
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -18,51 +19,88 @@ jobs:
       - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - name: Apply D1 migrations to a fresh local database
-        run: bun run db:migrate --persist-to "$RUNNER_TEMP/prisco-d1"
+      - name: Apply D1 migrations and load test fixtures in isolation
+        run: |
+          bun run db:migrate --persist-to "$RUNNER_TEMP/prisco-d1"
+          bunx wrangler d1 execute prisco-website --config wrangler.json --local \
+            --persist-to "$RUNNER_TEMP/prisco-d1" --file scripts/seed-test.sql
       - run: bun run ci
 
   deploy:
-    name: Deploy production
-    if: github.ref == 'refs/heads/main'
+    name: Deploy ${{ github.event_name == 'release' && 'production' || 'test' }}
+    if: github.event_name == 'push' || (github.event_name == 'release' && !github.event.release.prerelease && startsWith(github.ref, 'refs/tags/v'))
     needs: verify
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.event_name == 'release' && 'production' || 'test' }}
     concurrency:
-      group: prisco-production
+      group: prisco-${{ github.event_name == 'release' && 'production' || 'test' }}
       queue: max
+    permissions:
+      actions: read
+      contents: read
     steps:
       - uses: actions/checkout@v6
+      - name: Require a successful test deployment for the release commit
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          runs="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?event=push&branch=main&head_sha=$GITHUB_SHA&status=success" --jq '.workflow_runs[].id')"
+          for run in $runs; do
+            verified="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs" \
+              --jq '[.jobs[] | select(.name == "Deploy test" and .conclusion == "success") | .steps[] | select(.name == "Verify deployed pages" and .conclusion == "success")] | length')"
+            if [[ "$verified" -gt 0 ]]; then exit 0; fi
+          done
+          echo "This release commit has no successful test deployment from main."
+          exit 1
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - name: Build the Worker
         run: bun run build
         env:
+          CLOUDFLARE_ENV: ${{ github.event_name == 'push' && 'test' || '' }}
           VITE_FARO_URL: ${{ vars.VITE_FARO_URL }}
           VITE_MODE: ${{ vars.VITE_MODE }}
           VITE_PUBLIC_POSTHOG_HOST: ${{ vars.VITE_PUBLIC_POSTHOG_HOST }}
           VITE_PUBLIC_POSTHOG_KEY: ${{ vars.VITE_PUBLIC_POSTHOG_KEY }}
-      - name: Check that this commit is still the tip of main
-        id: main
+      - name: Check whether this commit should deploy
+        id: target
         run: |
-          current="$(git ls-remote --exit-code origin refs/heads/main)"
-          if [[ "${current%%$'\t'*}" == "$GITHUB_SHA" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == release ]]; then
             echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            current="$(git ls-remote --exit-code origin refs/heads/main)"
+            if [[ "${current%%$'\t'*}" == "$GITHUB_SHA" ]]; then
+              echo "deploy=true" >> "$GITHUB_OUTPUT"
+            fi
           fi
       - name: Migrate D1 and deploy the Worker
-        if: steps.main.outputs.deploy == 'true'
-        run: bun run deploy:built
+        if: steps.target.outputs.deploy == 'true'
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            bun run deploy:test:built
+          else
+            bun run deploy:built
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Verify public home pages
-        if: steps.main.outputs.deploy == 'true'
+      - name: Verify deployed pages
+        if: steps.target.outputs.deploy == 'true'
+        env:
+          ORIGIN: ${{ github.event_name == 'push' && 'https://test.prisco.me' || 'https://prisco.me' }}
         run: |
-          for url in https://prisco.me/ https://prisco.me/en; do
+          for path in / /en; do
             status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
-              --retry 5 --retry-delay 3 --max-time 15 --header 'Accept-Language: it' "$url")"
+              --retry 10 --retry-all-errors --retry-delay 5 --max-time 15 --header 'Accept-Language: it' "$ORIGIN$path")"
             if [[ "$status" != 200 ]]; then
-              echo "$url returned HTTP $status"
+              echo "$ORIGIN$path returned HTTP $status"
               exit 1
             fi
           done
+          if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            curl --fail --silent --show-error --dump-header "$RUNNER_TEMP/prisco-fixture.headers" \
+              "$ORIGIN/blog/articolo-di-prova" > "$RUNNER_TEMP/prisco-fixture.html"
+            grep -qi '^x-robots-tag: noindex, nofollow' "$RUNNER_TEMP/prisco-fixture.headers"
+            grep -q 'Articolo di prova' "$RUNNER_TEMP/prisco-fixture.html"
+          fi

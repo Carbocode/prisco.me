@@ -36,5 +36,40 @@
     "MEDIA_PUBLIC_URL": "https://media.prisco.me",
     "TURNSTILE_SITE_KEY": "0x4AAAAAACM4BBOgqLsfgNUy"
   },
-  "upload_source_maps": true
+  "upload_source_maps": true,
+  "env": {
+    "test": {
+      "name": "prisco-website-test",
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [
+        {
+          "pattern": "test.prisco.me",
+          "custom_domain": true
+        }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "prisco-website-test",
+          "migrations_dir": "drizzle",
+          "database_id": "51d4b45b-7a58-476d-96fb-7394489f2bca"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "CMS_MEDIA",
+          "bucket_name": "prisco-website-test-cms-media"
+        }
+      ],
+      "version_metadata": {
+        "binding": "CF_VERSION_METADATA"
+      },
+      "vars": {
+        "MEDIA_PUBLIC_URL": "/media",
+        "TURNSTILE_SITE_KEY": "0x4AAAAAAGMDGD9pWpilllLQ",
+        "AUTH_ORIGIN": "https://test.prisco.me"
+      }
+    }
+  }
 }

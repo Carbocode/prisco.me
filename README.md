@@ -49,11 +49,21 @@ Runs asset validation, formatting, lint, TypeScript, tests, migration checks, an
 
 When an SVG registered in `scripts/static-artwork.json` changes, run `bun run assets:render`; `bun run assets:check` verifies that caches are current.
 
-## Production delivery
+## Test and production delivery
 
-[CI and deploy](.github/workflows/ci.yml) runs on pull requests into `main` and pushes to `main`. It installs the locked dependencies, applies all SQL migrations to a fresh local D1 database, and runs `bun run ci`. Only the current tip of `main` is eligible to deploy. Production jobs are serialized, apply pending D1 migrations before publishing the built Worker, and check both public Home URLs for HTTP 200.
+[CI and deploy](.github/workflows/ci.yml) validates pull requests using a fresh local D1 database. A push to `main` deploys the checked commit to [test.prisco.me](https://test.prisco.me). The test Worker uses `prisco-website-test` in D1, a separate R2 bucket and Turnstile widget, and test-only authentication secrets. It applies the same migrations as production and loads [sample CMS records](scripts/seed-test.sql) without copying production data. Test pages carry `X-Robots-Tag: noindex, nofollow`. Test does not publish a sitemap, and its robots file allows crawlers to read the header.
 
-Before enabling GitHub delivery, configure the GitHub `production` environment with the `CLOUDFLARE_API_TOKEN` secret (Worker deployment and D1 migration permissions) and `CLOUDFLARE_ACCOUNT_ID` variable. Restrict the environment to `main` and carry over the existing public Vite settings (`VITE_MODE`, `VITE_FARO_URL`, `VITE_PUBLIC_POSTHOG_HOST`, and `VITE_PUBLIC_POSTHOG_KEY`, where configured). Disable any independent automatic production deploy in Cloudflare Workers Builds so production has one deploy pipeline. Keep branch builds local or give cloud previews their own D1 and R2 resources.
+The [performance fixtures](scripts/seed-test-performance.sql) add 2,000 fictional records with varied publication dates, document lengths, and tags. To restore them on the test D1 database after applying the sample fixtures, run:
+
+```sh
+bunx wrangler d1 execute prisco-website-test --config wrangler.json --env test --remote --file scripts/seed-test-performance.sql
+```
+
+The performance fixtures are loaded separately and persist across test deployments.
+
+To release, wait for **Deploy test** to pass for the commit you tested. Publish a GitHub release with a `v*` tag pointing to that exact commit, for example `v1.0.0`. GitHub checks that the tagged commit passed the test deployment before applying migrations and publishing it to [prisco.me](https://prisco.me). Drafts and prereleases do not publish to production. Both environments check the Italian and English home pages after deployment.
+
+The GitHub `test` environment allows the `main` branch, and `production` allows `v*` tags. Each environment needs a `CLOUDFLARE_API_TOKEN` secret with Worker deployment and D1 migration permissions, and a `CLOUDFLARE_ACCOUNT_ID` variable. Production also carries its analytics build variables (`VITE_MODE`, `VITE_FARO_URL`, `VITE_PUBLIC_POSTHOG_HOST`, and `VITE_PUBLIC_POSTHOG_KEY`, where configured). Keep Cloudflare Workers Builds disconnected so GitHub is the only automatic publisher.
 
 Keep new migrations compatible with the currently deployed Worker. Split breaking schema changes across releases so the old Worker can still serve requests between migration and publication, and so a failed Worker release can be retried. Keep applied SQL files immutable and rebase feature branches with pending migrations before merging.
 
@@ -63,4 +73,4 @@ For incident recovery, first check pending migrations using authenticated Wrangl
 bunx wrangler d1 migrations list prisco-website --remote
 ```
 
-If the deployed Worker is waiting for a pending migration, run `bun run db:migrate:remote` from the deployed commit, then check the affected URLs. Under normal operation, rerun the failed GitHub workflow on the current `main` commit. `bun run deploy:dry` builds and checks the Worker without touching remote data.
+If the deployed Worker is waiting for a pending migration, run `bun run db:migrate:remote` from the deployed commit, then check the affected URLs. Under normal operation, rerun the failed GitHub test deployment or release workflow. `bun run deploy:dry` builds and checks the Worker without touching remote data.
