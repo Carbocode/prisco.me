@@ -35,7 +35,13 @@ jobs:
       - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: bun run build
+      - name: Build the Worker
+        run: bun run build
+        env:
+          VITE_FARO_URL: ${{ vars.VITE_FARO_URL }}
+          VITE_MODE: ${{ vars.VITE_MODE }}
+          VITE_PUBLIC_POSTHOG_HOST: ${{ vars.VITE_PUBLIC_POSTHOG_HOST }}
+          VITE_PUBLIC_POSTHOG_KEY: ${{ vars.VITE_PUBLIC_POSTHOG_KEY }}
       - name: Check that this commit is still the tip of main
         id: main
         run: |
