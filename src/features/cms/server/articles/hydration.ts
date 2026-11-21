@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { asc, inArray } from "drizzle-orm";
+import { asc, inArray, sql } from "drizzle-orm";
 
 import { cmsArticleTags, cmsCategories, cmsMedia, cmsOrganizations, cmsTags } from "@/db/schema";
 import { mediaDeliveryBaseUrl, mediaUrl } from "@/features/cms/domain/media";
@@ -25,7 +25,8 @@ export async function hydratePublicArticles<
   },
 >(items: T[]) {
   if (!items.length) return [];
-  const articleIds = items.map((item) => item.id);
+  // Bind the archive IDs as one JSON value to stay within D1's parameter limit.
+  const articleIds = sql`select value from json_each(${JSON.stringify(items.map((item) => item.id))})`;
   const categoryRows = await db()
     .select({
       articleId: cmsArticleCategories.articleId,

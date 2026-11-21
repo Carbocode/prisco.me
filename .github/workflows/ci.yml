@@ -99,6 +99,8 @@ jobs:
             fi
           done
           if [[ "$GITHUB_EVENT_NAME" == push ]]; then
-            curl --fail --silent --show-error "$ORIGIN/blog/articolo-di-prova" > "$RUNNER_TEMP/prisco-fixture.html"
+            curl --fail --silent --show-error --dump-header "$RUNNER_TEMP/prisco-fixture.headers" \
+              "$ORIGIN/blog/articolo-di-prova" > "$RUNNER_TEMP/prisco-fixture.html"
+            grep -qi '^x-robots-tag: noindex, nofollow' "$RUNNER_TEMP/prisco-fixture.headers"
             grep -q 'Articolo di prova' "$RUNNER_TEMP/prisco-fixture.html"
           fi

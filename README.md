@@ -51,7 +51,15 @@ When an SVG registered in `scripts/static-artwork.json` changes, run `bun run as
 
 ## Test and production delivery
 
-[CI and deploy](.github/workflows/ci.yml) validates pull requests using a fresh local D1 database. A push to `main` deploys the checked commit to [test.prisco.me](https://test.prisco.me). The test Worker uses `prisco-website-test` in D1, a separate R2 bucket and Turnstile widget, and test-only authentication secrets. It applies the same migrations as production and loads [sample CMS records](scripts/seed-test.sql) without copying production data. Test pages instruct crawlers to stay out.
+[CI and deploy](.github/workflows/ci.yml) validates pull requests using a fresh local D1 database. A push to `main` deploys the checked commit to [test.prisco.me](https://test.prisco.me). The test Worker uses `prisco-website-test` in D1, a separate R2 bucket and Turnstile widget, and test-only authentication secrets. It applies the same migrations as production and loads [sample CMS records](scripts/seed-test.sql) without copying production data. Test pages carry `X-Robots-Tag: noindex, nofollow`. Test does not publish a sitemap, and its robots file allows crawlers to read the header.
+
+The [performance fixtures](scripts/seed-test-performance.sql) add 2,000 fictional records with varied publication dates, document lengths, and tags. To restore them on the test D1 database after applying the sample fixtures, run:
+
+```sh
+bunx wrangler d1 execute prisco-website-test --config wrangler.json --env test --remote --file scripts/seed-test-performance.sql
+```
+
+The performance fixtures are loaded separately and persist across test deployments.
 
 To release, wait for **Deploy test** to pass for the commit you tested. Publish a GitHub release with a `v*` tag pointing to that exact commit, for example `v1.0.0`. GitHub checks that the tagged commit passed the test deployment before applying migrations and publishing it to [prisco.me](https://prisco.me). Drafts and prereleases do not publish to production. Both environments check the Italian and English home pages after deployment.
 
