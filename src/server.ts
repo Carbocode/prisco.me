@@ -1,6 +1,7 @@
 import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
 import { env as cloudflareEnv } from "cloudflare:workers";
 
+import { SITE } from "@/config/site";
 import { createAuth, isLocalRequest } from "@/features/auth/server/auth";
 import { ardPath } from "@/features/site/domain/ard";
 import { serveSiteByLanguage } from "@/features/site/server/site-language";
@@ -16,7 +17,22 @@ export default createServerEntry({
           captchaEnabled: !isLocalRequest(request),
         }).handler(request);
       }
-      return serveSiteByLanguage(request, url, () => handler.fetch(request));
+      if (url.origin !== SITE.testOrigin) {
+        return serveSiteByLanguage(request, url, () => handler.fetch(request));
+      }
+      if (path === "/robots.txt") {
+        return new Response("User-agent: *\nDisallow: /\n", {
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
+      }
+      const response = await serveSiteByLanguage(request, url, () => handler.fetch(request));
+      const headers = new Headers(response.headers);
+      headers.set("X-Robots-Tag", "noindex, nofollow");
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
     } catch (error) {
       console.error("Errore non gestito durante la richiesta", {
         action: "request_unhandled_error",

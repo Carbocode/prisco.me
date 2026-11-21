@@ -4,6 +4,7 @@ import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { admin, captcha, jwt, twoFactor, username } from "better-auth/plugins";
 
+import { SITE } from "@/config/site";
 import { getDb } from "@/db";
 import * as schema from "@/db/schema";
 
@@ -11,6 +12,7 @@ import { cmsAccessControl, cmsRoles } from "../domain/permissions";
 
 type AuthEnv = Env & {
   BETTER_AUTH_SECRET: string;
+  AUTH_ORIGIN?: string;
   TURNSTILE_SECRET?: string;
   CF_TS_KEY?: string;
 };
@@ -30,25 +32,27 @@ export function isLocalRequest(request: Request) {
 
 export function createAuth(env: AuthEnv, options: { captchaEnabled?: boolean } = {}) {
   const captchaEnabled = options.captchaEnabled ?? true;
+  const origin = env.AUTH_ORIGIN ?? SITE.origin;
+  const hostname = new URL(origin).hostname;
 
   return betterAuth({
     appName: "Prisco.me",
     baseURL: {
       allowedHosts: [
-        "prisco.me",
-        "www.prisco.me",
+        hostname,
+        ...(origin === SITE.origin ? ["www.prisco.me"] : []),
         "localhost:3000",
         "localhost:4173",
         "localhost:5173",
       ],
-      fallback: "https://prisco.me",
+      fallback: origin,
       protocol: "auto",
     },
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(getDb(env), { provider: "sqlite", schema }),
     emailAndPassword: { enabled: true, minPasswordLength: 8 },
     user: { changeEmail: { enabled: true }, deleteUser: { enabled: true } },
-    trustedOrigins: ["https://prisco.me", "http://localhost:3000", "http://localhost:5173"],
+    trustedOrigins: [origin, "http://localhost:3000", "http://localhost:5173"],
     rateLimit: {
       enabled: true,
       window: 300,
@@ -73,7 +77,7 @@ export function createAuth(env: AuthEnv, options: { captchaEnabled?: boolean } =
           ? ["/sign-in/email", "/sign-in/username", "/sign-up/email"]
           : ["/__captcha-disabled-on-localhost"],
         expectedAction: "turnstile-spin-v2",
-        allowedHostnames: ["prisco.me"],
+        allowedHostnames: [hostname],
       }),
       admin({ defaultRole: "user", adminRoles: ["admin"], ac: cmsAccessControl, roles: cmsRoles }),
       username(),

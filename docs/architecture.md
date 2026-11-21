@@ -85,6 +85,10 @@ Artwork sources stay in `public`. WebP caches are described by `scripts/static-a
 
 `src/lib/dates.ts` interprets public dates in the `Europe/Rome` time zone defined in `src/config/site.ts`, so server and browser produce the same day and year. Do not compute current values used in rendering during Worker module initialization.
 
+## Deployment environments
+
+Cloudflare serves test and production with separate Workers, D1 databases, media buckets, authentication secrets, and Turnstile widgets. Test configures its auth origin independently and serves media through its own Worker. Test requests receive crawler exclusions. The GitHub workflow validates migrations and fixture SQL locally, deploys `main` to test, and allows production only for a published version tag whose commit passed the test deployment.
+
 ## Validation
 
 Tests live beside their implementation. `bun run ci` validates assets, formatting, lint, types, tests, migrations, and compilation. For structural changes crossing routes and server modules, also verify public navigation, authentication, CMS pages, and draft creation in an isolated local database.
